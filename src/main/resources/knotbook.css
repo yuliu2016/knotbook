@@ -1,0 +1,72 @@
+.minmax-button {
+    -fx-background-color: transparent;
+    -fx-padding: 6 12 6 12;
+    -fx-background-radius: 0;
+}
+
+.minmax-button .ikonli-font-icon {
+    -fx-icon-color: #444
+}
+
+.minmax-button:hover {
+    -fx-background-color: #ddd;
+}
+
+.minmax-button:hover .ikonli-font-icon{
+    -fx-icon-color: black
+}
+
+.close-button {
+    -fx-background-color: transparent;
+    -fx-padding: 6 12 6 12;
+    -fx-background-radius: 0;
+}
+
+.close-button .ikonli-font-icon {
+    -fx-icon-color: #444;
+}
+
+.close-button:hover {
+    -fx-background-color: red;
+}
+
+.close-button:hover .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+.menu-bar {
+    -fx-padding: 0 10 0 0;
+    -fx-background-color: transparent;
+}
+
+.menu {
+    -fx-padding: 6;
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+}
+
+.menu .label {
+    -fx-text-fill: #444;
+}
+
+
+.menu:hover {
+    -fx-background-color: #ddd;
+}
+
+.menu:showing {
+    -fx-background-color: #ddd;
+}
+
+.menu-item {
+    -fx-padding: 3 12 3 12;
+    -fx-min-width: 200;
+}
+
+.context-menu {
+    -fx-padding: 0;
+}
+
+.menu-item:focused {
+    -fx-background-color: #ddd;
+}
