@@ -1,6 +1,6 @@
 package knotbook.tables
 
-import knotbook.snap.BorderlessScene
+import knotbook.core.snap.SnapScene
 import javafx.application.Application
 import javafx.event.EventHandler
 import javafx.geometry.Insets
@@ -127,7 +127,7 @@ class Test : Application() {
                 })
             }
         }
-        stage.scene = BorderlessScene(stage, VBox().apply {
+        stage.scene = SnapScene(stage, VBox().apply {
             stylesheets.add("/knotbook.css")
             prefWidth = 800.0
             prefHeight = 600.0

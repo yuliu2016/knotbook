@@ -1,4 +1,4 @@
-package knotbook.snap;
+package knotbook.core.snap;
 
 /**
  * Utility class to store a pair of Double values.

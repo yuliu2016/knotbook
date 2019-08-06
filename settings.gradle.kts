@@ -1,1 +1,1 @@
-include("snap")
+include("core:snap")

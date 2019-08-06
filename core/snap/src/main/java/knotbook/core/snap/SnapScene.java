@@ -1,4 +1,4 @@
-package knotbook.snap;
+package knotbook.core.snap;
 
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -44,9 +44,9 @@ import javafx.stage.StageStyle;
  * @version 1.0
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class BorderlessScene extends Scene {
+public class SnapScene extends Scene {
 
-    private BorderlessController controller;
+    private SnapController controller;
     private AnchorPane root;
     private Stage primaryStage;
 
@@ -56,14 +56,14 @@ public class BorderlessScene extends Scene {
      * @param primaryStage your stage.
      * @param root         the root Parent of your content.
      */
-    public BorderlessScene(Stage primaryStage, Parent root) {
+    public SnapScene(Stage primaryStage, Parent root) {
         super(new Pane());
 
-        this.root = BorderlessFXML.pane;
+        this.root = SnapFXML.pane;
         setRoot(this.root);
         setContent(root);
 
-        this.controller = new BorderlessController();
+        this.controller = new SnapController();
         this.controller.setMainApp(primaryStage);
 
         primaryStage.initStyle(StageStyle.UNDECORATED);

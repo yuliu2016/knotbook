@@ -1,4 +1,4 @@
-package knotbook.snap;
+package knotbook.core.snap;
 
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
@@ -14,26 +14,26 @@ import javafx.stage.Stage;
  * @version 1.0
  */
 @SuppressWarnings({"WeakerAccess", "DuplicatedCode", "SpellCheckingInspection"})
-public class BorderlessController {
+public class SnapController {
     private Stage primaryStage;
     protected Delta prevSize;
     protected Delta prevPos;
     protected boolean maximised;
     private boolean snapped;
 
-    private Pane leftPane = BorderlessFXML.leftPane;
-    private Pane rightPane = BorderlessFXML.rightPane;
-    private Pane topPane = BorderlessFXML.topPane;
-    private Pane bottomPane = BorderlessFXML.bottomPane;
-    private Pane topLeftPane = BorderlessFXML.topLeftPane;
-    private Pane topRightPane = BorderlessFXML.topRightPane;
-    private Pane bottomLeftPane = BorderlessFXML.bottomLeftPane;
-    private Pane bottomRightPane = BorderlessFXML.bottomRightPane;
+    private Pane leftPane = SnapFXML.leftPane;
+    private Pane rightPane = SnapFXML.rightPane;
+    private Pane topPane = SnapFXML.topPane;
+    private Pane bottomPane = SnapFXML.bottomPane;
+    private Pane topLeftPane = SnapFXML.topLeftPane;
+    private Pane topRightPane = SnapFXML.topRightPane;
+    private Pane bottomLeftPane = SnapFXML.bottomLeftPane;
+    private Pane bottomRightPane = SnapFXML.bottomRightPane;
 
     /**
      * The constructor.
      */
-    public BorderlessController() {
+    public SnapController() {
         prevSize = new Delta();
         prevPos = new Delta();
         maximised = false;
