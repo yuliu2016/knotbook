@@ -8,5 +8,5 @@ repositories {
 }
 
 javafx {
-    modules = listOf("javafx.controls", "javafx.fxml")
+    modules = listOf("javafx.controls")
 }

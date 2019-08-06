@@ -33,4 +33,4 @@
  * @author Nicolas Senet-Larson
  * @version 1.0
  */
-package borderless;
+package knotbook.snap;

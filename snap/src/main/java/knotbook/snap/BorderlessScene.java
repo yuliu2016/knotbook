@@ -1,6 +1,5 @@
-package borderless;
+package knotbook.snap;
 
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -8,8 +7,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-
-import java.io.IOException;
 
 /**
  * Undecorated JavaFX Scene with implemented move, resize, minimise, maximise and Windows A e r o Snap controls.
@@ -61,22 +58,16 @@ public class BorderlessScene extends Scene {
      */
     public BorderlessScene(Stage primaryStage, Parent root) {
         super(new Pane());
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/Borderless.fxml"));
-            this.root = loader.load();
 
-            setRoot(this.root);
-            setContent(root);
+        this.root = BorderlessFXML.pane;
+        setRoot(this.root);
+        setContent(root);
 
-            this.controller = loader.getController();
-            this.controller.setMainApp(primaryStage);
+        this.controller = new BorderlessController();
+        this.controller.setMainApp(primaryStage);
 
-            primaryStage.initStyle(StageStyle.UNDECORATED);
-            this.primaryStage = primaryStage;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        primaryStage.initStyle(StageStyle.UNDECORATED);
+        this.primaryStage = primaryStage;
     }
 
     /**

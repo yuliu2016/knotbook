@@ -1,6 +1,6 @@
 package knotbook.tables
 
-import borderless.BorderlessScene
+import knotbook.snap.BorderlessScene
 import javafx.application.Application
 import javafx.event.EventHandler
 import javafx.geometry.Insets

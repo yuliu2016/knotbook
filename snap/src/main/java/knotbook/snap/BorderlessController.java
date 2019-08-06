@@ -1,6 +1,5 @@
-package borderless;
+package knotbook.snap;
 
-import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
@@ -21,22 +20,15 @@ public class BorderlessController {
     protected Delta prevPos;
     protected boolean maximised;
     private boolean snapped;
-    @FXML
-    private Pane leftPane;
-    @FXML
-    private Pane rightPane;
-    @FXML
-    private Pane topPane;
-    @FXML
-    private Pane bottomPane;
-    @FXML
-    private Pane topLeftPane;
-    @FXML
-    private Pane topRightPane;
-    @FXML
-    private Pane bottomLeftPane;
-    @FXML
-    private Pane bottomRightPane;
+
+    private Pane leftPane = BorderlessFXML.leftPane;
+    private Pane rightPane = BorderlessFXML.rightPane;
+    private Pane topPane = BorderlessFXML.topPane;
+    private Pane bottomPane = BorderlessFXML.bottomPane;
+    private Pane topLeftPane = BorderlessFXML.topLeftPane;
+    private Pane topRightPane = BorderlessFXML.topRightPane;
+    private Pane bottomLeftPane = BorderlessFXML.bottomLeftPane;
+    private Pane bottomRightPane = BorderlessFXML.bottomRightPane;
 
     /**
      * The constructor.
@@ -46,13 +38,7 @@ public class BorderlessController {
         prevPos = new Delta();
         maximised = false;
         snapped = false;
-    }
 
-    /**
-     * Called after the FXML layout is loaded.
-     */
-    @FXML
-    private void initialize() {
         setResizeControl(leftPane, "left");
         setResizeControl(rightPane, "right");
         setResizeControl(topPane, "top");
@@ -62,6 +48,7 @@ public class BorderlessController {
         setResizeControl(bottomLeftPane, "bottom-left");
         setResizeControl(bottomRightPane, "bottom-right");
     }
+
 
     /**
      * Reference to main application.

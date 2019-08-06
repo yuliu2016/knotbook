@@ -1,4 +1,4 @@
-package borderless;
+package knotbook.snap;
 
 /**
  * Utility class to store a pair of Double values.
