@@ -1,4 +1,4 @@
-module knotbook.snap {
+module knotbook.core.snap {
     requires javafx.graphics;
     requires javafx.controls;
 

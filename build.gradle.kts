@@ -10,7 +10,7 @@ plugins {
 }
 
 application {
-    mainClassName = "knotable.main/knotbook.tables.Test"
+    mainClassName = "knotbook/knotbook.tables.Test"
 }
 
 tasks.withType<KotlinCompile> {
@@ -30,7 +30,8 @@ javafx {
 
 dependencies {
     implementation(project("core:snap"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.3.41")
+    implementation(project("core:splash"))
+    implementation(kotlin("stdlib"))
 
     implementation(group = "org.kordamp.ikonli", name = "ikonli-javafx", version = "11.3.4")
     implementation(group = "org.kordamp.ikonli", name = "ikonli-materialdesign-pack", version = "11.3.4")

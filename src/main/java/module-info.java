@@ -1,10 +1,11 @@
-module knotable.main {
+module knotbook {
     requires kotlin.stdlib;
     requires javafx.graphics;
     requires javafx.controls;
     requires javafx.fxml;
 
-    requires knotbook.snap;
+    requires knotbook.core.snap;
+    requires knotbook.core.splash;
 
     requires org.kordamp.iconli.core;
     requires org.kordamp.ikonli.javafx;

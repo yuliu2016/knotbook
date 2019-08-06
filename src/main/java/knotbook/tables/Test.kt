@@ -1,6 +1,5 @@
 package knotbook.tables
 
-import knotbook.core.snap.SnapScene
 import javafx.application.Application
 import javafx.event.EventHandler
 import javafx.geometry.Insets
@@ -16,6 +15,8 @@ import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.stage.Stage
 import javafx.stage.StageStyle
+import knotbook.core.snap.SnapScene
+import knotbook.core.splash.Splash
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid
 import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign.MaterialDesign
@@ -103,7 +104,7 @@ class Test : Application() {
                                     SeparatorMenuItem(),
                                     MenuItem("About Knotbook").apply {
                                         onAction = EventHandler {
-                                            showAbout()
+                                            Splash.splash()
                                         }
                                     }
                             )
