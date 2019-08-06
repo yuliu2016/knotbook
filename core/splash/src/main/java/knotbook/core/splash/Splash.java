@@ -44,22 +44,26 @@ public class Splash {
         Label label1 = new Label("Powered by Knotable - Version 2019.2.0 ");
         label1.setStyle("-fx-text-fill: white");
 
+        top.getChildren().addAll(header, label1);
+
         VBox bottom = new VBox();
         bottom.setStyle("-fx-background-color:rgba(0,0,0,0.9)");
         VBox.setVgrow(bottom, Priority.ALWAYS);
         bottom.setAlignment(Pos.TOP_CENTER);
         bottom.setPadding(new Insets(8.0));
 
+        root.getChildren().addAll(top, bottom);
+
         Scene scene = new Scene(root);
         scene.setRoot(root);
-//        scene.setFill(Color.TRANSPARENT);
+        scene.setFill(Color.TRANSPARENT);
 
         stage.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) stage.close();
         });
 
         stage.setScene(scene);
-//        stage.initStyle(StageStyle.TRANSPARENT);
+        stage.initStyle(StageStyle.TRANSPARENT);
         stage.getIcons().add(iconImage);
         stage.setAlwaysOnTop(true);
         stage.show();

@@ -1,8 +1,7 @@
-module knotbook {
+module knotbook.main {
     requires kotlin.stdlib;
     requires javafx.graphics;
     requires javafx.controls;
-    requires javafx.fxml;
 
     requires knotbook.core.snap;
     requires knotbook.core.splash;

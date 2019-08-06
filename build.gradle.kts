@@ -1,31 +1,31 @@
 @file:Suppress("SpellCheckingInspection")
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
+    java
     kotlin("jvm") version "1.3.41"
     application
     id("org.openjfx.javafxplugin") version "0.0.8"
     id("org.beryx.jlink") version "2.14.0"
 }
 
-application {
-    mainClassName = "knotbook/knotbook.tables.Test"
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+    buildDir = File(rootProject.projectDir, "build/$name")
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = listOf("-Xnew-inference")
-        kotlinOptions.jvmTarget = "11"
+tasks {
+    compileKotlin {
+        kotlinOptions {
+            freeCompilerArgs = listOf("-Xnew-inference")
+            jvmTarget = "1.8"
+        }
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
 javafx {
-    modules = listOf("javafx.controls", "javafx.fxml")
+    modules = listOf("javafx.controls")
 }
 
 dependencies {
@@ -39,6 +39,10 @@ dependencies {
 
     testImplementation(kotlin("test"))
     testImplementation(group = "junit", name = "junit", version = "4.12")
+}
+
+application {
+    mainClassName = "knotbook.main/knotbook.tables.Test"
 }
 
 jlink {
