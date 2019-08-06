@@ -1,11 +1,11 @@
 package knotbook.tables
 
 import javafx.geometry.HPos
-import javafx.scene.control.SkinBase
 import javafx.geometry.Orientation
 import javafx.geometry.Rectangle2D
 import javafx.geometry.VPos
 import javafx.scene.control.ScrollBar
+import javafx.scene.control.SkinBase
 import javafx.scene.paint.Color
 import javafx.scene.shape.Line
 import javafx.scene.text.Text
@@ -47,8 +47,8 @@ class KnotableSkin(knotable: Knotable) : SkinBase<Knotable>(knotable) {
     var counter = 0
 
     init {
-        vln = (0 .. (visualBounds.width / kMinCellWidth).toInt() ).map { Line() }
-        hln = (0 .. (visualBounds.width / kMinCellHeight).toInt()).map { Line() }
+        vln = (0..(visualBounds.width / kMinCellWidth).toInt()).map { Line() }
+        hln = (0..(visualBounds.width / kMinCellHeight).toInt()).map { Line() }
         cells = (0 until vln.size * hln.size).map { Text("0") }
         children.addAll(vln)
         children.addAll(hln)
@@ -112,6 +112,6 @@ class KnotableSkin(knotable: Knotable) : SkinBase<Knotable>(knotable) {
         }
 
         layoutInArea(hsb, contentX, contentY, contentWidth - vsb.width, contentHeight, 0.0, HPos.LEFT, VPos.BOTTOM)
-        layoutInArea(vsb, contentX, contentY, contentWidth , contentHeight - hsb.height, 0.0, HPos.RIGHT, VPos.TOP)
+        layoutInArea(vsb, contentX, contentY, contentWidth, contentHeight - hsb.height, 0.0, HPos.RIGHT, VPos.TOP)
     }
 }
