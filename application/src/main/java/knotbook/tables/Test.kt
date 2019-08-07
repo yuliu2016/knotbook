@@ -39,8 +39,8 @@ class Test : Application() {
 //        root.children.add(canvas)
         stage.icons.add(Image(Test::class.java.getResourceAsStream("/knot-tb.png")))
         val knotable = Knotable()
-        knotable.prefWidth = 900.0
-        knotable.prefHeight = 600.0
+//        knotable.prefWidth = 900.0
+//        knotable.prefHeight = 600.0
         val min = Button("", FontIcon.of(MaterialDesign.MDI_WINDOW_MINIMIZE, 17)).apply {
             styleClass.add("minmax-button")
         }
