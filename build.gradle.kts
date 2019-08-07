@@ -15,6 +15,7 @@ val Project.rootPath: String get() {
 allprojects {
     repositories {
         mavenCentral()
+        jcenter()
     }
     buildDir = File(rootProject.projectDir, "build/$rootPath")
 }

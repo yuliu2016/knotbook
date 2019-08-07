@@ -6,6 +6,8 @@
       <module name="knotbook.snap.main" target="11" />
       <module name="knotbook.snap.test" target="11" />
       <module name="knotbook.test" target="11" />
+      <module name="knotbook.the-blue-alliance.client.main" target="11" />
+      <module name="knotbook.the-blue-alliance.client.test" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>
