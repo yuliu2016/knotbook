@@ -23,6 +23,7 @@ dependencies {
     implementation(project(":core:snap"))
     implementation(project(":core:splash"))
     implementation(project(":core:registry"))
+    implementation(project(":core:table"))
     implementation(kotlin("stdlib"))
 
     implementation(group = "org.kordamp.ikonli", name = "ikonli-javafx", version = "11.3.4")

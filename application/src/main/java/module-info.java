@@ -5,6 +5,7 @@ module knotbook.application {
 
     requires knotbook.core.snap;
     requires knotbook.core.splash;
+    requires knotbook.core.table;
 
     requires org.kordamp.iconli.core;
     requires org.kordamp.ikonli.javafx;

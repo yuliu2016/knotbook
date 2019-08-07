@@ -1,4 +1,4 @@
-package knotbook.application
+package knotbook.core.table
 
 import javafx.geometry.HPos
 import javafx.geometry.Orientation

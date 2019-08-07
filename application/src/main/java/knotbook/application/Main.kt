@@ -15,7 +15,7 @@ import javafx.scene.paint.Color
 import javafx.stage.Stage
 import knotbook.core.snap.SnapScene
 import knotbook.core.splash.Splash
-//import knotbook.core.splash.Splash
+import knotbook.core.table.Knotable
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid
 import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign.MaterialDesign

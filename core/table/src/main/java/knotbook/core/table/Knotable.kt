@@ -1,4 +1,4 @@
-package knotbook.application
+package knotbook.core.table
 
 import javafx.event.EventHandler
 import javafx.scene.control.Control

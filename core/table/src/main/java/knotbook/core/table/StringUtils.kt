@@ -1,5 +1,6 @@
-package knotbook.application.utils
+package knotbook.core.table
 
+@Suppress("unused")
 fun columnIndexToString(col: Int): String {
     if (col < 0) {
         return col.toString()
