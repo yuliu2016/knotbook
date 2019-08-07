@@ -1,2 +1,6 @@
 rootProject.name = "knotbook"
-include("application", "core:snap", "core:splash")
+include(
+        "application",
+        "core:snap",
+        "core:splash"
+)
