@@ -8,11 +8,15 @@ plugins {
     id("org.beryx.jlink") version "2.14.0"
 }
 
+val Project.rootPath: String get() {
+    return parent?.rootPath?.plus("/$name") ?: ""
+}
+
 allprojects {
     repositories {
         mavenCentral()
     }
-    buildDir = File(rootProject.projectDir, "build/$name")
+    buildDir = File(rootProject.projectDir, "build/$rootPath")
 }
 
 tasks {

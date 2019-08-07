@@ -41,7 +41,7 @@ public class Splash {
         header.setPrefHeight(80.0);
         header.getChildren().addAll(icon, label);
 
-        Label label1 = new Label("Powered by Knotable - Version 2019.2.0 ");
+        Label label1 = new Label("Version RISE (Build 3.0.01) - Powered by Restructured Tables ");
         label1.setStyle("-fx-text-fill: white");
 
         top.getChildren().addAll(header, label1);

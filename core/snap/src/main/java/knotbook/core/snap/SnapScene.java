@@ -47,21 +47,21 @@ import javafx.stage.StageStyle;
 public class SnapScene extends Scene {
 
     private SnapController controller;
-    private AnchorPane root;
+    private AnchorPane rootPane;
     private Stage primaryStage;
 
     /**
      * The constructor.
      *
      * @param primaryStage your stage.
-     * @param root         the root Parent of your content.
+     * @param content         the root Parent of your content.
      */
-    public SnapScene(Stage primaryStage, Parent root) {
+    public SnapScene(Stage primaryStage, Parent content) {
         super(new Pane());
 
-        this.root = SnapFXML.pane;
-        setRoot(this.root);
-        setContent(root);
+        this.rootPane = SnapFXML.pane;
+        setRoot(this.rootPane);
+        setContent(content);
 
         this.controller = new SnapController();
         this.controller.setMainApp(primaryStage);
@@ -76,8 +76,8 @@ public class SnapScene extends Scene {
      * @param content the root Parent of your new content.
      */
     public void setContent(Parent content) {
-        this.root.getChildren().remove(0);
-        this.root.getChildren().add(0, content);
+        this.rootPane.getChildren().remove(0);
+        this.rootPane.getChildren().add(0, content);
         AnchorPane.setLeftAnchor(content, 0.0D);
         AnchorPane.setTopAnchor(content, 0.0D);
         AnchorPane.setRightAnchor(content, 0.0D);
