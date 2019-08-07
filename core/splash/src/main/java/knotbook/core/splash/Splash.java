@@ -65,6 +65,7 @@ public class Splash {
         stage.initStyle(StageStyle.TRANSPARENT);
         stage.getIcons().add(iconImage);
         stage.setAlwaysOnTop(true);
+        stage.setTitle("About");
         stage.show();
     }
 }
