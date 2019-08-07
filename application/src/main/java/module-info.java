@@ -1,4 +1,4 @@
-module knotbook.main {
+module knotbook.application {
     requires kotlin.stdlib;
     requires javafx.graphics;
     requires javafx.controls;
@@ -11,5 +11,5 @@ module knotbook.main {
     requires org.kordamp.ikonli.materialdesign;
     requires org.kordamp.ikonli.fontawesome5;
 
-    exports knotbook.tables;
+    exports knotbook.application;
 }

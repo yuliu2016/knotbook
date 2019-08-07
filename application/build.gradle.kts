@@ -33,7 +33,7 @@ dependencies {
 }
 
 application {
-    mainClassName = "knotbook.main/knotbook.tables.Test"
+    mainClassName = "knotbook.application/knotbook.application.Main"
 }
 
 jlink {

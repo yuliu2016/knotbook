@@ -1,6 +1,5 @@
 package knotbook.core.splash;
 
-import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -28,7 +27,7 @@ public class Splash {
         top.setAlignment(Pos.CENTER);
         top.setStyle("-fx-background-color:rgba(96,96,96,0.9)");
 
-        Image iconImage = new Image(Splash.class.getResourceAsStream("/knot-tb.png"));
+        Image iconImage = new Image(Splash.class.getResourceAsStream("/knotbook/core/splash/knot-tb.png"));
         ImageView icon = new ImageView(iconImage);
         icon.setPreserveRatio(true);
         icon.setFitHeight(80.0);

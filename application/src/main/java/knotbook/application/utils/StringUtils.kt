@@ -1,4 +1,4 @@
-package knotbook.tables.utils
+package knotbook.application.utils
 
 fun columnIndexToString(col: Int): String {
     if (col < 0) {

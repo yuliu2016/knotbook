@@ -1,8 +1,6 @@
-package knotbook.tables
+package knotbook.application
 
-import javafx.event.Event
 import javafx.event.EventHandler
-import javafx.geometry.Orientation
 import javafx.scene.control.Control
 import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill

@@ -1,4 +1,4 @@
-package knotbook.tables
+package knotbook.application
 
 import javafx.application.Application
 import javafx.event.EventHandler
@@ -23,7 +23,7 @@ import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign.MaterialDesign
 
 
-class Test : Application() {
+class Main : Application() {
     override fun start(stage: Stage) {
         stage.title = "Knotable"
 //        val root = Pane()
@@ -37,7 +37,7 @@ class Test : Application() {
 //        root.prefHeight = 800.0
 //
 //        root.children.add(canvas)
-        stage.icons.add(Image(Test::class.java.getResourceAsStream("/knot-tb.png")))
+        stage.icons.add(Image(Main::class.java.getResourceAsStream("/knot-tb.png")))
         val knotable = Knotable()
 //        knotable.prefWidth = 900.0
 //        knotable.prefHeight = 600.0
@@ -59,7 +59,7 @@ class Test : Application() {
                 add(HBox().apply {
                     alignment = Pos.CENTER
                     prefWidth = 36.0
-                    children.add(ImageView(Image(Test::class.java.getResourceAsStream("/knot-tb.png"))).apply {
+                    children.add(ImageView(Image(Main::class.java.getResourceAsStream("/knot-tb.png"))).apply {
                         isPreserveRatio = true
                         fitHeight = 18.0
                     })
@@ -179,7 +179,7 @@ class Test : Application() {
                     alignment = Pos.BASELINE_CENTER
                     prefHeight = 80.0
                     children.addAll(
-                            ImageView(Image(Test::class.java.getResourceAsStream("/knot-tb.png"))).apply {
+                            ImageView(Image(Main::class.java.getResourceAsStream("/knot-tb.png"))).apply {
                                 isPreserveRatio = true
                                 fitHeight = 80.0
                             },
@@ -215,7 +215,7 @@ class Test : Application() {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            launch(Test::class.java)
+            launch(Main::class.java)
         }
     }
 }

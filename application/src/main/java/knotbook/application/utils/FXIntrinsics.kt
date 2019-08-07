@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package knotbook.tables.utils
+package knotbook.application.utils
 
 import javafx.event.Event
 import javafx.event.EventTarget
