@@ -10,7 +10,13 @@ tasks {
     compileKotlin {
         kotlinOptions {
             freeCompilerArgs = listOf("-Xnew-inference")
-            jvmTarget = "1.8"
+            jvmTarget = "11"
+        }
+    }
+    compileTestKotlin {
+        kotlinOptions {
+            freeCompilerArgs = listOf("-Xnew-inference")
+            jvmTarget = "11"
         }
     }
 }
