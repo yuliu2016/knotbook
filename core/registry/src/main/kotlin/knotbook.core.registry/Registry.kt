@@ -8,9 +8,9 @@ object Registry {
     private val map: MutableMap<String, String> = mutableMapOf()
 
     private val home = System.getProperty("user.home").replace(File.separatorChar, '/')
-    private const val version = "RT2019"
+    private const val version = "RISE"
 
-    private val registryFile = File(home, ".rt-registry.txt")
+    private val registryFile = File(home, ".kb-registry.txt")
 
     @Suppress("SpellCheckingInspection")
     private val defaultProps = mapOf(

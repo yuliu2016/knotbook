@@ -3,5 +3,6 @@ include(
         "application",
         "core:registry",
         "core:snap",
-        "core:splash"
+        "core:splash",
+        "ext:tba-client"
 )
