@@ -15,11 +15,14 @@ import javafx.scene.paint.Color
 import javafx.stage.Stage
 import knotbook.core.fx.*
 import knotbook.core.snap.SnapScene
+import knotbook.core.splash.GCSplash
 import knotbook.core.splash.Splash
 import knotbook.core.table.Knotable
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid
 import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign.MaterialDesign
+import java.io.File
+import kotlin.system.exitProcess
 
 
 class Main : Application() {
@@ -32,11 +35,32 @@ class Main : Application() {
                     item {
                         name("New Table")
                     }
+                    item { name("New Table") }
+                    item { name("Delete Table") }
+                    item {
+                        name("Synchronize")
+                        icon(FontAwesomeSolid.SYNC, 16)
+                    }
                     separator()
+                    item {
+                        name("New Repository")
+                    }
+                    item {
+                        name("Mark Repository as Read-Only")
+                    }
                     item {
                         name("Open Repository")
                         icon(FontAwesomeSolid.FOLDER_OPEN, 16)
                         shortcut(KeyCode.O, control = true)
+                    }
+                    item {
+                        name("Reveal Context in Source")
+                        shortcut(KeyCode.Q, control = true)
+                    }
+                    separator()
+                    item {
+                        name("Exit")
+                        action { exitProcess(0) }
                     }
                 }
             }
@@ -45,12 +69,14 @@ class Main : Application() {
                 modify {
                     item {
                         name("Find")
+                        icon(FontAwesomeSolid.SEARCH, 16)
                     }
                     item {
                         name("Replace")
                     }
                     item {
                         name("Copy")
+                        icon(FontAwesomeSolid.COPY, 16)
                         shortcut(KeyCode.C, control = true)
                     }
                     item {
@@ -61,44 +87,35 @@ class Main : Application() {
             }
             menu {
                 name("View")
+                modify {
+
+                }
+            }
+            menu {
+                name("Help")
+                modify {
+                    item { name("Process Manager") }
+                    item { name("Plugin Manager") }
+                    item { name("Show Log File") }
+                    item {
+                        name("Application Registry")
+                        icon(FontAwesomeSolid.ADDRESS_BOOK, 16)
+                    }
+                    item {
+                        name("Start GC Cycle")
+                        action { GCSplash.splash() }
+                        shortcut(KeyCode.B, control = true)
+                    }
+                    separator()
+                    item {
+                        name("About")
+                        action { Splash.splash() }
+                        shortcut(KeyCode.F1)
+                    }
+                }
             }
         }
     }
-//            Menu("File").apply {
-//                items.addAll(
-//                        Menu("New").apply {
-//                            items.addAll(
-//                                    MenuItem("TBA Integration"),
-//                                    MenuItem("Python Integration"),
-//                                    MenuItem("Duplicate Table"),
-//                                    MenuItem("Derive Table")
-//                            )
-//                        },
-//                        MenuItem("Open Repository", FontIcon.of(FontAwesomeSolid.FOLDER_OPEN, 16)).apply {
-//                            accelerator = KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN)
-//                        },
-//                        MenuItem("Reveal Context in Source").apply {
-//                            accelerator = KeyCodeCombination(KeyCode.Q, KeyCombination.SHORTCUT_DOWN)
-//                        },
-//                        MenuItem("Rename Table").apply {
-//                            accelerator = KeyCodeCombination(KeyCode.F6, KeyCombination.SHIFT_DOWN)
-//                        },
-//                        MenuItem("Synchronize", FontIcon.of(FontAwesomeSolid.SYNC, 16)).apply {
-//                            accelerator = KeyCodeCombination(KeyCode.R, KeyCombination.SHORTCUT_DOWN)
-//                        },
-//                        MenuItem("Mark Repository As Read-Only", FontIcon.of(FontAwesomeSolid.LOCK, 16)).apply {
-//                            accelerator = KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN)
-//                        },
-//                        MenuItem("Show Command Line Snippets", FontIcon.of(FontAwesomeSolid.CODE, 16)).apply {
-//                            accelerator = KeyCodeCombination(KeyCode.BACK_QUOTE, KeyCombination.ALT_DOWN)
-//                        },
-//                        MenuItem("Delete").apply {
-//                            accelerator = KeyCodeCombination(KeyCode.DELETE, KeyCombination.ALT_DOWN)
-//                        },
-//                        SeparatorMenuItem(),
-//                        MenuItem("Exit")
-//                )
-//            },
 //            Menu("View").apply {
 //                items.addAll(
 //                        MenuItem("Expand to Source").apply {
@@ -114,25 +131,7 @@ class Main : Application() {
 //                            accelerator = KeyCodeCombination(KeyCode.F2)
 //                        }
 //                )
-//            },
-//            Menu("Help").apply {
-//                items.addAll(
-//                        MenuItem("Activity Monitor", FontIcon(FontAwesomeSolid.HEARTBEAT)),
-//                        MenuItem("Plugin Manager", FontIcon(FontAwesomeSolid.CUBE)),
-//                        MenuItem("Start Garbage Collection Cycle"),
-//                        MenuItem("Application Registry"),
-//                        SeparatorMenuItem(),
-//                        MenuItem("About Knotbook").apply {
-//                            accelerator = KeyCodeCombination(KeyCode.F1)
-//                            onAction = EventHandler {
-//                                Splash.splash()
-//                            }
-//                        }
-//                )
 //            }
-//    ).apply {
-//
-//    }
 
     override fun start(stage: Stage) {
         stage.title = "Knotbook"
@@ -167,9 +166,6 @@ class Main : Application() {
                 })
                 add(Label(" - []"))
                 add(HBox().apply { HBox.setHgrow(this, Priority.ALWAYS) })
-                children.add(TextField("Search").apply {
-                    style = "-fx-background-insets: 0; -fx-background-color:#ddd; -fx-padding:0 4 0 4; -fx-border-insets:0; -fx-background-radius:0"
-                })
                 add(min)
                 add(max)
                 add(Button("", FontIcon.of(MaterialDesign.MDI_WINDOW_CLOSE, 17)).apply {
