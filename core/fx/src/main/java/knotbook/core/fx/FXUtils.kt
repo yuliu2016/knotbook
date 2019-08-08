@@ -56,17 +56,6 @@ inline fun Pane.modify(modifier: Modifier<Node>.() -> Unit) {
     Modifier(children).apply(modifier)
 }
 
-@FXKtDSL
-inline fun ContextMenu.modify(modifier: Modifier<MenuItem>.() -> Unit): ContextMenu {
-    Modifier(items).apply(modifier)
-    return this
-}
-
-@FXKtDSL
-inline fun Menu.modify(modifier: Modifier<MenuItem>.() -> Unit) {
-    Modifier(items).apply(modifier)
-}
-
 // PROPERTY SETTERS
 
 @FXKtDSL

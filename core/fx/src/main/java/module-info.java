@@ -3,4 +3,6 @@ module knotbook.core.fx {
     requires javafx.controls;
     requires org.kordamp.iconli.core;
     requires org.kordamp.ikonli.javafx;
+
+    exports knotbook.core.fx;
 }

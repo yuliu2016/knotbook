@@ -13,6 +13,7 @@ import javafx.scene.input.KeyCombination
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.stage.Stage
+import knotbook.core.fx.*
 import knotbook.core.snap.SnapScene
 import knotbook.core.splash.Splash
 import knotbook.core.table.Knotable
@@ -23,76 +24,115 @@ import org.kordamp.ikonli.materialdesign.MaterialDesign
 
 class Main : Application() {
 
-    val bar = MenuBar(
-            Menu("File").apply {
-                items.addAll(
-                        Menu("New").apply {
-                            items.addAll(
-                                    MenuItem("TBA Integration"),
-                                    MenuItem("Python Integration"),
-                                    MenuItem("Duplicate Table"),
-                                    MenuItem("Derive Table")
-                            )
-                        },
-                        MenuItem("Open Repository", FontIcon.of(FontAwesomeSolid.FOLDER_OPEN, 16)).apply {
-                            accelerator = KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN)
-                        },
-                        MenuItem("Reveal Context in Source").apply {
-                            accelerator = KeyCodeCombination(KeyCode.Q, KeyCombination.SHORTCUT_DOWN)
-                        },
-                        MenuItem("Rename Table").apply {
-                            accelerator = KeyCodeCombination(KeyCode.F6, KeyCombination.SHIFT_DOWN)
-                        },
-                        MenuItem("Synchronize", FontIcon.of(FontAwesomeSolid.SYNC, 16)).apply {
-                            accelerator = KeyCodeCombination(KeyCode.R, KeyCombination.SHORTCUT_DOWN)
-                        },
-                        MenuItem("Mark Repository As Read-Only", FontIcon.of(FontAwesomeSolid.LOCK, 16)).apply {
-                            accelerator = KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN)
-                        },
-                        MenuItem("Show Command Line Snippets", FontIcon.of(FontAwesomeSolid.CODE, 16)).apply {
-                            accelerator = KeyCodeCombination(KeyCode.BACK_QUOTE, KeyCombination.ALT_DOWN)
-                        },
-                        MenuItem("Delete").apply {
-                            accelerator = KeyCodeCombination(KeyCode.DELETE, KeyCombination.ALT_DOWN)
-                        },
-                        SeparatorMenuItem(),
-                        MenuItem("Exit")
-                )
-            },
-            Menu("View").apply {
-                items.addAll(
-                        MenuItem("Expand to Source").apply {
-                            accelerator = KeyCodeCombination(KeyCode.F9)
-                        },
-                        MenuItem("Toggle Sidebar").apply {
-                            accelerator = KeyCodeCombination(KeyCode.F9)
-                        },
-                        MenuItem("Toggle Fullscreen").apply {
-                            accelerator = KeyCodeCombination(KeyCode.F11)
-                        },
-                        MenuItem("Toggle Theme", FontIcon(FontAwesomeSolid.ADJUST)).apply {
-                            accelerator = KeyCodeCombination(KeyCode.F2)
-                        }
-                )
-            },
-            Menu("Help").apply {
-                items.addAll(
-                        MenuItem("Activity Monitor", FontIcon(FontAwesomeSolid.HEARTBEAT)),
-                        MenuItem("Plugin Manager", FontIcon(FontAwesomeSolid.CUBE)),
-                        MenuItem("Start Garbage Collection Cycle"),
-                        MenuItem("Application Registry"),
-                        SeparatorMenuItem(),
-                        MenuItem("About Knotbook").apply {
-                            accelerator = KeyCodeCombination(KeyCode.F1)
-                            onAction = EventHandler {
-                                Splash.splash()
-                            }
-                        }
-                )
+    private val bar = menuBar {
+        modify {
+            menu {
+                name("File")
+                modify {
+                    item {
+                        name("New Table")
+                    }
+                    separator()
+                    item {
+                        name("Open Repository")
+                        icon(FontAwesomeSolid.FOLDER_OPEN, 16)
+                        shortcut(KeyCode.O, control = true)
+                    }
+                }
             }
-    ).apply {
-
+            menu {
+                name("Edit")
+                modify {
+                    item {
+                        name("Find")
+                    }
+                    item {
+                        name("Replace")
+                    }
+                    item {
+                        name("Copy")
+                        shortcut(KeyCode.C, control = true)
+                    }
+                    item {
+                        name("Copy Special")
+                        shortcut(KeyCode.C, control = true, shift = true)
+                    }
+                }
+            }
+            menu {
+                name("View")
+            }
+        }
     }
+//            Menu("File").apply {
+//                items.addAll(
+//                        Menu("New").apply {
+//                            items.addAll(
+//                                    MenuItem("TBA Integration"),
+//                                    MenuItem("Python Integration"),
+//                                    MenuItem("Duplicate Table"),
+//                                    MenuItem("Derive Table")
+//                            )
+//                        },
+//                        MenuItem("Open Repository", FontIcon.of(FontAwesomeSolid.FOLDER_OPEN, 16)).apply {
+//                            accelerator = KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN)
+//                        },
+//                        MenuItem("Reveal Context in Source").apply {
+//                            accelerator = KeyCodeCombination(KeyCode.Q, KeyCombination.SHORTCUT_DOWN)
+//                        },
+//                        MenuItem("Rename Table").apply {
+//                            accelerator = KeyCodeCombination(KeyCode.F6, KeyCombination.SHIFT_DOWN)
+//                        },
+//                        MenuItem("Synchronize", FontIcon.of(FontAwesomeSolid.SYNC, 16)).apply {
+//                            accelerator = KeyCodeCombination(KeyCode.R, KeyCombination.SHORTCUT_DOWN)
+//                        },
+//                        MenuItem("Mark Repository As Read-Only", FontIcon.of(FontAwesomeSolid.LOCK, 16)).apply {
+//                            accelerator = KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN)
+//                        },
+//                        MenuItem("Show Command Line Snippets", FontIcon.of(FontAwesomeSolid.CODE, 16)).apply {
+//                            accelerator = KeyCodeCombination(KeyCode.BACK_QUOTE, KeyCombination.ALT_DOWN)
+//                        },
+//                        MenuItem("Delete").apply {
+//                            accelerator = KeyCodeCombination(KeyCode.DELETE, KeyCombination.ALT_DOWN)
+//                        },
+//                        SeparatorMenuItem(),
+//                        MenuItem("Exit")
+//                )
+//            },
+//            Menu("View").apply {
+//                items.addAll(
+//                        MenuItem("Expand to Source").apply {
+//                            accelerator = KeyCodeCombination(KeyCode.F9)
+//                        },
+//                        MenuItem("Toggle Sidebar").apply {
+//                            accelerator = KeyCodeCombination(KeyCode.F9)
+//                        },
+//                        MenuItem("Toggle Fullscreen").apply {
+//                            accelerator = KeyCodeCombination(KeyCode.F11)
+//                        },
+//                        MenuItem("Toggle Theme", FontIcon(FontAwesomeSolid.ADJUST)).apply {
+//                            accelerator = KeyCodeCombination(KeyCode.F2)
+//                        }
+//                )
+//            },
+//            Menu("Help").apply {
+//                items.addAll(
+//                        MenuItem("Activity Monitor", FontIcon(FontAwesomeSolid.HEARTBEAT)),
+//                        MenuItem("Plugin Manager", FontIcon(FontAwesomeSolid.CUBE)),
+//                        MenuItem("Start Garbage Collection Cycle"),
+//                        MenuItem("Application Registry"),
+//                        SeparatorMenuItem(),
+//                        MenuItem("About Knotbook").apply {
+//                            accelerator = KeyCodeCombination(KeyCode.F1)
+//                            onAction = EventHandler {
+//                                Splash.splash()
+//                            }
+//                        }
+//                )
+//            }
+//    ).apply {
+//
+//    }
 
     override fun start(stage: Stage) {
         stage.title = "Knotbook"

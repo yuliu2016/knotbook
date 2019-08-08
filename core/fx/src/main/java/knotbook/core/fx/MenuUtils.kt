@@ -4,13 +4,14 @@ package knotbook.core.fx
 
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
-import javafx.scene.control.Menu
-import javafx.scene.control.MenuItem
+import javafx.scene.control.*
+import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
+import javafx.scene.input.KeyCombination.*
 import org.kordamp.ikonli.Ikon
-import org.kordamp.ikonli.javafx.FontIcon
 
-typealias Combo = KeyCodeCombination
+@FXKtDSL
+inline fun menuBar(builder: MenuBar.() -> Unit): MenuBar = MenuBar().apply(builder)
 
 @FXKtDSL
 fun MenuItem.name(name: String) {
@@ -37,12 +38,50 @@ fun MenuItem.icon(icon: Ikon, iconSize: Int) {
     graphic = fontIcon(icon, iconSize)
 }
 
+typealias Combination = KeyCodeCombination
+
+@FXKtDSL
+fun MenuItem.shortcut(keyCode: KeyCode, control: Boolean = false, shift: Boolean = false, alt: Boolean = false) {
+    accelerator = KeyCodeCombination(
+            keyCode,
+            if (control) SHORTCUT_DOWN else SHORTCUT_ANY,
+            if (shift) SHIFT_DOWN else SHIFT_ANY,
+            if (alt) ALT_DOWN else ALT_ANY
+    )
+}
+
 @FXKtDSL
 fun Modifier<MenuItem>.item(modifier: MenuItem.() -> Unit) {
     +MenuItem().apply(modifier)
 }
 
 @FXKtDSL
+fun Modifier<MenuItem>.separator() {
+    +SeparatorMenuItem()
+}
+
+@FXKtDSL
 fun Modifier<MenuItem>.submenu(modifier: Menu.() -> Unit) {
+    +Menu().apply(modifier)
+}
+
+@FXKtDSL
+inline fun ContextMenu.modify(modifier: Modifier<MenuItem>.() -> Unit): ContextMenu {
+    Modifier(items).apply(modifier)
+    return this
+}
+
+@FXKtDSL
+inline fun Menu.modify(modifier: Modifier<MenuItem>.() -> Unit) {
+    Modifier(items).apply(modifier)
+}
+
+@FXKtDSL
+inline fun MenuBar.modify(modifier: Modifier<Menu>.() -> Unit) {
+    Modifier(menus).apply(modifier)
+}
+
+@FXKtDSL
+fun Modifier<Menu>.menu(modifier: Menu.() -> Unit) {
     +Menu().apply(modifier)
 }
