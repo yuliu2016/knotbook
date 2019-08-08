@@ -3,6 +3,8 @@ package knotbook.core.splash;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -14,6 +16,13 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class Splash {
+
+    private static Label labelOf(String s){
+        Label label = new Label(s);
+        label.setStyle("-fx-text-fill: white");
+        return label;
+    }
+
     public static void splash() {
         Stage stage = new Stage();
 
@@ -50,6 +59,14 @@ public class Splash {
         VBox.setVgrow(bottom, Priority.ALWAYS);
         bottom.setAlignment(Pos.TOP_CENTER);
         bottom.setPadding(new Insets(8.0));
+
+        Hyperlink hyperlink = new Hyperlink("github.com/yuliu2016/knotbook");
+        hyperlink.setStyle("-fx-border-width: 0");
+
+        bottom.getChildren().addAll(hyperlink,
+                labelOf("Distributed under the MIT license"),
+                labelOf("Runtime: " + System.getProperty("java.vm.name") +
+                        " " + System.getProperty("java.vm.version")));
 
         root.getChildren().addAll(top, bottom);
 
