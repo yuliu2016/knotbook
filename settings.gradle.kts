@@ -2,7 +2,7 @@ rootProject.name = "knotbook"
 include(
         "application",
         "core:registry",
-        "core:snap",
+        "core:snappy",
         "core:splash",
         "core:table",
         "core:fx",

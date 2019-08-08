@@ -3,7 +3,7 @@ module knotbook.application {
     requires javafx.graphics;
     requires javafx.controls;
 
-    requires knotbook.core.snap;
+    requires knotbook.core.snappy;
     requires knotbook.core.splash;
     requires knotbook.core.table;
     requires knotbook.core.fx;

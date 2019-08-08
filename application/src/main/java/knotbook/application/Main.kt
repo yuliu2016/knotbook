@@ -8,20 +8,17 @@ import javafx.scene.control.*
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
-import javafx.scene.input.KeyCodeCombination
-import javafx.scene.input.KeyCombination
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.stage.Stage
 import knotbook.core.fx.*
-import knotbook.core.snap.SnapScene
+import knotbook.core.snappy.borderless.BorderlessScene
 import knotbook.core.splash.GCSplash
 import knotbook.core.splash.Splash
 import knotbook.core.table.Knotable
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid
 import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign.MaterialDesign
-import java.io.File
 import kotlin.system.exitProcess
 
 
@@ -163,7 +160,7 @@ class Main : Application() {
                 })
             }
         }
-        stage.scene = SnapScene(stage, VBox().apply {
+        stage.scene = BorderlessScene(stage, VBox().apply {
             stylesheets.add("/knotbook.css")
             prefWidth = 800.0
             prefHeight = 600.0

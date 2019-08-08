@@ -26,7 +26,7 @@ javafx {
 }
 
 dependencies {
-    implementation(project(":core:snap"))
+    implementation(project(":core:snappy"))
     implementation(project(":core:splash"))
     implementation(project(":core:registry"))
     implementation(project(":core:table"))

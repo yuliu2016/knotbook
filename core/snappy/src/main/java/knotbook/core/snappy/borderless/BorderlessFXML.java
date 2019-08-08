@@ -1,11 +1,11 @@
-package knotbook.core.snap;
+package knotbook.core.snappy.borderless;
 
 import javafx.scene.Cursor;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
 //@SuppressWarnings("ALL")
-class SnapFXML {
+class BorderlessFXML {
 
     static final AnchorPane pane = new AnchorPane();
 
