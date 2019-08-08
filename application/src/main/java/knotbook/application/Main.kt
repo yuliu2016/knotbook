@@ -127,6 +127,9 @@ class Main : Application() {
                 })
                 add(Label(" - []"))
                 add(HBox().apply { HBox.setHgrow(this, Priority.ALWAYS) })
+                children.add(TextField("Search").apply {
+                    style = "-fx-background-insets: 0; -fx-background-color:#ddd; -fx-padding:0 4 0 4; -fx-border-insets:0; -fx-background-radius:0"
+                })
                 add(min)
                 add(max)
                 add(Button("", FontIcon.of(MaterialDesign.MDI_WINDOW_CLOSE, 17)).apply {
@@ -142,7 +145,15 @@ class Main : Application() {
             prefWidth = 800.0
             prefHeight = 600.0
             children.add(mover)
-            children.add(knotable)
+            children.add(HBox().apply {
+                children.add(VBox().apply {
+                    background = Background(BackgroundFill(Color.WHITE, null, null))
+                    prefWidth = 300.0
+                    minWidth = 300.0
+                    alignment = Pos.TOP_CENTER
+                })
+                children.add(knotable)
+            })
         }).apply {
             setMoveControl(mover)
             min.onAction = EventHandler {

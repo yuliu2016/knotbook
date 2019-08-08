@@ -5,5 +5,6 @@ include(
         "core:snap",
         "core:splash",
         "core:table",
+        "core:fx",
         "ext:tba-client"
 )
