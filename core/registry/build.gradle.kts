@@ -1,5 +1,7 @@
 plugins {
+    java
     kotlin("jvm")
+    id("org.openjfx.javafxplugin")
 }
 
 tasks {
@@ -15,6 +17,10 @@ tasks {
             jvmTarget = "11"
         }
     }
+}
+
+javafx {
+    modules = listOf("javafx.controls")
 }
 
 dependencies {

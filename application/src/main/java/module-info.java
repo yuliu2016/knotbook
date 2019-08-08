@@ -7,7 +7,7 @@ module knotbook.application {
     requires knotbook.core.splash;
     requires knotbook.core.table;
     requires knotbook.core.fx;
-//    requires knotbook.core.registry;
+    requires knotbook.core.registry;
 
     requires org.kordamp.iconli.core;
     requires org.kordamp.ikonli.javafx;
