@@ -83,12 +83,15 @@ class Main : Application() {
                         name("Copy Special")
                         shortcut(KeyCode.C, control = true, shift = true)
                     }
+                    item { name("Toggle Theme") }
                 }
             }
             menu {
-                name("View")
+                name("Navigate")
                 modify {
-
+                    item { name("Toggle Sidebar") }
+                    item { name("Expand Tree to Source") }
+                    item { name("Collapse Tree") }
                 }
             }
             menu {
@@ -116,22 +119,6 @@ class Main : Application() {
             }
         }
     }
-//            Menu("View").apply {
-//                items.addAll(
-//                        MenuItem("Expand to Source").apply {
-//                            accelerator = KeyCodeCombination(KeyCode.F9)
-//                        },
-//                        MenuItem("Toggle Sidebar").apply {
-//                            accelerator = KeyCodeCombination(KeyCode.F9)
-//                        },
-//                        MenuItem("Toggle Fullscreen").apply {
-//                            accelerator = KeyCodeCombination(KeyCode.F11)
-//                        },
-//                        MenuItem("Toggle Theme", FontIcon(FontAwesomeSolid.ADJUST)).apply {
-//                            accelerator = KeyCodeCombination(KeyCode.F2)
-//                        }
-//                )
-//            }
 
     override fun start(stage: Stage) {
         stage.title = "Knotbook"
