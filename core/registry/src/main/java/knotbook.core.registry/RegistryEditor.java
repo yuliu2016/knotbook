@@ -28,11 +28,10 @@ public class RegistryEditor {
         container.setPrefHeight(bounds.getHeight() * 0.7);
 
         String text = Registry.INSTANCE.join();
-        System.out.println(text);
         TextArea area = new TextArea(text);
         area.setStyle("-fx-background-insets: 0; -fx-border-insets:0; -fx-focus-color: transparent; " +
                 "-fx-faint-focus-color:transparent; -fx-font-family:'Roboto Mono', 'Courier New', monospace; " +
-                "-fx-font-size:24");
+                "-fx-font-size:18");
         VBox.setVgrow(area, Priority.ALWAYS);
 
         Button discard = new Button("Discard");

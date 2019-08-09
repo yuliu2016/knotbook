@@ -18,6 +18,7 @@ import knotbook.core.splash.Splash
 import knotbook.core.table.Knotable
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid
 import knotbook.core.icon.FontIcon
+import knotbook.core.registry.Registry
 import knotbook.core.registry.RegistryEditor
 import org.kordamp.ikonli.materialdesign.MaterialDesign
 import kotlin.system.exitProcess
@@ -198,6 +199,7 @@ class Main : Application() {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
+            Registry.load()
             launch(Main::class.java)
         }
     }
