@@ -18,6 +18,7 @@ import knotbook.core.splash.Splash
 import knotbook.core.table.Knotable
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid
 import knotbook.core.icon.FontIcon
+import knotbook.core.registry.RegistryEditor
 import org.kordamp.ikonli.materialdesign.MaterialDesign
 import kotlin.system.exitProcess
 
@@ -100,6 +101,7 @@ class Main : Application() {
                     item {
                         name("Application Registry")
                         icon(FontAwesomeSolid.ADDRESS_BOOK, 16)
+                        action { RegistryEditor.show() }
                     }
                     item {
                         name("Start GC Cycle")
