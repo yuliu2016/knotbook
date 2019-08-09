@@ -119,7 +119,7 @@ class Main : Application() {
 
     override fun start(stage: Stage) {
         stage.title = "Knotbook"
-        stage.icons.add(Image(Main::class.java.getResourceAsStream("/knotbook/application/knot-tb.png")))
+        stage.icons.add(Image(Main::class.java.getResourceAsStream("/knotbook/application/icon.png")))
         val knotable = Knotable()
         val min = Button("", FontIcon.of(MaterialDesign.MDI_WINDOW_MINIMIZE, 17)).apply {
             styleClass.add("minmax-button")
@@ -139,7 +139,7 @@ class Main : Application() {
                 add(HBox().apply {
                     alignment = Pos.CENTER
                     prefWidth = 36.0
-                    children.add(ImageView(Image(Main::class.java.getResourceAsStream("/knotbook/application/knot-tb.png"))).apply {
+                    children.add(ImageView(Image(Main::class.java.getResourceAsStream("/knotbook/application/icon.png"))).apply {
                         isPreserveRatio = true
                         fitHeight = 18.0
                     })
