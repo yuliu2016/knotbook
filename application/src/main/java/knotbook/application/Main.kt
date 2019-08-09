@@ -33,19 +33,21 @@ class Main : Application() {
                 modify {
                     item {
                         name("New Table")
+                        shortcut(KeyCode.N, control = true)
                     }
-                    item { name("New Table") }
-                    item { name("Delete Table") }
+                    item {
+                        name("Delete Table")
+                        shortcut(KeyCode.DELETE, alt = true)
+                    }
                     item {
                         name("Synchronize")
                         icon(FontAwesomeSolid.SYNC, 16)
+                        shortcut(KeyCode.R, control = true)
                     }
                     separator()
                     item {
                         name("New Repository")
-                    }
-                    item {
-                        name("Mark Repository as Read-Only")
+                        shortcut(KeyCode.N, control = true, alt = true)
                     }
                     item {
                         name("Open Repository")
@@ -54,9 +56,13 @@ class Main : Application() {
                     }
                     item {
                         name("Reveal Context in Source")
-                        shortcut(KeyCode.Q, control = true)
+                        shortcut(KeyCode.J, control = true)
                     }
                     separator()
+                    item {
+                        name("Toggle Theme")
+                        shortcut(KeyCode.F2)
+                    }
                     item {
                         name("Exit")
                         action { exitProcess(0) }
@@ -82,7 +88,14 @@ class Main : Application() {
                         name("Copy Special")
                         shortcut(KeyCode.C, control = true, shift = true)
                     }
-                    item { name("Toggle Theme") }
+                    item {
+                        name("Toggle Read-Only for Repository")
+                        shortcut(KeyCode.L, control = true, shift = true)
+                    }
+                    item {
+                        name("Toggle Read-Only for Table")
+                        shortcut(KeyCode.L, control = true)
+                    }
                 }
             }
             menu {
@@ -97,6 +110,7 @@ class Main : Application() {
                 name("Help")
                 modify {
                     item { name("Process Manager") }
+                    item { name("Test Camera") }
                     item { name("Plugin Manager") }
                     item { name("Show Log File") }
                     item {
@@ -155,7 +169,7 @@ class Main : Application() {
                 add(HBox().apply { HBox.setHgrow(this, Priority.ALWAYS) })
                 add(min)
                 add(max)
-                add(Button("", FontIcon.of(MaterialDesign.MDI_WINDOW_CLOSE, 17)).apply {
+                add(Button("", FontIcon.of(MaterialDesign.MDI_CLOSE, 17)).apply {
                     styleClass.add("close-button")
                     onAction = EventHandler {
                         stage.close()

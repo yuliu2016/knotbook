@@ -14,6 +14,11 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 public class Splash {
 
     private static Label labelOf(String s) {
@@ -54,9 +59,16 @@ public class Splash {
 
         Hyperlink hyperlink = new Hyperlink("github.com/yuliu2016/knotbook");
         hyperlink.setStyle("-fx-border-width: 0");
+        hyperlink.setOnAction(event -> {
+            try {
+                Desktop.getDesktop().browse(new URI("https://github.com/yuliu2016/knotbook"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
 
         bottom.getChildren().addAll(
-                labelOf("Version RISE (Build 3.0.01) - Powered by Restructured Tables"),
+                labelOf("Version LAUNCH (Build 3.0.01) - Powered by Restructured Tables"),
                 hyperlink,
                 labelOf("Licensed under MIT and powered by open-source software"),
                 labelOf("Runtime: " + System.getProperty("java.vm.name") +

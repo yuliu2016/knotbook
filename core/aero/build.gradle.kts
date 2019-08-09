@@ -6,3 +6,8 @@ plugins {
 javafx {
     modules = listOf("javafx.controls")
 }
+
+dependencies {
+    implementation(project(":core:icon"))
+    implementation(group = "org.kordamp.ikonli", name = "ikonli-materialdesign-pack", version = "11.3.4")
+}
