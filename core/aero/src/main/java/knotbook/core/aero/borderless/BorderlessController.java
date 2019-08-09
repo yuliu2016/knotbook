@@ -1,4 +1,4 @@
-package knotbook.core.snappy.borderless;
+package knotbook.core.aero.borderless;
 
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
@@ -13,7 +13,7 @@ import javafx.stage.Stage;
  * @author Nicolas Senet-Larson
  * @version 1.0
  */
-@SuppressWarnings({"WeakerAccess", "DuplicatedCode", "SpellCheckingInspection"})
+@SuppressWarnings({"WeakerAccess", "DuplicatedCode"})
 public class BorderlessController {
     private Stage primaryStage;
     protected Delta prevSize;

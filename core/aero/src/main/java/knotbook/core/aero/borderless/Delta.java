@@ -1,4 +1,4 @@
-package knotbook.core.snappy.borderless;
+package knotbook.core.aero.borderless;
 
 /**
  * Utility class to store a pair of Double values.

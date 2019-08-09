@@ -33,4 +33,4 @@
  * @author Nicolas Senet-Larson
  * @version 1.0
  */
-package knotbook.core.snappy.borderless;
+package knotbook.core.aero.borderless;

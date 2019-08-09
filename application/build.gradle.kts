@@ -26,7 +26,7 @@ javafx {
 }
 
 dependencies {
-    implementation(project(":core:snappy"))
+    implementation(project(":core:aero"))
     implementation(project(":core:splash"))
     implementation(project(":core:registry"))
     implementation(project(":core:table"))

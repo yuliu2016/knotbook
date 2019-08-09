@@ -1,4 +1,4 @@
-package knotbook.core.snappy.borderless;
+package knotbook.core.aero.borderless;
 
 import javafx.scene.Cursor;
 import javafx.scene.layout.AnchorPane;

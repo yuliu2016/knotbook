@@ -12,7 +12,7 @@ import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.stage.Stage
 import knotbook.core.fx.*
-import knotbook.core.snappy.borderless.BorderlessScene
+import knotbook.core.aero.borderless.BorderlessScene
 import knotbook.core.splash.GCSplash
 import knotbook.core.splash.Splash
 import knotbook.core.table.Knotable
