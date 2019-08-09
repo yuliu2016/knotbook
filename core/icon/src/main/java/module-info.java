@@ -17,9 +17,9 @@
  */
 module knotbook.core.icon {
     requires org.kordamp.iconli.core;
-    uses org.kordamp.ikonli.IkonHandler;
-
     requires javafx.controls;
+
+    uses org.kordamp.ikonli.IkonHandler;
 
     exports knotbook.core.icon;
 }

@@ -29,6 +29,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * @author Andres Almiray
  */
+@SuppressWarnings({"WeakerAccess", "ConstantConditions"})
 class IkonResolver {
     private static final IkonResolver INSTANCE;
     private static final Set<IkonHandler> HANDLERS = new LinkedHashSet<>();

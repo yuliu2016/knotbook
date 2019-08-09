@@ -24,5 +24,6 @@ javafx {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation(group = "org.kordamp.ikonli", name = "ikonli-javafx", version = "11.3.4")
+    implementation(project(":core:icon"))
+    implementation(group = "org.kordamp.ikonli", name = "ikonli-core", version = "11.3.4")
 }

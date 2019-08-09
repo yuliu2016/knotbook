@@ -2,9 +2,8 @@ package knotbook.core.fx
 
 import javafx.geometry.Pos
 import javafx.scene.layout.HBox
-import knotbook.core.fx.FXKtDSL
+import knotbook.core.icon.FontIcon
 import org.kordamp.ikonli.Ikon
-import org.kordamp.ikonli.javafx.FontIcon
 
 @FXKtDSL
 fun fontIcon(ic: Ikon, size: Int): FontIcon {

@@ -1,3 +1,7 @@
+* {
+    -fx-font-smoothing-type: gray;
+}
+
 .minmax-button {
     -fx-background-color: transparent;
     -fx-padding: 6 12 6 12;

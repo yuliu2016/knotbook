@@ -31,9 +31,10 @@ dependencies {
     implementation(project(":core:registry"))
     implementation(project(":core:table"))
     implementation(project(":core:fx"))
+    implementation(project(":core:icon"))
     implementation(kotlin("stdlib"))
 
-    implementation(group = "org.kordamp.ikonli", name = "ikonli-javafx", version = "11.3.4")
+//    implementation(group = "org.kordamp.ikonli", name = "ikonli-javafx", version = "11.3.4")
     implementation(group = "org.kordamp.ikonli", name = "ikonli-materialdesign-pack", version = "11.3.4")
     implementation(group = "org.kordamp.ikonli", name = "ikonli-fontawesome5-pack", version = "11.3.4")
 
@@ -41,18 +42,21 @@ dependencies {
     testImplementation(group = "junit", name = "junit", version = "4.12")
 }
 
+val appJVMArgs = listOf(
+        "-XX:+UseG1GC",
+        "-Xms64m",
+        "-Xmx1024m"
+)
+
 application {
+    applicationDefaultJvmArgs = appJVMArgs
     mainClassName = "knotbook.application/knotbook.application.Main"
 }
 
 jlink {
     launcher {
         name = "knotbook"
-        jvmArgs = listOf(
-                "-XX:+UseG1GC",
-                "-Xms128m",
-                "-Xmx1024m"
-        )
+        jvmArgs = appJVMArgs
     }
 
     addOptions(
