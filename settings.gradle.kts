@@ -7,5 +7,6 @@ include(
         "core:registry",
         "core:splash",
         "core:table",
+        "core:utils",
         "ext:tba-client"
 )

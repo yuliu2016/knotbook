@@ -2,7 +2,6 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
-      <module name="knotbook.core.icon.test" target="12" />
       <module name="knotbook.core.snap.main" target="12" />
       <module name="knotbook.core.snap.test" target="12" />
       <module name="knotbook.core.snappy.main" target="12" />

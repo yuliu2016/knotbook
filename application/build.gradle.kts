@@ -55,7 +55,7 @@ application {
 
 jlink {
     launcher {
-        name = "knotbook"
+        name = "run"
         jvmArgs = appJVMArgs
     }
 
