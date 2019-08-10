@@ -13,6 +13,7 @@ import javafx.scene.paint.Color
 import javafx.stage.Stage
 import knotbook.core.fx.*
 import knotbook.core.aero.borderless.BorderlessScene
+import knotbook.core.camera.KnotCamera
 import knotbook.core.splash.GCSplash
 import knotbook.core.splash.Splash
 import knotbook.core.table.Knotable
@@ -110,12 +111,17 @@ class Main : Application() {
                 name("Help")
                 modify {
                     item { name("Process Manager") }
-                    item { name("Test Camera") }
+                    item {
+                        name("Test Camera")
+                        action {
+                            val camera = KnotCamera()
+                        }
+                    }
                     item { name("Plugin Manager") }
                     item { name("Show Log File") }
                     item {
                         name("Application Registry")
-                        icon(FontAwesomeSolid.ADDRESS_BOOK, 16)
+                        icon (FontAwesomeSolid.ADDRESS_BOOK, 16)
                         action { RegistryEditor.show() }
                     }
                     item {

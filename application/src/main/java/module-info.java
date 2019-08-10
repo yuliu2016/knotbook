@@ -8,6 +8,7 @@ module knotbook.application {
     requires org.kordamp.ikonli.fontawesome5;
 
     requires knotbook.core.aero;
+    requires knotbook.core.camera;
     requires knotbook.core.splash;
     requires knotbook.core.table;
     requires knotbook.core.fx;
