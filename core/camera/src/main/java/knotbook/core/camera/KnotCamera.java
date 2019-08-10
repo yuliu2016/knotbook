@@ -9,7 +9,6 @@ import com.google.zxing.Result;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
 import javafx.animation.AnimationTimer;
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
@@ -18,7 +17,7 @@ import javafx.scene.image.WritableImage;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.atomic.AtomicReference;
 
-@SuppressWarnings("ALL")
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class KnotCamera {
 
     private ReadOnlyObjectWrapper<Image> imageProperty = new ReadOnlyObjectWrapper<>(null);
@@ -28,7 +27,7 @@ public class KnotCamera {
     }
 
     public Image getImage() {
-        return imageProperty.get();
+        return imageProperty().get();
     }
 
     private ReadOnlyStringWrapper resultProperty = new ReadOnlyStringWrapper(null);
@@ -42,43 +41,7 @@ public class KnotCamera {
     public BooleanProperty streamingProperty() {
         if (streamingProperty == null) {
             streamingProperty = new SimpleBooleanProperty(false);
-            streamingProperty.addListener((observable, oldValue, newValue) -> {
-                if (newValue) {
-                    if (!webcam.isOpen()) {
-                        webcam.setViewSize(WebcamResolution.VGA.getSize());
-                        webcam.setCustomViewSizes(WebcamResolution.VGA.getSize());
-                        webcam.open();
-                    }
-                    Thread thread = new Thread(() -> {
-                        final AtomicReference<WritableImage> imgRef = new AtomicReference<WritableImage>();
-                        int notFoundCount = 0;
-                        String lastEntry = "";
-                        while (!Thread.currentThread().isInterrupted()) {
-                            BufferedImage image = webcam.getImage();
-                            webcam.getImageBytes();
-                            if (image != null) {
-                                imgRef.set(SwingFXUtils.toFXImage(image, imgRef.get()));
-                                image.flush();
-                                Platform.runLater(() -> {
-                                    imageProperty.set(imgRef.get());
-                                });
-                                try {
-                                    BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(image)));
-                                    Result result = reader.decode(bitmap);
-                                    String text = result.getText();
-                                } catch (NotFoundException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    });
-                    thread.setDaemon(true);
-                    thread.start();
-                } else {
-                    webcam.close();
-                    timer.stop();
-                }
-            });
+            streamingProperty.addListener((observable, oldValue, newValue) -> updateStreamingState(newValue));
         }
         return streamingProperty;
     }
@@ -93,30 +56,85 @@ public class KnotCamera {
 
     private Image image = null;
     private String result = null;
+    private Thread thread = null;
+    private int skippedPulseCounter = 0;
 
-    private Webcam webcam = Webcam.getDefault();
+    private final Webcam webcam = Webcam.getDefault();
+    private final Object pulseControl = new Object();
+    private final MultiFormatReader reader = new MultiFormatReader();
 
-    private Object pulseControl = new Object();
-
-    AnimationTimer timer = new AnimationTimer() {
+    private final AnimationTimer timer = new AnimationTimer() {
         @Override
         public void handle(long now) {
+            Image capture;
+            String res;
             synchronized (pulseControl) {
-                Image image = KnotCamera.this.image;
-                if (image != null) {
-                    imageProperty.set(image);
+                capture = image;
+                res = result;
+            }
+            if (capture != null) {
+                imageProperty.set(capture);
+            }
+            if (res == null) {
+                skippedPulseCounter++;
+                if (skippedPulseCounter > 5) {
+                    resultProperty.set(null);
                 }
-                String result = KnotCamera.this.result;
-                if (result != null) {
-                    resultProperty.set(result);
-                }
+            } else {
+                resultProperty.set(res);
             }
         }
     };
 
-    MultiFormatReader reader = new MultiFormatReader();
+    private void updateStreamingState(boolean state) {
+        if (state) {
+            if (!webcam.isOpen()) {
+                webcam.setViewSize(WebcamResolution.VGA.getSize());
+                webcam.setCustomViewSizes(WebcamResolution.VGA.getSize());
+                webcam.open();
+            }
+            thread = new Thread(this::readStream);
+            thread.setDaemon(true);
+            thread.start();
+            timer.start();
+        } else {
+            if (thread != null) {
+                thread.interrupt();
+            }
+            webcam.close();
+            timer.stop();
+        }
+    }
 
-    public KnotCamera() {
+    private String decode(BufferedImage capture) {
+        try {
+            BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(capture)));
+            Result result = reader.decode(bitmap);
+            return result.getText();
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
+    private void readStream() {
+        final AtomicReference<WritableImage> imgRef = new AtomicReference<>(null);
+        while (!Thread.currentThread().isInterrupted()) {
+            BufferedImage capture = webcam.getImage();
+            if (capture != null) {
+                imgRef.set(SwingFXUtils.toFXImage(capture, imgRef.get()));
+                capture.flush();
+                String decoded = decode(capture);
+                synchronized (pulseControl) {
+                    image = imgRef.get();
+                    result = decoded;
+                }
+            }
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                return;
+            }
+        }
     }
 }
