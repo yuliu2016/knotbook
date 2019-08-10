@@ -23,7 +23,7 @@ public class AeroStageTest extends Application {
 
         VBox vBox = new VBox();
         vBox.setPrefWidth(500);
-        vBox.setPrefHeight(500);
+        vBox.setPrefHeight(700);
         vBox.setStyle("-fx-background-color: rgba(255,255,255,0.9)");
 
         HBox titleBar = new HBox();
@@ -31,25 +31,27 @@ public class AeroStageTest extends Application {
         titleBar.setMinHeight(30.0);
         titleBar.setStyle("-fx-background-color: #f0f0f0");
         titleBar.setAlignment(Pos.CENTER_LEFT);
-        titleBar.setPadding(new Insets(0.0, 0.0, 0.0, 8.0));
+        titleBar.setPadding(new Insets(0.0, 0.0, 0.0, 12.0));
+        titleBar.setSpacing(12.0);
 
         HBox imageContainer = new HBox();
         imageContainer.setPrefWidth(45.0);
 
-        var resource = getClass().getResource("/icon.png").toExternalForm();
+        Image icon = new Image("file:\\\\\\C:\\Users\\Yu\\IdeaProjects\\knotbook\\core\\aero\\src\\main\\resources\\icon.png");
 
-        ImageView imageView = new ImageView(new Image(resource));
+        ImageView imageView = new ImageView(icon);
         imageView.setFitHeight(20.0);
         imageView.setPreserveRatio(true);
         imageContainer.getChildren().add(imageView);
 
-        titleBar.getChildren().add(new Label("hi"));
+        titleBar.getChildren().addAll(imageView, new Label("hi"));
         vBox.getChildren().add(titleBar);
 
         BorderlessScene scene = new BorderlessScene(stage, vBox);
         scene.setMoveControl(titleBar);
         scene.setFill(Color.TRANSPARENT);
         stage.setScene(scene);
+        stage.getIcons().add(icon);
         stage.show();
     }
 }
