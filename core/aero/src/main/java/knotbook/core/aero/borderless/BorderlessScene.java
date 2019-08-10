@@ -66,7 +66,7 @@ public class BorderlessScene extends Scene {
         this.controller = new BorderlessController();
         this.controller.setMainApp(primaryStage);
 
-        primaryStage.initStyle(StageStyle.UNDECORATED);
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
         this.primaryStage = primaryStage;
     }
 
