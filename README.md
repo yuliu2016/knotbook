@@ -2,6 +2,8 @@
 
 ![Knotbook Icon](assets/knot-small.png)
 
+[![Build Status](https://dev.azure.com/liuyustarjuice/knotbook/_apis/build/status/yuliu2016.knotbook?branchName=master)](https://dev.azure.com/liuyustarjuice/knotbook/_build/latest?definitionId=1&branchName=master)
+
 **Knotbook** is a **JavaFX** data viewing/analysis app for FRC. It succeeds RT
 
 It is explicitly written with JDK 11 with modules and uses OpenJFX 12 and Kotlin 1.3 frameworks.
