@@ -1,0 +1,370 @@
+.root {
+    -fx-background-color: black;
+}
+
+.label {
+    -fx-text-fill: white;
+}
+
+.ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+
+/*==========LIST VIEW==========*/
+
+
+.list-cell {
+    -fx-background-color: #333;
+    -fx-padding: 0;
+}
+
+.list-cell:hover:filled {
+    -fx-background-color: #ddd;
+}
+
+.list-cell:selected:filled {
+    -fx-background-color: #ccc;
+    -fx-text-fill: black;
+}
+
+.list-view:focused .list-cell:filled:selected {
+    -fx-background-color: #5a8ade;
+    -fx-text-fill: white;
+}
+
+.list-view:focused .list-cell:filled:selected .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+.properties-list {
+    -fx-background-color: #333;
+}
+
+.properties-list .list-cell {
+    -fx-padding: 2 8 2 8;
+    -fx-background-color: #333;
+    -fx-text-fill: white;
+    -fx-background-insets: 0;
+}
+
+.properties-list .list-cell:filled:hover {
+    -fx-background-color: #555;
+}
+
+.properties-list .list-cell.drag-over {
+    -fx-background-color: red, #333;
+    -fx-background-insets: 0, 2;
+}
+
+.tree-cell .arrow {
+    -fx-background-color: white;
+}
+
+.tree-cell .label{
+    -fx-text-fill: white;
+}
+
+.tree-cell .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+.tree-view:focused .tree-cell:filled:selected {
+    -fx-background-color: #5a8ade;
+}
+
+.tree-cell:hover:filled {
+    -fx-background-color: #555;
+}
+
+.tree-cell:selected:filled {
+    -fx-background-color: #666;
+    -fx-text-fill: black;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #666;
+}
+
+.scroll-bar .thumb:pressed {
+    -fx-background-color: #888;
+}
+
+.scroll-bar .increment-button:hover {
+    -fx-background-color: #777;
+}
+
+.scroll-bar .decrement-button:hover {
+    -fx-background-color: #777;
+}
+
+.status-bar {
+    -fx-background-color: #ddd;
+}
+
+.status-item:hover {
+    -fx-background-color: #3c5c94;
+}
+
+.status-item:hover .label {
+    -fx-text-fill: white;
+}
+
+.status-item:hover .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+
+.split-pane-divider {
+    -fx-padding: 0 0 0 1;
+}
+
+/* NORMAL CELL */
+.spreadsheet-cell:filled:selected,
+.spreadsheet-cell:filled:focused:selected,
+.spreadsheet-cell:filled:focused:selected:hover {
+    /*-fx-background-color: #8cb1ff;*/
+    -fx-background-color: #333;
+    -fx-border-color: #555;
+    -fx-border-width: 1px;
+    -fx-text-fill: white;
+}
+
+.spreadsheet-cell:hover,
+.spreadsheet-cell:filled:focused {
+    /*-fx-background-color: #988490;*/
+    -fx-text-fill: white;
+    /*-fx-background-insets: 0, 0 0 1 0;*/
+}
+
+.spreadsheet-cell {
+    -fx-padding: 0 0 0 0.2em;
+    -fx-border-color: #555;
+    -fx-border-width: 1px;
+    -fx-text-fill: white;
+    -fx-font-weight: normal;
+    /*-fx-background-color: -fx-table-cell-border-color, white;*/
+    -fx-background-color: black;
+}
+
+VerticalHeader > Label.selected {
+    -fx-background-color: #3c5c94;
+    -fx-border-color: #3c5c94;
+    -fx-text-fill: white;
+}
+
+VerticalHeader > Label {
+    -fx-background-color: #333;
+    -fx-text-fill: white;
+    -fx-border-color: #555;
+    -fx-border-width: 1px;
+}
+
+HorizontalHeaderColumn > TableColumnHeader.column-header.table-column {
+    -fx-background-color: #333;
+    -fx-border-color: #555;
+}
+
+HorizontalHeaderColumn > TableColumnHeader.column-header.table-column > Label {
+    -fx-text-fill: white;
+}
+
+.table-view .filler {
+    -fx-background-color: black;
+}
+
+HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected,
+HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected > Label {
+    /*-fx-background-color: #5a8ade;*/
+    -fx-background-color: #3c5c94;
+    -fx-border-color: #3c5c94;
+    -fx-text-fill: white;
+}
+
+.menu-item {
+    -fx-padding: 6 12 6 12;
+}
+
+.menu-item .label {
+    -fx-text-fill: black;
+}
+
+.menu-item .ikonli-font-icon {
+    -fx-icon-color: black;
+}
+
+.menu-item:focused {
+    -fx-background-color: #3c5c94;
+}
+
+.menu-item:focused .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+.menu-item:focused .label {
+    -fx-text-fill: white;
+}
+
+.selection-rectangle {
+    -fx-fill: transparent;
+    -fx-stroke: #3c5c94;
+    -fx-stroke-width: 2;
+}
+
+.button {
+    -fx-background-color: #666;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.button:hover {
+    -fx-background-color: #888;
+}
+
+.button .ikonli-font-icon {
+    -fx-icon-color: white
+}
+
+.master-tab-icon-container {
+    -fx-background-color: #333;
+}
+
+.master-tab-icon-container .ikonli-font-icon{
+    -fx-icon-color: #888;
+}
+
+.master-tab-icon-container HBox:hover .ikonli-font-icon{
+    -fx-icon-color: white;
+}
+
+.master-tab-view {
+    -fx-background-color: #444;
+}
+
+.master-tab-icon-selected {
+    -fx-background-color: #555;
+    -fx-background-insets: 6;
+    -fx-background-radius: 12;
+}
+
+.master-tab-icon-selected .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+.master-cancel:hover {
+    -fx-background-color: #555;
+}
+
+.master-cancel .ikonli-font-icon{
+    -fx-icon-color: #f00;
+}
+
+.master-ok:hover {
+    -fx-background-color: #555;
+}
+
+.master-ok .ikonli-font-icon{
+    -fx-icon-color: #0b0;
+}
+
+.tab-title {
+    -fx-text-fill: white;
+    -fx-font-size: 20;
+}
+
+.text-field {
+    -fx-padding: 2;
+    -fx-background-color: #333;
+    -fx-border-color: #aaa;
+    -fx-border-radius: 0;
+    -fx-background-radius: 4;
+    -fx-border-width: 0 0 2 0;
+    -fx-prompt-text-fill: #888;
+    -fx-text-fill: white;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-highlight-fill: #5a8ade;
+    -fx-font-weight: lighter;
+    -fx-border-insets: 4;
+}
+
+.text-field:focused {
+    -fx-border-color: #5a8ade;
+}
+
+.split-pane {
+    -fx-background-color: transparent;
+}
+
+.split-pane-divider {
+    -fx-background-color: #888;
+    -fx-padding: 1;
+}
+
+.split-pane-section {
+    -fx-border-color: #888;
+    -fx-border-width: 0 0 1 0;
+}
+
+.split-pane-section .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 16;
+}
+
+.split-pane-section .ikonli-font-icon {
+    -fx-icon-color: white
+}
+
+.action-item .ikonli-font-icon {
+    -fx-icon-color: white
+}
+
+.action-item .label {
+    -fx-text-fill: white;
+}
+
+.action-item:hover {
+    -fx-background-color: #555;
+}
+
+.action-item:pressed {
+    -fx-background-color: #666;
+}
+
+.section-icon-button:hover {
+    -fx-background-color: #555;
+    -fx-background-insets: 2 0 2 0;
+    -fx-background-radius: 8;
+}
+
+.titled-pane {
+    -fx-text-fill: white;
+}
+
+.titled-pane > .title > .arrow-button > .arrow {
+    -fx-background-color: white;
+}
+
+.titled-pane:focused > .title > .arrow-button > .arrow {
+    -fx-background-color: white;
+    -fx-background-insets: 0;
+    -fx-effect: null;
+}
+
+.titled-pane > .title:hover {
+    -fx-background-color: #555;
+}
+
+.choice-box {
+    -fx-background-color: #555;
+}
+
+.choice-box:hover {
+    -fx-background-color: #666;
+}
+
+.tree-cell.drag-over {
+    -fx-background-color: red, #444;
+    -fx-background-insets: 0, 2;
+}

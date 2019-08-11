@@ -3,7 +3,7 @@
 
 ![Knotbook Icon](assets/knot-small.png)
 
-**Knotbook** is a **JavaFX** data viewing/analysis app for FRC. It succeeds RT
+**Knotbook** is a **JavaFX** data viewing/analysis app for FRC 2020.
 
 It is written with JDK 12 with modules and uses OpenJFX 12
 

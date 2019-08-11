@@ -1,0 +1,331 @@
+.root {
+    -fx-background-color: white;
+}
+
+* {
+    -rt-light-accent: #5a8ade;
+    -rt-dark-accent: #3c5c94;
+    -rt-root-shade: white;
+    -rt-item-hover-shade: #ddd;
+    -rt-item-selected-shade: #ccc;
+    -rt-clickable-shade: #ddd;
+    -rt-clickable-hover-shade: #ccc;
+}
+
+/*==========LIST VIEW==========*/
+
+.list-cell {
+    -fx-background-color: white;
+    -fx-padding: 0;
+}
+
+.list-cell:hover:filled {
+    -fx-background-color: #ddd;
+}
+
+.list-cell:selected:filled {
+    -fx-background-color: #ccc;
+    -fx-text-fill: black;
+}
+
+.list-view:focused .list-cell:filled:selected {
+    -fx-background-color: #5a8ade;
+    -fx-text-fill: white;
+}
+
+.list-view:focused .list-cell:filled:selected .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+
+.properties-list {
+    -fx-background-color: white;
+}
+
+.properties-list .list-cell {
+    -fx-padding: 3 8 3 8;
+    -fx-background-color: white;
+    -fx-background-insets: 0;
+    -fx-text-fill: black;
+}
+
+.properties-list .list-cell:filled:hover {
+    -fx-background-color: -rt-item-hover-shade;
+}
+
+.properties-list .list-cell.drag-over {
+    -fx-background-color: red, white;
+    -fx-background-insets: 0, 2;
+}
+
+/*==========TREE VIEW==========*/
+
+.tree-view:focused .tree-cell:filled:selected {
+    -fx-background-color: #5a8ade;
+    -fx-text-fill: white;
+}
+
+.tree-view:focused .tree-cell:filled:selected .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+.tree-cell:hover:filled {
+    -fx-background-color: #ddd;
+}
+
+.tree-cell:selected:filled {
+    -fx-background-color: #bbb;
+    -fx-text-fill: black;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #ccc;
+}
+
+.scroll-bar .thumb:pressed {
+    -fx-background-color: #aaa;
+}
+
+.scroll-bar .increment-button:hover {
+    -fx-background-color: #bbb;
+}
+
+.scroll-bar .decrement-button:hover {
+    -fx-background-color: #bbb;
+}
+
+.status-bar {
+    -fx-background-color: #ddd;
+}
+
+.status-item:hover {
+    -fx-background-color: #3c5c94;
+}
+
+.status-item:hover .label {
+    -fx-text-fill: white;
+}
+
+.status-item:hover .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+.split-pane-divider {
+    -fx-padding: 0 0 0 1;
+}
+
+/* NORMAL CELL */
+.spreadsheet-cell:filled:selected,
+.spreadsheet-cell:filled:focused:selected,
+.spreadsheet-cell:filled:focused:selected:hover {
+    /*-fx-background-color: #8cb1ff;*/
+    -fx-background-color: #ddd;
+    -fx-border-color: #a9a9a9;
+    -fx-border-width: 1px;
+    -fx-text-fill: -fx-selection-bar-text;
+}
+
+.spreadsheet-cell:hover,
+.spreadsheet-cell:filled:focused {
+    /*-fx-background-color: #988490;*/
+    -fx-text-fill: -fx-text-inner-color;
+    -fx-background-insets: 0, 0 0 1 0;
+}
+
+.spreadsheet-cell {
+    -fx-padding: 0 0 0 0.2em;
+    -fx-font-weight: normal;
+    -fx-border-color: #ccc;
+    -fx-border-width: 1px;
+    -fx-background-color: -fx-table-cell-border-color, white;
+}
+
+VerticalHeader > Label {
+    -fx-border-color: #ccc;
+    -fx-border-width: 1px;
+}
+
+VerticalHeader > Label.selected {
+    -fx-background-color: #3c5c94;
+    -fx-border-color: #3c5c94;
+    -fx-text-fill: white;
+}
+
+HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected,
+HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected > Label {
+    /*-fx-background-color: #5a8ade;*/
+    -fx-background-color: #3c5c94;
+    -fx-text-fill: white;
+}
+
+.table-view .filler {
+    -fx-background-color: white;
+}
+
+.menu-item {
+    -fx-padding: 6 12 6 12;
+}
+
+.menu-item:focused {
+    -fx-background-color: #3c5c94;
+}
+
+.menu-item:focused .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+.selection-rectangle {
+    -fx-fill: transparent;
+    -fx-stroke: #3c5c94;
+    -fx-stroke-width: 2;
+}
+
+.button {
+    -fx-background-color: #ddd;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+}
+
+.button:hover {
+    -fx-background-color: #bbb;
+}
+
+.master-tab-icon-container {
+    -fx-background-color: #fff;
+}
+
+.master-tab-icon-container .ikonli-font-icon {
+    -fx-icon-color: #888;
+}
+
+.master-tab-icon-container HBox:hover .ikonli-font-icon {
+    -fx-icon-color: black;
+}
+
+.master-tab-view {
+    -fx-background-color: #eee;
+}
+
+.master-tab-icon-selected{
+    -fx-background-color: #ddd;
+    -fx-background-insets: 6;
+    -fx-background-radius: 12;
+}
+
+.master-tab-icon-selected .ikonli-font-icon {
+    -fx-icon-color: black;
+}
+
+.master-cancel:hover {
+    -fx-background-color: #ddd;
+}
+
+.master-cancel .ikonli-font-icon{
+    -fx-icon-color: #f00;
+}
+
+.master-ok:hover {
+    -fx-background-color: #ddd;
+}
+
+.master-ok .ikonli-font-icon{
+    -fx-icon-color: #0b0;
+}
+
+.tab-title {
+    -fx-text-fill: black;
+    -fx-font-size: 20;
+}
+
+.text-field {
+    -fx-padding: 2;
+    -fx-background-color: #ddd;
+    -fx-border-color: gray;
+    -fx-border-radius: 0;
+    -fx-background-radius: 4;
+    -fx-border-width: 0 0 2 0;
+    -fx-prompt-text-fill: #888;
+    -fx-text-fill: black;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-highlight-fill: #5a8ade;
+    -fx-font-weight: lighter;
+    -fx-border-insets: 4;
+}
+
+.text-field:focused {
+    -fx-border-color: #5a8ade;
+}
+
+.split-pane {
+    -fx-background-color: inherit;
+}
+
+.split-pane-divider {
+    -fx-background-color: #aaa;
+    -fx-padding: 1;
+}
+
+.split-pane-section {
+    -fx-border-color: #aaa;
+    -fx-border-width: 0 0 1 0;
+}
+
+.split-pane-section .label {
+    -fx-text-fill: #444;
+    -fx-font-weight: bold;
+    -fx-font-size: 16;
+}
+
+.split-pane-section .ikonli-font-icon {
+    -fx-icon-color: black
+}
+
+.action-item .ikonli-font-icon {
+    -fx-icon-color: black
+}
+
+.action-item .label {
+    -fx-text-fill: black;
+}
+
+.action-item:hover {
+    -fx-background-color: #ddd;
+}
+
+.action-item:pressed {
+    -fx-background-color: #ccc;
+}
+
+.section-icon-button:hover {
+    -fx-background-color: #ccc;
+    -fx-background-insets: 2 0 2 0;
+    -fx-background-radius: 8;
+}
+
+.titled-pane > .title > .arrow-button > .arrow {
+    -fx-background-color: black;
+}
+
+.titled-pane:focused > .title > .arrow-button > .arrow {
+    -fx-background-color: black;
+    -fx-background-insets: 0;
+    -fx-effect: null;
+}
+
+.titled-pane > .title:hover {
+    -fx-background-color: #ddd;
+}
+
+.choice-box {
+    -fx-background-color: -rt-clickable-shade;
+}
+
+.choice-box:hover {
+    -fx-background-color: -rt-clickable-hover-shade;
+}
+
+.tree-cell.drag-over {
+    -fx-background-color: red, #eee;
+    -fx-background-insets: 0, 2;
+}

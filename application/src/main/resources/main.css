@@ -1,0 +1,118 @@
+.text {
+    -fx-font-family: "Open Sans", "Roboto", "Segoe UI", "Arial", sans-serif;
+    -fx-font-smoothing-type: gray;
+}
+
+.list-view {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-padding: 0;
+}
+
+.tree-view {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+
+.tree-cell {
+    -fx-background-color: transparent;
+}
+
+.table-view {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .increment-button {
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .decrement-button {
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+}
+
+.scroll-bar {
+    -fx-pref-width: 16;
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.corner {
+    -fx-background-color: transparent;
+}
+
+.status-item {
+    -fx-padding: 5 15 5 15;
+    -fx-spacing: 6;
+    -fx-alignment: CENTER-LEFT;
+}
+
+
+.split-pane-divider {
+    -fx-padding: 0 1 0 1;
+}
+
+.no-border-pane {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.text-field {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-background-insets: 0;
+}
+
+.scroll-pane:focused {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+}
+
+.titled-pane > .title {
+    -fx-background-color: null;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;/*3 3 0 0, 2 2 0 0, 1 1 0 0;*/
+    -fx-padding: 0.3333em 0.75em 0.3333em 0.75em; /* 4 9 4 9 */
+}
+
+.titled-pane > .title > .arrow-button {
+    -fx-background-color: null;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0.0em 0.583em 0.0em 0.0em; /* 0 7 0 0 */
+}
+
+.titled-pane > .title > .arrow-button > .arrow {
+    -fx-focus-color: null;
+    -fx-faint-focus-color: null;
+    -fx-background-color: black;
+    -fx-background-insets: 0;
+    -fx-padding: 0.25em 0.3125em 0.25em 0.3125em; /* 3 3.75 3 3.75 */
+    -fx-shape: "M 0 0 h 7 l -3.5 4 z";
+}
+
+.titled-pane > *.content {
+    -fx-padding: 0;
+    -fx-border-color: null;
+    -fx-border-insets: 0;
+    -fx-background-color: null;
+}
