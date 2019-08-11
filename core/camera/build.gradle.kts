@@ -4,7 +4,7 @@ plugins {
 }
 
 javafx {
-    modules = listOf("javafx.controls", "javafx.swing")
+    modules = listOf("javafx.controls")
 }
 
 dependencies {
