@@ -43,7 +43,7 @@ class Main : Application() {
                     }
                     item {
                         name("Synchronize")
-                        icon(FontAwesomeSolid.SYNC, 16)
+                        icon(FontAwesomeSolid.SYNC, 13)
                         shortcut(KeyCode.R, control = true)
                     }
                     separator()
@@ -53,7 +53,7 @@ class Main : Application() {
                     }
                     item {
                         name("Open Repository")
-                        icon(FontAwesomeSolid.FOLDER_OPEN, 16)
+                        icon(FontAwesomeSolid.FOLDER_OPEN, 13)
                         shortcut(KeyCode.O, control = true)
                     }
                     item {
@@ -76,14 +76,14 @@ class Main : Application() {
                 modify {
                     item {
                         name("Find")
-                        icon(FontAwesomeSolid.SEARCH, 16)
+                        icon(FontAwesomeSolid.SEARCH, 13)
                     }
                     item {
                         name("Replace")
                     }
                     item {
                         name("Copy")
-                        icon(FontAwesomeSolid.COPY, 16)
+                        icon(FontAwesomeSolid.COPY, 13)
                         shortcut(KeyCode.C, control = true)
                     }
                     item {
@@ -122,7 +122,7 @@ class Main : Application() {
                     item { name("Show Log File") }
                     item {
                         name("Application Registry")
-                        icon (FontAwesomeSolid.ADDRESS_BOOK, 16)
+                        icon (FontAwesomeSolid.ADDRESS_BOOK, 13)
                         action { RegistryEditor.show() }
                     }
                     item {
@@ -145,11 +145,17 @@ class Main : Application() {
         stage.title = "Knotbook"
         stage.icons.add(Image(Main::class.java.getResourceAsStream("/knotbook/application/icon.png")))
         val knotable = Knotable()
-        val min = Button("", FontIcon.of(MaterialDesign.MDI_WINDOW_MINIMIZE, 17)).apply {
+        val min = Button("", FontIcon.of(MaterialDesign.MDI_WINDOW_MINIMIZE, 14)).apply {
             styleClass.add("minmax-button")
         }
-        val max = Button("", FontIcon.of(MaterialDesign.MDI_WINDOW_MAXIMIZE, 17)).apply {
+        val max = Button("", FontIcon.of(MaterialDesign.MDI_WINDOW_MAXIMIZE, 14)).apply {
             styleClass.add("minmax-button")
+        }
+        val close = Button("", FontIcon.of(MaterialDesign.MDI_CLOSE, 15)).apply {
+            styleClass.add("close-button")
+            onAction = EventHandler {
+                stage.close()
+            }
         }
         val mover = HBox().apply {
             prefWidth = 400.0
@@ -176,12 +182,7 @@ class Main : Application() {
                 add(HBox().apply { HBox.setHgrow(this, Priority.ALWAYS) })
                 add(min)
                 add(max)
-                add(Button("", FontIcon.of(MaterialDesign.MDI_CLOSE, 17)).apply {
-                    styleClass.add("close-button")
-                    onAction = EventHandler {
-                        stage.close()
-                    }
-                })
+                add(close)
             }
         }
         stage.scene = BorderlessScene(stage, VBox().apply {
