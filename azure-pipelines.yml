@@ -3,9 +3,9 @@ steps:
   inputs:
     workingDirectory: ""
     gradleWrapperFile: "gradlew"
-    gradleOptions: "-Xmx3072m"
+#    gradleOptions: "-Xmx3072m"
     javaHomeOption: "JDKVersion"
-    jdkVersionOption: "1.11"
+    jdkVersionOption: "1.12"
     jdkArchitectureOption: "x64"
     publishJUnitResults: false
     testResultsFiles: "**/TEST-*.xml"
