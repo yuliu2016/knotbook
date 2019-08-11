@@ -37,7 +37,7 @@ public class KnotCameraTest {
         view.setFitHeight(720.0);
 
         Label label = new Label();
-        label.setStyle("-fx-text-fill: white");
+        label.setStyle("-fx-text-fill: white; -fx-font-size: 13");
         camera.resultProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
                 box.setBackground(null);
@@ -56,7 +56,8 @@ public class KnotCameraTest {
         stage.setOnCloseRequest(event -> {
             camera.setStreaming(false);
         });
-        stage.show();
+        stage.setResizable(false);
         camera.setStreaming(true);
+        stage.show();
     }
 }

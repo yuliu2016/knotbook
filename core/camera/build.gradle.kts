@@ -8,7 +8,7 @@ javafx {
 }
 
 dependencies {
-
+    implementation(project(":core:splash"))
     implementation(group = "com.github.sarxos", name = "webcam-capture", version = "0.3.12")
     implementation(group = "com.google.zxing", name = "core", version = "3.4.0")
     implementation(group = "com.google.zxing", name = "javase", version = "3.4.0")

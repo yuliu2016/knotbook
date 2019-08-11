@@ -6,5 +6,7 @@ module knotbook.core.camera {
     requires javafx.swing;
     requires java.desktop;
 
+    requires knotbook.core.splash;
+
     exports knotbook.core.camera;
 }

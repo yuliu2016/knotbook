@@ -9,11 +9,13 @@ import com.google.zxing.Result;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
 import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import knotbook.core.splash.GCSplash;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -57,13 +59,13 @@ public class KnotCamera {
     }
 
     public void setStreaming(boolean streaming) {
-        if (!streaming) webcam.close();
         streamingProperty().set(streaming);
     }
 
     private Image image = null;
     private String result = null;
     private Thread thread = null;
+    private boolean threadRunning = false;
     private int skippedPulseCounter = 0;
 
     private final Webcam webcam = Webcam.getDefault();
@@ -85,10 +87,11 @@ public class KnotCamera {
             }
             if (res == null) {
                 skippedPulseCounter++;
-                if (skippedPulseCounter > 30) {
+                if (skippedPulseCounter > 45) {
                     resultProperty.set(null);
                 }
             } else {
+                skippedPulseCounter = 0;
                 resultProperty.set(res);
             }
         }
@@ -107,10 +110,12 @@ public class KnotCamera {
             timer.start();
         } else {
             if (thread != null) {
+                threadRunning = false;
                 thread.interrupt();
             }
             webcam.close();
             timer.stop();
+            Platform.runLater(GCSplash::splash);
         }
     }
 
@@ -126,7 +131,8 @@ public class KnotCamera {
 
     private void readStream() {
         final AtomicReference<WritableImage> imgRef = new AtomicReference<>(null);
-        while (!Thread.currentThread().isInterrupted()) {
+        threadRunning = true;
+        while (threadRunning) {
             BufferedImage capture = webcam.getImage();
             if (capture != null) {
                 imgRef.set(toFXImageFlipped(capture, imgRef.get()));
@@ -138,7 +144,7 @@ public class KnotCamera {
                 }
             }
             try {
-                Thread.sleep(20);
+                Thread.sleep(10);
             } catch (InterruptedException e) {
                 break;
             }
@@ -182,11 +188,7 @@ public class KnotCamera {
             case BufferedImage.TYPE_INT_ARGB_PRE:
                 break;
             default:
-//                BufferedImage converted =
-//                        new BufferedImage(bw, bh, BufferedImage.TYPE_INT_ARGB_PRE);
-//                Graphics2D g2d = converted.createGraphics();
                 g2d.drawImage(source, 0, 0, null);
-//                g2d.dispose();
                 source = converted;
                 break;
         }
