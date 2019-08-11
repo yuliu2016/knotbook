@@ -51,6 +51,7 @@ public class KnotCamera {
     }
 
     public void setStreaming(boolean streaming) {
+        if (!streaming) webcam.close();
         streamingProperty().set(streaming);
     }
 
@@ -77,7 +78,7 @@ public class KnotCamera {
             }
             if (res == null) {
                 skippedPulseCounter++;
-                if (skippedPulseCounter > 5) {
+                if (skippedPulseCounter > 30) {
                     resultProperty.set(null);
                 }
             } else {
@@ -112,7 +113,6 @@ public class KnotCamera {
             Result result = reader.decode(bitmap);
             return result.getText();
         } catch (NotFoundException e) {
-            e.printStackTrace();
             return null;
         }
     }
@@ -133,8 +133,9 @@ public class KnotCamera {
             try {
                 Thread.sleep(20);
             } catch (InterruptedException e) {
-                return;
+                break;
             }
         }
+        thread = null;
     }
 }
