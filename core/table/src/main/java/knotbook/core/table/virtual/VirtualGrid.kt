@@ -9,7 +9,10 @@ package knotbook.core.table.virtual
  * position-wise
  *
  * The class also includes some fine tuned calculations for
- * JavaFX layout
+ * JavaFX layout.
+ *
+ * Usage of this class requires calling the right methods after
+ * changing parameters, because it's too complex to listen for changes
  */
 @Suppress("unused", "SpellCheckingInspection", "MemberVisibilityCanBePrivate")
 class VirtualGrid {
@@ -47,6 +50,9 @@ class VirtualGrid {
     var clipHeight = 0.0
         private set
 
+    // The zoom factor -- Everything else is invariant to the zoom factor
+    // Must apply it in every calculation to avoid changing other parameters
+
     var zoomFactor = 1.0
 
     // The current position in [0, 1] representing MIN/MAX
@@ -58,11 +64,19 @@ class VirtualGrid {
         return "VirtualGrid([$rows,$columns],[$totalWidth,$totalHeight],[$clipWidth,$clipHeight],$zoomFactor)"
     }
 
+    /**
+     * Set the clipping region to ([width], [height])
+     */
     fun setClip(width: Double, height: Double) {
+        check(width > minMax.minCellWidth)
+        check(height > minMax.maxCellHeight)
         clipWidth = width
         clipHeight = height
     }
 
+    /**
+     * Set the grid size to ([newRows], [newColumns]]
+     */
     fun initGrid(newRows: Int, newColumns: Int) {
         if (newRows > rowHeights.size) {
             val oldRows = rowHeights.size
@@ -74,7 +88,7 @@ class VirtualGrid {
         if (newColumns > columnWidths.size) {
             val oldColumns = columnWidths.size
             columnWidths = columnWidths.copyOf(newColumns)
-            for(i in oldColumns until newColumns) {
+            for (i in oldColumns until newColumns) {
                 columnWidths[i] = minMax.maxCellWidth
             }
         }
@@ -88,5 +102,56 @@ class VirtualGrid {
         for (i in 0 until rows) {
             totalHeight += rowHeights[i]
         }
+    }
+
+    /**
+     * Scroll the grid by ([dx], [dy])
+     *
+     * We make sure to only scroll in one direction
+     */
+    fun scroll(dx: Double, dy: Double) {
+        if (dx > dy) {
+            val effectiveClipWidth = clipWidth / zoomFactor
+            if (totalWidth > effectiveClipWidth) {
+                x -= dx / (totalWidth - effectiveClipWidth)
+                if (x < 0) x = 0.0
+                if (x > 1) x = 1.0
+            }
+        } else {
+            val effectiveClipHeight = clipHeight / zoomFactor
+            if (totalHeight > effectiveClipHeight) {
+                y -= dy / (totalHeight - effectiveClipHeight)
+                if (y < 0) y = 0.0
+                if (y > 1) y = 1.0
+            }
+        }
+    }
+
+    /**
+     * @return the set size of [rows] that need to be made virtual
+     */
+    fun virtualGridRows(): Int {
+        return (clipHeight / (minMax.minCellHeight * zoomFactor)).toInt() + 1
+    }
+
+    /**
+     * @return the set size of [columns] that need to be made virtual
+     */
+    fun virtualGridCols(): Int {
+        return (clipHeight / (minMax.minCellHeight * zoomFactor)).toInt() + 1
+    }
+
+    /**
+     * @return the thumb size for the horizontal scroll bar
+     */
+    fun horizontalThumbSize(): Double {
+        return (totalWidth - clipWidth / zoomFactor) / totalWidth
+    }
+
+    /**
+     * @return the thumb size for the horizontal scroll bar
+     */
+    fun verticalThumbSize(): Double {
+        return (totalHeight - clipHeight / zoomFactor) / totalHeight
     }
 }
