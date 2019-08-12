@@ -4,6 +4,7 @@ plugins {
     application
     id("org.openjfx.javafxplugin")
     id("org.beryx.jlink")
+    id("org.jetbrains.dokka")
 }
 
 tasks {

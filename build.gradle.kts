@@ -6,6 +6,7 @@ plugins {
     id("org.openjfx.javafxplugin") version "0.0.8" apply false
     id("org.beryx.jlink") version "2.14.0" apply false
     id("com.github.gmazzo.buildconfig") version "1.5.0" apply false
+    id("org.jetbrains.dokka") version "0.9.18" apply false
 }
 
 val Project.rootPath: String get() {
