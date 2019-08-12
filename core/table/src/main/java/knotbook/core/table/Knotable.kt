@@ -24,8 +24,11 @@ class Knotable : Control() {
 
     init {
         onScroll = EventHandler {
-            ks.hsb.value = (ks.hsb.value - it.deltaX * 3 / boundsInLocal.height).coerceIn(0.0, 1.0)
             ks.vsb.value = (ks.vsb.value - it.deltaY * 3 / boundsInLocal.width).coerceIn(0.0, 1.0)
+            if (it.deltaY == 0.0) {
+                ks.hsb.value = (ks.hsb.value - it.deltaX * 3 / boundsInLocal.height).coerceIn(0.0, 1.0)
+            }
+
         }
     }
 }
