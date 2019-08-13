@@ -131,14 +131,14 @@ class VirtualGrid {
      * @return the set size of [rows] that need to be made virtual
      */
     fun virtualGridRows(): Int {
-        return (clipHeight / (minMax.minCellHeight * zoomFactor)).toInt() + 1
+        return (clipHeight / (minMax.minCellHeight * zoomFactor)).toInt() + 2
     }
 
     /**
      * @return the set size of [columns] that need to be made virtual
      */
     fun virtualGridCols(): Int {
-        return (clipHeight / (minMax.minCellHeight * zoomFactor)).toInt() + 1
+        return (clipHeight / (minMax.minCellHeight * zoomFactor)).toInt() + 2
     }
 
     /**

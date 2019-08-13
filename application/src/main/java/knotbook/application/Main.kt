@@ -4,24 +4,24 @@ import javafx.application.Application
 import javafx.application.Platform
 import javafx.event.EventHandler
 import javafx.geometry.Pos
-import javafx.scene.control.*
+import javafx.scene.control.Button
+import javafx.scene.control.Label
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.stage.Stage
-import knotbook.core.fx.*
 import knotbook.core.aero.borderless.BorderlessScene
-import knotbook.core.camera.KnotCamera
 import knotbook.core.camera.KnotCameraTest
+import knotbook.core.fx.*
+import knotbook.core.icon.FontIcon
+import knotbook.core.registry.Registry
+import knotbook.core.registry.RegistryEditor
 import knotbook.core.splash.GCSplash
 import knotbook.core.splash.Splash
 import knotbook.core.table.Knotable
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid
-import knotbook.core.icon.FontIcon
-import knotbook.core.registry.Registry
-import knotbook.core.registry.RegistryEditor
 import org.kordamp.ikonli.materialdesign.MaterialDesign
 import kotlin.system.exitProcess
 
@@ -122,7 +122,7 @@ class Main : Application() {
                     item { name("Show Log File") }
                     item {
                         name("Application Registry")
-                        icon (FontAwesomeSolid.ADDRESS_BOOK, 13)
+                        icon(FontAwesomeSolid.ADDRESS_BOOK, 13)
                         action { RegistryEditor.show() }
                     }
                     item {
@@ -165,46 +165,43 @@ class Main : Application() {
             alignment = Pos.CENTER_LEFT
             background = Background(BackgroundFill(Color.valueOf("#eee"), null, null))
 
-            children.apply {
-                add(HBox().apply {
-                    alignment = Pos.CENTER
-                    prefWidth = 36.0
-                    children.add(ImageView(Image(Main::class.java.getResourceAsStream("/knotbook/application/icon.png"))).apply {
-                        isPreserveRatio = true
-                        fitHeight = 18.0
-                    })
+            add(hbox {
+                alignment = Pos.CENTER
+                prefWidth = 36.0
+                children.add(ImageView(Image(Main::class.java.getResourceAsStream("/knotbook/application/icon.png"))).apply {
+                    isPreserveRatio = true
+                    fitHeight = 18.0
                 })
-                add(bar)
-                add(Label("Test Repo").apply {
-                    style = "-fx-font-weight:bold"
-                })
-                add(Label(" - []"))
-                add(HBox().apply { HBox.setHgrow(this, Priority.ALWAYS) })
-                add(min)
-                add(max)
-                add(close)
-            }
+            })
+            add(bar)
+            add(Label("Test Repo").apply {
+                style = "-fx-font-weight:bold"
+            })
+            add(Label(" - []"))
+            add(HBox().apply { HBox.setHgrow(this, Priority.ALWAYS) })
+            add(min)
+            add(max)
+            add(close)
         }
-        stage.scene = BorderlessScene(stage, VBox().apply {
+        stage.scene = BorderlessScene(stage, vbox {
             stylesheets.add("/knotbook.css")
             prefWidth = 800.0
             prefHeight = 600.0
-            children.add(mover)
-            children.add(HBox().apply {
-                children.add(VBox().apply {
+            add(mover)
+            add(hbox {
+                add(vbox {
                     background = Background(BackgroundFill(Color.WHITE, null, null))
                     prefWidth = 300.0
                     minWidth = 300.0
                     alignment = Pos.TOP_CENTER
                 })
-                children.add(knotable)
+                add(knotable)
             })
         }).apply {
             setMoveControl(mover)
             min.onAction = EventHandler {
                 minimise()
             }
-
             max.onAction = EventHandler {
                 maximise()
             }

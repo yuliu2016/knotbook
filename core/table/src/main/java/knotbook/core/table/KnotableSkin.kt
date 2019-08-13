@@ -1,15 +1,13 @@
 package knotbook.core.table
 
-import javafx.geometry.HPos
-import javafx.geometry.Orientation
-import javafx.geometry.Rectangle2D
-import javafx.geometry.VPos
+import javafx.geometry.*
 import javafx.scene.control.ScrollBar
 import javafx.scene.control.SkinBase
 import javafx.scene.paint.Color
 import javafx.scene.shape.Line
 import javafx.scene.text.Text
 import javafx.stage.Screen
+import knotbook.core.table.virtual.VirtualGrid
 
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -22,6 +20,7 @@ class KnotableSkin(knotable: Knotable) : SkinBase<Knotable>(knotable) {
         const val kTextMargin = 4.0
     }
 
+    val grid = VirtualGrid()
 
     val hsb = ScrollBar().apply {
         orientation = Orientation.HORIZONTAL
@@ -43,8 +42,6 @@ class KnotableSkin(knotable: Knotable) : SkinBase<Knotable>(knotable) {
     val hln: List<Line>
 
     val cells: List<Text>
-
-    var counter = 0
 
     init {
         vln = (0..(visualBounds.width / kMinCellWidth).toInt()).map { Line() }
@@ -98,9 +95,6 @@ class KnotableSkin(knotable: Knotable) : SkinBase<Knotable>(knotable) {
                     HPos.LEFT, VPos.TOP)
         }
 
-        counter++
-        cells[0].text = counter.toString()
-
         for (i in 0 until vln.size) {
             for (j in 0 until hln.size) {
                 val cell = cells[i * hln.size + j]
@@ -111,7 +105,10 @@ class KnotableSkin(knotable: Knotable) : SkinBase<Knotable>(knotable) {
             }
         }
 
-        layoutInArea(hsb, contentX, contentY, contentWidth - vsb.width, contentHeight, 0.0, HPos.LEFT, VPos.BOTTOM)
-        layoutInArea(vsb, contentX, contentY, contentWidth, contentHeight - hsb.height, 0.0, HPos.RIGHT, VPos.TOP)
+
+        layoutInArea(hsb, contentX, contentY, contentWidth - vsb.width, contentHeight, 0.0,
+                Insets.EMPTY, true, true, HPos.LEFT, VPos.BOTTOM)
+        layoutInArea(vsb, contentX, contentY, contentWidth, contentHeight - hsb.height, 0.0,
+                Insets.EMPTY, true, true, HPos.RIGHT, VPos.TOP)
     }
 }
