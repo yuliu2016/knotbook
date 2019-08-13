@@ -27,7 +27,6 @@ javafx {
 }
 
 dependencies {
-    implementation(project(":core:aero"))
     implementation(project(":core:camera"))
     implementation(project(":core:splash"))
     implementation(project(":core:registry"))

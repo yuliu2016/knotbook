@@ -1,34 +1,34 @@
 package knotbook.application
 
 import javafx.application.Application
-import javafx.application.Platform
-import javafx.event.EventHandler
 import javafx.geometry.Pos
-import javafx.scene.control.Button
+import javafx.scene.Scene
 import javafx.scene.control.Label
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
-import javafx.scene.layout.*
+import javafx.scene.layout.Background
+import javafx.scene.layout.BackgroundFill
+import javafx.scene.layout.HBox
+import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
 import javafx.stage.Stage
-import knotbook.core.aero.borderless.BorderlessScene
+import javafx.stage.StageStyle
 import knotbook.core.camera.KnotCameraTest
 import knotbook.core.fx.*
-import knotbook.core.icon.FontIcon
 import knotbook.core.registry.Registry
 import knotbook.core.registry.RegistryEditor
 import knotbook.core.splash.GCSplash
 import knotbook.core.splash.Splash
 import knotbook.core.table.Knotable
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid
-import org.kordamp.ikonli.materialdesign.MaterialDesign
 import kotlin.system.exitProcess
 
 
 class Main : Application() {
 
     private val bar = menuBar {
+        isUseSystemMenuBar = true
         modify {
             menu {
                 name("File")
@@ -145,45 +145,26 @@ class Main : Application() {
         stage.title = "Knotbook"
         stage.icons.add(Image(Main::class.java.getResourceAsStream("/knotbook/application/icon.png")))
         val knotable = Knotable()
-        val min = Button("", FontIcon.of(MaterialDesign.MDI_WINDOW_MINIMIZE, 14)).apply {
-            styleClass.add("minmax-button")
-        }
-        val max = Button("", FontIcon.of(MaterialDesign.MDI_WINDOW_MAXIMIZE, 14)).apply {
-            styleClass.add("minmax-button")
-        }
-        val close = Button("", FontIcon.of(MaterialDesign.MDI_CLOSE, 15)).apply {
-            styleClass.add("close-button")
-            onAction = EventHandler {
-                stage.close()
-            }
-        }
         val mover = HBox().apply {
             prefWidth = 400.0
             prefHeight = 28.0
-            minHeight = 28.0
-            maxHeight = 28.0
+            minHeight = 26.0
+            maxHeight = 26.0
             alignment = Pos.CENTER_LEFT
             background = Background(BackgroundFill(Color.valueOf("#eee"), null, null))
 
             add(hbox {
                 alignment = Pos.CENTER
-                prefWidth = 36.0
+                prefWidth = 8.0
                 children.add(ImageView(Image(Main::class.java.getResourceAsStream("/knotbook/application/icon.png"))).apply {
                     isPreserveRatio = true
                     fitHeight = 18.0
+                    image = null
                 })
             })
             add(bar)
-            add(Label("Test Repo").apply {
-                style = "-fx-font-weight:bold"
-            })
-            add(Label(" - []"))
-            add(HBox().apply { HBox.setHgrow(this, Priority.ALWAYS) })
-            add(min)
-            add(max)
-            add(close)
         }
-        stage.scene = BorderlessScene(stage, vbox {
+        stage.scene = Scene(vbox {
             stylesheets.add("/knotbook.css")
             prefWidth = 800.0
             prefHeight = 600.0
@@ -197,19 +178,8 @@ class Main : Application() {
                 })
                 add(knotable)
             })
-        }).apply {
-            setMoveControl(mover)
-            min.onAction = EventHandler {
-                minimise()
-            }
-            max.onAction = EventHandler {
-                maximise()
-            }
-            Platform.runLater {
-                maximise()
-            }
-        }
-
+        })
+        stage.initStyle(StageStyle.DECORATED)
         knotable.requestFocus()
         stage.show()
 

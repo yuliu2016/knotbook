@@ -3,6 +3,7 @@ package knotbook.core.table
 import javafx.geometry.*
 import javafx.scene.control.ScrollBar
 import javafx.scene.control.SkinBase
+import javafx.scene.layout.Region
 import javafx.scene.paint.Color
 import javafx.scene.shape.Line
 import javafx.scene.text.Text
