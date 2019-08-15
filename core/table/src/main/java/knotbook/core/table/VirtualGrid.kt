@@ -177,11 +177,11 @@ class VirtualGrid {
      * @return the effective clip width
      */
     fun computeEffectiveClipWidth(): Double {
-        return clipWidth / zoomFactor;
+        return clipWidth / zoomFactor
     }
 
     fun computeEffectiveClipHeight(): Double {
-        return clipHeight / zoomFactor;
+        return clipHeight / zoomFactor
     }
 
     /**
@@ -201,7 +201,7 @@ class VirtualGrid {
     /**
      * Set the clipping region to ([width], [height])
      */
-    fun setClip(width: Double, height: Double) {
+    fun updateContentClip(width: Double, height: Double) {
         if (width == clipWidth && height == clipHeight) {
             return
         }
@@ -251,8 +251,8 @@ class VirtualGrid {
         }
         var start = 0.0
         for (j in 0 until virtual) {
-            start += if (j >= actual) min else arr[j]
             positions[j] = start
+            start += if (j >= actual) min else arr[j]
         }
     }
 
