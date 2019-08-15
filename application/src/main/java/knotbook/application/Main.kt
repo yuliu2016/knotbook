@@ -141,48 +141,50 @@ class Main : Application() {
         }
     }
 
+    val mover = HBox().apply {
+        prefWidth = 400.0
+        prefHeight = 28.0
+        minHeight = 24.0
+        maxHeight = 24.0
+        alignment = Pos.CENTER_LEFT
+        background = Background(BackgroundFill(Color.valueOf("#eee"), null, null))
+
+        add(hbox {
+            alignment = Pos.CENTER
+            prefWidth = 8.0
+            children.add(ImageView(Image(Main::class.java.getResourceAsStream("/knotbook/application/icon.png"))).apply {
+                isPreserveRatio = true
+                fitHeight = 18.0
+                image = null
+            })
+        })
+        add(bar)
+    }
+
+    val scene = Scene(vbox {
+        val knotable = Knotable()
+        stylesheets.add("/knotbook.css")
+        prefWidth = 800.0
+        prefHeight = 600.0
+        add(mover)
+        add(hbox {
+            add(vbox {
+                background = Background(BackgroundFill(Color.WHITE, null, null))
+                prefWidth = 300.0
+                minWidth = 300.0
+                alignment = Pos.TOP_CENTER
+            })
+            add(knotable)
+        })
+        knotable.requestFocus()
+    })
+
     override fun start(stage: Stage) {
         stage.title = "Knotbook"
         stage.icons.add(Image(Main::class.java.getResourceAsStream("/knotbook/application/icon.png")))
-        val knotable = Knotable()
-        val mover = HBox().apply {
-            prefWidth = 400.0
-            prefHeight = 28.0
-            minHeight = 26.0
-            maxHeight = 26.0
-            alignment = Pos.CENTER_LEFT
-            background = Background(BackgroundFill(Color.valueOf("#eee"), null, null))
-
-            add(hbox {
-                alignment = Pos.CENTER
-                prefWidth = 8.0
-                children.add(ImageView(Image(Main::class.java.getResourceAsStream("/knotbook/application/icon.png"))).apply {
-                    isPreserveRatio = true
-                    fitHeight = 18.0
-                    image = null
-                })
-            })
-            add(bar)
-        }
-        stage.scene = Scene(vbox {
-            stylesheets.add("/knotbook.css")
-            prefWidth = 800.0
-            prefHeight = 600.0
-            add(mover)
-            add(hbox {
-                add(vbox {
-                    background = Background(BackgroundFill(Color.WHITE, null, null))
-                    prefWidth = 300.0
-                    minWidth = 300.0
-                    alignment = Pos.TOP_CENTER
-                })
-                add(knotable)
-            })
-        })
+        stage.scene = scene
         stage.initStyle(StageStyle.DECORATED)
-        knotable.requestFocus()
         stage.show()
-
     }
 
     companion object {
