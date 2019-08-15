@@ -23,10 +23,11 @@ tasks {
 }
 
 javafx {
-    modules = listOf("javafx.controls", "javafx.swing")
+    modules = listOf("javafx.controls", "javafx.fxml")
 }
 
 dependencies {
+    implementation(fileTree(mapOf("dir" to "../libs", "include" to listOf("*.jar"))))
     implementation(project(":core:camera"))
     implementation(project(":core:splash"))
     implementation(project(":core:registry"))

@@ -20,6 +20,7 @@ import knotbook.core.splash.GCSplash
 import knotbook.core.splash.Splash
 import knotbook.core.table.Knotable
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid
+import org.scenicview.ScenicView
 import kotlin.system.exitProcess
 
 
@@ -109,6 +110,10 @@ class Main : Application() {
             menu {
                 name("Help")
                 modify {
+                    item {
+                        name("Scenic View")
+                        action { ScenicView.show(scene) }
+                    }
                     item { name("Process Manager") }
                     item {
                         name("Test Camera")
@@ -167,12 +172,13 @@ class Main : Application() {
         add(mover)
         add(hbox {
             add(vbox {
-                background = Background(BackgroundFill(Color.WHITE, null, null))
-                prefWidth = 300.0
-                minWidth = 300.0
+                background = Background(BackgroundFill(Color.LIGHTBLUE, null, null))
+                prefWidth = 240.0
+                minWidth = 240.0
                 alignment = Pos.TOP_CENTER
             })
-            add(knotable)
+            vgrow()
+            add(knotable.hgrow())
         })
         knotable.requestFocus()
     })
