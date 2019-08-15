@@ -1,14 +1,14 @@
 package knotbook.core.table
 
+import javafx.event.EventHandler
 import javafx.geometry.*
 import javafx.scene.control.ScrollBar
 import javafx.scene.control.SkinBase
-import javafx.scene.layout.Region
+import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.shape.Line
 import javafx.scene.text.Text
 import javafx.stage.Screen
-import knotbook.core.table.virtual.VirtualGrid
 
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -39,6 +39,8 @@ class KnotableSkin(knotable: Knotable) : SkinBase<Knotable>(knotable) {
 
     val visualBounds: Rectangle2D = Screen.getPrimary().visualBounds
 
+    val vp = Pane()
+
     val vln: List<Line>
     val hln: List<Line>
 
@@ -48,10 +50,19 @@ class KnotableSkin(knotable: Knotable) : SkinBase<Knotable>(knotable) {
         vln = (0..(visualBounds.width / kMinCellWidth).toInt()).map { Line() }
         hln = (0..(visualBounds.width / kMinCellHeight).toInt()).map { Line() }
         cells = (0 until vln.size * hln.size).map { Text("0") }
-        children.addAll(vln)
+        vp.children.addAll(vln)
+//        children.addAll(vln)
         children.addAll(hln)
         children.addAll(cells)
-        children.addAll(hsb, vsb)
+        children.addAll(vp, hsb, vsb)
+        skinnable!!.apply {
+            onScroll = EventHandler {
+                vsb.value = (vsb.value - it.deltaY * 3 / boundsInLocal.width).coerceIn(0.0, 1.0)
+                if (it.deltaY == 0.0) {
+                    hsb.value = (hsb.value - it.deltaX * 3 / boundsInLocal.height).coerceIn(0.0, 1.0)
+                }
+            }
+        }
     }
 
     override fun computeMinWidth(height: Double,
@@ -68,18 +79,15 @@ class KnotableSkin(knotable: Knotable) : SkinBase<Knotable>(knotable) {
 
     @Suppress("DuplicatedCode")
     override fun layoutChildren(contentX: Double, contentY: Double, contentWidth: Double, contentHeight: Double) {
+        grid.setClip(contentWidth, contentHeight)
         for (i in 0 until vln.size) {
             val line = vln[i]
-            line.startX = 0.0
-            line.startY = contentHeight
-            line.endX = 0.0
-            line.endY = 0.0
+            line.startX = contentX + i * kMinCellWidth
+            line.startY = 0.0
+            line.endX = contentX + i * kMinCellWidth
+            line.endY = contentY + contentHeight
             line.strokeWidth = kLineStroke
             line.stroke = Color.GRAY
-            val lineX = contentX + i * kMinCellWidth
-            layoutInArea(line, lineX, contentY,
-                    kMinCellWidth, contentHeight, -0.0,
-                    HPos.LEFT, VPos.TOP)
         }
 
         for (j in 0 until hln.size) {
@@ -92,7 +100,7 @@ class KnotableSkin(knotable: Knotable) : SkinBase<Knotable>(knotable) {
             line.stroke = Color.GRAY
             val lineY = contentY + j * kMinCellHeight
             layoutInArea(line, contentX, lineY,
-                    contentWidth, kMinCellHeight, -0.0,
+                    contentWidth, kMinCellHeight, 0.0,
                     HPos.LEFT, VPos.TOP)
         }
 
@@ -106,7 +114,8 @@ class KnotableSkin(knotable: Knotable) : SkinBase<Knotable>(knotable) {
             }
         }
 
-
+        layoutInArea(vp, 0.0, 0.0, contentWidth, contentHeight, 0.0,
+                Insets.EMPTY, true, true, HPos.LEFT, VPos.TOP)
         layoutInArea(hsb, 0.0, 0.0, contentWidth - vsb.width, contentHeight, 0.0,
                 Insets.EMPTY, true, true, HPos.LEFT, VPos.BOTTOM)
         layoutInArea(vsb, 0.0, 0.0, contentWidth, contentHeight - hsb.height, 0.0,

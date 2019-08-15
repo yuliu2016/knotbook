@@ -172,7 +172,7 @@ class Main : Application() {
         add(mover)
         add(hbox {
             add(vbox {
-                background = Background(BackgroundFill(Color.LIGHTBLUE, null, null))
+                background = Background(BackgroundFill(Color.WHITE, null, null))
                 prefWidth = 240.0
                 minWidth = 240.0
                 alignment = Pos.TOP_CENTER
