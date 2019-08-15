@@ -1,6 +1,8 @@
 .gradle/
 build/
 application/scenicView.properties
+core/spreadsheet/
+scripts/api_v3.json
 
 *.iml
 
