@@ -23,7 +23,7 @@ tasks {
 }
 
 javafx {
-    modules = listOf("javafx.controls")
+    modules = listOf("javafx.controls", "javafx.swing")
 }
 
 dependencies {

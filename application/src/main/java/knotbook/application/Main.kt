@@ -3,14 +3,12 @@ package knotbook.application
 import javafx.application.Application
 import javafx.geometry.Pos
 import javafx.scene.Scene
-import javafx.scene.control.Label
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.HBox
-import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
 import javafx.stage.Stage
 import javafx.stage.StageStyle

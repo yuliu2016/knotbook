@@ -14,5 +14,7 @@ module knotbook.application {
     requires knotbook.core.registry;
     requires knotbook.core.icon;
 
+    requires javafx.swing;
+
     exports knotbook.application;
 }
