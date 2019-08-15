@@ -18,14 +18,6 @@ tasks {
     }
 }
 
-sourceSets {
-    main {
-        java {
-            include(rootProject.path + "/scripts/Paths.kt")
-        }
-    }
-}
-
 dependencies {
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))

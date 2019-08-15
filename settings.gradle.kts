@@ -9,5 +9,6 @@ include(
         "core:splash",
         "core:table",
         "core:utils",
+        "ext:formulas",
         "ext:tba-client"
 )
