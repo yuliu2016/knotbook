@@ -178,7 +178,7 @@ vir   = [row=$virtualGridRows, col=$virtualGridCols]
 
         val effectiveClipWidth = computeEffectiveClipWidth()
 
-        if (totalWidth > effectiveClipWidth) {
+        if (kotlin.math.abs(dx) > 0 && totalWidth > effectiveClipWidth) {
 
             scrollX -= dx / (totalWidth - effectiveClipWidth)
 
@@ -194,7 +194,7 @@ vir   = [row=$virtualGridRows, col=$virtualGridCols]
 
         val effectiveClipHeight = computeEffectiveClipHeight()
 
-        if (totalHeight > effectiveClipHeight) {
+        if (kotlin.math.abs(dy) > 0 && totalHeight > effectiveClipHeight) {
 
             scrollY -= dy / (totalHeight - effectiveClipHeight)
 
@@ -274,7 +274,7 @@ vir   = [row=$virtualGridRows, col=$virtualGridCols]
         check(rowPositions.size >= virtualGridRows) {
             "Cannot update row state - Position bound limited"
         }
-        var start = scrollX * 100
+        var start = scrollY * 100
         for (j in 0 until virtualGridRows) {
             rowPositions[j] = start
             start += if (j >= rows) policy.minCellHeight else rowHeights[j]
@@ -289,7 +289,7 @@ vir   = [row=$virtualGridRows, col=$virtualGridCols]
         check( colPositions.size >= virtualGridCols) {
             "Cannot update column state - Position bound limited"
         }
-        var start = scrollY * 100
+        var start = scrollX * 100
         for (j in 0 until virtualGridCols) {
             colPositions[j] = start
             start += if (j >= columns) policy.minCellWidth else colWidths[j]
@@ -317,7 +317,7 @@ vir   = [row=$virtualGridRows, col=$virtualGridCols]
     fun doIfRowStateChanged(action: () -> Unit) {
         if (requiresRowLayout) {
             action()
-            requiresColLayout = false
+            requiresRowLayout = false
         }
     }
 

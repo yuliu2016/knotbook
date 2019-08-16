@@ -5,7 +5,6 @@ module knotbook.application {
     requires javafx.fxml;
 
     requires org.kordamp.iconli.core;
-    requires org.kordamp.ikonli.materialdesign;
     requires org.kordamp.ikonli.fontawesome5;
 
     requires org.scenicview.scenicview;
