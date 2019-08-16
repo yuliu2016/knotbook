@@ -271,7 +271,14 @@ vir   = [row=$virtualGridRows, col=$virtualGridCols]
      * Update the row state and mark for update
      */
     fun updateRowState() {
-        updateArrayState(virtualGridRows, rows, policy.minCellHeight, rowHeights, rowPositions)
+        check(rowPositions.size >= virtualGridRows) {
+            "Cannot update row state - Position bound limited"
+        }
+        var start = scrollX * 100
+        for (j in 0 until virtualGridRows) {
+            rowPositions[j] = start
+            start += if (j >= rows) policy.minCellHeight else rowHeights[j]
+        }
         markRowStateChanged()
     }
 
@@ -279,22 +286,15 @@ vir   = [row=$virtualGridRows, col=$virtualGridCols]
      * Update the column state and mark for update
      */
     fun updateColState() {
-        updateArrayState(virtualGridCols, columns, policy.minCellWidth, colWidths, colPositions)
+        check( colPositions.size >= virtualGridCols) {
+            "Cannot update column state - Position bound limited"
+        }
+        var start = scrollY * 100
+        for (j in 0 until virtualGridCols) {
+            colPositions[j] = start
+            start += if (j >= columns) policy.minCellWidth else colWidths[j]
+        }
         markColStateChanged()
-    }
-
-    /**
-     * Perform a virtual state update on either row or column
-     */
-    fun updateArrayState(virtual: Int, actual: Int, min: Double, arr: DoubleArray, positions: DoubleArray) {
-        check(positions.size >= virtual) {
-            "Cannot update state - Position bound limited"
-        }
-        var start = 0.0
-        for (j in 0 until virtual) {
-            positions[j] = start
-            start += if (j >= actual) min else arr[j]
-        }
     }
 
     /**

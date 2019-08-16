@@ -59,6 +59,7 @@ class KnotTableSkin(knotable: KnotTable) : SkinBase<KnotTable>(knotable) {
                 hsb.value = grid.scrollX
                 vsb.visibleAmount = grid.verticalThumbSize()
                 hsb.visibleAmount = grid.horizontalThumbSize()
+                requestLayout()
             }
             onMouseMoved = EventHandler {
                 grid.setMouse(it.x, it.y)
