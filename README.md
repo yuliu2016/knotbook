@@ -16,10 +16,16 @@ To generate a runtime image: `gradlew jlink` or `gradlew jlinkZip`
 
 #### Components
 
-**Knotable**: 
+**KnotTable**: 
 ControlsFX SpreadsheetView is not supported since JDK 9.
 This project uses a custom table Control that uses a custom 
-VirtualFlow implementation
+VirtualFlow implementation. 
+See [VirtualGrid.kt](core/table/src/main/java/knotbook/core/table/VirtualGrid.kt)
+for details on how it works.
+
+**Camera**:
+A JavaFX image property to display the webcam and read QR codes. See
+[KnotCamera.java](core/camera/src/main/java/knotbook/core/camera/KnotCamera.java)
 
 #### Special Notes: 
 The webcam-capture library is unable to load the native files in the modules in development mode,
