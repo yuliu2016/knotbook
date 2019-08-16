@@ -4,7 +4,6 @@ import javafx.event.EventHandler
 import javafx.geometry.*
 import javafx.scene.control.ScrollBar
 import javafx.scene.control.SkinBase
-import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.shape.Line
 import javafx.scene.text.Text
@@ -45,6 +44,7 @@ class KnotableSkin(knotable: Knotable) : SkinBase<Knotable>(knotable) {
     val cells: List<Text>
 
     init {
+        grid.initGrid(70, 20)
         vln = (0..(visualBounds.width / kMinCellWidth).toInt()).map { Line() }
         hln = (0..(visualBounds.height / kMinCellHeight).toInt()).map { Line() }
         cells = (0 until vln.size * hln.size).map { Text("0") }
@@ -54,10 +54,14 @@ class KnotableSkin(knotable: Knotable) : SkinBase<Knotable>(knotable) {
         children.addAll(hsb, vsb)
         skinnable!!.apply {
             onScroll = EventHandler {
-                vsb.value = (vsb.value - it.deltaY * 3 / boundsInLocal.width).coerceIn(0.0, 1.0)
-                if (it.deltaY == 0.0) {
-                    hsb.value = (hsb.value - it.deltaX * 3 / boundsInLocal.height).coerceIn(0.0, 1.0)
-                }
+                grid.scrollBy(it.deltaX * 2, it.deltaY * 2)
+                vsb.value = grid.scrollY
+                hsb.value = grid.scrollX
+                vsb.visibleAmount = grid.verticalThumbSize()
+                hsb.visibleAmount = grid.horizontalThumbSize()
+            }
+            onMouseMoved = EventHandler {
+                grid.setMouse(it.x, it.y)
             }
         }
     }

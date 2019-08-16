@@ -12,7 +12,8 @@ package knotbook.core.table
  * JavaFX layout.
  *
  * Usage of this class requires calling the right methods after
- * changing parameters, because it's too complex to listen for changes
+ * changing parameters, because it's too complex to listen for changes.
+ * On the other hand, it is
  */
 @Suppress("unused", "SpellCheckingInspection", "MemberVisibilityCanBePrivate")
 class VirtualGrid {
@@ -85,9 +86,9 @@ class VirtualGrid {
 
     // The current position in [0, 1] representing MIN/MAX
 
-    var x = 0.0
+    var scrollX = 0.0
         private set
-    var y = 0.0
+    var scrollY = 0.0
         private set
 
     // The last position of the mouse
@@ -104,7 +105,15 @@ class VirtualGrid {
 
 
     override fun toString(): String {
-        return "VirtualGrid([$rows,$columns],[$totalWidth,$totalHeight],[$clipWidth,$clipHeight],$zoomFactor)"
+        return """VirtualGrid(
+dim   = [row=$rows, col=$columns],
+total = [w=$totalWidth, h=$totalHeight],
+clip  = [w=$clipWidth, h=$clipHeight],
+zoom  = [$zoomFactor],
+mouse = [x=$mouseX, y=$mouseY,
+scr   = [x=$scrollX, y=$scrollY],
+virt  = [row=$virtualGridRows, col=$virtualGridCols]
+)"""
     }
 
     /**
@@ -130,7 +139,7 @@ class VirtualGrid {
             colWidths = colWidths.copyOf(newColumns)
 
             for (i in oldColumns until newColumns) {
-                colWidths[i] = minMax.maxCellWidth
+                colWidths[i] = minMax.minCellWidth
             }
         }
 
@@ -151,25 +160,40 @@ class VirtualGrid {
     /**
      * Scroll the grid by ([dx], [dy])
      *
-     * We make sure to only scroll in one direction
+     * Should be called from a scroll event listener
      */
-    fun scroll(dx: Double, dy: Double) {
-        if (dx > dy) {
-            val effectiveClipWidth = computeEffectiveClipWidth()
+    fun scrollBy(dx: Double, dy: Double) {
 
-            if (totalWidth > effectiveClipWidth) {
-                x -= dx / (totalWidth - effectiveClipWidth)
-                if (x < 0) x = 0.0
-                if (x > 1) x = 1.0
-            }
-        } else {
-            val effectiveClipHeight = computeEffectiveClipHeight()
+        val effectiveClipWidth = computeEffectiveClipWidth()
 
-            if (totalHeight > effectiveClipHeight) {
-                y -= dy / (totalHeight - effectiveClipHeight)
-                if (y < 0) y = 0.0
-                if (y > 1) y = 1.0
+        if (totalWidth > effectiveClipWidth) {
+
+            scrollX -= dx / (totalWidth - effectiveClipWidth)
+
+            if (scrollX < 0) {
+                scrollX = 0.0
             }
+            if (scrollX > 1) {
+                scrollX = 1.0
+            }
+
+            updateColState()
+        }
+        val effectiveClipHeight = computeEffectiveClipHeight()
+
+        if (totalHeight > effectiveClipHeight) {
+
+            scrollY -= dy / (totalHeight - effectiveClipHeight)
+
+            if (scrollY < 0) {
+                scrollY = 0.0
+            }
+
+            if (scrollY > 1) {
+                scrollY = 1.0
+            }
+
+            updateRowState()
         }
     }
 
@@ -299,16 +323,38 @@ class VirtualGrid {
     }
 
     /**
-     * @return the thumb size for the horizontal scroll bar
+     * Use the result of [computeEffectiveClipWidth] to calculate
+     * thumb size, defined as the ratio of the clip width to the
+     * total width of the virtual view
+     *
+     * Limits result to < 1.0 because a division by 0 is possible
+     * when [initGrid] is not calledbefore this method
+     *
+     * @return the thumb size for the horizontal scroll bar in [0, 1]
      */
     fun horizontalThumbSize(): Double {
-        return (totalWidth - clipWidth / zoomFactor) / totalWidth
+        val effectiveClipWidth = computeEffectiveClipWidth()
+        if (totalWidth <= effectiveClipWidth) {
+            return 1.0
+        }
+        return effectiveClipWidth / totalWidth
     }
 
     /**
-     * @return the thumb size for the horizontal scroll bar
+     * Use the result of [computeEffectiveClipHeight] to calculate
+     * thumb size, defined as the ratio of the clip height to the
+     * total height of the virtual view
+     *
+     * Limits result to < 1.0 because a division by 0 is possible
+     * when [initGrid] is not calledbefore this method
+     *
+     * @return the thumb size for the vertical scroll bar in [0, 1]
      */
     fun verticalThumbSize(): Double {
-        return (totalHeight - clipHeight / zoomFactor) / totalHeight
+        val effectiveClipHeight = computeEffectiveClipHeight()
+        if (totalHeight <= effectiveClipHeight) {
+            return 1.0
+        }
+        return effectiveClipHeight / totalHeight
     }
 }
