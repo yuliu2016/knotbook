@@ -15,11 +15,9 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.awt.*;
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 
-public class Splash {
+public class AboutSplash {
 
     private static Label labelOf(String s) {
         Label label = new Label(s);
@@ -41,12 +39,12 @@ public class Splash {
         top.setPrefHeight(80.0);
         top.setStyle("-fx-background-color:rgba(96,96,96,0.9)");
 
-        Image iconImage = new Image(Splash.class.getResourceAsStream("/knotbook/core/splash/icon.png"));
+        Image iconImage = new Image(AboutSplash.class.getResourceAsStream("/knotbook/core/splash/icon.png"));
         ImageView icon = new ImageView(iconImage);
         icon.setPreserveRatio(true);
         icon.setFitHeight(80.0);
 
-        Label label = new Label("notbook");
+        Label label = new Label("notBook");
         label.setStyle("-fx-font-size: 72;-fx-font-weight:bold;-fx-text-fill: white");
         top.getChildren().addAll(icon, label);
 

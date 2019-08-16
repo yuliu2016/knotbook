@@ -17,7 +17,7 @@ import knotbook.core.fx.*
 import knotbook.core.registry.Registry
 import knotbook.core.registry.RegistryEditor
 import knotbook.core.splash.GCSplash
-import knotbook.core.splash.Splash
+import knotbook.core.splash.AboutSplash
 import knotbook.core.table.KnotTable
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid
 import org.scenicview.ScenicView
@@ -136,7 +136,7 @@ class Main : Application() {
                     separator()
                     item {
                         name("About")
-                        action { Splash.splash() }
+                        action { AboutSplash.splash() }
                         shortcut(KeyCode.F1)
                     }
                 }
