@@ -15,24 +15,30 @@ package knotbook.core.table
  * changing parameters, because it's too complex to listen for changes.
  * On the other hand, it is
  */
-@Suppress("unused", "SpellCheckingInspection", "MemberVisibilityCanBePrivate")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class VirtualGrid {
 
     /**
      * Configuration limits for the grid
      */
-    data class MinMax(
+    data class Policy(
+
             val minCellHeight: Double = 18.0,
+
             val maxCellHeight: Double = 30.0,
+
             val minCellWidth: Double = 80.0,
+
             val maxCellWidth: Double = 400.0,
+
             val minZoomFactor: Double = 0.5,
+
             val maxZoomFactor: Double = 2.0
     )
 
-    // Minimum and maximum bounds for the grid
+    // Grid policy
 
-    var minMax = MinMax()
+    var policy = Policy()
         private set
 
     // The size of the grid to display
@@ -112,7 +118,7 @@ clip  = [w=$clipWidth, h=$clipHeight],
 zoom  = [$zoomFactor],
 mouse = [x=$mouseX, y=$mouseY,
 scr   = [x=$scrollX, y=$scrollY],
-virt  = [row=$virtualGridRows, col=$virtualGridCols]
+vir   = [row=$virtualGridRows, col=$virtualGridCols]
 )"""
     }
 
@@ -126,20 +132,24 @@ virt  = [row=$virtualGridRows, col=$virtualGridCols]
         }
 
         if (newRows > rowHeights.size) {
+
             val oldRows = rowHeights.size
+
             rowHeights = rowHeights.copyOf(newRows)
 
             for (i in oldRows until newRows) {
-                rowHeights[i] = minMax.minCellHeight
+                rowHeights[i] = policy.minCellHeight
             }
         }
 
         if (newColumns > colWidths.size) {
+
             val oldColumns = colWidths.size
+
             colWidths = colWidths.copyOf(newColumns)
 
             for (i in oldColumns until newColumns) {
-                colWidths[i] = minMax.minCellWidth
+                colWidths[i] = policy.minCellWidth
             }
         }
 
@@ -147,11 +157,13 @@ virt  = [row=$virtualGridRows, col=$virtualGridCols]
         columns = newColumns
 
         totalWidth = 0.0
+
         for (i in 0 until columns) {
             totalWidth += colWidths[i]
         }
 
         totalHeight = 0.0
+
         for (i in 0 until rows) {
             totalHeight += rowHeights[i]
         }
@@ -179,6 +191,7 @@ virt  = [row=$virtualGridRows, col=$virtualGridCols]
 
             updateColState()
         }
+
         val effectiveClipHeight = computeEffectiveClipHeight()
 
         if (totalHeight > effectiveClipHeight) {
@@ -212,25 +225,27 @@ virt  = [row=$virtualGridRows, col=$virtualGridCols]
      * @return the set size of [rows] that need to be made virtual
      */
     fun computeVirtualRows(): Int {
-        return (clipHeight / (minMax.minCellHeight * zoomFactor)).toInt() + 2
+        return (clipHeight / (policy.minCellHeight * zoomFactor)).toInt() + 2
     }
 
     /**
      * @return the set size of [columns] that need to be made virtual
      */
     fun computeVirtualCols(): Int {
-        return (clipHeight / (minMax.minCellHeight * zoomFactor)).toInt() + 2
+        return (clipHeight / (policy.minCellHeight * zoomFactor)).toInt() + 2
     }
 
     /**
      * Set the clipping region to ([width], [height])
+     *
+     * This method only applies when the clip dimensions have changed
      */
     fun updateContentClip(width: Double, height: Double) {
         if (width == clipWidth && height == clipHeight) {
             return
         }
 
-        require(width > minMax.minCellWidth && height > minMax.maxCellHeight) {
+        require(width >= policy.minCellWidth && height >= policy.minCellHeight) {
             "Clip dimension is set to less than the minimum cell dimension"
         }
 
@@ -238,12 +253,14 @@ virt  = [row=$virtualGridRows, col=$virtualGridCols]
         clipHeight = height
 
         virtualGridRows = computeVirtualRows()
+
         if (virtualGridRows > rowPositions.size) {
             rowPositions = DoubleArray(virtualGridRows)
             updateRowState()
         }
 
         virtualGridCols = computeVirtualCols()
+
         if (virtualGridCols > colPositions.size) {
             colPositions = DoubleArray(virtualGridCols)
             updateColState()
@@ -254,7 +271,7 @@ virt  = [row=$virtualGridRows, col=$virtualGridCols]
      * Update the row state and mark for update
      */
     fun updateRowState() {
-        doUpdateArrayState(virtualGridRows, rows, minMax.minCellHeight, rowHeights, rowPositions)
+        updateArrayState(virtualGridRows, rows, policy.minCellHeight, rowHeights, rowPositions)
         markRowStateChanged()
     }
 
@@ -262,14 +279,14 @@ virt  = [row=$virtualGridRows, col=$virtualGridCols]
      * Update the column state and mark for update
      */
     fun updateColState() {
-        doUpdateArrayState(virtualGridCols, columns, minMax.minCellWidth, colWidths, colPositions)
+        updateArrayState(virtualGridCols, columns, policy.minCellWidth, colWidths, colPositions)
         markColStateChanged()
     }
 
     /**
      * Perform a virtual state update on either row or column
      */
-    fun doUpdateArrayState(virtual: Int, actual: Int, min: Double, arr: DoubleArray, positions: DoubleArray) {
+    fun updateArrayState(virtual: Int, actual: Int, min: Double, arr: DoubleArray, positions: DoubleArray) {
         check(positions.size >= virtual) {
             "Cannot update state - Position bound limited"
         }
@@ -315,7 +332,11 @@ virt  = [row=$virtualGridRows, col=$virtualGridCols]
     }
 
     /**
-     * Sets the mouse position
+     * Sets the mouse position.
+     * This is used in conjunction with zooming -- it allows zooming
+     * from a specific point by adjusting [scrollX] and [scrollY]
+     *
+     * This should be called from a mouse event listener
      */
     fun setMouse(x: Double, y: Double) {
         mouseX = x
@@ -328,7 +349,7 @@ virt  = [row=$virtualGridRows, col=$virtualGridCols]
      * total width of the virtual view
      *
      * Limits result to < 1.0 because a division by 0 is possible
-     * when [initGrid] is not calledbefore this method
+     * when [initGrid] is not called before this method
      *
      * @return the thumb size for the horizontal scroll bar in [0, 1]
      */
@@ -346,7 +367,7 @@ virt  = [row=$virtualGridRows, col=$virtualGridCols]
      * total height of the virtual view
      *
      * Limits result to < 1.0 because a division by 0 is possible
-     * when [initGrid] is not calledbefore this method
+     * when [initGrid] is not called before this method
      *
      * @return the thumb size for the vertical scroll bar in [0, 1]
      */

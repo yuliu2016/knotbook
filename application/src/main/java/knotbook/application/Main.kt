@@ -18,7 +18,7 @@ import knotbook.core.registry.Registry
 import knotbook.core.registry.RegistryEditor
 import knotbook.core.splash.GCSplash
 import knotbook.core.splash.Splash
-import knotbook.core.table.Knotable
+import knotbook.core.table.KnotTable
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid
 import org.scenicview.ScenicView
 import kotlin.system.exitProcess
@@ -165,7 +165,7 @@ class Main : Application() {
     }
 
     val scene = Scene(vbox {
-        val knotable = Knotable()
+        val knotable = KnotTable()
         stylesheets.add("/knotbook.css")
         prefWidth = 800.0
         prefHeight = 600.0
