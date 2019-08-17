@@ -1,4 +1,19 @@
 jobs:
+  - job: Windows
+      pool:
+        vmImage: 'windows-latest'
+      steps:
+        - script: echo hello from Windows
+        - task: Gradle@2
+          inputs:
+            workingDirectory: ""
+            gradleWrapperFile: "gradlew"
+            javaHomeOption: "JDKVersion"
+            jdkVersionOption: "1.11"
+            jdkArchitectureOption: "x64"
+            publishJUnitResults: false
+            testResultsFiles: "**/TEST-*.xml"
+            tasks: "build"
   - job: Linux
     pool:
       vmImage: 'ubuntu-latest'
@@ -19,21 +34,6 @@ jobs:
       vmImage: 'macOS-latest'
     steps:
       - script: echo hello from macOS
-      - task: Gradle@2
-        inputs:
-          workingDirectory: ""
-          gradleWrapperFile: "gradlew"
-          javaHomeOption: "JDKVersion"
-          jdkVersionOption: "1.12"
-          jdkArchitectureOption: "x64"
-          publishJUnitResults: false
-          testResultsFiles: "**/TEST-*.xml"
-          tasks: "build"
-  - job: Windows
-    pool:
-      vmImage: 'windows-latest'
-    steps:
-      - script: echo hello from Windows
       - task: Gradle@2
         inputs:
           workingDirectory: ""
