@@ -103,21 +103,10 @@ class VirtualGrid {
     /**
      * Set the grid size to ([newRows], [newColumns]]
      */
-    fun initGrid(newRows: Int, newColumns: Int) {
+    fun initGrid(newColumns: Int, newRows: Int) {
 
-        require(newRows > 0 && newColumns > 0) {
+        require(newColumns > 0 && newRows > 0) {
             "Dimensions cannot be less than 0"
-        }
-
-        if (newRows > rowHeights.size) {
-
-            val oldRows = rowHeights.size
-
-            rowHeights = rowHeights.copyOf(newRows)
-
-            for (i in oldRows until newRows) {
-                rowHeights[i] = policy.minCellHeight
-            }
         }
 
         if (newColumns > colWidths.size) {
@@ -129,10 +118,25 @@ class VirtualGrid {
             for (i in oldColumns until newColumns) {
                 colWidths[i] = policy.minCellWidth
             }
+
+            sumIntoOrExpand(colWidths, colPos)
         }
 
-        rows = newRows
+        if (newRows > rowHeights.size) {
+
+            val oldRows = rowHeights.size
+
+            rowHeights = rowHeights.copyOf(newRows)
+
+            for (i in oldRows until newRows) {
+                rowHeights[i] = policy.minCellHeight
+            }
+
+            sumIntoOrExpand(rowHeights, rowPos)
+        }
+
         cols = newColumns
+        rows = newRows
 
         totalWidth = 0.0
 
@@ -281,14 +285,20 @@ class VirtualGrid {
      * Update the row state and mark for update
      */
     fun updateRowState() {
+
         check(virtualRowPos.size >= virtualRows) {
             "Cannot update row state - Position bound limited"
         }
+
         var start = -scrollY * 300
+
         for (j in 0 until virtualRows) {
+
             virtualRowPos[j] = start
+
             start += if (j >= rows) policy.minCellHeight else rowHeights[j]
         }
+
         markRowStateChanged()
     }
 
@@ -296,14 +306,20 @@ class VirtualGrid {
      * Update the column state and mark for update
      */
     fun updateColState() {
+
         check(virtualColPos.size >= virtualCols) {
             "Cannot update column state - Position bound limited"
         }
+
         var start = -scrollX * 300
+
         for (j in 0 until virtualCols) {
+
             virtualColPos[j] = start
+
             start += if (j >= cols) policy.minCellWidth else colWidths[j]
         }
+
         markColStateChanged()
     }
 
@@ -389,10 +405,34 @@ class VirtualGrid {
         return effectiveClipHeight / totalHeight
     }
 
-//
-//    fun sumInto(values: DoubleArray, sumCache: DoubleArray) {
-//
-//    }
+    /**
+     * Sum an array of values into another array,
+     * such that the i-th item in the resulting array is the
+     * sum of all values between the index of [0, i] in the input
+     * array.
+     *
+     * @param sumCache accepts a cached array to reuse memory. This
+     * is used for [rowPos] and [colPos]. This array is expanded
+     * as needed to fit the size of [values]
+     *
+     * @return the sum array
+     */
+    fun sumIntoOrExpand(values: DoubleArray, sumCache: DoubleArray): DoubleArray {
+        val sum = if (values.size <= sumCache.size) {
+            sumCache
+        } else {
+            DoubleArray(values.size)
+        }
+
+        var accumulator = 0.0
+
+        for (i in 0 until values.size) {
+            accumulator += values[i]
+            sum[i] = accumulator
+        }
+
+        return sum
+    }
 
 
     override fun toString(): String {

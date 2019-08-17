@@ -44,7 +44,7 @@ class KnotTableSkin(knotable: KnotTable) : SkinBase<KnotTable>(knotable) {
     val cells: List<Text>
 
     init {
-        grid.initGrid(70, 20)
+        grid.initGrid(20, 70)
         vln = (0..(visualBounds.width / kMinCellWidth).toInt()).map { Line() }
         hln = (0..(visualBounds.height / kMinCellHeight).toInt()).map { Line() }
         cells = (0 until vln.size * hln.size).map { Text("0") }
