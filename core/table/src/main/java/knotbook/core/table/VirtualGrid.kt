@@ -13,61 +13,29 @@ package knotbook.core.table
  *
  * Usage of this class requires calling the right methods after
  * changing parameters, because it's too complex to listen for changes.
- * On the other hand, it is
  */
+
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class VirtualGrid {
 
-    /**
-     * Configuration limits for the grid
-     */
-    data class Policy(
-
-            val minCellHeight: Double = 18.0,
-
-            val maxCellHeight: Double = 30.0,
-
-            val minCellWidth: Double = 80.0,
-
-            val maxCellWidth: Double = 400.0,
-
-            val minZoomFactor: Double = 0.5,
-
-            val maxZoomFactor: Double = 2.0
-    )
-
-    // Grid policy
-
-    var policy = Policy()
-        private set
+    // === TOTAL FINITE DIMENSIONS ===
 
     // The size of the grid to display
 
-    var rows = 0
+    var cols = 0
         private set
-    var columns = 0
+    var rows = 0
         private set
 
     // The width and heights of individual cells
 
     var colWidths = DoubleArray(0)
-        private set
     var rowHeights = DoubleArray(0)
-        private set
 
-    // The position of grid lines
+    // The position of grid lines -- synced with widths and heights
 
-    var colPositions = DoubleArray(0)
-        private set
-    var rowPositions = DoubleArray(0)
-        private set
-
-    // The number of lines that need to show on the screen
-
-    var virtualGridRows = 0
-        private set
-    var virtualGridCols = 0
-        private set
+    var colPos = DoubleArray(0)
+    var rowPos = DoubleArray(0)
 
     // The total dimensions of the entire grid
     // Equal to the sum of the individual dimensions up to the specified size
@@ -77,12 +45,28 @@ class VirtualGrid {
     var totalHeight = 0.0
         private set
 
+    // === VIRTUAL DIMENSIONS ===
+
+    // The number of lines that need to show on the screen
+
+    var virtualCols = 0
+        private set
+    var virtualRows = 0
+        private set
+
+    // The position of grid lines
+
+    var virtualColPos = DoubleArray(0)
+    var virtualRowPos = DoubleArray(0)
+
     // The width and height of the virtual box
 
     var clipWidth = 0.0
         private set
     var clipHeight = 0.0
         private set
+
+    // === VIEW CONFIGURATION ===
 
     // The zoom factor -- Everything else is invariant to the zoom factor
     // Must apply it in every calculation to avoid changing other parameters
@@ -97,6 +81,8 @@ class VirtualGrid {
     var scrollY = 0.0
         private set
 
+    // === COMPUTE STATE/MARKERS ===
+
     // The last position of the mouse
     var mouseX = 0.0
         private set
@@ -109,18 +95,10 @@ class VirtualGrid {
     var requiresColLayout = false
         private set
 
+    // === GRID POLICY ===
 
-    override fun toString(): String {
-        return """VirtualGrid(
-dim   = [row=$rows, col=$columns],
-total = [w=$totalWidth, h=$totalHeight],
-clip  = [w=$clipWidth, h=$clipHeight],
-zoom  = [$zoomFactor],
-mouse = [x=$mouseX, y=$mouseY,
-scr   = [x=$scrollX, y=$scrollY],
-vir   = [row=$virtualGridRows, col=$virtualGridCols]
-)"""
-    }
+    var policy = Policy()
+        private set
 
     /**
      * Set the grid size to ([newRows], [newColumns]]
@@ -154,11 +132,11 @@ vir   = [row=$virtualGridRows, col=$virtualGridCols]
         }
 
         rows = newRows
-        columns = newColumns
+        cols = newColumns
 
         totalWidth = 0.0
 
-        for (i in 0 until columns) {
+        for (i in 0 until cols) {
             totalWidth += colWidths[i]
         }
 
@@ -182,14 +160,7 @@ vir   = [row=$virtualGridRows, col=$virtualGridCols]
 
             scrollX -= dx / (totalWidth - effectiveClipWidth)
 
-            if (scrollX < 0) {
-                scrollX = 0.0
-            }
-            if (scrollX > 1) {
-                scrollX = 1.0
-            }
-
-            updateColState()
+            constrainScrollX()
         }
 
         val effectiveClipHeight = computeEffectiveClipHeight()
@@ -198,15 +169,54 @@ vir   = [row=$virtualGridRows, col=$virtualGridCols]
 
             scrollY -= dy / (totalHeight - effectiveClipHeight)
 
-            if (scrollY < 0) {
-                scrollY = 0.0
-            }
+            constrainScrollY()
+        }
+    }
 
-            if (scrollY > 1) {
-                scrollY = 1.0
-            }
+    /**
+     * Constrains [scrollX] between [0, 1] and updates the state
+     */
+    fun constrainScrollX() {
+        if (scrollX < 0) {
+            scrollX = 0.0
+        }
+        if (scrollX > 1) {
+            scrollX = 1.0
+        }
+        updateColState()
+    }
 
-            updateRowState()
+    /**
+     * Constrains [scrollY] between [0, 1]
+     */
+    fun constrainScrollY() {
+        if (scrollY < 0) {
+            scrollY = 0.0
+        }
+
+        if (scrollY > 1) {
+            scrollY = 1.0
+        }
+        updateRowState()
+    }
+
+    /**
+     * Scrolls to a specific point in the x direction
+     */
+    fun scrollToX(x: Double) {
+        if (x != scrollX) {
+            scrollX = x
+            constrainScrollX()
+        }
+    }
+
+    /**
+     * Scrolls to a specific point in the y direction
+     */
+    fun scrollToY(y: Double) {
+        if (y != scrollY) {
+            scrollY = y
+            constrainScrollY()
         }
     }
 
@@ -229,7 +239,7 @@ vir   = [row=$virtualGridRows, col=$virtualGridCols]
     }
 
     /**
-     * @return the set size of [columns] that need to be made virtual
+     * @return the set size of [cols] that need to be made virtual
      */
     fun computeVirtualCols(): Int {
         return (clipHeight / (policy.minCellHeight * zoomFactor)).toInt() + 2
@@ -252,17 +262,17 @@ vir   = [row=$virtualGridRows, col=$virtualGridCols]
         clipWidth = width
         clipHeight = height
 
-        virtualGridRows = computeVirtualRows()
+        virtualRows = computeVirtualRows()
 
-        if (virtualGridRows > rowPositions.size) {
-            rowPositions = DoubleArray(virtualGridRows)
+        if (virtualRows > virtualRowPos.size) {
+            virtualRowPos = DoubleArray(virtualRows)
             updateRowState()
         }
 
-        virtualGridCols = computeVirtualCols()
+        virtualCols = computeVirtualCols()
 
-        if (virtualGridCols > colPositions.size) {
-            colPositions = DoubleArray(virtualGridCols)
+        if (virtualCols > virtualColPos.size) {
+            virtualColPos = DoubleArray(virtualCols)
             updateColState()
         }
     }
@@ -271,12 +281,12 @@ vir   = [row=$virtualGridRows, col=$virtualGridCols]
      * Update the row state and mark for update
      */
     fun updateRowState() {
-        check(rowPositions.size >= virtualGridRows) {
+        check(virtualRowPos.size >= virtualRows) {
             "Cannot update row state - Position bound limited"
         }
-        var start = scrollY * 100
-        for (j in 0 until virtualGridRows) {
-            rowPositions[j] = start
+        var start = -scrollY * 300
+        for (j in 0 until virtualRows) {
+            virtualRowPos[j] = start
             start += if (j >= rows) policy.minCellHeight else rowHeights[j]
         }
         markRowStateChanged()
@@ -286,13 +296,13 @@ vir   = [row=$virtualGridRows, col=$virtualGridCols]
      * Update the column state and mark for update
      */
     fun updateColState() {
-        check( colPositions.size >= virtualGridCols) {
+        check(virtualColPos.size >= virtualCols) {
             "Cannot update column state - Position bound limited"
         }
-        var start = scrollX * 100
-        for (j in 0 until virtualGridCols) {
-            colPositions[j] = start
-            start += if (j >= columns) policy.minCellWidth else colWidths[j]
+        var start = -scrollX * 300
+        for (j in 0 until virtualCols) {
+            virtualColPos[j] = start
+            start += if (j >= cols) policy.minCellWidth else colWidths[j]
         }
         markColStateChanged()
     }
@@ -378,4 +388,40 @@ vir   = [row=$virtualGridRows, col=$virtualGridCols]
         }
         return effectiveClipHeight / totalHeight
     }
+
+//
+//    fun sumInto(values: DoubleArray, sumCache: DoubleArray) {
+//
+//    }
+
+
+    override fun toString(): String {
+        return """VirtualGrid(
+ dim   = [row=$rows, col=$cols],
+ total = [w=$totalWidth, h=$totalHeight],
+ clip  = [w=$clipWidth, h=$clipHeight],
+ zoom  = [$zoomFactor],
+ mouse = [x=$mouseX, y=$mouseY,
+ scr   = [x=$scrollX, y=$scrollY],
+ vir   = [row=$virtualRows, col=$virtualCols]
+)"""
+    }
+
+    /**
+     * Configuration limits for the grid
+     */
+    data class Policy(
+
+            val minCellWidth: Double = 80.0,
+
+            val maxCellWidth: Double = 400.0,
+
+            val minCellHeight: Double = 18.0,
+
+            val maxCellHeight: Double = 30.0,
+
+            val minZoomFactor: Double = 0.5,
+
+            val maxZoomFactor: Double = 2.0
+    )
 }

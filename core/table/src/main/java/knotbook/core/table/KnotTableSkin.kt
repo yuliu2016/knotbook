@@ -85,8 +85,8 @@ class KnotTableSkin(knotable: KnotTable) : SkinBase<KnotTable>(knotable) {
         grid.doIfColStateChanged {
             for (i in 0 until vln.size) {
                 val line = vln[i]
-                if (i < grid.virtualGridCols) {
-                    val x = grid.colPositions[i]
+                if (i < grid.virtualCols) {
+                    val x = grid.virtualColPos[i]
                     line.startX = 0.0
                     line.startY = 0.0
                     line.endX = 0.0
@@ -103,8 +103,8 @@ class KnotTableSkin(knotable: KnotTable) : SkinBase<KnotTable>(knotable) {
         grid.doIfRowStateChanged {
             for (j in 0 until hln.size) {
                 val line = hln[j]
-                if (j < grid.virtualGridRows) {
-                    val y = grid.rowPositions[j]
+                if (j < grid.virtualRows) {
+                    val y = grid.virtualRowPos[j]
                     line.startX = 0.0
                     line.startY = 0.0
                     line.endX = contentWidth
