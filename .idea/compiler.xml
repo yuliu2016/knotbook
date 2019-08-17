@@ -8,6 +8,10 @@
       <module name="knotbook.core.snappy.test" target="12" />
       <module name="knotbook.ext.expression-solver.main" target="12" />
       <module name="knotbook.ext.expression-solver.test" target="12" />
+      <module name="knotbook.ext.formulas.main" target="12" />
+      <module name="knotbook.ext.formulas.test" target="12" />
+      <module name="knotbook.ext.tba-client.main" target="12" />
+      <module name="knotbook.ext.tba-client.test" target="12" />
       <module name="knotbook.main" target="11" />
       <module name="knotbook.snap.main" target="11" />
       <module name="knotbook.snap.test" target="11" />
