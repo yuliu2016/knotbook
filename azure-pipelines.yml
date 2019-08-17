@@ -13,7 +13,7 @@ jobs:
           jdkArchitectureOption: "x64"
           publishJUnitResults: false
           testResultsFiles: "**/TEST-*.xml"
-          tasks: "build"
+          tasks: "build jlink"
   - job: Linux
     pool:
       vmImage: 'ubuntu-latest'
@@ -28,7 +28,7 @@ jobs:
           jdkArchitectureOption: "x64"
           publishJUnitResults: false
           testResultsFiles: "**/TEST-*.xml"
-          tasks: "build"
+          tasks: "build jlink"
   - job: macOS
     pool:
       vmImage: 'macOS-latest'
@@ -43,4 +43,4 @@ jobs:
           jdkArchitectureOption: "x64"
           publishJUnitResults: false
           testResultsFiles: "**/TEST-*.xml"
-          tasks: "build"
+          tasks: "build jlink"
