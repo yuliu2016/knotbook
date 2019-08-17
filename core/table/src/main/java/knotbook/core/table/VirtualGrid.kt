@@ -119,7 +119,7 @@ class VirtualGrid {
                 colWidths[i] = policy.minCellWidth
             }
 
-            sumIntoOrExpand(colWidths, colPos)
+            colPos = sumIntoOrExpand(colWidths, colPos)
         }
 
         if (newRows > rowHeights.size) {
@@ -132,7 +132,7 @@ class VirtualGrid {
                 rowHeights[i] = policy.minCellHeight
             }
 
-            sumIntoOrExpand(rowHeights, rowPos)
+            rowPos = sumIntoOrExpand(rowHeights, rowPos)
         }
 
         cols = newColumns
