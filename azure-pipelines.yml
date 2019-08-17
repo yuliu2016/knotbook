@@ -13,7 +13,7 @@ jobs:
           jdkArchitectureOption: "x64"
           publishJUnitResults: false
           testResultsFiles: "**/TEST-*.xml"
-          tasks: "build jlink"
+          tasks: "build"
   - job: Linux
     pool:
       vmImage: 'ubuntu-latest'
