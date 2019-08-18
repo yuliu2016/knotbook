@@ -49,7 +49,7 @@ jobs:
         inputs:
           rootFolderOrFile: '$(System.DefaultWorkingDirectory)/build/application/image'
           includeRootFolder: true
-          archiveType: '7z'
+          archiveType: 'zip'
           archiveFile: '$(System.DefaultWorkingDirectory)/$(Build.BuildId).7z'
   - job: macOS
     pool:
@@ -69,5 +69,5 @@ jobs:
         inputs:
           rootFolderOrFile: '$(System.DefaultWorkingDirectory)/build/application/image'
           includeRootFolder: true
-          archiveType: '7z'
+          archiveType: 'zip'
           archiveFile: '$(System.DefaultWorkingDirectory)/$(Build.BuildId).7z'
