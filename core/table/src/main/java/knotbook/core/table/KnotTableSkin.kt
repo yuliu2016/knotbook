@@ -15,7 +15,7 @@ class KnotTableSkin(knotable: KnotTable) : SkinBase<KnotTable>(knotable) {
 
     private companion object {
         const val kLineStroke = 0.5
-        const val kMinCellWidth = 80.0
+        const val kMinCellWidth = 90.0
         const val kMinCellHeight = 18.0
         const val kTextMargin = 4.0
     }
@@ -44,6 +44,8 @@ class KnotTableSkin(knotable: KnotTable) : SkinBase<KnotTable>(knotable) {
     val cells: List<Text>
 
     init {
+        flow.x.minSize = kMinCellWidth
+        flow.y.minSize = kMinCellHeight
         flow.x.setCellCount(20)
         flow.y.setCellCount(70)
         vln = (0..(visualBounds.width / kMinCellWidth).toInt()).map { Line() }

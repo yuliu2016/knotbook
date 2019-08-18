@@ -21,7 +21,6 @@ class LinearVirtualFlow {
     // === MIN-MAX DIMENSIONS ===
 
     var minSize = 0.0
-    var maxSize = 0.0
 
     // === TOTAL FINITE DIMENSIONS ===
 
@@ -228,6 +227,7 @@ class LinearVirtualFlow {
      * This method only applies when the clip dimensions have changed
      */
     fun updateContentClip(size: Double) {
+        println(size)
         if (size == clipSize) {
             return
         }
