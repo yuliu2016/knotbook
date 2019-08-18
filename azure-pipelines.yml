@@ -34,7 +34,7 @@ jobs:
       - task: PublishPipelineArtifact@1
         inputs:
           path: "$(System.DefaultWorkingDirectory)/$(Build.BuildId).7z"
-          artifact: "WebApp"
+          artifact: "app-image-windows"
   - job: Linux
     pool:
       vmImage: "ubuntu-latest"
@@ -58,7 +58,7 @@ jobs:
       - task: PublishPipelineArtifact@1
         inputs:
           path: "$(System.DefaultWorkingDirectory)/$(Build.BuildId).zip"
-          artifact: "WebApp"
+          artifact: "app-image-ubuntu"
   - job: macOS
     pool:
       vmImage: "macOS-latest"
@@ -82,4 +82,4 @@ jobs:
       - task: PublishPipelineArtifact@1
         inputs:
           path: "$(System.DefaultWorkingDirectory)/$(Build.BuildId).zip"
-          artifact: "WebApp"
+          artifact: "app-image-mac"
