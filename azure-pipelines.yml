@@ -1,19 +1,19 @@
 jobs:
   - job: Windows
     pool:
-      vmImage: 'windows-latest'
+      vmImage: "windows-latest"
     steps:
       - powershell: |
           mkdir build
-          $ProgressPreference = 'SilentlyContinue'
+          $ProgressPreference = "SilentlyContinue"
           wget "https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_windows-x64_bin.zip" -O "build\jdk.zip"
-        displayName: 'Download JDK'
+        displayName: "Download JDK"
       - task: JavaToolInstaller@0
         inputs:
           versionSpec: "12"
           jdkSourceOption: localDirectory
-          jdkFile: 'build/jdk.zip'
-          jdkDestinationDirectory: 'build/jdk_inst'
+          jdkFile: "build/jdk.zip"
+          jdkDestinationDirectory: "build/jdk_inst"
           jdkArchitectureOption: x64
       - task: Gradle@2
         inputs:
@@ -27,13 +27,17 @@ jobs:
           tasks: "build jlink"
       - task: ArchiveFiles@2
         inputs:
-          rootFolderOrFile: '$(System.DefaultWorkingDirectory)/build/application/image'
+          rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/application/image"
           includeRootFolder: true
-          archiveType: '7z'
-          archiveFile: '$(System.DefaultWorkingDirectory)/$(Build.BuildId).7z'
+          archiveType: "7z"
+          archiveFile: "$(System.DefaultWorkingDirectory)/$(Build.BuildId).7z"
+      - task: PublishPipelineArtifact@1
+        inputs:
+          path: "$(System.DefaultWorkingDirectory)/$(Build.BuildId).7z"
+          artifact: "WebApp"
   - job: Linux
     pool:
-      vmImage: 'ubuntu-latest'
+      vmImage: "ubuntu-latest"
     steps:
       - task: Gradle@2
         inputs:
@@ -47,13 +51,17 @@ jobs:
           tasks: "build jlink"
       - task: ArchiveFiles@2
         inputs:
-          rootFolderOrFile: '$(System.DefaultWorkingDirectory)/build/application/image'
+          rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/application/image"
           includeRootFolder: true
-          archiveType: 'zip'
-          archiveFile: '$(System.DefaultWorkingDirectory)/$(Build.BuildId).zip'
+          archiveType: "zip"
+          archiveFile: "$(System.DefaultWorkingDirectory)/$(Build.BuildId).zip"
+      - task: PublishPipelineArtifact@1
+        inputs:
+          path: "$(System.DefaultWorkingDirectory)/$(Build.BuildId).zip"
+          artifact: "WebApp"
   - job: macOS
     pool:
-      vmImage: 'macOS-latest'
+      vmImage: "macOS-latest"
     steps:
       - task: Gradle@2
         inputs:
@@ -67,7 +75,11 @@ jobs:
           tasks: "build jlink"
       - task: ArchiveFiles@2
         inputs:
-          rootFolderOrFile: '$(System.DefaultWorkingDirectory)/build/application/image'
+          rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/application/image"
           includeRootFolder: true
-          archiveType: 'zip'
-          archiveFile: '$(System.DefaultWorkingDirectory)/$(Build.BuildId).zip'
+          archiveType: "zip"
+          archiveFile: "$(System.DefaultWorkingDirectory)/$(Build.BuildId).zip"
+      - task: PublishPipelineArtifact@1
+        inputs:
+          path: "$(System.DefaultWorkingDirectory)/$(Build.BuildId).zip"
+          artifact: "WebApp"
