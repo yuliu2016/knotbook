@@ -246,6 +246,34 @@ class LinearVirtualFlow {
     }
 
 
+    /**
+     * Use the result of [computeEffectiveClipSize] to calculate
+     * thumb size, defined as the ratio of the clip size to the
+     * total size of the virtual view
+     *
+     * Limits result to < 1.0 because a division by 0 is possible
+     * when [setCellCount] is not called before this method
+     *
+     * @return the thumb size for the scroll bar in [0, 1]
+     */
+    fun thumbSize(): Double {
+        val effectiveClipSize = computeEffectiveClipSize()
+        if (totalSize <= effectiveClipSize) {
+            return 1.0
+        }
+        return effectiveClipSize / totalSize
+    }
+
+    /**
+     * Event callback if column is required
+     */
+    fun doIfStateChanged(action: () -> Unit) {
+        if (requiresLayout) {
+            action()
+            requiresLayout = false
+        }
+    }
+
     override fun toString(): String {
         return "LVF(cnt=$cellCount, tot=$totalSize, vce=$virtualCellCount, " +
                 "cli=$clipSize, zoo=$zoomFactor, scr=$scroll)"

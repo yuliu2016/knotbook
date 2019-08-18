@@ -20,18 +20,18 @@ class KnotTableSkin(knotable: KnotTable) : SkinBase<KnotTable>(knotable) {
         const val kTextMargin = 4.0
     }
 
-    val grid = VirtualGrid()
+    val flow = GridVirtualFlow()
 
     val hsb = ScrollBar().apply {
         orientation = Orientation.HORIZONTAL
-        visibleAmount = 0.3
+        visibleAmount = 1.0
         min = 0.0
         max = 1.0
     }
 
     val vsb = ScrollBar().apply {
         orientation = Orientation.VERTICAL
-        visibleAmount = 0.3
+        visibleAmount = 1.0
         min = 0.0
         max = 1.0
     }
@@ -44,8 +44,8 @@ class KnotTableSkin(knotable: KnotTable) : SkinBase<KnotTable>(knotable) {
     val cells: List<Text>
 
     init {
-        grid.initGrid(20, 70)
-        !grid.colPos.debug
+        flow.x.setCellCount(20)
+        flow.y.setCellCount(70)
         vln = (0..(visualBounds.width / kMinCellWidth).toInt()).map { Line() }
         hln = (0..(visualBounds.height / kMinCellHeight).toInt()).map { Line() }
         cells = (0 until vln.size * hln.size).map { Text("0") }
@@ -55,15 +55,13 @@ class KnotTableSkin(knotable: KnotTable) : SkinBase<KnotTable>(knotable) {
         children.addAll(hsb, vsb)
         skinnable!!.apply {
             onScroll = EventHandler {
-                grid.scrollBy(it.deltaX * 2, it.deltaY * 2)
-                vsb.value = grid.scrollY
-                hsb.value = grid.scrollX
-                vsb.visibleAmount = grid.verticalThumbSize()
-                hsb.visibleAmount = grid.horizontalThumbSize()
+                flow.x.scrollBy(it.deltaX * 3)
+                flow.y.scrollBy(it.deltaY * 3)
+                vsb.value = flow.y.scroll
+                hsb.value = flow.x.scroll
+                vsb.visibleAmount = flow.y.thumbSize()
+                hsb.visibleAmount = flow.x.thumbSize()
                 requestLayout()
-            }
-            onMouseMoved = EventHandler {
-                grid.setMouse(it.x, it.y)
             }
         }
     }
@@ -82,12 +80,13 @@ class KnotTableSkin(knotable: KnotTable) : SkinBase<KnotTable>(knotable) {
 
     @Suppress("DuplicatedCode")
     override fun layoutChildren(contentX: Double, contentY: Double, contentWidth: Double, contentHeight: Double) {
-        grid.updateContentClip(contentWidth, contentHeight)
-        grid.doIfColStateChanged {
+        flow.x.updateContentClip(contentWidth)
+        flow.y.updateContentClip(contentHeight)
+        flow.x.doIfStateChanged {
             for (i in 0 until vln.size) {
                 val line = vln[i]
-                if (i < grid.virtualCols) {
-                    val x = grid.virtualColPos[i]
+                if (i < flow.x.virtualCellCount) {
+                    val x = flow.x.virtualCellPos[i]
                     line.startX = 0.0
                     line.startY = 0.0
                     line.endX = 0.0
@@ -101,11 +100,11 @@ class KnotTableSkin(knotable: KnotTable) : SkinBase<KnotTable>(knotable) {
                 }
             }
         }
-        grid.doIfRowStateChanged {
+        flow.y.doIfStateChanged {
             for (j in 0 until hln.size) {
                 val line = hln[j]
-                if (j < grid.virtualRows) {
-                    val y = grid.virtualRowPos[j]
+                if (j < flow.y.virtualCellCount) {
+                    val y = flow.y.virtualCellPos[j]
                     line.startX = 0.0
                     line.startY = 0.0
                     line.endX = contentWidth
