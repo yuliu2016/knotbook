@@ -37,9 +37,6 @@ dependencies {
     implementation(kotlin("stdlib"))
 
     implementation(group = "org.kordamp.ikonli", name = "ikonli-fontawesome5-pack", version = "11.3.4")
-
-    testImplementation(kotlin("test"))
-    testImplementation(group = "junit", name = "junit", version = "4.12")
 }
 
 val appJVMArgs = listOf(
