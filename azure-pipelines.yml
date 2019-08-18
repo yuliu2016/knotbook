@@ -1,3 +1,8 @@
+trigger:
+  - master
+  - release/*
+  - feature/*
+
 jobs:
   - job: Windows
     pool:
