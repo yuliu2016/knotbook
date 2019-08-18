@@ -25,6 +25,12 @@ jobs:
           publishJUnitResults: false
           testResultsFiles: "**/TEST-*.xml"
           tasks: "build jlink"
+      - task: ArchiveFiles@2
+        inputs:
+          rootFolderOrFile: '$(System.DefaultWorkingDirectory)/build/application/image'
+          includeRootFolder: true
+          archiveType: '7z'
+          archiveFile: '$(System.DefaultWorkingDirectory)/$(Build.BuildId).7z'
   - job: Linux
     pool:
       vmImage: 'ubuntu-latest'
@@ -39,6 +45,12 @@ jobs:
           publishJUnitResults: false
           testResultsFiles: "**/TEST-*.xml"
           tasks: "build jlink"
+      - task: ArchiveFiles@2
+        inputs:
+          rootFolderOrFile: '$(System.DefaultWorkingDirectory)/build/application/image'
+          includeRootFolder: true
+          archiveType: '7z'
+          archiveFile: '$(System.DefaultWorkingDirectory)/$(Build.BuildId).7z'
   - job: macOS
     pool:
       vmImage: 'macOS-latest'
@@ -53,3 +65,9 @@ jobs:
           publishJUnitResults: false
           testResultsFiles: "**/TEST-*.xml"
           tasks: "build jlink"
+      - task: ArchiveFiles@2
+        inputs:
+          rootFolderOrFile: '$(System.DefaultWorkingDirectory)/build/application/image'
+          includeRootFolder: true
+          archiveType: '7z'
+          archiveFile: '$(System.DefaultWorkingDirectory)/$(Build.BuildId).7z'
