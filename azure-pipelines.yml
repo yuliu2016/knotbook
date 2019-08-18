@@ -50,7 +50,7 @@ jobs:
           rootFolderOrFile: '$(System.DefaultWorkingDirectory)/build/application/image'
           includeRootFolder: true
           archiveType: 'zip'
-          archiveFile: '$(System.DefaultWorkingDirectory)/$(Build.BuildId).7z'
+          archiveFile: '$(System.DefaultWorkingDirectory)/$(Build.BuildId).zip'
   - job: macOS
     pool:
       vmImage: 'macOS-latest'
@@ -70,4 +70,4 @@ jobs:
           rootFolderOrFile: '$(System.DefaultWorkingDirectory)/build/application/image'
           includeRootFolder: true
           archiveType: 'zip'
-          archiveFile: '$(System.DefaultWorkingDirectory)/$(Build.BuildId).7z'
+          archiveFile: '$(System.DefaultWorkingDirectory)/$(Build.BuildId).zip'
