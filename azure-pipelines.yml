@@ -20,6 +20,9 @@ jobs:
           jdkFile: "build/jdk.zip"
           jdkDestinationDirectory: "build/jdk_inst"
           jdkArchitectureOption: x64
+      - powershell: |
+          choco install 7zip -y
+        displayName: "Install 7z"
       - task: Gradle@2
         inputs:
           workingDirectory: ""
