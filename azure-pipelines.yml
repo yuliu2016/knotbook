@@ -3,7 +3,6 @@ jobs:
     pool:
       vmImage: 'windows-latest'
     steps:
-      - script: echo hello from Windows
       - powershell: |
           mkdir build
           $ProgressPreference = 'SilentlyContinue'
@@ -30,7 +29,6 @@ jobs:
     pool:
       vmImage: 'ubuntu-latest'
     steps:
-      - script: echo hello from Linux
       - task: Gradle@2
         inputs:
           workingDirectory: ""
@@ -45,7 +43,6 @@ jobs:
     pool:
       vmImage: 'macOS-latest'
     steps:
-      - script: echo hello from macOS
       - task: Gradle@2
         inputs:
           workingDirectory: ""
