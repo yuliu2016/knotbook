@@ -22,7 +22,7 @@ jobs:
           javaHomeOption: "JDKVersion"
           jdkVersionOption: "1.12"
           jdkArchitectureOption: "x64"
-          publishJUnitResults: false
+          publishJUnitResults: true
           testResultsFiles: "**/TEST-*.xml"
           tasks: "build jlink"
       - task: ArchiveFiles@2
@@ -42,7 +42,7 @@ jobs:
           javaHomeOption: "JDKVersion"
           jdkVersionOption: "1.12"
           jdkArchitectureOption: "x64"
-          publishJUnitResults: false
+          publishJUnitResults: true
           testResultsFiles: "**/TEST-*.xml"
           tasks: "build jlink"
       - task: ArchiveFiles@2
@@ -62,7 +62,7 @@ jobs:
           javaHomeOption: "JDKVersion"
           jdkVersionOption: "1.12"
           jdkArchitectureOption: "x64"
-          publishJUnitResults: false
+          publishJUnitResults: true
           testResultsFiles: "**/TEST-*.xml"
           tasks: "build jlink"
       - task: ArchiveFiles@2
