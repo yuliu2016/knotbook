@@ -15,7 +15,7 @@ class KnotTableSkin(knotable: KnotTable) : SkinBase<KnotTable>(knotable) {
 
     private companion object {
         const val kLineStroke = 0.5
-        const val kMinCellWidth = 80.0
+        const val kMinCellWidth = 90.0
         const val kMinCellHeight = 18.0
         const val kTextMargin = 4.0
     }
@@ -44,8 +44,10 @@ class KnotTableSkin(knotable: KnotTable) : SkinBase<KnotTable>(knotable) {
     val cells: List<Text>
 
     init {
+        flow.x.minSize = kMinCellWidth
+        flow.y.minSize = kMinCellHeight
         flow.x.setCellCount(20)
-        flow.y.setCellCount(70)
+        flow.y.setCellCount(700)
         vln = (0..(visualBounds.width / kMinCellWidth).toInt()).map { Line() }
         hln = (0..(visualBounds.height / kMinCellHeight).toInt()).map { Line() }
         cells = (0 until vln.size * hln.size).map { Text("0") }
@@ -55,8 +57,8 @@ class KnotTableSkin(knotable: KnotTable) : SkinBase<KnotTable>(knotable) {
         children.addAll(hsb, vsb)
         skinnable!!.apply {
             onScroll = EventHandler {
-                flow.x.scrollBy(it.deltaX * 3)
-                flow.y.scrollBy(it.deltaY * 3)
+                flow.x.scrollBy(it.deltaX * 2)
+                flow.y.scrollBy(it.deltaY * 2)
                 vsb.value = flow.y.scroll
                 hsb.value = flow.x.scroll
                 vsb.visibleAmount = flow.y.thumbSize()

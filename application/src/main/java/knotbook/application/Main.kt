@@ -42,7 +42,7 @@ class Main : Application() {
                     }
                     item {
                         name("Synchronize")
-                        icon(FontAwesomeSolid.SYNC, 13)
+                        icon(FontAwesomeSolid.SYNC, 12)
                         shortcut(KeyCode.R, control = true)
                     }
                     separator()
@@ -59,11 +59,11 @@ class Main : Application() {
                         name("Reveal Context in Source")
                         shortcut(KeyCode.J, control = true)
                     }
-                    separator()
                     item {
-                        name("Toggle Theme")
-                        shortcut(KeyCode.F2)
+                        name("Save as Zip File")
+                        shortcut(KeyCode.S, control = true, shift = true)
                     }
+                    separator()
                     item {
                         name("Exit")
                         action { exitProcess(0) }
@@ -100,6 +100,15 @@ class Main : Application() {
                 }
             }
             menu {
+                name("View")
+                modify {
+                    item {
+                        name("Toggle Theme")
+                        shortcut(KeyCode.F2)
+                    }
+                }
+            }
+            menu {
                 name("Navigate")
                 modify {
                     item { name("Toggle Sidebar") }
@@ -108,32 +117,48 @@ class Main : Application() {
                 }
             }
             menu {
-                name("Help")
+                name("Start")
                 modify {
+                    item {
+                        name("Data Agent")
+                        icon(FontAwesomeSolid.FILE_IMPORT, 13)
+                    }
                     item {
                         name("Scenic View")
                         action { ScenicView.show(scene) }
+                        icon(FontAwesomeSolid.IMAGE, 13)
                     }
                     item { name("Process Manager") }
                     item {
-                        name("Test Camera")
+                        name("WebCam View")
+                        icon(FontAwesomeSolid.CAMERA_RETRO, 13)
                         action {
                             KnotCameraTest.test()
                         }
                     }
-                    item { name("Plugin Manager") }
-                    item { name("Show Log File") }
                     item {
-                        name("Application Registry")
-                        icon(FontAwesomeSolid.ADDRESS_BOOK, 13)
+                        name("Plugin Manager")
+                        icon(FontAwesomeSolid.CUBE, 13)
+                    }
+                    item {
+                        name("Registry Editor")
+                        icon(FontAwesomeSolid.TOOLS, 13)
                         action { RegistryEditor.show() }
                     }
                     item {
-                        name("Start GC Cycle")
+                        name("Drive Path Planner")
+                        icon(FontAwesomeSolid.LOCATION_ARROW, 13)
+                    }
+                    item {
+                        name("Garbage Collection Cycle")
                         action { GCSplash.splash() }
                         shortcut(KeyCode.B, control = true)
                     }
-                    separator()
+                }
+            }
+            menu {
+                name("Help")
+                modify {
                     item {
                         name("About")
                         action { AboutSplash.splash() }

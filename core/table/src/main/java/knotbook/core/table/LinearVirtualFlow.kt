@@ -20,22 +20,30 @@ class LinearVirtualFlow {
 
     // === MIN-MAX DIMENSIONS ===
 
+    /**
+     * The minimum size of each cell
+     *
+     * This value is used to populate [cellSizes] if
+     * either the size of [cellSizes] is smaller than
+     * [cellCount] or if the computed [totalSize] is
+     * smaller than [clipSize]
+     */
     var minSize = 0.0
-    var maxSize = 0.0
 
-    // === TOTAL FINITE DIMENSIONS ===
-
-    // The total number of sections to display
-
+    /**
+     * The total number of sections to display
+     */
     var cellCount = 0
         private set
 
-    // The size of individual cells
-
+    /**
+     * The size of each individual cell
+     */
     var cellSizes = DoubleArray(0)
 
-    // The position of lines separating the
-
+    /**
+     * The position of lines separating cells
+     */
     var cellPos = DoubleArray(0)
 
     // The total dimensions of the entire grid
@@ -122,17 +130,15 @@ class LinearVirtualFlow {
      * @return the sum array
      */
     fun sumIntoOrExpand(values: DoubleArray, sumCache: DoubleArray): DoubleArray {
-        val sum = if (values.size <= sumCache.size) {
+        val sum = if (values.size < sumCache.size) {
             sumCache
         } else {
-            DoubleArray(values.size)
+            DoubleArray(values.size + 1)
         }
 
-        var accumulator = 0.0
-
+        sum[0] = 0.0
         for (i in 0 until values.size) {
-            accumulator += values[i]
-            sum[i] = accumulator
+            sum[i + 1] = sum[i] + values[i]
         }
 
         return sum
@@ -209,13 +215,16 @@ class LinearVirtualFlow {
             "Cannot update row state - Position bound limited"
         }
 
-        var start = -scroll * 300
+        val start = scroll * (totalSize - clipSize)
 
-        for (j in 0 until virtualCellCount) {
+        var j = 0
 
-            virtualCellPos[j] = start
-
-            start += if (j >= cellCount) minSize else cellSizes[j]
+        for (i in 0..cellCount) {
+            val pos = cellPos[i]
+            if (pos >= start && j < virtualCellCount) {
+                virtualCellPos[j] = pos - start
+                j++
+            }
         }
 
         markStateChanged()
@@ -228,6 +237,7 @@ class LinearVirtualFlow {
      * This method only applies when the clip dimensions have changed
      */
     fun updateContentClip(size: Double) {
+
         if (size == clipSize) {
             return
         }
@@ -257,10 +267,13 @@ class LinearVirtualFlow {
      * @return the thumb size for the scroll bar in [0, 1]
      */
     fun thumbSize(): Double {
+
         val effectiveClipSize = computeEffectiveClipSize()
+
         if (totalSize <= effectiveClipSize) {
             return 1.0
         }
+
         return effectiveClipSize / totalSize
     }
 

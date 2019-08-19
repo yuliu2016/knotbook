@@ -25,13 +25,13 @@ public class RegistryEditor {
         VBox container = new VBox();
         Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
         container.setPrefWidth(bounds.getWidth() * 0.7);
-        container.setPrefHeight(bounds.getHeight() * 0.7);
+        container.setPrefHeight(bounds.getHeight() * 0.9);
 
         String text = Registry.INSTANCE.join();
         TextArea area = new TextArea(text);
         area.setStyle("-fx-background-insets: 0; -fx-border-insets:0; -fx-focus-color: transparent; " +
                 "-fx-faint-focus-color:transparent; -fx-font-family:'Roboto Mono', 'Courier New', monospace; " +
-                "-fx-font-size:18");
+                "-fx-font-size:18; -fx-font-smoothing-type: gray");
         VBox.setVgrow(area, Priority.ALWAYS);
 
         Button discard = new Button("Discard");
