@@ -42,7 +42,7 @@ class Main : Application() {
                     }
                     item {
                         name("Synchronize")
-                        icon(FontAwesomeSolid.SYNC, 13)
+                        icon(FontAwesomeSolid.SYNC, 12)
                         shortcut(KeyCode.R, control = true)
                     }
                     separator()
@@ -60,10 +60,6 @@ class Main : Application() {
                         shortcut(KeyCode.J, control = true)
                     }
                     separator()
-                    item {
-                        name("Toggle Theme")
-                        shortcut(KeyCode.F2)
-                    }
                     item {
                         name("Exit")
                         action { exitProcess(0) }
@@ -100,6 +96,15 @@ class Main : Application() {
                 }
             }
             menu {
+                name("View")
+                modify {
+                    item {
+                        name("Toggle Theme")
+                        shortcut(KeyCode.F2)
+                    }
+                }
+            }
+            menu {
                 name("Navigate")
                 modify {
                     item { name("Toggle Sidebar") }
@@ -108,32 +113,44 @@ class Main : Application() {
                 }
             }
             menu {
-                name("Help")
+                name("Tools")
                 modify {
                     item {
                         name("Scenic View")
                         action { ScenicView.show(scene) }
+                        icon(FontAwesomeSolid.IMAGE, 13)
                     }
                     item { name("Process Manager") }
                     item {
                         name("Test Camera")
+                        icon(FontAwesomeSolid.CAMERA_RETRO, 13)
                         action {
                             KnotCameraTest.test()
                         }
                     }
-                    item { name("Plugin Manager") }
-                    item { name("Show Log File") }
+                    item {
+                        name("Plugin Manager")
+                        icon(FontAwesomeSolid.CUBE, 13)
+                    }
                     item {
                         name("Application Registry")
-                        icon(FontAwesomeSolid.ADDRESS_BOOK, 13)
+                        icon(FontAwesomeSolid.TOOLS, 13)
                         action { RegistryEditor.show() }
                     }
                     item {
-                        name("Start GC Cycle")
+                        name("Robot Path Planner")
+                        icon(FontAwesomeSolid.LOCATION_ARROW, 13)
+                    }
+                    item {
+                        name("Start Garbage Collection")
                         action { GCSplash.splash() }
                         shortcut(KeyCode.B, control = true)
                     }
-                    separator()
+                }
+            }
+            menu {
+                name("Help")
+                modify {
                     item {
                         name("About")
                         action { AboutSplash.splash() }

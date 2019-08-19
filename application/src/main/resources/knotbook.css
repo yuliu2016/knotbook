@@ -64,11 +64,11 @@
 
 .menu-item {
     -fx-padding: 3 12 3 12;
-    -fx-min-width: 200;
 }
 
 .context-menu {
     -fx-padding: 0;
+    -fx-min-width: 200;
 }
 
 .menu-item:focused {
