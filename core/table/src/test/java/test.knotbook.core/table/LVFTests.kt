@@ -4,6 +4,7 @@ import knotbook.core.table.LinearVirtualFlow
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class LVFTests {
 
@@ -28,5 +29,13 @@ class LVFTests {
         assertThrows<IllegalArgumentException> {
             flow.setCellCount(-1)
         }
+    }
+
+    @Test
+    fun `sumIntoOrExpand on setCellCount`() {
+        val flow = LinearVirtualFlow()
+        flow.minSize = 30.0
+        flow.setCellCount(4)
+        assertTrue(flow.cellPos.contentEquals(doubleArrayOf(0.0, 30.0, 60.0, 90.0, 120.0)))
     }
 }
