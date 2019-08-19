@@ -215,13 +215,16 @@ class LinearVirtualFlow {
             "Cannot update row state - Position bound limited"
         }
 
-        var start = -scroll * 300
+        val start = scroll * (totalSize - clipSize)
 
-        for (j in 0 until virtualCellCount) {
+        var j = 0
 
-            virtualCellPos[j] = start
-
-            start += if (j >= cellCount) minSize else cellSizes[j]
+        for (i in 0..cellCount) {
+            val pos = cellPos[i]
+            if (pos >= start && j < virtualCellCount) {
+                virtualCellPos[j] = pos - start
+                j++
+            }
         }
 
         markStateChanged()
