@@ -59,6 +59,10 @@ class Main : Application() {
                         name("Reveal Context in Source")
                         shortcut(KeyCode.J, control = true)
                     }
+                    item {
+                        name("Save as Zip File")
+                        shortcut(KeyCode.S, control = true, shift = true)
+                    }
                     separator()
                     item {
                         name("Exit")
@@ -113,8 +117,12 @@ class Main : Application() {
                 }
             }
             menu {
-                name("Tools")
+                name("Start")
                 modify {
+                    item {
+                        name("Data Agent")
+                        icon(FontAwesomeSolid.FILE_IMPORT, 13)
+                    }
                     item {
                         name("Scenic View")
                         action { ScenicView.show(scene) }
@@ -122,7 +130,7 @@ class Main : Application() {
                     }
                     item { name("Process Manager") }
                     item {
-                        name("Test Camera")
+                        name("WebCam View")
                         icon(FontAwesomeSolid.CAMERA_RETRO, 13)
                         action {
                             KnotCameraTest.test()
@@ -133,16 +141,16 @@ class Main : Application() {
                         icon(FontAwesomeSolid.CUBE, 13)
                     }
                     item {
-                        name("Application Registry")
+                        name("Registry Editor")
                         icon(FontAwesomeSolid.TOOLS, 13)
                         action { RegistryEditor.show() }
                     }
                     item {
-                        name("Robot Path Planner")
+                        name("Drive Path Planner")
                         icon(FontAwesomeSolid.LOCATION_ARROW, 13)
                     }
                     item {
-                        name("Start Garbage Collection")
+                        name("Garbage Collection Cycle")
                         action { GCSplash.splash() }
                         shortcut(KeyCode.B, control = true)
                     }
