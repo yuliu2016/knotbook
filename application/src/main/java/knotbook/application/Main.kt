@@ -19,6 +19,8 @@ import knotbook.core.registry.RegistryEditor
 import knotbook.core.splash.GCSplash
 import knotbook.core.splash.AboutSplash
 import knotbook.core.table.KnotTable
+import knotbook.pathplanner.PathPlanner
+import knotbook.pathplanner.runPathPlanner
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid
 import org.scenicview.ScenicView
 import kotlin.system.exitProcess
@@ -33,35 +35,50 @@ class Main : Application() {
                 name("File")
                 modify {
                     item {
-                        name("New Table")
-                        shortcut(KeyCode.N, control = true)
-                    }
-                    item {
-                        name("Delete Table")
-                        shortcut(KeyCode.DELETE, alt = true)
-                    }
-                    item {
-                        name("Synchronize")
-                        icon(FontAwesomeSolid.SYNC, 12)
-                        shortcut(KeyCode.R, control = true)
-                    }
-                    separator()
-                    item {
-                        name("New Repository")
-                        shortcut(KeyCode.N, control = true, alt = true)
-                    }
-                    item {
-                        name("Open Repository")
+                        name("Open Folder")
                         icon(FontAwesomeSolid.FOLDER_OPEN, 13)
                         shortcut(KeyCode.O, control = true)
                     }
                     item {
-                        name("Reveal Context in Source")
-                        shortcut(KeyCode.J, control = true)
+                        name("Close Folder")
+                        shortcut(KeyCode.W, alt = true, shift = true)
                     }
                     item {
-                        name("Save as Zip File")
+                        name("Folder Properties")
+                    }
+                    item {
+                        name("Export as Archive")
                         shortcut(KeyCode.S, control = true, shift = true)
+                    }
+                    item {
+                        name("Export as Workbook")
+                        shortcut(KeyCode.S, control = true, alt = true)
+                    }
+                    separator()
+                    item {
+                        name("Create Table")
+                        shortcut(KeyCode.N, control = true)
+                    }
+                    item {
+                        name("Close Table")
+                        shortcut(KeyCode.W, alt = true, control = true)
+                    }
+                    item {
+                        name("Rename Table")
+                        shortcut(KeyCode.DELETE, alt = true)
+                    }
+                    item {
+                        name("Synchronize Data")
+                        icon(FontAwesomeSolid.SYNC, 12)
+                        shortcut(KeyCode.R, control = true)
+                    }
+                    item {
+                        name("Reveal in Local")
+                        shortcut(KeyCode.H, control = true)
+                    }
+                    item {
+                        name("Reveal in Source")
+                        shortcut(KeyCode.J, control = true)
                     }
                     separator()
                     item {
@@ -120,15 +137,9 @@ class Main : Application() {
                 name("Start")
                 modify {
                     item {
-                        name("Data Agent")
+                        name("Data Agent Manager")
                         icon(FontAwesomeSolid.FILE_IMPORT, 13)
                     }
-                    item {
-                        name("Scenic View")
-                        action { ScenicView.show(scene) }
-                        icon(FontAwesomeSolid.IMAGE, 13)
-                    }
-                    item { name("Process Manager") }
                     item {
                         name("WebCam View")
                         icon(FontAwesomeSolid.CAMERA_RETRO, 13)
@@ -141,14 +152,21 @@ class Main : Application() {
                         icon(FontAwesomeSolid.CUBE, 13)
                     }
                     item {
+                        name("Drive Path Planner")
+                        icon(FontAwesomeSolid.LOCATION_ARROW, 13)
+                        action { runPathPlanner() }
+                    }
+                    item {
+                        name("Scenic View")
+                        action { ScenicView.show(scene) }
+                        icon(FontAwesomeSolid.IMAGE, 13)
+                    }
+                    item {
                         name("Registry Editor")
                         icon(FontAwesomeSolid.TOOLS, 13)
                         action { RegistryEditor.show() }
                     }
-                    item {
-                        name("Drive Path Planner")
-                        icon(FontAwesomeSolid.LOCATION_ARROW, 13)
-                    }
+                    item { name("Process Manager") }
                     item {
                         name("Garbage Collection Cycle")
                         action { GCSplash.splash() }
@@ -159,6 +177,9 @@ class Main : Application() {
             menu {
                 name("Help")
                 modify {
+                    item {
+                        name("Show releases on GitHub")
+                    }
                     item {
                         name("About")
                         action { AboutSplash.splash() }
@@ -214,6 +235,7 @@ class Main : Application() {
         stage.scene = scene
         stage.initStyle(StageStyle.DECORATED)
         stage.show()
+        runPathPlanner()
     }
 
     companion object {

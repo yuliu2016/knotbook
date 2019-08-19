@@ -24,6 +24,10 @@ javafx {
 }
 
 dependencies {
+//    implementation(project(":core:aero"))
+    implementation(project(":core:fx"))
     implementation(kotlin("stdlib"))
-    implementation ("com.github.Team865:FRC-Commons-Kotlin:802c13ad7f")
+    implementation ("com.github.Team865:FRC-Commons-Kotlin:e00ce2ccc6") {
+
+    }
 }

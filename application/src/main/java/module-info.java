@@ -16,5 +16,7 @@ module knotbook.application {
     requires knotbook.core.registry;
     requires knotbook.core.icon;
 
+    requires knotbook.pathplanner;
+
     exports knotbook.application;
 }
