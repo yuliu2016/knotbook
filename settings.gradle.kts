@@ -10,5 +10,6 @@ include(
         "core:table",
         "core:utils",
         "fn:formulas",
+        "fn:path-planner",
         "fn:tba-client"
 )
