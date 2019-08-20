@@ -21,13 +21,12 @@ class PathPlanner {
 
     @Suppress("UNUSED_CHANGED_VALUE", "UNUSED_VARIABLE")
     val editor = tabPane {
-        prefWidth = 340.0
+        prefWidth = 320.0
         tabClosingPolicy = TabPane.TabClosingPolicy.UNAVAILABLE
         tabDragPolicy = TabPane.TabDragPolicy.FIXED
         modify {
             +tab {
-                // isAnimated = false
-//                text = "Field Model Configuration"
+                tooltip = Tooltip("Field Model Configuration")
                 graphic = fontIcon(FontAwesomeSolid.FLAG, 13)
                 content = gridPane {
                     padding = Insets(8.0)
@@ -63,8 +62,7 @@ class PathPlanner {
                 }
             }
             +tab {
-                // isAnimated = false
-//                text = "Path Configuration"
+                tooltip = Tooltip("Path Configuration")
                 graphic = fontIcon(FontAwesomeSolid.BEZIER_CURVE, 13)
                 content = gridPane {
                     padding = Insets(8.0)
@@ -82,26 +80,12 @@ class PathPlanner {
                     addRow(r++, label { text = "Minimum Segment dTheta" }, textField { })
                     addRow(r++, label { text = "Iterative Δk² Optimization" }, checkbox { })
                     addRow(r++, label { text = "Optimization Passes" }, textField { })
-                }
-            }
-            +tab {
-                // isAnimated = false
-                tooltip = Tooltip("Robot Configuration")
-                graphic = fontIcon(FontAwesomeSolid.RULER, 13)
-                content = gridPane {
-                    padding = Insets(8.0)
-                    hgap = 8.0
-                    vgap = 4.0
-                    var r = 0
                     addRow(r++, label { text = "Effective Wheelbase" }, textField { })
                     addRow(r++, label { text = "Wheelbase Multiplier" }, slider { })
                     addRow(r++, label { text = "Wheel Radius" }, textField { })
-                    addRow(r++, label { text = "kV" }, textField { })
-                    addRow(r++, label { text = "kA" }, textField { })
                 }
             }
             +tab {
-                // isAnimated = false
                 tooltip = Tooltip("Trajectory Configuration")
                 graphic = fontIcon(FontAwesomeSolid.CLOCK, 13)
                 content = gridPane {
@@ -121,8 +105,7 @@ class PathPlanner {
                 }
             }
             +tab {
-                // isAnimated = false
-//                text = "Waypoint List"
+                tooltip = Tooltip("Waypoints")
                 graphic = fontIcon(FontAwesomeSolid.DIRECTIONS, 13)
                 content = gridPane {
                     padding = Insets(8.0)
@@ -133,9 +116,8 @@ class PathPlanner {
                 }
             }
             +tab {
-                // isAnimated = false
-//                text = "Path Rendering"
-                graphic = fontIcon(FontAwesomeSolid.PENCIL_ALT, 13)
+                tooltip = Tooltip("Path Rendering")
+                graphic = fontIcon(FontAwesomeSolid.FILL, 13)
                 content = gridPane {
                     padding = Insets(8.0)
                     hgap = 8.0
@@ -149,8 +131,7 @@ class PathPlanner {
                 }
             }
             +tab {
-                // isAnimated = false
-//                text = "Plot Rendering"
+                tooltip = Tooltip("Plot Rendering")
                 graphic = fontIcon(FontAwesomeSolid.CHART_LINE, 13)
                 content = gridPane {
                     padding = Insets(8.0)
@@ -170,8 +151,7 @@ class PathPlanner {
                 }
             }
             +tab {
-                // isAnimated = false
-//                text = "Trajectory Simulation"
+                tooltip = Tooltip("Trajectory Simulation")
                 graphic = fontIcon(FontAwesomeSolid.PLAY, 12)
                 content = gridPane {
                     padding = Insets(8.0)
@@ -186,9 +166,8 @@ class PathPlanner {
                 }
             }
             +tab {
-                // isAnimated = false
-//                text = "Compare"
-                graphic = fontIcon(FontAwesomeSolid.CHECK, 13)
+                tooltip = Tooltip("Measure and Compare")
+                graphic = fontIcon(FontAwesomeSolid.RULER, 13)
                 content = gridPane {
                     padding = Insets(8.0)
                     hgap = 8.0
@@ -197,8 +176,7 @@ class PathPlanner {
                 }
             }
             +tab {
-                // isAnimated = false
-                text = " "
+                tooltip = Tooltip("Load and Save")
                 graphic = fontIcon(FontAwesomeSolid.SAVE, 13)
                 content = gridPane {
                     padding = Insets(8.0)
@@ -214,7 +192,12 @@ class PathPlanner {
     val scene = Scene(hbox {
         prefHeight = 800.0
         add(pathCanvas.canvas)
-        add(editor)
+        add(vbox {
+            add(vbox {
+                prefHeight = 300.0
+            })
+            add(editor)
+        })
     })
 
     fun updateMainCanvas() {
