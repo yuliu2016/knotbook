@@ -17,18 +17,11 @@ class PathPlanner {
 
     val stage = Stage()
 
-    val mainCanvas = canvas {
-        width = 512.0
-        height = 768.0
-        draw {
-            fill = Color.BLACK
-            fillRect(0.0, 0.0, width, height)
-        }
-    }
+    val mainCanvas = PathCanvas()
 
     @Suppress("UNUSED_CHANGED_VALUE", "UNUSED_VARIABLE")
     val editor = tabPane {
-        prefWidth = 320.0
+        prefWidth = 340.0
         tabClosingPolicy = TabPane.TabClosingPolicy.UNAVAILABLE
         tabDragPolicy = TabPane.TabDragPolicy.FIXED
         modify {
@@ -205,7 +198,7 @@ class PathPlanner {
             }
             +tab {
                 // isAnimated = false
-//                text = "Save/Load"
+                text = " "
                 graphic = fontIcon(FontAwesomeSolid.SAVE, 13)
                 content = gridPane {
                     padding = Insets(8.0)
@@ -219,17 +212,17 @@ class PathPlanner {
 
     @Suppress("UNUSED_CHANGED_VALUE")
     val scene = Scene(hbox {
-        maxHeight = 800.0
-        add(mainCanvas)
+        prefHeight = 800.0
+        add(mainCanvas.theCanvas)
         add(editor)
     })
 
     fun updateMainCanvas() {
-        mainCanvas.height = stage.height
-        mainCanvas.width = stage.height / 3.0 * 2.0
+        mainCanvas.theCanvas.height = stage.height
+        mainCanvas.theCanvas.width = stage.height / 3.0 * 2.0
         mainCanvas.draw {
             fill = Color.BLACK
-            fillRect(0.0, 0.0, mainCanvas.width, mainCanvas.height)
+            fillRect(0.0, 0.0, mainCanvas.theCanvas.width, mainCanvas.theCanvas.height)
         }
     }
 
