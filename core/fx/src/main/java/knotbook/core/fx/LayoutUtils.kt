@@ -3,7 +3,7 @@
 package knotbook.core.fx
 
 import javafx.scene.Node
-import javafx.scene.control.SplitPane
+import javafx.scene.control.*
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.layout.Priority
@@ -50,4 +50,14 @@ fun SplitPane.addFixed(vararg node: Node) {
 @FXKtDSL
 inline fun Pane.modify(modifier: Modifier<Node>.() -> Unit) {
     Modifier(children).apply(modifier)
+}
+
+@FXKtDSL
+inline fun TabPane.modify(modifier: Modifier<Tab>.() -> Unit) {
+    Modifier(tabs).apply(modifier)
+}
+
+@FXKtDSL
+inline fun Accordion.modify(modifier: Modifier<TitledPane>.() -> Unit) {
+    Modifier(panes).apply(modifier)
 }

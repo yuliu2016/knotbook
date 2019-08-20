@@ -33,6 +33,12 @@ inline fun checkbox(builder: CheckBox.() -> Unit): CheckBox = CheckBox().apply(b
 inline fun <T> choiceBox(builder: ChoiceBox<T>.() -> Unit): ChoiceBox<T> = ChoiceBox<T>().apply(builder)
 
 @FXKtDSL
+inline fun <T> listView(builder: ListView<T>.() -> Unit): ListView<T> = ListView<T>().apply(builder)
+
+@FXKtDSL
+inline fun <T> treeView(builder: TreeView<T>.() -> Unit): TreeView<T> = TreeView<T>().apply(builder)
+
+@FXKtDSL
 inline fun slider(builder: Slider.() -> Unit): Slider = Slider().apply(builder)
 
 @FXKtDSL
@@ -45,6 +51,9 @@ inline fun gridPane(builder: GridPane.() -> Unit): GridPane = GridPane().apply(b
 inline fun tabPane(builder: TabPane.() -> Unit): TabPane = TabPane().apply(builder)
 
 @FXKtDSL
+inline fun tab(builder: Tab.() -> Unit): Tab = Tab().apply(builder)
+
+@FXKtDSL
 inline fun anchorPane(builder: AnchorPane.() -> Unit): AnchorPane = AnchorPane().apply(builder)
 
 @FXKtDSL
@@ -52,3 +61,9 @@ inline fun textFlow(builder: TextFlow.() -> Unit): TextFlow = TextFlow().apply(b
 
 @FXKtDSL
 inline fun stackPane(builder: StackPane.() -> Unit): StackPane = StackPane().apply(builder)
+
+@FXKtDSL
+inline fun accordion(builder: Accordion.() -> Unit): Accordion = Accordion().apply(builder)
+
+@FXKtDSL
+inline fun titledPane(builder: TitledPane.() -> Unit): TitledPane = TitledPane().apply(builder)

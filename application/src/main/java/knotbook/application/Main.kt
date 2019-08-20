@@ -19,7 +19,6 @@ import knotbook.core.registry.RegistryEditor
 import knotbook.core.splash.GCSplash
 import knotbook.core.splash.AboutSplash
 import knotbook.core.table.KnotTable
-import knotbook.pathplanner.PathPlanner
 import knotbook.pathplanner.runPathPlanner
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid
 import org.scenicview.ScenicView

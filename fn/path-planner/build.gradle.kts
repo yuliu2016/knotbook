@@ -24,10 +24,9 @@ javafx {
 }
 
 dependencies {
-//    implementation(project(":core:aero"))
+    implementation(project(":core:icon"))
     implementation(project(":core:fx"))
     implementation(kotlin("stdlib"))
-    implementation ("com.github.Team865:FRC-Commons-Kotlin:e00ce2ccc6") {
-
-    }
+    implementation ("com.github.Team865:FRC-Commons-Kotlin:e00ce2ccc6")
+    implementation(group = "org.kordamp.ikonli", name = "ikonli-fontawesome5-pack", version = "11.3.4")
 }
