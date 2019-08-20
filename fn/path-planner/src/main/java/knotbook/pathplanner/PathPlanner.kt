@@ -17,7 +17,7 @@ class PathPlanner {
 
     val stage = Stage()
 
-    val mainCanvas = PathCanvas()
+    val pathCanvas = PathCanvas()
 
     @Suppress("UNUSED_CHANGED_VALUE", "UNUSED_VARIABLE")
     val editor = tabPane {
@@ -213,16 +213,16 @@ class PathPlanner {
     @Suppress("UNUSED_CHANGED_VALUE")
     val scene = Scene(hbox {
         prefHeight = 800.0
-        add(mainCanvas.theCanvas)
+        add(pathCanvas.theCanvas)
         add(editor)
     })
 
     fun updateMainCanvas() {
-        mainCanvas.theCanvas.height = stage.height
-        mainCanvas.theCanvas.width = stage.height / 3.0 * 2.0
-        mainCanvas.draw {
+        pathCanvas.theCanvas.height = stage.height
+        pathCanvas.theCanvas.width = stage.height / 3.0 * 2.0
+        pathCanvas.draw {
             fill = Color.BLACK
-            fillRect(0.0, 0.0, mainCanvas.theCanvas.width, mainCanvas.theCanvas.height)
+//            fillRect(0.0, 0.0, pathCanvas.theCanvas.width, pathCanvas.theCanvas.height)
         }
     }
 
@@ -234,7 +234,7 @@ class PathPlanner {
         })
         stage.maxWidth = Screen.getPrimary().visualBounds.height / 3.0 * 2.0 + 300.0
         stage.width = stage.maxWidth
-        runLater { updateMainCanvas() }
+//        runLater { updateMainCanvas() }
         stage.show()
     }
 }
