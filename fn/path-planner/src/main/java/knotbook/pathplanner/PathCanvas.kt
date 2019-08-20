@@ -54,7 +54,6 @@ class PathCanvas : CanvasScope {
     var intermediate: List<QuinticSegment2D> = emptyList()
     var splines: List<ArcPose2D> = emptyList()
     var trajectory: List<TrajectoryState> = emptyList()
-    var dynamics: List<Triple<WheelState, DynamicState, Double>> = emptyList()
 
     var maxVRatio = 1.0
     var maxARatio = 1.0
@@ -134,14 +133,6 @@ class PathCanvas : CanvasScope {
                 model.maxAcceleration * maxAcRatio,
                 if (jerkLimiting) 45.0 else Double.POSITIVE_INFINITY)
         trajectoryTime = trajectory.last().t
-        dynamics = trajectory.map {
-            val velocity = it.velocity
-            val acceleration = it.acceleration
-            val wv = model.solve(velocity) * (217.5025513493939 / 1023 * 12)
-            val wa = model.solve(acceleration) * (6.0 / 1023 * 12)
-            Triple(WheelState(wv.left + wa.left, wv.right + wa.right),
-                    model.solve(velocity, acceleration), it.t)
-        }
         maxK = splines.maxBy { it.curvature.absoluteValue }?.curvature?.absoluteValue ?: 1.0
         maxAngular = trajectory.map { kotlin.math.abs(it.w) }.max() ?: 1.0
         maxAngularAcc = trajectory.map { kotlin.math.abs(it.dw) }.max() ?: 1.0
@@ -196,6 +187,51 @@ class PathCanvas : CanvasScope {
         }
     }
 
+    fun v2T(v: Double, t: Double, max: Double, y: Int) =
+            Translation2D(531 + (t / trajectoryTime) * 474, y - (v / max) * 50)
+
+    fun v2T2(v: Double, t: Double, max: Double, y: Int) =
+            Translation2D(531 + (t / trajectoryTime) * 474, y - (v / max) * 100)
+
+    fun h2TL(v: Double, t: Double, max: Double, y: Int) =
+            Translation2D(531 + (t / trajectoryTime) * 231, y - (v / max) * 104)
+
+    fun h2TR(v: Double, t: Double, max: Double, y: Int) =
+            Translation2D(774 + (t / trajectoryTime) * 231, y - (v / max) * 104)
+
+    fun List<Translation2D>.connect() {
+        draw {
+            beginPath()
+            forEach { vertex(it) }
+            closePath()
+            stroke()
+        }
+    }
+
+    fun drawGraph(i: Int) {
+        if (i == 0) return
+        draw {
+            trajectory.subList(0, i + 1).apply {
+                lineWidth = 1.0
+                stroke = Color.rgb(255, 128, 0)
+                forEachIndexed { index, point ->
+                    val x = 0 + (point.t / trajectoryTime) * 512
+                    if (index % 2 == 0) strokeLine(x, 652.5, x, 667.5)
+                    else strokeLine(x, 657.5, x, 672.5)
+                }
+                lineWidth = 2.0
+                stroke = Color.rgb(0, 128, 192)
+                map { v2T(it.dv, it.t, model.maxAcceleration, 434) }.connect()
+                //stroke(0f, 192f, 128f)
+                //map { v2T((it.state.curvature * it.acceleration), it.t, maxAngularAcc, 434) }.connect()
+                stroke = Color.rgb(255, 255, 128)
+                map { v2T(it.w, it.t, maxAngular, 290) }.connect()
+                stroke = Color.rgb(128, 128, 255)
+                map { v2T2(it.v, it.t, model.maxVelocity, 340) }.connect()
+            }
+        }
+    }
+
     fun redrawScreen() {
         redrawBackground()
 
@@ -245,7 +281,7 @@ class PathCanvas : CanvasScope {
 
             if (!simulating) {
                 redrawControlPoints()
-//                drawGraph(trajectory.size - 1)
+                drawGraph(trajectory.size - 1)
             }
         }
     }
