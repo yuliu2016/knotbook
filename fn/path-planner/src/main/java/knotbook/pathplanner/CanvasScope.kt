@@ -3,7 +3,7 @@ package knotbook.pathplanner
 import javafx.scene.canvas.Canvas
 
 interface CanvasScope {
-    val theCanvas: Canvas
+    val canvas: Canvas
 
     fun keyPressed() {
     }

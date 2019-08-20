@@ -5,25 +5,29 @@ import knotbook.core.fx.draw
 import javafx.event.EventHandler as handler
 
 fun CanvasScope.initCanvas() {
-    theCanvas.onMouseMoved = handler {
+    canvas.onMouseMoved = handler {
     }
-    theCanvas.onMouseReleased = handler {
+    canvas.onMouseReleased = handler {
         mouseReleased()
     }
-    theCanvas.onMouseClicked = handler {
+    canvas.onMouseClicked = handler {
     }
-    theCanvas.onKeyPressed = handler {
+    canvas.onKeyPressed = handler {
+        keyPressed()
     }
-    theCanvas.onMouseDragEntered = handler {
+    canvas.onKeyReleased = handler {
+        keyReleased()
     }
-    theCanvas.onMouseDragExited = handler {
+    canvas.onMouseDragEntered = handler {
     }
-    theCanvas.onMouseDragOver = handler {
+    canvas.onMouseDragExited = handler {
     }
-    theCanvas.onMouseDragReleased = handler {
+    canvas.onMouseDragOver = handler {
+    }
+    canvas.onMouseDragReleased = handler {
     }
 }
 
 inline fun CanvasScope.draw(action: GraphicsContext.() -> Unit) {
-    theCanvas.draw(action)
+    canvas.draw(action)
 }

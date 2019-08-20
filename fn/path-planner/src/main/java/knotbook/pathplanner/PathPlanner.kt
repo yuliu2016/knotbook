@@ -93,7 +93,7 @@ class PathPlanner {
                     hgap = 8.0
                     vgap = 4.0
                     var r = 0
-                    addRow(r++, label { text = "Effective Wheelbase Radius" }, textField { })
+                    addRow(r++, label { text = "Effective Wheelbase" }, textField { })
                     addRow(r++, label { text = "Wheelbase Multiplier" }, slider { })
                     addRow(r++, label { text = "Wheel Radius" }, textField { })
                     addRow(r++, label { text = "kV" }, textField { })
@@ -213,13 +213,13 @@ class PathPlanner {
     @Suppress("UNUSED_CHANGED_VALUE")
     val scene = Scene(hbox {
         prefHeight = 800.0
-        add(pathCanvas.theCanvas)
+        add(pathCanvas.canvas)
         add(editor)
     })
 
     fun updateMainCanvas() {
-        pathCanvas.theCanvas.height = stage.height
-        pathCanvas.theCanvas.width = stage.height / 3.0 * 2.0
+        pathCanvas.canvas.height = stage.height
+        pathCanvas.canvas.width = stage.height / 3.0 * 2.0
         pathCanvas.draw {
             fill = Color.BLACK
 //            fillRect(0.0, 0.0, pathCanvas.theCanvas.width, pathCanvas.theCanvas.height)

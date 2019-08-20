@@ -15,22 +15,17 @@ import ca.warp7.frc.path.quinticSplinesOf
 import ca.warp7.frc.path.sumDCurvature2
 import javafx.event.EventHandler
 import javafx.scene.canvas.Canvas
-import javafx.scene.canvas.GraphicsContext
+import javafx.scene.image.Image
 import javafx.scene.paint.Color
-import knotbook.core.fx.draw
 import kotlin.math.absoluteValue
 import kotlin.math.sqrt
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 class PathCanvas : CanvasScope {
 
-    override val theCanvas = Canvas()
+    override val canvas = Canvas()
 
-    inline fun draw(action: GraphicsContext.() -> Unit) {
-        theCanvas.draw(action)
-    }
-
-    var p = Color.BLACK
+    private val bg = Image(PathCanvas::class.java.getResourceAsStream("/field.PNG"))
 
     val kTriangleRatio = 1 / sqrt(3.0)
     val step = 0.0254 * 12 / 10
@@ -43,7 +38,7 @@ class PathCanvas : CanvasScope {
     val robotDrawCenter = Translation2D(768.0, 100.0)
 
     val kPixelsPerMeter = 494 / 8.2296
-    val yCenterPx = 17.0 + (512.0 - 17.0) / 2
+    val yCenterPx = 493.0 / 2.0
 
     val Double.my2x: Double get() = (yCenterPx - kPixelsPerMeter * this)
     val Double.mx2y: Double get() = (493.0 - kPixelsPerMeter * this)
@@ -111,8 +106,8 @@ class PathCanvas : CanvasScope {
                 Pose2D(6.feet, 4.feet, 0.degrees),
                 Pose2D(16.8.feet, 11.2.feet, 32.degrees)
         )
-        theCanvas.requestFocus()
-        theCanvas.onMouseClicked = EventHandler {
+        canvas.requestFocus()
+        canvas.onMouseClicked = EventHandler {
             regenerate()
         }
     }
@@ -156,7 +151,48 @@ class PathCanvas : CanvasScope {
     fun redrawBackground() {
         draw {
             fill = kBlack
-            fillRect(0.0, 0.0, theCanvas.width, theCanvas.height)
+            fillRect(0.0, 0.0, canvas.width, canvas.height)
+            drawImage(bg, 0.0, 0.0, 495.0, 493.0)
+        }
+    }
+
+    fun drawArrow(point: Pose2D) {
+        draw {
+            val pos = point.translation.newXY
+            val heading = (point.translation + point.rotation.translation.scaled(0.5)).newXY
+            val dir = point.rotation.norm.translation
+
+            val r1 = dir.scaled(0.1524 * kTriangleRatio * 2)
+            val r2 = r1.rotate(Rotation2D(0.0, 1.0)).scaled(kTriangleRatio)
+            val r3 = r1.rotate(Rotation2D(0.0, -1.0)).scaled(kTriangleRatio)
+            strokeOval(pos.x - 6.0, pos.y - 6.0, 12.0, 12.0)
+            val start = pos - dir.scaled(6.0).transposed
+            lineTo(start, heading)
+            val a1 = heading + r1.newXYNoOffset
+            val a2 = heading + r2.newXYNoOffset
+            val a3 = heading + r3.newXYNoOffset
+
+            beginPath()
+            vertex(a1)
+            vertex(a2)
+            vertex(a3)
+            vertex(a1)
+            closePath()
+            stroke()
+        }
+    }
+
+    fun redrawControlPoints() {
+        draw {
+            waypoints.forEachIndexed { index, waypoint ->
+                stroke = if (selectedIndex == index) {
+                    kSelectedControlPointColor
+                } else {
+                    kControlPointColor
+                }
+                lineWidth = 2.0
+                drawArrow(waypoint)
+            }
         }
     }
 
@@ -206,20 +242,11 @@ class PathCanvas : CanvasScope {
             lineTo(af, bf)
             lineTo(left, af)
             lineTo(right, bf)
-//            val msg = "ΣΔk²=${curvatureSum.f1}  " +
-//                    "ΣΔd=${(kMetersToFeet * arcLength).f1}ft  " +
-//                    "ΣΔt=${trajectory.last().t.f1}s  " +
-//                    "O=$optimizing  " +
-//                    "V=${maxVRatio.f1}  " +
-//                    "A=${maxARatio.f1}  " +
-//                    "Ac=${maxAcRatio.f1}  " +
-//                    "J=$jerkLimiting"
-//            drawText(msg)
-//
-//            if (!simulating) {
-//                redrawControlPoints()
+
+            if (!simulating) {
+                redrawControlPoints()
 //                drawGraph(trajectory.size - 1)
-//            }
+            }
         }
     }
 
