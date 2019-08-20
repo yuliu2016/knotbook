@@ -4,8 +4,8 @@ package knotbook.core.fx
 
 import javafx.scene.canvas.Canvas
 import javafx.scene.control.*
-import javafx.scene.layout.HBox
-import javafx.scene.layout.VBox
+import javafx.scene.layout.*
+import javafx.scene.text.TextFlow
 
 
 @FXKtDSL
@@ -34,3 +34,21 @@ inline fun <T> choiceBox(builder: ChoiceBox<T>.() -> Unit): ChoiceBox<T> = Choic
 
 @FXKtDSL
 inline fun slider(builder: Slider.() -> Unit): Slider = Slider().apply(builder)
+
+@FXKtDSL
+inline fun scrollPane(builder: ScrollPane.() -> Unit): ScrollPane = ScrollPane().apply(builder)
+
+@FXKtDSL
+inline fun gridPane(builder: GridPane.() -> Unit): GridPane = GridPane().apply(builder)
+
+@FXKtDSL
+inline fun tabPane(builder: TabPane.() -> Unit): TabPane = TabPane().apply(builder)
+
+@FXKtDSL
+inline fun anchorPane(builder: AnchorPane.() -> Unit): AnchorPane = AnchorPane().apply(builder)
+
+@FXKtDSL
+inline fun textFlow(builder: TextFlow.() -> Unit): TextFlow = TextFlow().apply(builder)
+
+@FXKtDSL
+inline fun stackPane(builder: StackPane.() -> Unit): StackPane = StackPane().apply(builder)

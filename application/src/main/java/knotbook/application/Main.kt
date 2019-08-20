@@ -26,6 +26,7 @@ import org.scenicview.ScenicView
 import kotlin.system.exitProcess
 
 
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 class Main : Application() {
 
     private val bar = menuBar {
@@ -230,11 +231,11 @@ class Main : Application() {
     })
 
     override fun start(stage: Stage) {
-        stage.title = "Knotbook"
-        stage.icons.add(Image(Main::class.java.getResourceAsStream("/knotbook/application/icon.png")))
-        stage.scene = scene
-        stage.initStyle(StageStyle.DECORATED)
-        stage.show()
+//        stage.title = "Knotbook"
+//        stage.icons.add(Image(Main::class.java.getResourceAsStream("/knotbook/application/icon.png")))
+//        stage.scene = scene
+//        stage.initStyle(StageStyle.DECORATED)
+//        stage.show()
         runPathPlanner()
     }
 
