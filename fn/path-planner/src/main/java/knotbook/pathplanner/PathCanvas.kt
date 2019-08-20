@@ -13,9 +13,9 @@ import knotbook.core.fx.draw
 import kotlin.math.sqrt
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
-class PathCanvas {
+class PathCanvas: CanvasScope {
 
-    val theCanvas = Canvas()
+    override val theCanvas = Canvas()
 
     inline fun draw(action: GraphicsContext.() -> Unit) {
         theCanvas.draw(action)
@@ -68,30 +68,6 @@ class PathCanvas {
     var selectionChanged = false
 
     init {
-        theCanvas.onMouseMoved = EventHandler {
-            draw {
-                fill = p
-                fillOval(it.x, it.y, 5.0, 5.0)
-            }
-        }
-        theCanvas.isFocusTraversable = true
-        theCanvas.onMouseClicked = EventHandler {
-            theCanvas.requestFocus()
-        }
-        theCanvas.onKeyPressed = EventHandler {
-            p = Color.hsb(Math.random() * 360.0, 1.0, 1.0)
-        }
-        theCanvas.onMouseDragEntered = EventHandler {
-
-        }
-        theCanvas.onMouseDragExited = EventHandler {
-
-        }
-        theCanvas.onMouseDragOver = EventHandler {
-
-        }
-        theCanvas.onMouseDragReleased = EventHandler {
-
-        }
+        initCanvas()
     }
 }
