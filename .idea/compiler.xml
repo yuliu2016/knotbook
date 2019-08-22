@@ -12,6 +12,8 @@
       <module name="knotbook.ext.formulas.test" target="12" />
       <module name="knotbook.ext.tba-client.main" target="12" />
       <module name="knotbook.ext.tba-client.test" target="12" />
+      <module name="knotbook.fn.path-planner.main" target="12" />
+      <module name="knotbook.fn.path-planner.test" target="12" />
       <module name="knotbook.main" target="11" />
       <module name="knotbook.snap.main" target="11" />
       <module name="knotbook.snap.test" target="11" />
