@@ -20,10 +20,8 @@ jobs:
           jdkFile: "build/jdk.zip"
           jdkDestinationDirectory: "build/jdk_inst"
           jdkArchitectureOption: x64
-      - powershell: |
-          choco install 7zip -y
-        displayName: "Install 7z"
       - task: Gradle@2
+        displayName: "Gradle Build"
         inputs:
           workingDirectory: ""
           gradleWrapperFile: "gradlew"
@@ -32,14 +30,31 @@ jobs:
           jdkArchitectureOption: "x64"
           publishJUnitResults: true
           testResultsFiles: "**/TEST-*.xml"
-          tasks: "build jlink"
+          tasks: "build"
+      - task: Gradle@2
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+        displayName: "Generate Runtime Image"
+        inputs:
+          workingDirectory: ""
+          gradleWrapperFile: "gradlew"
+          javaHomeOption: "JDKVersion"
+          jdkVersionOption: "1.12"
+          jdkArchitectureOption: "x64"
+          publishJUnitResults: false
+          tasks: "jlink"
+      - powershell: |
+          choco install 7zip -y
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+        displayName: "Install 7z"
       - task: ArchiveFiles@2
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
           rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/application/image"
           includeRootFolder: true
           archiveType: "7z"
           archiveFile: "$(System.DefaultWorkingDirectory)/$(Build.BuildId).7z"
       - task: PublishPipelineArtifact@1
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
           path: "$(System.DefaultWorkingDirectory)/$(Build.BuildId).7z"
           artifact: "app-image-windows"
@@ -48,6 +63,7 @@ jobs:
       vmImage: "ubuntu-latest"
     steps:
       - task: Gradle@2
+        displayName: "Gradle Build"
         inputs:
           workingDirectory: ""
           gradleWrapperFile: "gradlew"
@@ -56,14 +72,27 @@ jobs:
           jdkArchitectureOption: "x64"
           publishJUnitResults: true
           testResultsFiles: "**/TEST-*.xml"
-          tasks: "build jlink"
+          tasks: "build"
+      - task: Gradle@2
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+        displayName: "Generate Runtime Image"
+        inputs:
+          workingDirectory: ""
+          gradleWrapperFile: "gradlew"
+          javaHomeOption: "JDKVersion"
+          jdkVersionOption: "1.12"
+          jdkArchitectureOption: "x64"
+          publishJUnitResults: false
+          tasks: "jlink"
       - task: ArchiveFiles@2
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
           rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/application/image"
           includeRootFolder: true
           archiveType: "zip"
           archiveFile: "$(System.DefaultWorkingDirectory)/$(Build.BuildId).zip"
       - task: PublishPipelineArtifact@1
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
           path: "$(System.DefaultWorkingDirectory)/$(Build.BuildId).zip"
           artifact: "app-image-ubuntu"
@@ -72,6 +101,7 @@ jobs:
       vmImage: "macOS-latest"
     steps:
       - task: Gradle@2
+        displayName: "Gradle Build"
         inputs:
           workingDirectory: ""
           gradleWrapperFile: "gradlew"
@@ -80,14 +110,27 @@ jobs:
           jdkArchitectureOption: "x64"
           publishJUnitResults: true
           testResultsFiles: "**/TEST-*.xml"
-          tasks: "build jlink"
+          tasks: "build"
+      - task: Gradle@2
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+        displayName: "Generate Runtime Image"
+        inputs:
+          workingDirectory: ""
+          gradleWrapperFile: "gradlew"
+          javaHomeOption: "JDKVersion"
+          jdkVersionOption: "1.12"
+          jdkArchitectureOption: "x64"
+          publishJUnitResults: false
+          tasks: "jlink"
       - task: ArchiveFiles@2
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
           rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/application/image"
           includeRootFolder: true
           archiveType: "zip"
           archiveFile: "$(System.DefaultWorkingDirectory)/$(Build.BuildId).zip"
       - task: PublishPipelineArtifact@1
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
           path: "$(System.DefaultWorkingDirectory)/$(Build.BuildId).zip"
           artifact: "app-image-mac"
