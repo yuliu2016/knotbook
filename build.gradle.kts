@@ -17,6 +17,7 @@ allprojects {
     repositories {
         mavenCentral()
         jcenter()
+        maven { setUrl("https://jitpack.io") }
     }
     buildDir = File(rootProject.projectDir, "build/$rootPath")
 }

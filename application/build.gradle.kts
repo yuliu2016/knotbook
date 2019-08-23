@@ -34,6 +34,7 @@ dependencies {
     implementation(project(":core:table"))
     implementation(project(":core:fx"))
     implementation(project(":core:icon"))
+    implementation(project(":fn:path-planner"))
     implementation(kotlin("stdlib"))
 
     implementation(group = "org.kordamp.ikonli", name = "ikonli-fontawesome5-pack", version = "11.3.4")
