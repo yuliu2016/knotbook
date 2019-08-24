@@ -6,6 +6,7 @@ include(
         "core:fx",
         "core:icon",
         "core:registry",
+        "core:server",
         "core:splash",
         "core:table",
         "core:utils",
