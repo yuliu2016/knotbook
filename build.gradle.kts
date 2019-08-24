@@ -19,6 +19,13 @@ allprojects {
         jcenter()
         maven { setUrl("https://jitpack.io") }
     }
+    ext {
+        set("ikonli-version", "11.3.4")
+        set("kotlin-coroutines-version", "1.3.0-RC2")
+        set("junit-version", "5.5.1")
+        set("javafx-version", "12.0.1")
+        set("kotlin-jvm-target", "11")
+    }
     buildDir = File(rootProject.projectDir, "build/$rootPath")
 }
 
