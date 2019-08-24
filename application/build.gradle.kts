@@ -33,6 +33,7 @@ dependencies {
     implementation(project(":core:table"))
     implementation(project(":core:fx"))
     implementation(project(":core:icon"))
+    implementation(project(":core:server"))
     implementation(project(":fn:path-planner"))
     implementation(kotlin("stdlib"))
 

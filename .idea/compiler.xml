@@ -14,12 +14,12 @@
       <module name="knotbook.ext.tba-client.test" target="12" />
       <module name="knotbook.fn.formulas.main" target="12" />
       <module name="knotbook.fn.formulas.test" target="12" />
-      <module name="knotbook.main" target="11" />
+      <module name="knotbook.main" target="12" />
       <module name="knotbook.snap.main" target="11" />
       <module name="knotbook.snap.test" target="11" />
       <module name="knotbook.tba.client.main" target="11" />
       <module name="knotbook.tba.client.test" target="11" />
-      <module name="knotbook.test" target="11" />
+      <module name="knotbook.test" target="12" />
       <module name="knotbook.the-blue-alliance.client.main" target="11" />
       <module name="knotbook.the-blue-alliance.client.test" target="11" />
     </bytecodeTargetLevel>
