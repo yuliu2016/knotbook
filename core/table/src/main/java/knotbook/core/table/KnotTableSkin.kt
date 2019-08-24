@@ -85,7 +85,7 @@ class KnotTableSkin(knotable: KnotTable) : SkinBase<KnotTable>(knotable) {
         flow.x.updateContentClip(contentWidth)
         flow.y.updateContentClip(contentHeight)
         flow.x.doIfStateChanged {
-            for (i in 0 until vln.size) {
+            for (i in vln.indices) {
                 val line = vln[i]
                 if (i < flow.x.virtualCellCount) {
                     val x = flow.x.virtualCellPos[i]
@@ -103,7 +103,7 @@ class KnotTableSkin(knotable: KnotTable) : SkinBase<KnotTable>(knotable) {
             }
         }
         flow.y.doIfStateChanged {
-            for (j in 0 until hln.size) {
+            for (j in hln.indices) {
                 val line = hln[j]
                 if (j < flow.y.virtualCellCount) {
                     val y = flow.y.virtualCellPos[j]
@@ -123,8 +123,8 @@ class KnotTableSkin(knotable: KnotTable) : SkinBase<KnotTable>(knotable) {
             }
         }
 
-        for (i in 0 until vln.size) {
-            for (j in 0 until hln.size) {
+        for (i in vln.indices) {
+            for (j in hln.indices) {
                 val cell = cells[i * hln.size + j]
                 val lineX = contentX + i * kMinCellWidth + kTextMargin
                 val lineY = contentY + j * kMinCellHeight

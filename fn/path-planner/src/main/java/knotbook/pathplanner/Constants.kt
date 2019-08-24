@@ -4,7 +4,6 @@ package knotbook.pathplanner
 
 const val kFeetToMeters: Double = 0.3048
 const val kInchesToMeters: Double = 0.0254
-const val kFeetToInches: Double = 12.0
 
 // Dimension Constants
 
