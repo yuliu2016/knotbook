@@ -64,4 +64,8 @@ public class RegistryEditor {
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.show();
     }
+
+    public static void show2() {
+
+    }
 }

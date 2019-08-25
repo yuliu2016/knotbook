@@ -6,6 +6,8 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.function.Consumer;
 
 /**
@@ -20,8 +22,8 @@ public class CodeEditor {
     private RSyntaxTextArea area = new RSyntaxTextArea(35, 84);
     private JFrame frame = new JFrame();
 
-    private CodeEditor(String title, String yes, String no, String initialText,
-                       Consumer<String> yesRun, Runnable noRun, Syntax syntax) {
+    private CodeEditor(String title, boolean editable, String yes, String no, String initialText,
+                       Consumer<String> yesRun, Syntax syntax) {
         Helper.runOnEDT(() -> {
             JPanel cp = new JPanel();
 
@@ -37,36 +39,59 @@ public class CodeEditor {
             area.setCloseCurlyBraces(true);
             area.setFont(area.getFont().deriveFont(15f));
             area.setText(initialText);
+            area.setEditable(editable);
 
             RTextScrollPane sp = new RTextScrollPane(area);
             sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
+            if (editable) {
+                var bottomPanel = new JPanel();
+                bottomPanel.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
+                bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
+                bottomPanel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
+                bottomPanel.setBorder(null);
 
-            var bottomPanel = new JPanel();
-            bottomPanel.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
-            bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
-            bottomPanel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
-            bottomPanel.setBorder(null);
+                var okBtn = new JButton(no);
+                okBtn.setAlignmentX(JButton.RIGHT_ALIGNMENT);
+                okBtn.setBackground(new Color(224, 224, 224));
+                okBtn.addActionListener(e -> {
+                    frame.dispose();
+                    yesRun.accept(area.getText());
+                });
 
-            var okBtn = new JButton(no);
-            okBtn.setAlignmentX(JButton.RIGHT_ALIGNMENT);
-            okBtn.setBackground(new Color(224, 224, 224));
-            okBtn.addActionListener(e -> yesRun.accept(area.getText()));
+                var closeBtn = new JButton(yes);
+                closeBtn.setBackground(new Color(224, 224, 255));
+                closeBtn.setAlignmentX(JButton.RIGHT_ALIGNMENT);
+                closeBtn.addActionListener(e -> frame.dispose());
 
-            var closeBtn = new JButton(yes);
-            closeBtn.setBackground(new Color(224, 224, 255));
-            closeBtn.setAlignmentX(JButton.RIGHT_ALIGNMENT);
-            closeBtn.addActionListener(e -> noRun.run());
+                bottomPanel.add(okBtn);
+                bottomPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+                bottomPanel.add(closeBtn);
+                bottomPanel.add(Box.createRigidArea(new Dimension(5, 0)));
 
-            bottomPanel.add(okBtn);
-            bottomPanel.add(Box.createRigidArea(new Dimension(5, 0)));
-            bottomPanel.add(closeBtn);
-            bottomPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+                cp.add(Box.createRigidArea(new Dimension(0, 5)));
+                cp.add(bottomPanel);
+                cp.add(Box.createRigidArea(new Dimension(0, 5)));
+            }
 
-            cp.add(Box.createRigidArea(new Dimension(0, 5)));
-            cp.add(bottomPanel);
-            cp.add(Box.createRigidArea(new Dimension(0, 5)));
             cp.add(sp);
+
+            area.addKeyListener(new KeyListener() {
+                @Override
+                public void keyTyped(KeyEvent e) {
+                }
+
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                        frame.dispose();
+                    }
+                }
+
+                @Override
+                public void keyReleased(KeyEvent e) {
+                }
+            });
 
             frame.setContentPane(cp);
             frame.setTitle(title);
@@ -78,8 +103,7 @@ public class CodeEditor {
     }
 
     public static void launch() {
-        new CodeEditor("table.py", "Save", "Discard", "", e -> {
-        }, () -> {
+        new CodeEditor("table.py", true,"Save", "Discard", "", e -> {
         }, Syntax.Python);
     }
 }
