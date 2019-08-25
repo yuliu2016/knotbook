@@ -1,0 +1,20 @@
+{
+    "tables": [
+        "match_schedule",
+        "scouted_entries",
+        "scouted_entries_persons",
+        "scouts_overview",
+        "wrong_data",
+        "missing_entries",
+        "auto_list",
+        "climb_summary",
+        "cycle_matrix",
+        "team_averages",
+        "team_averages_nonzero",
+        "raw_data_app",
+        "app_cycles",
+        "endgame_overview",
+        "tba_powerups",
+        "tba_team_overview"
+    ]
+}
