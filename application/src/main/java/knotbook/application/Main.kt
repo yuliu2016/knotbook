@@ -235,12 +235,13 @@ class Main : Application() {
     })
 
     override fun start(stage: Stage) {
-        stage.title = "Knotbook"
-        stage.icons.add(Image(Main::class.java.getResourceAsStream("/knotbook/application/icon.png")))
-        stage.scene = scene
-        stage.initStyle(StageStyle.DECORATED)
-        stage.show()
+//        stage.title = "Knotbook"
+//        stage.icons.add(Image(Main::class.java.getResourceAsStream("/knotbook/application/icon.png")))
+//        stage.scene = scene
+//        stage.initStyle(StageStyle.DECORATED)
+//        stage.show()
 //        runPathPlanner()
+        CodeEditor.launch()
     }
 
     companion object {

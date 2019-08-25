@@ -13,7 +13,7 @@ class Helper {
         }
     }
 
-    static void runOnApplication(Runnable doRun) {
+    static void runOnFx(Runnable doRun) {
         if (Platform.isFxApplicationThread()) {
             doRun.run();
         } else {

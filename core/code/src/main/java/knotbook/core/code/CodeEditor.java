@@ -1,46 +1,25 @@
 package knotbook.core.code;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.embed.swing.SwingNode;
+import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 import java.awt.*;
 
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class CodeEditor extends BorderPane {
 
-    private RSyntaxTextArea area = new RSyntaxTextArea(36, 100);
-
-    private StringProperty textProperty;
-
-    public StringProperty textProperty() {
-        if (textProperty == null) {
-            textProperty = new SimpleStringProperty();
-            textProperty.addListener((observable, oldValue, newValue) -> {
-                area.setText(newValue);
-            });
-        }
-        return textProperty;
-    }
-
-    public String getText() {
-        return textProperty().get();
-    }
-
-    public void setText(String text) {
-        textProperty().set(text);
-    }
+    private RSyntaxTextArea area;
+    private RTextScrollPane sp;
 
     private ObjectProperty<Syntax> syntaxProperty;
 
@@ -48,7 +27,8 @@ public class CodeEditor extends BorderPane {
         if (syntaxProperty == null) {
             syntaxProperty = new SimpleObjectProperty<>(Syntax.Plain);
             syntaxProperty.addListener((observable, oldValue, newValue) -> {
-                area.setSyntaxEditingStyle(newValue.getValue());
+                // Apply the change on the EDT
+                Helper.runOnEDT(() -> area.setSyntaxEditingStyle(newValue.getValue()));
             });
         }
         return syntaxProperty;
@@ -62,52 +42,56 @@ public class CodeEditor extends BorderPane {
         syntaxProperty().set(syntax);
     }
 
+    private SwingNode swingNode = new SwingNode();
 
     private CodeEditor() {
-
-        JPanel cp = new JPanel(new BorderLayout());
-
-        area.setCurrentLineHighlightColor(Color.white);
-        area.setAntiAliasingEnabled(true);
-        area.setCodeFoldingEnabled(true);
-        area.setAutoIndentEnabled(true);
-        area.setBracketMatchingEnabled(true);
-        area.setPaintTabLines(true);
-        area.setTabSize(4);
-        area.setTabsEmulated(true);
-        area.setCloseCurlyBraces(true);
-        area.setMarkOccurrences(true);
-
-        area.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                Document document = e.getDocument();
-                String text;
-                try {
-                    text = document.getText(0, document.getLength());
-                } catch (BadLocationException ex) {
-                    text = "";
-                }
-            }
-        });
-
-        RTextScrollPane sp = new RTextScrollPane(area);
-        sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
-        SwingNode swingNode = new SwingNode();
-        swingNode.setContent(sp);
+        super();
         setCenter(swingNode);
+
+        InvalidationListener listener = new InvalidationListener() {
+            @Override
+            public void invalidated(Observable observable) {
+                int width = (int) getWidth();
+                int height = (int) getHeight();
+                Helper.runOnEDT(() -> sp.setSize(width, height));
+            }
+        };
+
+        widthProperty().addListener(listener);
+        heightProperty().addListener(listener);
+
+        Helper.runOnEDT(() -> {
+            area = new RSyntaxTextArea(36, 100);
+            area.setCurrentLineHighlightColor(Color.white);
+            area.setAntiAliasingEnabled(true);
+            area.setCodeFoldingEnabled(true);
+            area.setAutoIndentEnabled(true);
+            area.setBracketMatchingEnabled(true);
+            area.setPaintTabLines(true);
+            area.setTabSize(4);
+            area.setTabsEmulated(true);
+            area.setCloseCurlyBraces(true);
+            area.setMarkOccurrences(true);
+            area.setText("\n\nhi");
+
+            sp = new RTextScrollPane(area);
+            sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+            swingNode.setContent(sp);
+
+            Helper.runOnFx(() -> {
+
+            });
+        });
     }
 
     public static void launch() {
-        Helper.runOnEDT(CodeEditor::new);
+        Helper.runOnFx(() -> {
+            Stage stage = new Stage();
+            CodeEditor editor = new CodeEditor();
+            stage.setTitle("Code Editor");
+            stage.setScene(new Scene(editor));
+            stage.show();
+        });
     }
 }
