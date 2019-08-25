@@ -15,6 +15,6 @@ class KnotTable : Control() {
     }
 
     override fun createDefaultSkin(): Skin<*> {
-        return KnotTableSkin(this);
+        return KnotTableSkin(this)
     }
 }

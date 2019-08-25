@@ -426,7 +426,7 @@ class VirtualGrid {
 
         var accumulator = 0.0
 
-        for (i in 0 until values.size) {
+        for (i in values.indices) {
             accumulator += values[i]
             sum[i] = accumulator
         }

@@ -7,26 +7,20 @@ tasks {
     compileKotlin {
         kotlinOptions {
             freeCompilerArgs = listOf("-Xnew-inference")
-            jvmTarget = "11"
+            jvmTarget = "1.8"
         }
     }
     compileTestKotlin {
         kotlinOptions {
             freeCompilerArgs = listOf("-Xnew-inference")
-            jvmTarget = "11"
-        }
-    }
-}
-
-sourceSets {
-    main {
-        java {
-            include(rootProject.path + "/scripts/Paths.kt")
+            jvmTarget = "1.8"
         }
     }
 }
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation(kotlin("reflect"))
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.0-RC2")
+//    implementation(group = "io.ktor", name = "ktor-server-core", version = "1.2.3")
+//    implementation(group = "io.ktor", name = "ktor-server-netty", version = "1.2.3")
 }

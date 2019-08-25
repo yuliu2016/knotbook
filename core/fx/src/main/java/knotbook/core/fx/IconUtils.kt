@@ -10,6 +10,7 @@ fun fontIcon(ic: Ikon, size: Int): FontIcon {
     return FontIcon.of(ic, size)
 }
 
+@Suppress("unused")
 @FXKtDSL
 fun FontIcon.centerIn(width: Int): HBox = hbox {
     add(this@centerIn)

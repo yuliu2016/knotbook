@@ -3,6 +3,7 @@ package knotbook.application
 import javafx.application.Application
 import javafx.geometry.Pos
 import javafx.scene.Scene
+import javafx.scene.control.Alert
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
@@ -16,12 +17,11 @@ import knotbook.core.camera.KnotCameraTest
 import knotbook.core.fx.*
 import knotbook.core.registry.Registry
 import knotbook.core.registry.RegistryEditor
-import knotbook.core.splash.GCSplash
 import knotbook.core.splash.AboutSplash
+import knotbook.core.splash.GCSplash
 import knotbook.core.table.KnotTable
 import knotbook.pathplanner.runPathPlanner
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid
-import org.scenicview.ScenicView
 import kotlin.system.exitProcess
 
 
@@ -158,7 +158,7 @@ class Main : Application() {
                     }
                     item {
                         name("Scenic View")
-                        action { ScenicView.show(scene) }
+                        action { Alert(Alert.AlertType.INFORMATION, "Scenic View is not supported in this version of KB").show() }
                         icon(FontAwesomeSolid.IMAGE, 13)
                     }
                     item {
@@ -230,12 +230,12 @@ class Main : Application() {
     })
 
     override fun start(stage: Stage) {
-//        stage.title = "Knotbook"
-//        stage.icons.add(Image(Main::class.java.getResourceAsStream("/knotbook/application/icon.png")))
-//        stage.scene = scene
-//        stage.initStyle(StageStyle.DECORATED)
-//        stage.show()
-        runPathPlanner()
+        stage.title = "Knotbook"
+        stage.icons.add(Image(Main::class.java.getResourceAsStream("/knotbook/application/icon.png")))
+        stage.scene = scene
+        stage.initStyle(StageStyle.DECORATED)
+        stage.show()
+//        runPathPlanner()
     }
 
     companion object {

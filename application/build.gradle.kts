@@ -27,13 +27,13 @@ javafx {
 }
 
 dependencies {
-    implementation(fileTree(mapOf("dir" to "../libs", "include" to listOf("*.jar"))))
     implementation(project(":core:camera"))
     implementation(project(":core:splash"))
     implementation(project(":core:registry"))
     implementation(project(":core:table"))
     implementation(project(":core:fx"))
     implementation(project(":core:icon"))
+    implementation(project(":core:server"))
     implementation(project(":fn:path-planner"))
     implementation(kotlin("stdlib"))
 
@@ -63,6 +63,4 @@ jlink {
             "--strip-debug",
             "--compress=1"
     )
-
-    imageZip.set(project.file("${project.buildDir}/knotbook.zip"))
 }

@@ -1,8 +1,6 @@
 package knotbook.pathplanner
 
 import ca.warp7.frc.drive.DifferentialDriveModel
-import ca.warp7.frc.drive.DynamicState
-import ca.warp7.frc.drive.WheelState
 import ca.warp7.frc.drive.trajectory.TrajectoryState
 import ca.warp7.frc.drive.trajectory.generateTrajectory
 import ca.warp7.frc.epsilonEquals

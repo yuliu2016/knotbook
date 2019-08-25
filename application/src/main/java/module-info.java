@@ -2,12 +2,9 @@ module knotbook.application {
     requires kotlin.stdlib;
     requires javafx.graphics;
     requires javafx.controls;
-    requires javafx.fxml;
 
     requires org.kordamp.iconli.core;
     requires org.kordamp.ikonli.fontawesome5;
-
-    requires org.scenicview.scenicview;
 
     requires knotbook.core.camera;
     requires knotbook.core.splash;
@@ -15,6 +12,7 @@ module knotbook.application {
     requires knotbook.core.fx;
     requires knotbook.core.registry;
     requires knotbook.core.icon;
+    requires knotbook.core.server;
 
     requires knotbook.pathplanner;
 

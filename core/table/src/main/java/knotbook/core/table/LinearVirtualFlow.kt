@@ -137,7 +137,7 @@ class LinearVirtualFlow {
         }
 
         sum[0] = 0.0
-        for (i in 0 until values.size) {
+        for (i in values.indices) {
             sum[i + 1] = sum[i] + values[i]
         }
 
