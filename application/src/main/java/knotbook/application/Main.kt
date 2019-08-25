@@ -14,6 +14,7 @@ import javafx.scene.paint.Color
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import knotbook.core.camera.KnotCameraTest
+import knotbook.core.code.TextEditorDemo
 import knotbook.core.fx.*
 import knotbook.core.registry.Registry
 import knotbook.core.registry.RegistryEditor
@@ -160,6 +161,10 @@ class Main : Application() {
                         name("Scenic View")
                         action { Alert(Alert.AlertType.INFORMATION, "Scenic View is not supported in this version of KB").show() }
                         icon(FontAwesomeSolid.IMAGE, 13)
+                    }
+                    item {
+                        name("Code Editor")
+                        action { TextEditorDemo.launch() }
                     }
                     item {
                         name("Registry Editor")
