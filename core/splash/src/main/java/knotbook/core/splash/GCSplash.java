@@ -16,7 +16,7 @@ public class GCSplash {
             } catch (InterruptedException ignored) {
             }
             Platform.runLater(() -> {
-                long now =  (runtime.totalMemory() - runtime.freeMemory());
+                long now = (runtime.totalMemory() - runtime.freeMemory());
                 String mem = String.format("Currently Used Memory: %.3f MB", now / 1000000.0);
                 String freed = String.format("Freed Memory: %.3f MB", (before - now) / 1000000.0);
                 String msg = mem + "\n" + freed;

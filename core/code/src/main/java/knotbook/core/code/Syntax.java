@@ -10,9 +10,7 @@ public enum Syntax {
 
     Properties(SyntaxConstants.SYNTAX_STYLE_PROPERTIES_FILE),
 
-    Plain(SyntaxConstants.SYNTAX_STYLE_NONE)
-
-    ;
+    Plain(SyntaxConstants.SYNTAX_STYLE_NONE);
 
     private String value;
 

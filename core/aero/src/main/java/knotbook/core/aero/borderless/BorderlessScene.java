@@ -54,7 +54,7 @@ public class BorderlessScene extends Scene {
      * The constructor.
      *
      * @param primaryStage your stage.
-     * @param content         the root Parent of your content.
+     * @param content      the root Parent of your content.
      */
     public BorderlessScene(Stage primaryStage, Parent content) {
         super(new Pane());
