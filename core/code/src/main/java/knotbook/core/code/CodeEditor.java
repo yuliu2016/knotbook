@@ -1,97 +1,85 @@
 package knotbook.core.code;
 
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.embed.swing.SwingNode;
-import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.util.function.Consumer;
 
+/**
+ * Code editor in Swing using {@link RSyntaxTextArea},
+ * however, every public method should be called from the JavaFX
+ * application thread
+ */
 
-@SuppressWarnings({"WeakerAccess", "unused"})
-public class CodeEditor extends BorderPane {
+@SuppressWarnings({"unused"})
+public class CodeEditor {
 
-    private RSyntaxTextArea area;
-    private RTextScrollPane sp;
+    private RSyntaxTextArea area = new RSyntaxTextArea(35, 84);
+    private JFrame frame = new JFrame();
 
-    private ObjectProperty<Syntax> syntaxProperty;
-
-    public ObjectProperty<Syntax> syntaxProperty() {
-        if (syntaxProperty == null) {
-            syntaxProperty = new SimpleObjectProperty<>(Syntax.Plain);
-            syntaxProperty.addListener((observable, oldValue, newValue) -> {
-                // Apply the change on the EDT
-                Helper.runOnEDT(() -> area.setSyntaxEditingStyle(newValue.getValue()));
-            });
-        }
-        return syntaxProperty;
-    }
-
-    public Syntax getSyntax() {
-        return syntaxProperty().get();
-    }
-
-    public void setSyntax(Syntax syntax) {
-        syntaxProperty().set(syntax);
-    }
-
-    private SwingNode swingNode = new SwingNode();
-
-    private CodeEditor() {
-        super();
-        setCenter(swingNode);
-
-        InvalidationListener listener = new InvalidationListener() {
-            @Override
-            public void invalidated(Observable observable) {
-                int width = (int) getWidth();
-                int height = (int) getHeight();
-                Helper.runOnEDT(() -> sp.setSize(width, height));
-            }
-        };
-
-        widthProperty().addListener(listener);
-        heightProperty().addListener(listener);
-
+    private CodeEditor(String title, String yes, String no, String initialText,
+                       Consumer<String> yesRun, Runnable noRun, Syntax syntax) {
         Helper.runOnEDT(() -> {
-            area = new RSyntaxTextArea(36, 100);
+            JPanel cp = new JPanel();
+
+            cp.setLayout(new BoxLayout(cp, BoxLayout.Y_AXIS));
+
+            area.setSyntaxEditingStyle(syntax.getValue());
             area.setCurrentLineHighlightColor(Color.white);
-            area.setAntiAliasingEnabled(true);
             area.setCodeFoldingEnabled(true);
             area.setAutoIndentEnabled(true);
-            area.setBracketMatchingEnabled(true);
             area.setPaintTabLines(true);
             area.setTabSize(4);
             area.setTabsEmulated(true);
             area.setCloseCurlyBraces(true);
-            area.setMarkOccurrences(true);
-            area.setText("\n\nhi");
+            area.setFont(area.getFont().deriveFont(15f));
+            area.setText(initialText);
 
-            sp = new RTextScrollPane(area);
+            RTextScrollPane sp = new RTextScrollPane(area);
             sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-            swingNode.setContent(sp);
 
-            Helper.runOnFx(() -> {
+            var bottomPanel = new JPanel();
+            bottomPanel.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
+            bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
+            bottomPanel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
+            bottomPanel.setBorder(null);
 
-            });
+            var okBtn = new JButton(no);
+            okBtn.setAlignmentX(JButton.RIGHT_ALIGNMENT);
+            okBtn.setBackground(new Color(224, 224, 224));
+            okBtn.addActionListener(e -> yesRun.accept(area.getText()));
+
+            var closeBtn = new JButton(yes);
+            closeBtn.setBackground(new Color(224, 224, 255));
+            closeBtn.setAlignmentX(JButton.RIGHT_ALIGNMENT);
+            closeBtn.addActionListener(e -> noRun.run());
+
+            bottomPanel.add(okBtn);
+            bottomPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+            bottomPanel.add(closeBtn);
+            bottomPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+
+            cp.add(Box.createRigidArea(new Dimension(0, 5)));
+            cp.add(bottomPanel);
+            cp.add(Box.createRigidArea(new Dimension(0, 5)));
+            cp.add(sp);
+
+            frame.setContentPane(cp);
+            frame.setTitle(title);
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
         });
     }
 
     public static void launch() {
-        Helper.runOnFx(() -> {
-            Stage stage = new Stage();
-            CodeEditor editor = new CodeEditor();
-            stage.setTitle("Code Editor");
-            stage.setScene(new Scene(editor));
-            stage.show();
-        });
+        new CodeEditor("table.py", "Save", "Discard", "", e -> {
+        }, () -> {
+        }, Syntax.Python);
     }
 }
