@@ -22,7 +22,6 @@ import knotbook.core.splash.GCSplash
 import knotbook.core.table.KnotTable
 import knotbook.pathplanner.runPathPlanner
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid
-//import org.scenicview.ScenicView
 import kotlin.system.exitProcess
 
 
@@ -159,7 +158,7 @@ class Main : Application() {
                     }
                     item {
                         name("Scenic View")
-                        action { Alert(Alert.AlertType.INFORMATION, "Scenic View is not supported in this version").show() }
+                        action { Alert(Alert.AlertType.INFORMATION, "Scenic View is not supported in this version of KB").show() }
                         icon(FontAwesomeSolid.IMAGE, 13)
                     }
                     item {
