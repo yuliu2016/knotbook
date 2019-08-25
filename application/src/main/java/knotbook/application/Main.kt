@@ -14,7 +14,7 @@ import javafx.scene.paint.Color
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import knotbook.core.camera.KnotCameraTest
-import knotbook.core.code.TextEditorDemo
+import knotbook.core.code.CodeEditor
 import knotbook.core.fx.*
 import knotbook.core.registry.Registry
 import knotbook.core.registry.RegistryEditor
@@ -164,7 +164,7 @@ class Main : Application() {
                     }
                     item {
                         name("Code Editor")
-                        action { TextEditorDemo.launch() }
+                        action { CodeEditor.launch() }
                     }
                     item {
                         name("Registry Editor")
