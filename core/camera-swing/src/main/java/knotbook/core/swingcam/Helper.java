@@ -1,4 +1,4 @@
-package knotbook.core.code;
+package knotbook.core.swingcam;
 
 import javax.swing.*;
 
