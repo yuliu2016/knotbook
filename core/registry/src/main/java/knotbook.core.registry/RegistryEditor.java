@@ -14,10 +14,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import knotbook.core.code.CodeEditor;
+import knotbook.core.code.Syntax;
 
 import java.util.Arrays;
 
 public class RegistryEditor {
+    @SuppressWarnings("unused")
     public static void show() {
         Stage stage = new Stage();
         stage.setTitle("App Registry");
@@ -65,7 +68,11 @@ public class RegistryEditor {
         stage.show();
     }
 
-    public static void show2() {
-
+    public static void ish() {
+        new CodeEditor("Application Properties", true,
+                "Save", "Discard", Registry.INSTANCE.join(), s -> {
+            Registry.INSTANCE.parse(Arrays.asList(s.split("\n")));
+            Registry.INSTANCE.save();
+        }, Syntax.Properties);
     }
 }

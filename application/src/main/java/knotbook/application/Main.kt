@@ -159,17 +159,13 @@ class Main : Application() {
                     }
                     item {
                         name("Scenic View")
-                        action { Alert(Alert.AlertType.INFORMATION, "Scenic View is not supported in this version of KB").show() }
+                        action { Alert(Alert.AlertType.INFORMATION, "Scenic View is not supported in this build").show() }
                         icon(FontAwesomeSolid.IMAGE, 13)
                     }
                     item {
-                        name("Code Editor")
-                        action { CodeEditor.launch() }
-                    }
-                    item {
-                        name("Registry Editor")
+                        name("Application Properties")
                         icon(FontAwesomeSolid.TOOLS, 13)
-                        action { RegistryEditor.show() }
+                        action { RegistryEditor.ish() }
                     }
                     item { name("Process Manager") }
                     item {
@@ -235,13 +231,12 @@ class Main : Application() {
     })
 
     override fun start(stage: Stage) {
-//        stage.title = "Knotbook"
-//        stage.icons.add(Image(Main::class.java.getResourceAsStream("/knotbook/application/icon.png")))
-//        stage.scene = scene
-//        stage.initStyle(StageStyle.DECORATED)
-//        stage.show()
+        stage.title = "Knotbook"
+        stage.icons.add(Image(Main::class.java.getResourceAsStream("/knotbook/application/icon.png")))
+        stage.scene = scene
+        stage.initStyle(StageStyle.DECORATED)
+        stage.show()
 //        runPathPlanner()
-        CodeEditor.launch()
     }
 
     companion object {

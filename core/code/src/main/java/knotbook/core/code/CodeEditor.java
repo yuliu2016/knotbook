@@ -22,8 +22,8 @@ public class CodeEditor {
     private RSyntaxTextArea area = new RSyntaxTextArea(35, 84);
     private JFrame frame = new JFrame();
 
-    private CodeEditor(String title, boolean editable, String yes, String no, String initialText,
-                       Consumer<String> yesRun, Syntax syntax) {
+    public CodeEditor(String title, boolean editable, String yes, String no, String initialText,
+                      Consumer<String> yesRun, Syntax syntax) {
         Helper.runOnEDT(() -> {
             JPanel cp = new JPanel();
 
@@ -54,15 +54,15 @@ public class CodeEditor {
                 var okBtn = new JButton(no);
                 okBtn.setAlignmentX(JButton.RIGHT_ALIGNMENT);
                 okBtn.setBackground(new Color(224, 224, 224));
-                okBtn.addActionListener(e -> {
-                    frame.dispose();
-                    yesRun.accept(area.getText());
-                });
+                okBtn.addActionListener(e -> frame.dispose());
 
                 var closeBtn = new JButton(yes);
                 closeBtn.setBackground(new Color(224, 224, 255));
                 closeBtn.setAlignmentX(JButton.RIGHT_ALIGNMENT);
-                closeBtn.addActionListener(e -> frame.dispose());
+                closeBtn.addActionListener(e -> {
+                    frame.dispose();
+                    yesRun.accept(area.getText());
+                });
 
                 bottomPanel.add(okBtn);
                 bottomPanel.add(Box.createRigidArea(new Dimension(5, 0)));
@@ -100,10 +100,5 @@ public class CodeEditor {
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
         });
-    }
-
-    public static void launch() {
-        new CodeEditor("table.py", true,"Save", "Discard", "", e -> {
-        }, Syntax.Python);
     }
 }
