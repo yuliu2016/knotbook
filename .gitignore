@@ -3,6 +3,7 @@ build/
 application/scenicView.properties
 core/spreadsheet/
 scripts/api_v3.json
+scripts/modena.css
 
 *.iml
 
