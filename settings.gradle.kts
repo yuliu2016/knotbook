@@ -3,6 +3,7 @@ include(
         "application",
         "core:aero",
         "core:camera",
+        "core:code",
         "core:fx",
         "core:icon",
         "core:registry",

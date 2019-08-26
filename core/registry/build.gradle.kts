@@ -24,5 +24,6 @@ javafx {
 }
 
 dependencies {
+    implementation(project(":core:code"))
     implementation(kotlin("stdlib"))
 }

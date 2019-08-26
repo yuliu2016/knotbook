@@ -1,0 +1,23 @@
+{
+    "tables": [
+        "match_schedule",
+        "scouted_entries",
+        "scouted_entries_persons",
+        "scouts_overview",
+        "wrong_data",
+        "missing_entries",
+        "cycle_matrix",
+        "scale_autos",
+        "switch_autos",
+        "team_averages",
+        "team_averages_nonzero",
+        "team_average_ratings",
+        "team_by_matches",
+        "raw_data",
+        "raw_data_app",
+        "app_cycles",
+        "app_power_ups",
+        "tba_powerups",
+        "tba_team_overview"
+    ]
+}

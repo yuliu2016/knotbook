@@ -34,6 +34,7 @@ dependencies {
     implementation(project(":core:fx"))
     implementation(project(":core:icon"))
     implementation(project(":core:server"))
+    implementation(project(":core:code"))
     implementation(project(":fn:path-planner"))
     implementation(kotlin("stdlib"))
 

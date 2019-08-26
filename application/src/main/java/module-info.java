@@ -13,6 +13,7 @@ module knotbook.application {
     requires knotbook.core.registry;
     requires knotbook.core.icon;
     requires knotbook.core.server;
+    requires knotbook.core.code;
 
     requires knotbook.pathplanner;
 

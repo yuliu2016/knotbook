@@ -18,6 +18,7 @@ val Project.rootPath: String get() {
 }
 
 subprojects {
+    apply(plugin="java")
     apply(plugin="org.javamodularity.moduleplugin")
     repositories {
         mavenCentral()

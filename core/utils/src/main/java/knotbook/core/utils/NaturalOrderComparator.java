@@ -24,7 +24,7 @@ package knotbook.core.utils;
  3. This notice may not be removed or altered from any source distribution.
  */
 
-import java.util.*;
+import java.util.Comparator;
 
 @SuppressWarnings("WeakerAccess")
 public class NaturalOrderComparator implements Comparator {

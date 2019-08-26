@@ -14,6 +14,7 @@ import javafx.scene.paint.Color
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import knotbook.core.camera.KnotCameraTest
+import knotbook.core.code.CodeEditor
 import knotbook.core.fx.*
 import knotbook.core.registry.Registry
 import knotbook.core.registry.RegistryEditor
@@ -158,13 +159,13 @@ class Main : Application() {
                     }
                     item {
                         name("Scenic View")
-                        action { Alert(Alert.AlertType.INFORMATION, "Scenic View is not supported in this version of KB").show() }
+                        action { Alert(Alert.AlertType.INFORMATION, "Scenic View is not supported in this build").show() }
                         icon(FontAwesomeSolid.IMAGE, 13)
                     }
                     item {
-                        name("Registry Editor")
+                        name("Application Properties")
                         icon(FontAwesomeSolid.TOOLS, 13)
-                        action { RegistryEditor.show() }
+                        action { RegistryEditor.ish() }
                     }
                     item { name("Process Manager") }
                     item {
