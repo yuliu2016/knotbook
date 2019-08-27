@@ -1,4 +1,4 @@
-package knotbook.core.utils;
+package knotbook.core.table;
 
 @SuppressWarnings("unused")
 public class TableHeaders {

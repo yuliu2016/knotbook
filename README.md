@@ -22,9 +22,9 @@ from the build status table above
 
 #### Components
 
-**KnotTable**: 
+**Bowline**: 
 ControlsFX SpreadsheetView is not supported since JDK 9.
-This project uses a custom table Control that uses a custom 
+Bowline a custom table Control with its own
 VirtualFlow implementation. 
 See [GridVirtualFlow.kt](core/table/src/main/java/knotbook/core/table/GridVirtualFlow.kt)
 for details on how it works.

@@ -6,6 +6,8 @@
       <module name="knotbook.core.snap.test" target="12" />
       <module name="knotbook.core.snappy.main" target="12" />
       <module name="knotbook.core.snappy.test" target="12" />
+      <module name="knotbook.core.utils.main" target="12" />
+      <module name="knotbook.core.utils.test" target="12" />
       <module name="knotbook.ext.expression-solver.main" target="12" />
       <module name="knotbook.ext.expression-solver.test" target="12" />
       <module name="knotbook.ext.formulas.main" target="12" />

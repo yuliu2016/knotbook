@@ -1,4 +1,4 @@
-package knotbook.core.utils;
+package knotbook.core.table;
 
 /*
  NaturalOrderComparator.java -- Perform 'natural order' comparisons of strings in Java.

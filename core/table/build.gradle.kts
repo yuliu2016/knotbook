@@ -28,7 +28,6 @@ javafx {
 }
 
 dependencies {
-    implementation(project(":core:utils"))
     implementation(kotlin("stdlib"))
 
     testImplementation(kotlin("test"))
