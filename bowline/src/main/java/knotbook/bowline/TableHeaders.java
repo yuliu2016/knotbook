@@ -1,4 +1,4 @@
-package knotbook.core.table;
+package knotbook.bowline;
 
 @SuppressWarnings("unused")
 public class TableHeaders {

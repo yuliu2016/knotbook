@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package knotbook.core.table
+package knotbook.bowline
 
 
 // DEBUG FUNCTIONS

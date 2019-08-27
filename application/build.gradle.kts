@@ -27,10 +27,10 @@ javafx {
 }
 
 dependencies {
+    implementation(project(":bowline"))
     implementation(project(":core:camera"))
     implementation(project(":core:splash"))
     implementation(project(":core:registry"))
-    implementation(project(":core:table"))
     implementation(project(":core:fx"))
     implementation(project(":core:icon"))
     implementation(project(":core:server"))

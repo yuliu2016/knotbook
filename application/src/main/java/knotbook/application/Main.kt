@@ -13,14 +13,13 @@ import javafx.scene.layout.HBox
 import javafx.scene.paint.Color
 import javafx.stage.Stage
 import javafx.stage.StageStyle
+import knotbook.bowline.KnotTable
 import knotbook.core.camera.KnotCameraTest
-import knotbook.core.code.CodeEditor
 import knotbook.core.fx.*
 import knotbook.core.registry.Registry
 import knotbook.core.registry.RegistryEditor
 import knotbook.core.splash.AboutSplash
 import knotbook.core.splash.GCSplash
-import knotbook.core.table.KnotTable
 import knotbook.pathplanner.runPathPlanner
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid
 import kotlin.system.exitProcess

@@ -1,4 +1,4 @@
-package knotbook.core.table
+package knotbook.bowline
 
 import javafx.event.EventHandler
 import javafx.geometry.*

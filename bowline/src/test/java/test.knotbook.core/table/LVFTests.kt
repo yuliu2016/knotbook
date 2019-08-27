@@ -1,6 +1,6 @@
 package test.knotbook.core.table
 
-import knotbook.core.table.LinearVirtualFlow
+import knotbook.bowline.LinearVirtualFlow
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals

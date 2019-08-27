@@ -1,4 +1,4 @@
-package knotbook.core.table
+package knotbook.bowline
 
 import javafx.scene.control.Control
 import javafx.scene.control.Skin

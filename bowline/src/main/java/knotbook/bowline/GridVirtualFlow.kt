@@ -1,4 +1,4 @@
-package knotbook.core.table
+package knotbook.bowline
 
 /**
  * Virtual Flow for a grid, based upon [LinearVirtualFlow]

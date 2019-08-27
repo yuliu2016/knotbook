@@ -1,6 +1,7 @@
 rootProject.name = "knotbook"
 include(
         "application",
+        "bowline",
         "core:aero",
         "core:camera",
         "core:camera-swing",
@@ -10,7 +11,6 @@ include(
         "core:registry",
         "core:server",
         "core:splash",
-        "core:table",
         "fn:path-planner",
         "fn:tba-client"
 )

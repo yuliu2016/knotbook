@@ -8,7 +8,7 @@ module knotbook.application {
 
     requires knotbook.core.camera;
     requires knotbook.core.splash;
-    requires knotbook.core.table;
+    requires knotbook.bowline;
     requires knotbook.core.fx;
     requires knotbook.core.registry;
     requires knotbook.core.icon;

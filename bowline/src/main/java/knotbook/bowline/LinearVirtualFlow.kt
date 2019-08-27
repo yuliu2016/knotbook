@@ -1,4 +1,4 @@
-package knotbook.core.table
+package knotbook.bowline
 
 /**
  * Pure implementation of VirtualFlow that is independent of cells
