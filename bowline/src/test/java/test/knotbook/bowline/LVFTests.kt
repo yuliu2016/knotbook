@@ -1,4 +1,4 @@
-package test.knotbook.core.table
+package test.knotbook.bowline
 
 import knotbook.bowline.LinearVirtualFlow
 import org.junit.jupiter.api.Test
