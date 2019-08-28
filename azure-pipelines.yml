@@ -61,7 +61,7 @@ jobs:
       - task: ArchiveFiles@2
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
-          rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/application/image"
+          rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/kb.application/image"
           includeRootFolder: true
           archiveType: "7z"
           archiveFile: "$(System.DefaultWorkingDirectory)/app-image-$(Build.BuildNumber)"
@@ -105,7 +105,7 @@ jobs:
       - task: ArchiveFiles@2
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
-          rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/application/image"
+          rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/kb.application/image"
           includeRootFolder: true
           archiveType: "zip"
           archiveFile: "$(System.DefaultWorkingDirectory)/app-image-$(Build.BuildNumber).zip"
@@ -149,7 +149,7 @@ jobs:
       - task: ArchiveFiles@2
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
-          rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/application/image"
+          rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/kb.application/image"
           includeRootFolder: true
           archiveType: "zip"
           archiveFile: "$(System.DefaultWorkingDirectory)/app-image-$(Build.BuildNumber).zip"
