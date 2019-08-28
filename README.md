@@ -31,7 +31,7 @@ for details on how it works.
 
 **Camera**:
 A JavaFX image window to display the webcam and read QR codes. See
-[KnotCamera.java](core/camera/src/main/java/knotbook/core/camera/KnotCamera.java)
+[KnotCamera.java](modules/kb.core.camera.fx/src/main/java/knotbook/core/camera/KnotCamera.java)
 
 #### Special Notes: 
 The webcam-capture library is unable to load the native files in the modules in development mode,

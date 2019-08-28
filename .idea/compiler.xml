@@ -2,30 +2,34 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
-      <module name="knotbook.core.snap.main" target="12" />
-      <module name="knotbook.core.snap.test" target="12" />
-      <module name="knotbook.core.snappy.main" target="12" />
-      <module name="knotbook.core.snappy.test" target="12" />
-      <module name="knotbook.core.table.main" target="12" />
-      <module name="knotbook.core.table.test" target="12" />
-      <module name="knotbook.core.utils.main" target="12" />
-      <module name="knotbook.core.utils.test" target="12" />
-      <module name="knotbook.ext.expression-solver.main" target="12" />
-      <module name="knotbook.ext.expression-solver.test" target="12" />
-      <module name="knotbook.ext.formulas.main" target="12" />
-      <module name="knotbook.ext.formulas.test" target="12" />
-      <module name="knotbook.ext.tba-client.main" target="12" />
-      <module name="knotbook.ext.tba-client.test" target="12" />
-      <module name="knotbook.fn.formulas.main" target="12" />
-      <module name="knotbook.fn.formulas.test" target="12" />
-      <module name="knotbook.main" target="12" />
-      <module name="knotbook.snap.main" target="11" />
-      <module name="knotbook.snap.test" target="11" />
-      <module name="knotbook.tba.client.main" target="11" />
-      <module name="knotbook.tba.client.test" target="11" />
-      <module name="knotbook.test" target="12" />
-      <module name="knotbook.the-blue-alliance.client.main" target="11" />
-      <module name="knotbook.the-blue-alliance.client.test" target="11" />
+      <module name="knotbook.kb.application.main" target="12" />
+      <module name="knotbook.kb.application.test" target="12" />
+      <module name="knotbook.kb.core.bowline.main" target="12" />
+      <module name="knotbook.kb.core.bowline.test" target="12" />
+      <module name="knotbook.kb.core.camera.fx.main" target="12" />
+      <module name="knotbook.kb.core.camera.fx.test" target="12" />
+      <module name="knotbook.kb.core.camera.swing.main" target="12" />
+      <module name="knotbook.kb.core.camera.swing.test" target="12" />
+      <module name="knotbook.kb.core.code.main" target="12" />
+      <module name="knotbook.kb.core.code.test" target="12" />
+      <module name="knotbook.kb.core.fx.main" target="12" />
+      <module name="knotbook.kb.core.fx.test" target="12" />
+      <module name="knotbook.kb.core.icon.main" target="12" />
+      <module name="knotbook.kb.core.icon.test" target="12" />
+      <module name="knotbook.kb.core.registry.main" target="12" />
+      <module name="knotbook.kb.core.registry.test" target="12" />
+      <module name="knotbook.kb.core.server.main" target="12" />
+      <module name="knotbook.kb.core.server.test" target="12" />
+      <module name="knotbook.kb.core.splash.main" target="12" />
+      <module name="knotbook.kb.core.splash.test" target="12" />
+      <module name="knotbook.kb.core.view.main" target="12" />
+      <module name="knotbook.kb.core.view.test" target="12" />
+      <module name="knotbook.kb.lib.borderless.main" target="12" />
+      <module name="knotbook.kb.lib.borderless.test" target="12" />
+      <module name="knotbook.kb.path.planner.main" target="12" />
+      <module name="knotbook.kb.path.planner.test" target="12" />
+      <module name="knotbook.kb.tba.client.main" target="12" />
+      <module name="knotbook.kb.tba.client.test" target="12" />
     </bytecodeTargetLevel>
   </component>
 </project>

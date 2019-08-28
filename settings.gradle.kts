@@ -1,17 +1,13 @@
 rootProject.name = "knotbook"
-include(
-        "application",
-        "bowline",
-        "core:aero",
-        "core:camera",
-        "core:camera-swing",
-        "core:code",
-        "core:fx",
-        "core:icon",
-        "core:registry",
-        "core:server",
-        "core:splash",
-        "core:view",
-        "fn:path-planner",
-        "fn:tba-client"
-)
+val modulesFiles = file("modules/").listFiles()
+        ?.filter { it.isDirectory && it.name.startsWith("kb") }
+val submodules = modulesFiles?.map { it.name } ?: listOf()
+include(*submodules.toTypedArray())
+
+for (project in rootProject.children) {
+    val projectDirName = project.name
+    project.projectDir = file("modules/$projectDirName")
+    require(project.projectDir.isDirectory) {
+        "Project directory ${project.projectDir} for project ${project.name} does not exist."
+    }
+}
