@@ -1,4 +1,4 @@
-module knotbook.tba.client {
+module kb.tba.client {
     requires kotlin.stdlib;
     requires fuel;
     requires klaxon;

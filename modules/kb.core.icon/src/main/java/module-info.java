@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-module knotbook.core.icon {
+module kb.core.icon {
     requires org.kordamp.iconli.core;
     requires javafx.controls;
 

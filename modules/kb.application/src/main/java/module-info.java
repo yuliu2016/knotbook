@@ -1,8 +1,8 @@
-module knotbook.application {
+module kb.application {
     requires javafx.graphics;
 
-    requires knotbook.core.registry;
-    requires knotbook.core.view;
+    requires kb.core.registry;
+    requires kb.core.view;
 
     exports knotbook.application;
 }

@@ -1,4 +1,4 @@
-module knotbook.core.code {
+module kb.core.code {
     requires rsyntaxtextarea;
     requires java.desktop;
     requires javafx.graphics;

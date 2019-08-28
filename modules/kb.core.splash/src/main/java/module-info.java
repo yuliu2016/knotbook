@@ -1,4 +1,4 @@
-module knotbook.core.splash {
+module kb.core.splash {
     requires javafx.controls;
     requires java.desktop;
 

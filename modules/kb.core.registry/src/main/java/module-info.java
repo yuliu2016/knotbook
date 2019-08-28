@@ -1,8 +1,8 @@
-module knotbook.core.registry {
+module kb.core.registry {
     requires kotlin.stdlib;
     requires javafx.controls;
 
-    requires knotbook.core.code;
+    requires kb.core.code;
 
     exports knotbook.core.registry;
 }

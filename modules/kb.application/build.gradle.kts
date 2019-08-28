@@ -22,7 +22,7 @@ val appJVMArgs = listOf(
 
 application {
     applicationDefaultJvmArgs = appJVMArgs
-    mainClassName = "knotbook.application/knotbook.application.Main"
+    mainClassName = "kb.application/knotbook.application.Main"
 }
 
 jlink {

@@ -1,7 +1,7 @@
-module knotbook.core.aero {
+module kb.lib.borderless {
     requires javafx.graphics;
     requires javafx.controls;
-    requires knotbook.core.icon;
+    requires kb.core.icon;
     requires org.kordamp.ikonli.materialdesign;
 
     exports knotbook.core.aero;

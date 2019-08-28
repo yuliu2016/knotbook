@@ -1,4 +1,4 @@
-module knotbook.core.view {
+module kb.core.view {
     requires kotlin.stdlib;
     requires javafx.graphics;
     requires javafx.controls;
@@ -6,16 +6,16 @@ module knotbook.core.view {
     requires org.kordamp.iconli.core;
     requires org.kordamp.ikonli.fontawesome5;
 
-    requires knotbook.core.camera;
-    requires knotbook.core.splash;
-    requires knotbook.bowline;
-    requires knotbook.core.fx;
-    requires knotbook.core.registry;
-    requires knotbook.core.icon;
-    requires knotbook.core.server;
-    requires knotbook.core.code;
+    requires kb.core.camera.fx;
+    requires kb.core.splash;
+    requires kb.core.bowline;
+    requires kb.core.fx;
+    requires kb.core.registry;
+    requires kb.core.icon;
+    requires kb.core.server;
+    requires kb.core.code;
 
-    requires knotbook.pathplanner;
+    requires kb.pathplanner;
 
     exports knotbook.core.view;
 }
