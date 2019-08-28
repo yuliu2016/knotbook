@@ -1,5 +1,7 @@
 package kb.core.camera.swing;
 
+import com.github.sarxos.webcam.Webcam;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -26,12 +28,12 @@ public class KnotSwingCamera {
         }
     }
 
-
     private JFrame frame;
     private ImageView imageView;
 
     AffineTransform at = new AffineTransform();
 
+    Webcam webcam = Webcam.getDefault();
 
     public KnotSwingCamera() {
         at.concatenate(AffineTransform.getScaleInstance(-1, 1));
@@ -41,23 +43,13 @@ public class KnotSwingCamera {
             imageView = new ImageView();
             frame.setTitle("Camera");
             frame.add(imageView);
+            Thread thread = new Thread(() -> {
+                BufferedImage image = webcam.getImage();
+                BufferedImage transformed = createTransformed(image, at);
+                Helper.runOnEDT(() -> imageView.setImage(transformed));
+            });
+            thread.start();
         });
-    }
-
-    private static BufferedImage convertToARGB(BufferedImage image) {
-        BufferedImage newImage = new BufferedImage(
-                image.getWidth(), image.getHeight(),
-                BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = newImage.createGraphics();
-        g.drawImage(image, 0, 0, null);
-        g.dispose();
-        return newImage;
-    }
-
-    private static BufferedImage createRotated(BufferedImage image) {
-        AffineTransform at = AffineTransform.getRotateInstance(
-                Math.PI, image.getWidth() / 2f, image.getHeight() / 2.0);
-        return createTransformed(image, at);
     }
 
     private static BufferedImage createTransformed(

@@ -5,20 +5,20 @@ from io import StringIO
 import sys
 
 class ScriptContext:
+    """
+    Create a scripting context
+    """
 
-    def __init__(self, host, port, redirect_out):
+    def __init__(self, host="localhost", port="8080"):
         self._host = host
         self._port = port
-        self._redirect_out = redirect_out
-        self._out = StringIO()
-        if redirect_print:
-            self._stdout = sys.stdout
-            sys.stdout = self._out
-        else:
-            self._stdout = None
+        self._job = None
+
+    def _get(self, path: "str"):
+        return requests.get(f"http://{self._host}:{self._port}/get/{path}", timeout=5)
 
     def get_table(self, table_name: "str", default_file=None) -> "pd.DataFrame":
-        r = requests.get(f"http://{self._host}:{self._port}/get/{table_name}", timeout=5)
+        r = _get(f"table/{table_name}")
         t = r.text
         if t is None or len(t) == 0:
             return pd.read_csv(default_file)
@@ -35,9 +35,4 @@ class ScriptContext:
             sys.stdout = self._stdout
         requests.post(f"http://{self._host}:{self._port}/done", data=self._out.getvalue())
 
-    def log(self, *obj):
-        print(*obj, file=self._out)
-
-
-def script_context(host="localhost", port="8080", redirect_print=True):
-    return ScriptContext(host, port, redirect_print)
+script_context = ScriptContext
