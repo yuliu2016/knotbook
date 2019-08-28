@@ -22,11 +22,11 @@ jobs:
           jdkDestinationDirectory: "build/jdk_inst"
           jdkArchitectureOption: x64
       - task: CacheBeta@0
-          condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
-          inputs:
-            key: jdk | $(Agent.OS)
-            path: "build/jdk_inst"
-          displayName: "JDK Cache"
+        condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
+        inputs:
+          key: jdk | $(Agent.OS)
+          path: "build/jdk_inst"
+        displayName: "JDK Cache"
       #      - task: CacheBeta@0
       #        condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
       #        inputs:
