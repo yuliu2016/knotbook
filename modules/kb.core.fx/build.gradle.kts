@@ -1,5 +1,4 @@
 plugins {
-    java
     kotlin("jvm")
     id("org.openjfx.javafxplugin")
 }
@@ -24,9 +23,7 @@ javafx {
 }
 
 dependencies {
-    implementation(project(":core:icon"))
-    implementation(project(":core:fx"))
     implementation(kotlin("stdlib"))
-    implementation ("com.github.Team865:FRC-Commons-Kotlin:e00ce2ccc6")
-    implementation(group = "org.kordamp.ikonli", name = "ikonli-fontawesome5-pack", version = "11.3.4")
+    implementation(project(":kb.core.icon"))
+    implementation(group = "org.kordamp.ikonli", name = "ikonli-core", version = "11.3.4")
 }

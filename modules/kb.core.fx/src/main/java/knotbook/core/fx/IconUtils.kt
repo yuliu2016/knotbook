@@ -1,6 +1,5 @@
 package knotbook.core.fx
 
-import javafx.geometry.Pos
 import javafx.scene.layout.HBox
 import knotbook.core.icon.FontIcon
 import org.kordamp.ikonli.Ikon

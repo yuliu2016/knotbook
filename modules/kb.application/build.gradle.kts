@@ -6,12 +6,12 @@ plugins {
 }
 
 javafx {
-    modules = listOf("javafx.controls")
+    modules("javafx.controls")
 }
 
 dependencies {
-    implementation(project(":core:view"))
-    implementation(project(":core:registry"))
+    implementation(project(":kb.core.view"))
+    implementation(project(":kb.core.registry"))
 }
 
 val appJVMArgs = listOf(

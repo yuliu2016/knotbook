@@ -1,4 +1,5 @@
 plugins {
+    java
     kotlin("jvm")
     id("org.openjfx.javafxplugin")
 }
@@ -23,7 +24,6 @@ javafx {
 }
 
 dependencies {
+    implementation(project(":kb.core.code"))
     implementation(kotlin("stdlib"))
-    implementation(project(":core:icon"))
-    implementation(group = "org.kordamp.ikonli", name = "ikonli-core", version = "11.3.4")
 }

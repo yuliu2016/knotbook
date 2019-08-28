@@ -24,15 +24,15 @@ javafx {
 }
 
 dependencies {
-    implementation(project(":bowline"))
-    implementation(project(":core:camera"))
-    implementation(project(":core:splash"))
-    implementation(project(":core:registry"))
-    implementation(project(":core:fx"))
-    implementation(project(":core:icon"))
-    implementation(project(":core:server"))
-    implementation(project(":core:code"))
-    implementation(project(":fn:path-planner"))
+    implementation(project(":kb.core.bowline"))
+    implementation(project(":kb.core.camera.fx"))
+    implementation(project(":kb.core.splash"))
+    implementation(project(":kb.core.registry"))
+    implementation(project(":kb.core.fx"))
+    implementation(project(":kb.core.icon"))
+    implementation(project(":kb.core.server"))
+    implementation(project(":kb.core.code"))
+    implementation(project(":kb.path.planner"))
     implementation(kotlin("stdlib"))
 
     implementation(group = "org.kordamp.ikonli", name = "ikonli-fontawesome5-pack", version = "11.3.4")

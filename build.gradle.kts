@@ -13,10 +13,6 @@ plugins {
     id("org.jetbrains.dokka") version "0.9.18" apply false
 }
 
-val Project.rootPath: String get() {
-    return parent?.rootPath?.plus("/$name") ?: ""
-}
-
 subprojects {
     apply(plugin="java")
     apply(plugin="org.javamodularity.moduleplugin")
@@ -32,7 +28,7 @@ subprojects {
         set("javafx-version", "12.0.1")
         set("kotlin-jvm-target", "11")
     }
-    buildDir = File(rootProject.projectDir, "build/$rootPath")
+    buildDir = File(rootProject.projectDir, "build/$name")
 }
 
 buildScan {
