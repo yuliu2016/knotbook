@@ -6,10 +6,8 @@
  
 ; -------------------------------
 ; Start
- 
-  !define MUI_PRODUCT "SIG Beta Ver. 1.0"
+
   !define MUI_FILE "savefile"
-  !define MUI_VERSION ""
   !define MUI_BRANDINGTEXT "SIG Beta Ver. 1.0"
   CRCCheck On
  
@@ -20,20 +18,21 @@
 ;---------------------------------
 ;General
  
-  OutFile "installsig.exe"
-  ShowInstDetails "nevershow"
-  ShowUninstDetails "nevershow"
+  OutFile "knotbook.exe"
+  ShowInstDetails "show"
+  ShowUninstDetails "show"
+  SetCompressor /SOLID lzma
   ;SetCompressor "bzip2"
  
-  !define MUI_ICON "icon.ico"
-  !define MUI_UNICON "icon.ico"
-  !define MUI_SPECIALBITMAP "Bitmap.bmp"
+  !define MUI_ICON "..\assets\knot.ico"
+  !define MUI_UNICON "..\assets\knot.ico"
+#  !define MUI_SPECIALBITMAP "Bitmap.bmp"
  
  
 ;--------------------------------
 ;Folder selection page
  
-  InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
+  InstallDir "$LOCALAPPDATA\knotbook"
  
  
 ;--------------------------------
@@ -51,19 +50,19 @@
 ;--------------------------------
 ;Language
  
-  !insertmacro MUI_LANGUAGE "English"
+#  !insertmacro MUI_LANGUAGE "English"
  
  
 ;-------------------------------- 
 ;Modern UI System
  
-  !insertmacro MUI_SYSTEM 
+#  !insertmacro MUI_SYSTEM
  
  
 ;--------------------------------
 ;Data
  
-  LicenseData "Read_me.txt"
+#  LicenseData "docs.py"
  
  
 ;-------------------------------- 
@@ -73,34 +72,34 @@ Section "install" Installation info
 ;Add files
   SetOutPath "$INSTDIR"
  
-  File "${MUI_FILE}.exe"
-  File "${MUI_FILE}.ini"
-  File "Read_me.txt"
-  SetOutPath "$INSTDIR\playlists"
-  file "playlists\${MUI_FILE}.epp"
-  SetOutPath "$INSTDIR\data"
-  file "data\*.cst"
-  file "data\errorlog.txt"
+#  File "${MUI_FILE}.exe"
+#  File "${MUI_FILE}.ini"
+#  File "Read_me.txt"
+#  SetOutPath "$INSTDIR\playlists"
+#  file "playlists\${MUI_FILE}.epp"
+#  SetOutPath "$INSTDIR\data"
+#  file "data\*.cst"
+#  file "data\errorlog.txt"
   ; Here follow the files that will be in the playlist
   SetOutPath "$INSTDIR"  
-  file /r mpg
+#  file /r mpg
   SetOutPath "$INSTDIR"  
-  file /r xtras  
+#  file /r xtras
  
 ;create desktop shortcut
-  CreateShortCut "$DESKTOP\${MUI_PRODUCT}.lnk" "$INSTDIR\${MUI_FILE}.exe" ""
+#  CreateShortCut "$DESKTOP\${MUI_PRODUCT}.lnk" "$INSTDIR\${MUI_FILE}.exe" ""
  
 ;create start-menu items
-  CreateDirectory "$SMPROGRAMS\${MUI_PRODUCT}"
-  CreateShortCut "$SMPROGRAMS\${MUI_PRODUCT}\Uninstall.lnk" "$INSTDIR\Uninstall.exe" "" "$INSTDIR\Uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\${MUI_PRODUCT}\${MUI_PRODUCT}.lnk" "$INSTDIR\${MUI_FILE}.exe" "" "$INSTDIR\${MUI_FILE}.exe" 0
- 
+#  CreateDirectory "$SMPROGRAMS\${MUI_PRODUCT}"
+#  CreateShortCut "$SMPROGRAMS\${MUI_PRODUCT}\Uninstall.lnk" "$INSTDIR\Uninstall.exe" "" "$INSTDIR\Uninstall.exe" 0
+#  CreateShortCut "$SMPROGRAMS\${MUI_PRODUCT}\${MUI_PRODUCT}.lnk" "$INSTDIR\${MUI_FILE}.exe" "" "$INSTDIR\${MUI_FILE}.exe" 0
+#
 ;write uninstall information to the registry
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${MUI_PRODUCT}" "DisplayName" "${MUI_PRODUCT} (remove only)"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${MUI_PRODUCT}" "UninstallString" "$INSTDIR\Uninstall.exe"
- 
-  WriteUninstaller "$INSTDIR\Uninstall.exe"
- 
+#  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${MUI_PRODUCT}" "DisplayName" "${MUI_PRODUCT} (remove only)"
+#  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${MUI_PRODUCT}" "UninstallString" "$INSTDIR\Uninstall.exe"
+#
+#  WriteUninstaller "$INSTDIR\Uninstall.exe"
+#
 SectionEnd
  
  
