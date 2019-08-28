@@ -22,7 +22,7 @@ object Registry {
     fun parse(lines: List<String>) {
         map.clear()
         lines.map { it.trim() }
-                .filter { it.isNotEmpty() && !it.startsWith("//") && it.contains("=") }
+                .filter { it.isNotEmpty() && !it.startsWith("#") && it.contains("=") }
                 .map { it.split("=") }
                 .associateTo(map) { it[0].trim() to it[1].trim() }
     }
