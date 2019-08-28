@@ -9,21 +9,21 @@ jobs:
     pool:
       vmImage: "windows-latest"
     steps:
-      - task: CacheBeta@0
-        condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
-        inputs:
-          key: jdk | $(Agent.OS)
-          path: "build/jdk_inst"
-          cacheHitVar: JDK_CACHE_RESTORED
-        displayName: "JDK Cache"
+      #      - task: CacheBeta@0
+      #        condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
+      #        inputs:
+      #          key: jdk | $(Agent.OS)
+      #          path: "build/jdk_inst"
+      #          cacheHitVar: JDK_CACHE_RESTORED
+      #        displayName: "JDK Cache"
       - powershell: |
           mkdir build
           $ProgressPreference = "SilentlyContinue"
           wget "https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_windows-x64_bin.zip" -O "build\jdk.zip"
-        condition: ne(variables.JDK_CACHE_RESTORED, 'true')
+        #        condition: ne(variables.JDK_CACHE_RESTORED, 'true')
         displayName: "Download JDK"
       - task: JavaToolInstaller@0
-        condition: ne(variables.JDK_CACHE_RESTORED, 'true')
+        #        condition: ne(variables.JDK_CACHE_RESTORED, 'true')
         inputs:
           versionSpec: "12"
           jdkSourceOption: localDirectory
