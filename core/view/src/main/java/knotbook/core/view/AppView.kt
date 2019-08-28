@@ -1,22 +1,18 @@
-package knotbook.application
+package knotbook.core.view
 
-import javafx.application.Application
 import javafx.geometry.Pos
 import javafx.scene.Scene
 import javafx.scene.control.Alert
 import javafx.scene.image.Image
-import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.HBox
 import javafx.scene.paint.Color
 import javafx.stage.Stage
-import javafx.stage.StageStyle
 import knotbook.bowline.KnotTable
 import knotbook.core.camera.KnotCameraTest
 import knotbook.core.fx.*
-import knotbook.core.registry.Registry
 import knotbook.core.registry.RegistryEditor
 import knotbook.core.splash.AboutSplash
 import knotbook.core.splash.GCSplash
@@ -24,9 +20,7 @@ import knotbook.pathplanner.runPathPlanner
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid
 import kotlin.system.exitProcess
 
-
-@Suppress("MemberVisibilityCanBePrivate", "unused")
-class Main : Application() {
+object AppView {
 
     private val bar = menuBar {
         isUseSystemMenuBar = true
@@ -197,16 +191,6 @@ class Main : Application() {
         maxHeight = 24.0
         alignment = Pos.CENTER_LEFT
         background = Background(BackgroundFill(Color.valueOf("#eee"), null, null))
-
-        add(hbox {
-            alignment = Pos.CENTER
-            prefWidth = 8.0
-            children.add(ImageView(Image(Main::class.java.getResourceAsStream("/knotbook/application/icon.png"))).apply {
-                isPreserveRatio = true
-                fitHeight = 18.0
-                image = null
-            })
-        })
         add(bar)
     }
 
@@ -229,20 +213,11 @@ class Main : Application() {
         knotable.requestFocus()
     })
 
-    override fun start(stage: Stage) {
+    fun show(stage: Stage) {
         stage.title = "Knotbook"
-        stage.icons.add(Image(Main::class.java.getResourceAsStream("/knotbook/application/icon.png")))
-        stage.scene = scene
-        stage.initStyle(StageStyle.DECORATED)
+        stage.icons.add(Image(AppView::class.java.getResourceAsStream("/icon.png")))
+        stage.scene = AppView.scene
         stage.show()
-//        runPathPlanner()
     }
 
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) {
-            Registry.load()
-            launch(Main::class.java)
-        }
-    }
 }

@@ -11,6 +11,7 @@ include(
         "core:registry",
         "core:server",
         "core:splash",
+        "core:view",
         "fn:path-planner",
         "fn:tba-client"
 )
