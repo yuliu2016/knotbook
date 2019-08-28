@@ -20,6 +20,12 @@ jobs:
           jdkFile: "build/jdk.zip"
           jdkDestinationDirectory: "build/jdk_inst"
           jdkArchitectureOption: x64
+      - task: CacheBeta@0
+        condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
+        inputs:
+          key: gradle | $(Agent.OS)
+          path: $(GRADLE_USER_HOME)
+        displayName: "Gradle Cache"
       - task: Gradle@2
         displayName: "Gradle Build"
         inputs:
@@ -69,6 +75,12 @@ jobs:
           publishJUnitResults: true
           testResultsFiles: "**/TEST-*.xml"
           tasks: "build"
+      - task: CacheBeta@0
+        condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
+        inputs:
+          key: gradle | $(Agent.OS)
+          path: $(GRADLE_USER_HOME)
+        displayName: "Gradle Cache"
       - task: Gradle@2
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         displayName: "Generate Runtime Image"
@@ -96,6 +108,12 @@ jobs:
     pool:
       vmImage: "macOS-latest"
     steps:
+      - task: CacheBeta@0
+        condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
+        inputs:
+          key: gradle | $(Agent.OS)
+          path: $(GRADLE_USER_HOME)
+        displayName: "Gradle Cache"
       - task: Gradle@2
         displayName: "Gradle Build"
         inputs:
