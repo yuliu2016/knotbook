@@ -22,11 +22,17 @@ jobs:
           jdkDestinationDirectory: "build/jdk_inst"
           jdkArchitectureOption: x64
       - task: CacheBeta@0
-        condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
-        inputs:
-          key: gradle|$(Agent.OS)
-          path: $(Pipeline.Workspace)/.gradle
-        displayName: "Gradle Cache"
+          condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
+          inputs:
+            key: jdk | $(Agent.OS)
+            path: "build/jdk_inst"
+          displayName: "JDK Cache"
+      #      - task: CacheBeta@0
+      #        condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
+      #        inputs:
+      #          key: gradle | $(Agent.OS)
+      #          path: $(Pipeline.Workspace)/.gradle
+      #        displayName: "Gradle Cache"
       - task: Gradle@2
         displayName: "Gradle Build"
         inputs:
@@ -65,12 +71,12 @@ jobs:
     pool:
       vmImage: "ubuntu-latest"
     steps:
-      - task: CacheBeta@0
-        condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
-        inputs:
-          key: gradle|$(Agent.OS)
-          path: $(Pipeline.Workspace)/.gradle
-        displayName: "Gradle Cache"
+      #      - task: CacheBeta@0
+      #        condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
+      #        inputs:
+      #          key: gradle | $(Agent.OS)
+      #          path: $(Pipeline.Workspace)/.gradle
+      #        displayName: "Gradle Cache"
       - task: Gradle@2
         displayName: "Gradle Build"
         inputs:
@@ -109,12 +115,12 @@ jobs:
     pool:
       vmImage: "macOS-latest"
     steps:
-      - task: CacheBeta@0
-        condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
-        inputs:
-          key: gradle|$(Agent.OS)
-          path: $(Pipeline.Workspace)/.gradle
-        displayName: "Gradle Cache"
+      #      - task: CacheBeta@0
+      #        condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
+      #        inputs:
+      #          key: gradle | $(Agent.OS)
+      #          path: $(Pipeline.Workspace)/.gradle
+      #        displayName: "Gradle Cache"
       - task: Gradle@2
         displayName: "Gradle Build"
         inputs:
