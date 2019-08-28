@@ -8,5 +8,5 @@ module kb.pathplanner {
 
     requires kb.core.fx;
 
-    exports knotbook.pathplanner;
+    exports kb.path.planner;
 }

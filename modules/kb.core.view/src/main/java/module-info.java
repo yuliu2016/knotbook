@@ -17,5 +17,5 @@ module kb.core.view {
 
     requires kb.pathplanner;
 
-    exports knotbook.core.view;
+    exports kb.core.view;
 }

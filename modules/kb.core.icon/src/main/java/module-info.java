@@ -21,5 +21,5 @@ module kb.core.icon {
 
     uses org.kordamp.ikonli.IkonHandler;
 
-    exports knotbook.core.icon;
+    exports kb.core.icon;
 }

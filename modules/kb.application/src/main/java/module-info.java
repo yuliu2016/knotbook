@@ -4,5 +4,5 @@ module kb.application {
     requires kb.core.registry;
     requires kb.core.view;
 
-    exports knotbook.application;
+    exports kb.application;
 }

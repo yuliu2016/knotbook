@@ -4,5 +4,5 @@ module kb.core.code {
     requires javafx.graphics;
     requires javafx.swing;
 
-    exports knotbook.core.code;
+    exports kb.core.code;
 }

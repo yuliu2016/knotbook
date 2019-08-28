@@ -2,5 +2,5 @@ module kb.core.splash {
     requires javafx.controls;
     requires java.desktop;
 
-    exports knotbook.core.splash;
+    exports kb.core.splash;
 }

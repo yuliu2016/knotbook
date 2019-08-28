@@ -7,5 +7,5 @@ module kb.core.camera.swing {
 
     requires kb.core.splash;
 
-    exports knotbook.core.swingcam;
+    exports kb.core.camera.swing;
 }

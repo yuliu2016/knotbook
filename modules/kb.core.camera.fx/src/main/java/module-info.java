@@ -7,5 +7,5 @@ module kb.core.camera.fx {
 
     requires kb.core.splash;
 
-    exports knotbook.core.camera;
+    exports kb.core.camera.fx;
 }

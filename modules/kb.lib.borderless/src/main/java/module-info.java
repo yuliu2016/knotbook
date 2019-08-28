@@ -4,6 +4,6 @@ module kb.lib.borderless {
     requires kb.core.icon;
     requires org.kordamp.ikonli.materialdesign;
 
-    exports knotbook.core.aero;
-    exports knotbook.core.aero.borderless;
+    exports kb.lib.borderless;
+    exports kb.lib.borderless.borderless;
 }

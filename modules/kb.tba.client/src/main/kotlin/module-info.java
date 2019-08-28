@@ -4,5 +4,5 @@ module kb.tba.client {
     requires klaxon;
     requires fuel.coroutines;
 
-    exports knotbook.tba.client;
+    exports kb.tba.client;
 }

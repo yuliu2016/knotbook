@@ -4,5 +4,5 @@ module kb.core.registry {
 
     requires kb.core.code;
 
-    exports knotbook.core.registry;
+    exports kb.core.registry;
 }
