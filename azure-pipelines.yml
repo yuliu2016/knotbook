@@ -24,8 +24,8 @@ jobs:
       - task: CacheBeta@0
         condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
         inputs:
-          key: gradle | $(Agent.OS)
-          path: "$(Pipeline.Workspace)/.gradle"
+          key: gradle|$(Agent.OS)
+          path: $(Pipeline.Workspace)/.gradle
         displayName: "Gradle Cache"
       - task: Gradle@2
         displayName: "Gradle Build"
@@ -68,8 +68,8 @@ jobs:
       - task: CacheBeta@0
         condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
         inputs:
-          key: gradle | $(Agent.OS)
-          path: "$(Pipeline.Workspace)/.gradle"
+          key: gradle|$(Agent.OS)
+          path: $(Pipeline.Workspace)/.gradle
         displayName: "Gradle Cache"
       - task: Gradle@2
         displayName: "Gradle Build"
@@ -112,8 +112,8 @@ jobs:
       - task: CacheBeta@0
         condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
         inputs:
-          key: gradle | $(Agent.OS)
-          path: "$(Pipeline.Workspace)/.gradle"
+          key: gradle|$(Agent.OS)
+          path: $(Pipeline.Workspace)/.gradle
         displayName: "Gradle Cache"
       - task: Gradle@2
         displayName: "Gradle Build"
