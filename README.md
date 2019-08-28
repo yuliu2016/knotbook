@@ -1,4 +1,4 @@
-![Knotbook Icon](assets/knot-small.png)
+![Knotbook Icon](tools/assets/knot-small.png)
 
 |Platform|Build Status|
 |----|----|
