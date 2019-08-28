@@ -2,6 +2,7 @@ trigger:
   - master
   - release/*
   - feature/*
+  - ci/*
 
 jobs:
   - job: Windows
