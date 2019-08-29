@@ -13,6 +13,6 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        AppView.INSTANCE.show(primaryStage);
+        AppView.INSTANCE.show();
     }
 }
