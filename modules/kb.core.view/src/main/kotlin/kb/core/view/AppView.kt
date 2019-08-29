@@ -116,10 +116,7 @@ object AppView {
                     item {
                         name("Toggle Full Screen")
                         shortcut(KeyCode.F11)
-                        action {
-                            isFullScreen = !isFullScreen
-                            stage.isFullScreen = isFullScreen
-                        }
+                        action { toggleFullScreen() }
                     }
                     item {
                         name("Toggle Table Features")
@@ -218,13 +215,19 @@ object AppView {
     }
 
     var isFullScreen = false
+
+    private fun toggleFullScreen() {
+        isFullScreen = !isFullScreen
+        stage.isFullScreen = isFullScreen
+    }
+
     val stage = Stage()
 
     private val scene = Scene(vbox {
         val bowline = Bowline()
         stylesheets.add("/knotbook.css")
-        prefWidth = 1280.0
-        prefHeight = 720.0
+        prefWidth = 1120.0
+        prefHeight = 630.0
         add(bar)
         add(hbox {
             add(DashboardActivity().view.indexTree)

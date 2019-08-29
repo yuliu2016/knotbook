@@ -22,7 +22,7 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
     // Kotlin Coroutines
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.0-RC2")
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.3.0")
     // HTTP Requests Library
     implementation(group = "com.github.kittinunf.fuel", name = "fuel", version = "2.2.0")
     // Support Library to integrate Fuel and Coroutines
