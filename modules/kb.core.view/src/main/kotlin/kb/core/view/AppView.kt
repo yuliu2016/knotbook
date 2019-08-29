@@ -111,14 +111,34 @@ object AppView {
                     item {
                         name("Toggle Theme")
                         shortcut(KeyCode.F2)
+                        icon(FontAwesomeSolid.ADJUST, 13)
                     }
+                    item { name("Toggle Full Screen") }
+                    item { name("Toggle Table Features") }
+                    item { name("Zoom In") }
+                    item { name("Zoom Out") }
+                    item { name("Reset Zoom") }
                 }
             }
             menu {
-                name("Navigate")
+                name("Tree")
                 modify {
-                    item { name("Toggle Sidebar") }
-                    item { name("Expand Tree to Source") }
+                    item {
+                        name("Toggle Visibility")
+                        icon(FontAwesomeSolid.EYE, 13)
+                    }
+                    item {
+                        name("Toggle Logs")
+                        icon(FontAwesomeSolid.HISTORY, 13)
+                    }
+                    item {
+                        name("Toggle Metric View")
+                        icon(FontAwesomeSolid.TAPE, 13)
+                    }
+                    separator()
+                    item { name("Collapse All") }
+                    item { name("Expand All") }
+                    item { name("Expand to Current Table") }
                     item { name("Collapse Tree") }
                 }
             }
