@@ -11,7 +11,6 @@ class KnotTable : Control() {
     init {
         background = Background(BackgroundFill(Color.WHITE, null, null))
         styleClass.add("knot-table")
-        stylesheets.add("/knotable.css")
     }
 
     override fun createDefaultSkin(): Skin<*> {
