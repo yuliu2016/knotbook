@@ -5,7 +5,7 @@ import javafx.scene.control.Alert
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
 import javafx.stage.Stage
-import kb.core.bowline.KnotTable
+import kb.core.bowline.Bowline
 import kb.core.camera.fx.KnotCameraTest
 import kb.core.fx.*
 import kb.core.registry.RegistryEditor
@@ -200,7 +200,7 @@ object AppView {
     }
 
     private val scene = Scene(vbox {
-        val knotable = KnotTable()
+        val bowline = Bowline()
         stylesheets.add("/knotbook.css")
         prefWidth = 1280.0
         prefHeight = 720.0
@@ -208,9 +208,9 @@ object AppView {
         add(hbox {
             add(DashboardActivity().view.indexTree)
             vgrow()
-            add(knotable.hgrow())
+            add(bowline.hgrow())
         })
-        knotable.requestFocus()
+        bowline.requestFocus()
     })
 
     fun show(stage: Stage) {

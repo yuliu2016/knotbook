@@ -6,7 +6,7 @@ import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
 import javafx.scene.paint.Color
 
-class KnotTable : Control() {
+class Bowline : Control() {
 
     init {
         background = Background(BackgroundFill(Color.WHITE, null, null))
@@ -14,6 +14,6 @@ class KnotTable : Control() {
     }
 
     override fun createDefaultSkin(): Skin<*> {
-        return KnotTableSkin(this)
+        return BowlineSkin(this)
     }
 }

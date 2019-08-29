@@ -11,7 +11,7 @@ import javafx.stage.Screen
 
 
 @Suppress("MemberVisibilityCanBePrivate")
-class KnotTableSkin(knotable: KnotTable) : SkinBase<KnotTable>(knotable) {
+class BowlineSkin(knotable: Bowline) : SkinBase<Bowline>(knotable) {
 
     private companion object {
         const val kLineStroke = 0.5
