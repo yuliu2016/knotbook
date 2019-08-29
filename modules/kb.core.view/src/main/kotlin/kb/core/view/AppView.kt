@@ -1,16 +1,11 @@
 package kb.core.view
 
-import javafx.geometry.Pos
 import javafx.scene.Scene
 import javafx.scene.control.Alert
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
-import javafx.scene.layout.Background
-import javafx.scene.layout.BackgroundFill
-import javafx.scene.layout.HBox
-import javafx.scene.paint.Color
 import javafx.stage.Stage
-import kb.core.bowline.KnotTable
+import kb.core.bowline.Bowline
 import kb.core.camera.fx.KnotCameraTest
 import kb.core.fx.*
 import kb.core.registry.RegistryEditor
@@ -116,14 +111,34 @@ object AppView {
                     item {
                         name("Toggle Theme")
                         shortcut(KeyCode.F2)
+                        icon(FontAwesomeSolid.ADJUST, 13)
                     }
+                    item { name("Toggle Full Screen") }
+                    item { name("Toggle Table Features") }
+                    item { name("Zoom In") }
+                    item { name("Zoom Out") }
+                    item { name("Reset Zoom") }
                 }
             }
             menu {
-                name("Navigate")
+                name("Tree")
                 modify {
-                    item { name("Toggle Sidebar") }
-                    item { name("Expand Tree to Source") }
+                    item {
+                        name("Toggle Visibility")
+                        icon(FontAwesomeSolid.EYE, 13)
+                    }
+                    item {
+                        name("Toggle Logs")
+                        icon(FontAwesomeSolid.HISTORY, 13)
+                    }
+                    item {
+                        name("Toggle Metric View")
+                        icon(FontAwesomeSolid.TAPE, 13)
+                    }
+                    separator()
+                    item { name("Collapse All") }
+                    item { name("Expand All") }
+                    item { name("Expand to Current Table") }
                     item { name("Collapse Tree") }
                 }
             }
@@ -184,33 +199,18 @@ object AppView {
         }
     }
 
-    val mover = HBox().apply {
-        prefWidth = 400.0
-        prefHeight = 28.0
-        minHeight = 24.0
-        maxHeight = 24.0
-        alignment = Pos.CENTER_LEFT
-        background = Background(BackgroundFill(Color.valueOf("#eee"), null, null))
-        add(bar)
-    }
-
-    val scene = Scene(vbox {
-        val knotable = KnotTable()
+    private val scene = Scene(vbox {
+        val bowline = Bowline()
         stylesheets.add("/knotbook.css")
-        prefWidth = 800.0
-        prefHeight = 600.0
-        add(mover)
+        prefWidth = 1280.0
+        prefHeight = 720.0
+        add(bar)
         add(hbox {
-            add(vbox {
-                background = Background(BackgroundFill(Color.WHITE, null, null))
-                prefWidth = 240.0
-                minWidth = 240.0
-                alignment = Pos.TOP_CENTER
-            })
+            add(DashboardActivity().view.indexTree)
             vgrow()
-            add(knotable.hgrow())
+            add(bowline.hgrow())
         })
-        knotable.requestFocus()
+        bowline.requestFocus()
     })
 
     fun show(stage: Stage) {
@@ -219,5 +219,4 @@ object AppView {
         stage.scene = scene
         stage.show()
     }
-
 }
