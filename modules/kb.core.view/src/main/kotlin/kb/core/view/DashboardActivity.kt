@@ -1,13 +1,11 @@
 package kb.core.view
 
-import javafx.event.EventHandler
-import javafx.geometry.Insets
-import javafx.geometry.Pos
-import javafx.scene.control.*
-import javafx.scene.input.ClipboardContent
-import javafx.scene.input.TransferMode
+import javafx.scene.control.ContextMenu
+import javafx.scene.control.SeparatorMenuItem
+import javafx.scene.control.TreeItem
 import javafx.util.Callback
 import kb.core.fx.*
+import kb.core.icon.FontIcon
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid.*
 
 @Suppress("unused")
@@ -32,7 +30,7 @@ class DashboardActivity {
 //        }
 //    }
 
-    private fun selectAndFocus(item: TreeItem<Index>) {
+    private fun selectAndFocus(item: TreeItem<Entity>) {
         view.indexTree.selectionModel.select(item)
         appRunLater {
             view.indexTree.requestFocus()
@@ -45,7 +43,7 @@ class DashboardActivity {
 //    }
 
     @Suppress("UNUSED_PARAMETER")
-    private fun addAndSelect(index: Index) {
+    private fun addAndSelect(index: Entity) {
         // Requires item to be added to repo AFTER, not BEFORE
 //        val item = TreeItem(index)
 //        val repoIndex = repositories.indexOf(index.repository)
@@ -61,7 +59,8 @@ class DashboardActivity {
 //        selectAndSet(item)
     }
 
-    private val root = TreeItem<Index>(null)
+    private val entityRoot = Entity(FontIcon.of(ICE_CREAM), listOf(), mutableListOf())
+    private val root = TreeItem<Entity>(null)
 
 //    init {
 //        setContentView(view.splitPane)
@@ -89,7 +88,7 @@ class DashboardActivity {
 //    }
 
     init {
-        view.indexTree.cellFactory = Callback { Cell() }
+        view.indexTree.cellFactory = Callback { EntityCell() }
         view.indexTree.root = root
         view.indexTree.isShowRoot = false
         view.indexTree.contextMenu = ContextMenu().modify {
@@ -136,110 +135,9 @@ class DashboardActivity {
     }
 
     private fun regenerate() {
-//        root.children.setAll(repositories.map { repository ->
-//            TreeItem(Index(repository.title, repository.icon, repository, "", false)).apply {
-//                val tables = repository.tables
-//                children.clear()
-//                tables[""]?.run {
-//                    children.addAll(map { TreeItem(it) })
-//                }
-//                children.addAll(repository.tables.mapNotNull { e ->
-//                    if (e.key.isEmpty()) null else
-//                        TreeItem(Index(e.key, fontIcon(FOLDER, 18), repository, "", false)).apply {
-//                            children.addAll(e.value.map { TreeItem(it) })
-//                        }
-//                })
-//                isExpanded = true
-//            }
-//        })
+        root.children.setAll()
 //        selectAndSet(root.children.first().children.first())
     }
 
-    inner class Cell : TreeCell<Index>() {
 
-        init {
-            onDragDetected = EventHandler { event ->
-                if (item == null || !treeItem.isLeaf) {
-                    return@EventHandler
-                }
-                val board = startDragAndDrop(TransferMode.MOVE)
-                val content = ClipboardContent()
-                content.putString(item.hashCode().toString())
-                board.setContent(content)
-                event.consume()
-            }
-
-            onDragOver = EventHandler { event ->
-                if (event.gestureSource !== this@Cell && event.dragboard.hasString() && !isEmpty && !item.isLeaf) {
-                    event.acceptTransferModes(TransferMode.MOVE)
-                }
-                event.consume()
-            }
-
-            onDragEntered = EventHandler { event ->
-                if (event.gestureSource !== this@Cell && event.dragboard.hasString() && !isEmpty && !item.isLeaf) {
-                    styleClass("drag-over")
-                }
-            }
-
-            onDragExited = EventHandler { event ->
-                if (event.gestureSource !== this@Cell && event.dragboard.hasString() && !isEmpty && !item.isLeaf) {
-                    noStyleClass()
-                }
-            }
-
-            onDragDropped = EventHandler { event ->
-                if (item == null) {
-                    return@EventHandler
-                }
-
-                val db = event.dragboard
-                var success = false
-
-                if (db.hasString()) {
-                    success = true
-                }
-
-                event.isDropCompleted = success
-
-                event.consume()
-            }
-
-            onDragDone = EventHandler { it.consume() }
-        }
-
-        override fun updateItem(item: Index?, empty: Boolean) {
-            super.updateItem(item, empty)
-            super.updateItem(item, empty)
-
-            if (item == null || empty) {
-                graphic = null
-            } else {
-                alignment = Pos.CENTER_LEFT
-                graphic = hbox {
-                    alignment = Pos.CENTER_LEFT
-                    padding = Insets(0.0, 0.0, 0.0, 4.0)
-                    modify {
-                        +item.icon.centerIn(24)
-                        val a = item.title.substringBeforeLast("/", "")
-                        if (a.isEmpty()) {
-                            +Label(item.title)
-                        } else {
-                            +Label("$a/")
-                            +Label(item.title.substringAfterLast('/', "")).apply {
-                                style = "-fx-font-weight:bold"
-                                padding = Insets(0.0)
-                            }
-                        }
-                    }
-
-                    onMouseClicked = EventHandler { event ->
-                        if (event.clickCount == 2) {
-                            println("hi")
-                        }
-                    }
-                }
-            }
-        }
-    }
 }
