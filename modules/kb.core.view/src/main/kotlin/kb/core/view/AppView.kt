@@ -215,22 +215,34 @@ object AppView {
         }
     }
 
-    var isFullScreen = false
+    private var isFullScreen = false
 
     private fun toggleFullScreen() {
         isFullScreen = !isFullScreen
         stage.isFullScreen = isFullScreen
     }
 
-    private fun toggleTheme() {
+    @Suppress("unused")
+    enum class Theme(val fileName: String) {
+        Light("/light.css"),
+        Dark("/dark.css");
 
+        val next: Theme get() = values()[(ordinal + 1) % values().size]
+    }
+
+    private var theme = Theme.Light
+
+    private fun toggleTheme() {
+        scene.stylesheets.remove(theme.fileName)
+        theme = theme.next
+        scene.stylesheets.add(theme.fileName)
     }
 
     val stage = Stage()
 
     private val scene = Scene(vbox {
         val bowline = Bowline()
-        stylesheets.add("/knotbook.css")
+        stylesheets.addAll("/knotbook.css", Theme.Light.fileName)
         prefWidth = 1120.0
         prefHeight = 630.0
         add(bar)
