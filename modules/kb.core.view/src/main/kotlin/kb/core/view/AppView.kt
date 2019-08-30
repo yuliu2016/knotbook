@@ -110,7 +110,7 @@ object AppView {
                 modify {
                     item {
                         name("Toggle Theme")
-                        shortcut(KeyCode.F2)
+                        shortcut(KeyCode.F3)
                         icon(FontAwesomeSolid.ADJUST, 13)
                         action { toggleTheme() }
                     }
@@ -226,23 +226,23 @@ object AppView {
     enum class Theme(val fileName: String) {
         Light("/light.css"),
         Dark("/dark.css");
-
-        val next: Theme get() = values()[(ordinal + 1) % values().size]
     }
 
-    private var theme = Theme.Light
+    private var theme = Theme.Dark
 
     private fun toggleTheme() {
-        scene.stylesheets.remove(theme.fileName)
-        theme = theme.next
-        scene.stylesheets.add(theme.fileName)
+        theme = when (theme) {
+            Theme.Light -> Theme.Dark
+            Theme.Dark -> Theme.Light
+        }
+        box.stylesheets.setAll("/knotbook.css", theme.fileName)
     }
 
     val stage = Stage()
 
-    private val scene = Scene(vbox {
+    private val box = vbox {
         val bowline = Bowline()
-        stylesheets.addAll("/knotbook.css", Theme.Light.fileName)
+        stylesheets.addAll("/knotbook.css", Theme.Dark.fileName)
         prefWidth = 1120.0
         prefHeight = 630.0
         add(bar)
@@ -252,7 +252,9 @@ object AppView {
             add(bowline.hgrow())
         })
         bowline.requestFocus()
-    })
+    }
+
+    private val scene = Scene(box)
 
     fun show() {
         stage.fullScreenExitHint = "Press F11 to Exit"

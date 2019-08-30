@@ -181,28 +181,55 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
     -fx-text-fill: white;
 }
 
+.menu-bar {
+    -fx-padding: 0 9 0 9;
+    -fx-background-color: #222;
+}
+
+.menu {
+    -fx-padding: 3 8 3 8;
+    -fx-font-size: 13;
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+}
+
 .menu-item {
-    -fx-padding: 6 12 6 12;
+    -fx-padding: 3 12 3 12;
+    -fx-background-color: #222;
 }
 
 .menu-item .label {
-    -fx-text-fill: black;
+    -fx-text-fill: white;
 }
 
 .menu-item .ikonli-font-icon {
-    -fx-icon-color: black;
+    -fx-icon-color: white;
 }
 
 .menu-item:focused {
-    -fx-background-color: #3c5c94;
+    -fx-background-color: #333;
 }
 
 .menu-item:focused .ikonli-font-icon {
     -fx-icon-color: white;
 }
 
-.menu-item:focused .label {
+.menu .label {
     -fx-text-fill: white;
+}
+
+.menu:hover {
+    -fx-background-color: #333;
+}
+
+.menu:showing {
+    -fx-background-color: #444;
+}
+
+.context-menu {
+    -fx-padding: 0;
+    -fx-min-width: 200;
+    -fx-background-color: rgba(0, 0, 0, 0.95);
 }
 
 .selection-rectangle {
