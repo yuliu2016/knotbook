@@ -112,6 +112,7 @@ object AppView {
                         name("Toggle Theme")
                         shortcut(KeyCode.F2)
                         icon(FontAwesomeSolid.ADJUST, 13)
+                        action { toggleTheme() }
                     }
                     item {
                         name("Toggle Full Screen")
@@ -219,6 +220,10 @@ object AppView {
     private fun toggleFullScreen() {
         isFullScreen = !isFullScreen
         stage.isFullScreen = isFullScreen
+    }
+
+    private fun toggleTheme() {
+
     }
 
     val stage = Stage()
