@@ -71,7 +71,9 @@ class EntityCell : TreeCell<Entity>() {
             graphic = hbox {
                 alignment = Pos.CENTER_LEFT
                 padding = Insets(0.0, 0.0, 0.0, 4.0)
-                add(item.icon.centerIn(24))
+                if (item.icon != null) {
+                    add(item.icon.centerIn(16))
+                }
                 children.addAll(item.text.map {
                     label {
                         text = it.string

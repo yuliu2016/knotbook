@@ -59,7 +59,7 @@ class DashboardActivity {
 //        selectAndSet(item)
     }
 
-    private val entityRoot = Entity(FontIcon.of(ICE_CREAM), listOf(), mutableListOf())
+    private val entityRoot = Entity(listOf(), FontIcon.of(ICE_CREAM), mutableListOf())
     private val root = TreeItem<Entity>(null)
 
 //    init {
@@ -88,6 +88,11 @@ class DashboardActivity {
 //    }
 
     init {
+        entityRoot.children?.addAll(listOf(
+                Entity("Memory Repo", fontIcon(BOLT, 13)),
+                Entity("Local Filesystem", fontIcon(DESKTOP, 13)),
+                Entity("The Blue Alliance")
+        ))
         view.indexTree.cellFactory = Callback { EntityCell() }
         view.indexTree.root = root
         view.indexTree.isShowRoot = false
@@ -135,9 +140,16 @@ class DashboardActivity {
     }
 
     private fun regenerate() {
-        root.children.setAll()
-//        selectAndSet(root.children.first().children.first())
+        regenerateChildren(root, entityRoot)
     }
 
-
+    private fun regenerateChildren(root: TreeItem<Entity>, entityRoot: Entity) {
+        if (entityRoot.children != null && entityRoot.children.isNotEmpty()) {
+            root.children.setAll(entityRoot.children.map { entity ->
+                TreeItem(entity).also { item ->
+                    regenerateChildren(item, entity)
+                }
+            })
+        }
+    }
 }
