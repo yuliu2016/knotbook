@@ -7,8 +7,10 @@ import javafx.scene.input.KeyCode
 import javafx.stage.Stage
 import kb.core.bowline.Bowline
 import kb.core.camera.fx.KnotCameraTest
+import kb.core.code.CodeEditor
+import kb.core.code.Syntax
 import kb.core.fx.*
-import kb.core.registry.RegistryEditor
+import kb.core.registry.Registry
 import kb.core.splash.AboutSplash
 import kb.core.splash.GCSplash
 import kb.path.planner.runPathPlanner
@@ -152,10 +154,18 @@ object AppView {
                         icon(FontAwesomeSolid.TAPE, 13)
                     }
                     separator()
-                    item { name("Collapse All") }
-                    item { name("Expand All") }
-                    item { name("Expand to Current Table") }
-                    item { name("Collapse Tree") }
+                    item {
+                        name("Collapse All")
+                    }
+                    item {
+                        name("Expand All")
+                    }
+                    item {
+                        name("Expand to Current Table")
+                    }
+                    item {
+                        name("Collapse Tree")
+                    }
                 }
             }
             menu {
@@ -189,7 +199,14 @@ object AppView {
                     item {
                         name("Application Properties")
                         icon(FontAwesomeSolid.TOOLS, 13)
-                        action { RegistryEditor.ish() }
+                        shortcut(KeyCode.P, control = true)
+                        action {
+                            CodeEditor("Application Properties", true,
+                                    "Save", "Discard", Registry.join(), { s ->
+                                Registry.parse(s.split("\n"))
+                                Registry.save()
+                            }, Syntax.Properties)
+                        }
                     }
                     separator()
                     item {

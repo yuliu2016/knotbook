@@ -25,6 +25,13 @@ public class CodeEditor {
     public CodeEditor(String title, boolean editable, String yes, String no, String initialText,
                       Consumer<String> yesRun, Syntax syntax) {
         Helper.runOnEDT(() -> {
+
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             JPanel cp = new JPanel();
 
             cp.setLayout(new BoxLayout(cp, BoxLayout.Y_AXIS));
@@ -64,6 +71,7 @@ public class CodeEditor {
                     yesRun.accept(area.getText());
                 });
 
+                bottomPanel.add(Box.createRigidArea(new Dimension(5, 0)));
                 bottomPanel.add(okBtn);
                 bottomPanel.add(Box.createRigidArea(new Dimension(5, 0)));
                 bottomPanel.add(closeBtn);
@@ -76,7 +84,7 @@ public class CodeEditor {
 
             cp.add(sp);
 
-            area.addKeyListener(new KeyListener() {
+            frame.addKeyListener(new KeyListener() {
                 @Override
                 public void keyTyped(KeyEvent e) {
                 }
@@ -99,6 +107,8 @@ public class CodeEditor {
             frame.pack();
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
+
+            area.requestFocusInWindow();
         });
     }
 }
