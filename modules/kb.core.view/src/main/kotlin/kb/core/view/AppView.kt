@@ -110,14 +110,30 @@ object AppView {
                 modify {
                     item {
                         name("Toggle Theme")
-                        shortcut(KeyCode.F2)
+                        shortcut(KeyCode.F3)
                         icon(FontAwesomeSolid.ADJUST, 13)
+                        action { toggleTheme() }
                     }
-                    item { name("Toggle Full Screen") }
-                    item { name("Toggle Table Features") }
-                    item { name("Zoom In") }
-                    item { name("Zoom Out") }
-                    item { name("Reset Zoom") }
+                    item {
+                        name("Toggle Full Screen")
+                        shortcut(KeyCode.F11)
+                        action { toggleFullScreen() }
+                    }
+                    item {
+                        name("Toggle Table Features")
+                    }
+                    separator()
+                    item {
+                        name("Zoom In")
+                        icon(FontAwesomeSolid.SEARCH_PLUS, 13)
+                    }
+                    item {
+                        name("Zoom Out")
+                        icon(FontAwesomeSolid.SEARCH_MINUS, 13)
+                    }
+                    item {
+                        name("Reset Zoom")
+                    }
                 }
             }
             menu {
@@ -175,7 +191,7 @@ object AppView {
                         icon(FontAwesomeSolid.TOOLS, 13)
                         action { RegistryEditor.ish() }
                     }
-                    item { name("Process Manager") }
+                    separator()
                     item {
                         name("Garbage Collection Cycle")
                         action { GCSplash.splash() }
@@ -199,11 +215,36 @@ object AppView {
         }
     }
 
-    private val scene = Scene(vbox {
+    private var isFullScreen = false
+
+    private fun toggleFullScreen() {
+        isFullScreen = !isFullScreen
+        stage.isFullScreen = isFullScreen
+    }
+
+    @Suppress("unused")
+    enum class Theme(val fileName: String) {
+        Light("/light.css"),
+        Dark("/dark.css");
+    }
+
+    private var theme = Theme.Dark
+
+    private fun toggleTheme() {
+        theme = when (theme) {
+            Theme.Light -> Theme.Dark
+            Theme.Dark -> Theme.Light
+        }
+        box.stylesheets.setAll("/knotbook.css", theme.fileName)
+    }
+
+    val stage = Stage()
+
+    private val box = vbox {
         val bowline = Bowline()
-        stylesheets.add("/knotbook.css")
-        prefWidth = 1280.0
-        prefHeight = 720.0
+        stylesheets.addAll("/knotbook.css", Theme.Dark.fileName)
+        prefWidth = 1120.0
+        prefHeight = 630.0
         add(bar)
         add(hbox {
             add(DashboardActivity().view.indexTree)
@@ -211,9 +252,12 @@ object AppView {
             add(bowline.hgrow())
         })
         bowline.requestFocus()
-    })
+    }
 
-    fun show(stage: Stage) {
+    private val scene = Scene(box)
+
+    fun show() {
+        stage.fullScreenExitHint = "Press F11 to Exit"
         stage.title = "Knotbook"
         stage.icons.add(Image(AppView::class.java.getResourceAsStream("/icon.png")))
         stage.scene = scene

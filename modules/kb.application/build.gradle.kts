@@ -11,6 +11,7 @@ javafx {
 
 dependencies {
     implementation(project(":kb.core.view"))
+    implementation(project(":kb.core.context"))
     implementation(project(":kb.core.registry"))
 }
 

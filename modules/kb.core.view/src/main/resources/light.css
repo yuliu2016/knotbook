@@ -3,16 +3,18 @@
 }
 
 * {
-    -rt-light-accent: #5a8ade;
-    -rt-dark-accent: #3c5c94;
-    -rt-root-shade: white;
-    -rt-item-hover-shade: #ddd;
-    -rt-item-selected-shade: #ccc;
-    -rt-clickable-shade: #ddd;
-    -rt-clickable-hover-shade: #ccc;
+    -kb-light-accent: #5a8ade;
+    -kb-dark-accent: #3c5c94;
+    -kb-root-shade: white;
+    -kb-item-hover-shade: #ddd;
+    -kb-item-selected-shade: #ccc;
+    -kb-clickable-shade: #ddd;
+    -kb-clickable-hover-shade: #ccc;
 }
 
+
 /*==========LIST VIEW==========*/
+
 
 .list-cell {
     -fx-background-color: white;
@@ -78,6 +80,8 @@
     -fx-text-fill: black;
 }
 
+/*SCROLL BAR*/
+
 .scroll-bar .thumb {
     -fx-background-color: #ccc;
 }
@@ -98,23 +102,9 @@
     -fx-background-color: #ddd;
 }
 
-.status-item:hover {
-    -fx-background-color: #3c5c94;
-}
 
-.status-item:hover .label {
-    -fx-text-fill: white;
-}
+/*SPREADSHEET VIEW*/
 
-.status-item:hover .ikonli-font-icon {
-    -fx-icon-color: white;
-}
-
-.split-pane-divider {
-    -fx-padding: 0 0 0 1;
-}
-
-/* NORMAL CELL */
 .spreadsheet-cell:filled:selected,
 .spreadsheet-cell:filled:focused:selected,
 .spreadsheet-cell:filled:focused:selected:hover {
@@ -162,17 +152,47 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
     -fx-background-color: white;
 }
 
+/*MENUS*/
+
+.menu-bar {
+    -fx-padding: 0 9 0 9;
+    -fx-background-color: #eee;
+}
+
+.menu {
+    -fx-padding: 3 8 3 8;
+    -fx-font-size: 13;
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+}
+
+.menu .label {
+    -fx-text-fill: #444;
+}
+
+.menu:hover {
+    -fx-background-color: #ddd;
+}
+
+.menu:showing {
+    -fx-background-color: #ccc;
+}
+
 .menu-item {
-    -fx-padding: 6 12 6 12;
+    -fx-padding: 3 12 3 12;
+}
+
+.context-menu {
+    -fx-padding: 0;
+    -fx-min-width: 200;
+    -fx-background-color: rgba(255, 255, 255, 0.95);
 }
 
 .menu-item:focused {
-    -fx-background-color: #3c5c94;
+    -fx-background-color: #ddd;
 }
 
-.menu-item:focused .ikonli-font-icon {
-    -fx-icon-color: white;
-}
+/*OTHERS---*/
 
 .selection-rectangle {
     -fx-fill: transparent;
