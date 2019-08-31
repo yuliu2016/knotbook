@@ -1,0 +1,130 @@
+/*
+Multi-line comments
+*/
+
+/**
+ * Documentation comments, referencing [symbol], or
+ * [link_text](link)
+ */
+
+# Single line comments
+
+# Dynamic Type Variable
+msg = "Hello World"
+msg = None
+
+# Static Type Variable (cannot change type after)
+msg := "Hello World" # Inferred
+msg: str = "Hello World" # Explicit
+
+# Optional Static Variable
+msg ?= "Hello World" # Inferred
+msg: str? = "Hello World" # Explicit
+
+# Printing
+print("Hello World")
+
+# Condition Control Flow (no elif or else if; use when)
+if msg is str {
+    print(msg)
+} else {
+    print("msg is something else")
+}
+
+if 1 < 2: print("1 < 2")
+result = if a < b: a else: b
+
+# Multi-branch conditions
+when value {
+    1 -> print("1")
+    2 -> print("2")
+    else -> print("something else")
+}
+
+# Loops
+for i in 0..10 {
+    print(i)
+    if i == 5: continue
+}
+
+i = 0
+while True {
+    print("hi")
+    i += 1
+    if i > 100: break
+}
+
+# Functions
+say_hello = def() {
+    print("Hello")
+}
+
+# Error handling
+try: print(1//0)
+except ArithmeticError: print(trace())
+finally: pass
+
+# Classes
+Person = dataclass(name: str, height: int, address: str)
+
+# List function examples
+numbers = (0..100).list()
+squared = numbers.map { it * it }.list()
+odd = numbers.filter { it % 2 == 1}.list()
+primes = numbers.filter { n -> (2..sqrt(n)).all { p -> n % p != 0 } }.list()
+numbers[0:3] = 4
+
+
+# Literals
+"---"  # type: str (""" for multi-line)
+f'---' # type: f_str (f''' for multi-line)
+12345  # type: int
+0x1e2  # type: int (hex)
+0b100  # type: int (binary)
+123.4  # type: float
+1.3E9  # type: float (exponential)
+[]     # type: list
+{}     # type: dict
+()     # type: tuple
+
+# Operators (and overloading functions)
++     # __plus__     (other)
+      # __uplus__    ()
+-     # __minus__    (other)
+      # __uminus__   ()
+*     # __times__    (other)
+/     # __div__      (other)
+//    # __fdiv__     (other)
+%     # __mod__      (other)
+**    # __exp__      (other)
+~     # __not__      ()
+&     # __and__      ()
+|     # __or__       ()
+<<    # __shl__      (other)
+>>    # __shr__      (other)
+..    # __range__    (other)
+str   # __str__      ()
+repr  # __repr__     ()
+.     # __getattr__  (name)
+      # __setattr__  (name, value)
+()    # __invoke__   (*args, **kwargs)
+[]    # __getindex__ (*i)
+      # __setindex__ (*i, value)
+==    # __eq__       (other)
+!=    # __ne__       (other)
+<     # __lt__       (other)
+<=    # __le__       (other)
+>     # __gt__       (other)
+>=    # __ge__       (other)
+in    # __contains__ (other)
+with  # __enter__    ()
+      # __exit__     ()
+
+# Other operators
+and   # Logical AND
+or    # Logical OR
+not   # Logical NOT
+?:    # Elvis Operator
+is    # Type checking
+as    # Casting: Error if cannot cast
+as?   # Casting: None if cannot cast
