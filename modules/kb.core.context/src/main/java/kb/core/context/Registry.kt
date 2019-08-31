@@ -1,4 +1,4 @@
-package kb.core.registry
+package kb.core.context
 
 import java.io.File
 
