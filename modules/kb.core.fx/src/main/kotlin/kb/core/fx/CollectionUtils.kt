@@ -10,3 +10,8 @@ import javafx.collections.ObservableList
 fun <T> List<T>.observable(): ObservableList<T> {
     return FXCollections.observableList(this)
 }
+
+@FXKtDSL
+fun <T> MutableList<T>.addAll(vararg elements: T) {
+    addAll(elements)
+}

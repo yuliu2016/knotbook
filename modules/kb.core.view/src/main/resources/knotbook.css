@@ -18,6 +18,7 @@
 
 .tree-cell {
     -fx-background-color: transparent;
+    -fx-padding: 3 0 3 0;
 }
 
 .table-view {

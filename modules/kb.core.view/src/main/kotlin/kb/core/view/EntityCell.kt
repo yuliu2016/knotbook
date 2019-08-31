@@ -1,6 +1,5 @@
 package kb.core.view
 
-import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.control.TreeCell
 import javafx.scene.input.ClipboardContent
@@ -66,13 +65,14 @@ class EntityCell : TreeCell<Entity>() {
 
         if (item == null || empty) {
             graphic = null
+            setOnMouseClicked {
+            }
         } else {
             alignment = Pos.CENTER_LEFT
             graphic = hbox {
                 alignment = Pos.CENTER_LEFT
-                padding = Insets(0.0, 0.0, 0.0, 4.0)
                 if (item.icon != null) {
-                    add(item.icon.centerIn(16))
+                    add(item.icon.centerIn(20))
                 }
                 children.addAll(item.text.map {
                     label {
@@ -85,13 +85,8 @@ class EntityCell : TreeCell<Entity>() {
                         }
                     }
                 })
-
-                setOnMouseClicked { event ->
-                    if (event.clickCount == 2) {
-                        println("hi")
-                    }
-                }
             }
         }
+
     }
 }

@@ -361,5 +361,5 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 
 .tree-cell.drag-over {
     -fx-background-color: red, #444;
-    -fx-background-insets: 0, 2;
+    -fx-background-insets: 0, 1;
 }

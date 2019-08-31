@@ -67,3 +67,6 @@ inline fun accordion(builder: Accordion.() -> Unit): Accordion = Accordion().app
 
 @FXKtDSL
 inline fun titledPane(builder: TitledPane.() -> Unit): TitledPane = TitledPane().apply(builder)
+
+@FXKtDSL
+inline fun contextMenu(builder: ContextMenu.() -> Unit): ContextMenu = ContextMenu().apply(builder)

@@ -3,6 +3,6 @@ package kb.core.fx
 import javafx.application.Platform
 
 @Suppress("unused")
-fun appRunLater(action: () -> Unit) {
+fun runOnFxThread(action: () -> Unit) {
     Platform.runLater(action)
 }

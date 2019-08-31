@@ -244,8 +244,7 @@ object AppView {
     private fun toggleTheme() {
         theme = when (theme) {
             Theme.Light -> Theme.Dark
-            Theme.Dark -> Theme.ComicSans
-            Theme.ComicSans -> Theme.Light
+            Theme.Dark -> Theme.Light
         }
         box.stylesheets.setAll("/knotbook.css", theme.fileName)
     }
