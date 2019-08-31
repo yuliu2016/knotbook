@@ -7,8 +7,10 @@ import javafx.scene.input.KeyCode
 import javafx.stage.Stage
 import kb.core.bowline.Bowline
 import kb.core.camera.fx.KnotCameraTest
+import kb.core.code.CodeEditor
+import kb.core.code.Syntax
+import kb.core.context.Registry
 import kb.core.fx.*
-import kb.core.registry.RegistryEditor
 import kb.core.splash.AboutSplash
 import kb.core.splash.GCSplash
 import kb.path.planner.runPathPlanner
@@ -152,10 +154,36 @@ object AppView {
                         icon(FontAwesomeSolid.TAPE, 13)
                     }
                     separator()
-                    item { name("Collapse All") }
-                    item { name("Expand All") }
-                    item { name("Expand to Current Table") }
-                    item { name("Collapse Tree") }
+                    item {
+                        name("Collapse All")
+                    }
+                    item {
+                        name("Expand All")
+                    }
+                    item {
+                        name("Expand to Current Table")
+                    }
+                    item {
+                        name("Collapse Tree")
+                    }
+                    separator()
+                    item {
+                        name("Move Feature Up")
+                    }
+                    item {
+                        name("Move Feature Down")
+                    }
+                    item {
+                        name("Delete Feature")
+                    }
+                    item {
+                        name("Supress Feature")
+                    }
+                    separator()
+                    item {
+                        name("Feature Properties")
+                        shortcut(KeyCode.SPACE)
+                    }
                 }
             }
             menu {
@@ -189,7 +217,14 @@ object AppView {
                     item {
                         name("Application Properties")
                         icon(FontAwesomeSolid.TOOLS, 13)
-                        action { RegistryEditor.ish() }
+                        shortcut(KeyCode.P, control = true)
+                        action {
+                            CodeEditor("Application Properties", true,
+                                    "Save", "Discard", Registry.join(), { s ->
+                                Registry.parse(s.split("\n"))
+                                Registry.save()
+                            }, Syntax.Properties)
+                        }
                     }
                     separator()
                     item {
@@ -222,13 +257,7 @@ object AppView {
         stage.isFullScreen = isFullScreen
     }
 
-    @Suppress("unused")
-    enum class Theme(val fileName: String) {
-        Light("/light.css"),
-        Dark("/dark.css");
-    }
-
-    private var theme = Theme.Dark
+    private var theme = Theme.Light
 
     private fun toggleTheme() {
         theme = when (theme) {
@@ -242,7 +271,7 @@ object AppView {
 
     private val box = vbox {
         val bowline = Bowline()
-        stylesheets.addAll("/knotbook.css", Theme.Dark.fileName)
+        stylesheets.addAll("/knotbook.css", Theme.Light.fileName)
         prefWidth = 1120.0
         prefHeight = 630.0
         add(bar)
@@ -258,7 +287,7 @@ object AppView {
 
     fun show() {
         stage.fullScreenExitHint = "Press F11 to Exit"
-        stage.title = "Knotbook"
+        stage.title = "KnotBook"
         stage.icons.add(Image(AppView::class.java.getResourceAsStream("/icon.png")))
         stage.scene = scene
         stage.show()

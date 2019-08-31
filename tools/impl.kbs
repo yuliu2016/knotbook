@@ -1,0 +1,45 @@
+# Implementation example
+
+sequence = interface<T> {
+    hasNext: def() -> bool
+    next: def() -> T
+}
+
+GeneratorScope = interface<T> {
+    yield: def(element: T)
+}
+
+@inline
+generator = def<T>(func: GeneratorScope<T>.def()) -> sequence<T> {
+    nextValue: T? = None
+    scope = GeneratorScope {
+        yield = def(element: T) {
+            nextValue = element
+            suspend()
+        }
+    }
+    func(scope)
+    return sequence {
+        hasNext = def() -> bool: return nextValue is not None
+        next = def() -> T {
+            assert(hasNext())
+            thisValue = nextValue
+            func(scope)
+            return thisValue
+        }
+    }
+}
+
+@inline
+sequence<T>.map = def<R>(transform: def(element: T) -> R) -> sequence<R>: return generator {
+    for element in this {
+        yield(transform(element))
+    }
+}
+
+@inline
+sequence<T>.filter = def(predicate: def(element: T) -> bool) -> sequence<T>: return generator {
+    for element in this {
+        if predicate(element): yield(element)
+    }
+}

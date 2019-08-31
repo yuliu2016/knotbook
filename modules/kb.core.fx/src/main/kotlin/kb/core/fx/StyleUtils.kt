@@ -33,3 +33,8 @@ fun VBox.align(pos: Pos) {
 fun Region.height(height: Double) {
     prefHeight = height
 }
+
+@FXKtDSL
+fun Region.width(width: Double) {
+    prefWidth = width
+}

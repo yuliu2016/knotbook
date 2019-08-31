@@ -1,5 +1,5 @@
-.root {
-    -fx-background-color: white;
+.text {
+    -fx-font-family: "Comic Sans MS", "Roboto", "Segoe UI", "Arial", sans-serif;
 }
 
 * {
@@ -80,7 +80,6 @@
     -fx-text-fill: black;
 }
 
-
 /*SPREADSHEET VIEW*/
 
 .spreadsheet-cell:filled:selected,
@@ -139,6 +138,7 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 
 .menu {
     -fx-padding: 3 8 3 8;
+    -fx-font-size: 13;
     -fx-background-color: transparent;
     -fx-background-insets: 0;
 }
@@ -162,7 +162,7 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 .context-menu {
     -fx-padding: 0;
     -fx-min-width: 200;
-    -fx-background-color: rgba(238, 238, 238, 0.95);
+    -fx-background-color: rgba(255, 255, 255, 0.95);
 }
 
 .menu-item:focused {
@@ -203,7 +203,7 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
     -fx-background-color: #eee;
 }
 
-.master-tab-icon-selected{
+.master-tab-icon-selected {
     -fx-background-color: #ddd;
     -fx-background-insets: 6;
     -fx-background-radius: 12;
@@ -217,7 +217,7 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
     -fx-background-color: #ddd;
 }
 
-.master-cancel .ikonli-font-icon{
+.master-cancel .ikonli-font-icon {
     -fx-icon-color: #f00;
 }
 
@@ -225,7 +225,7 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
     -fx-background-color: #ddd;
 }
 
-.master-ok .ikonli-font-icon{
+.master-ok .ikonli-font-icon {
     -fx-icon-color: #0b0;
 }
 
@@ -323,6 +323,6 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 }
 
 .tree-cell.drag-over {
-    -fx-background-color: red, white;
-    -fx-background-insets: 0, 1;
+    -fx-background-color: red, #eee;
+    -fx-background-insets: 0, 2;
 }

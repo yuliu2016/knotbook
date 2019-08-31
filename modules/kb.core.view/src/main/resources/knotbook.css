@@ -18,6 +18,7 @@
 
 .tree-cell {
     -fx-background-color: transparent;
+    -fx-padding: 3 0 3 0;
 }
 
 .table-view {
@@ -65,13 +66,6 @@
 .corner {
     -fx-background-color: transparent;
 }
-
-.status-item {
-    -fx-padding: 5 15 5 15;
-    -fx-spacing: 6;
-    -fx-alignment: CENTER-LEFT;
-}
-
 
 .split-pane-divider {
     -fx-padding: 0 1 0 1;

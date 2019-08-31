@@ -1,5 +1,5 @@
-.gradle/
-build/
+venv/
+scripts/api_v3.json
 
 *.iml
 

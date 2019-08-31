@@ -1,10 +1,9 @@
 package kb.core.view
 
-import javafx.scene.control.ContextMenu
-import javafx.scene.control.SeparatorMenuItem
 import javafx.scene.control.TreeItem
-import javafx.util.Callback
-import kb.core.fx.*
+import javafx.scene.paint.Color
+import kb.core.fx.fontIcon
+import kb.core.fx.runOnFxThread
 import kb.core.icon.FontIcon
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid.*
 
@@ -32,7 +31,7 @@ class DashboardActivity {
 
     private fun selectAndFocus(item: TreeItem<Entity>) {
         view.indexTree.selectionModel.select(item)
-        appRunLater {
+        runOnFxThread {
             view.indexTree.requestFocus()
         }
     }
@@ -89,53 +88,25 @@ class DashboardActivity {
 
     init {
         entityRoot.children?.addAll(listOf(
-                Entity("Memory Repo", fontIcon(BOLT, 13)),
-                Entity("Local Filesystem", fontIcon(DESKTOP, 13)),
+                Entity(listOf(EntityText("Memory Repo")), fontIcon(BOLT, 13), mutableListOf(
+                        Entity("Empty View", fontIcon(MINUS, 13)),
+                        Entity(listOf(EntityText("2018iri.csv")), fontIcon(TABLE, 13), mutableListOf(
+                                Entity("Filesystem Link", fontIcon(LINK, 13)),
+                                Entity("User Edit Mask", fontIcon(USER_EDIT, 13)),
+                                Entity("Formulas", fontIcon(SUPERSCRIPT, 13)),
+                                Entity(listOf(EntityText("Filter"), EntityText("Team={865}", Color.GRAY)), fontIcon(FILTER, 13)),
+                                Entity(listOf(EntityText("Sort"), EntityText("Scale", Color.GRAY)), fontIcon(SORT_ALPHA_UP, 13)),
+                                Entity(listOf(EntityText("Sort"), EntityText("Switch", Color.GRAY)), fontIcon(SORT_ALPHA_UP, 13)),
+                                Entity(listOf(EntityText("Colour Scale"), EntityText("Auto Switch", Color.GRAY)), fontIcon(PAINT_BRUSH, 13))
+                        ))
+                )),
+                Entity(listOf(EntityText("Local File"), EntityText("~/kb192/data", Color.GRAY)), fontIcon(DESKTOP, 13)),
+                Entity("Android Scouting App", fontIcon(QRCODE, 13)),
                 Entity("The Blue Alliance")
         ))
-        view.indexTree.cellFactory = Callback { EntityCell() }
+        view.indexTree.setCellFactory { EntityCell() }
         view.indexTree.root = root
         view.indexTree.isShowRoot = false
-        view.indexTree.contextMenu = ContextMenu().modify {
-            submenu {
-                name("New")
-                modify {
-                    item {
-                        name("TBA Integration")
-                    }
-                    item {
-                        name("Python Integration")
-                    }
-                    item {
-                        name("Duplicate Table")
-                    }
-                    item {
-                        name("Linked View")
-                    }
-                }
-            }
-            +SeparatorMenuItem()
-            item {
-                name("New Folder")
-                icon(FOLDER_OPEN, 18)
-            }
-            item {
-                name("Rename")
-                icon(FONT, 18)
-            }
-            item {
-                name("Reload")
-                icon(SYNC, 18)
-            }
-            item {
-                name("Delete")
-                icon(TRASH_ALT, 18)
-            }
-            item {
-                name("Reveal in Source")
-                icon(EYE, 18)
-            }
-        }
         regenerate()
     }
 
