@@ -80,28 +80,6 @@
     -fx-text-fill: black;
 }
 
-/*SCROLL BAR*/
-
-.scroll-bar .thumb {
-    -fx-background-color: #ccc;
-}
-
-.scroll-bar .thumb:pressed {
-    -fx-background-color: #aaa;
-}
-
-.scroll-bar .increment-button:hover {
-    -fx-background-color: #bbb;
-}
-
-.scroll-bar .decrement-button:hover {
-    -fx-background-color: #bbb;
-}
-
-.status-bar {
-    -fx-background-color: #ddd;
-}
-
 
 /*SPREADSHEET VIEW*/
 
