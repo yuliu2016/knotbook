@@ -8,8 +8,8 @@ import javafx.scene.layout.VBox
 internal class DashboardView {
 
     internal val indexTree = TreeView<Entity>().apply {
-        prefWidth = 300.0
-        minWidth = 300.0
+        prefWidth = 360.0
+        minWidth = 360.0
         VBox.setVgrow(this, Priority.ALWAYS)
     }
 }

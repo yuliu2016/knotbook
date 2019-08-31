@@ -166,6 +166,24 @@ object AppView {
                     item {
                         name("Collapse Tree")
                     }
+                    separator()
+                    item {
+                        name("Move Feature Up")
+                    }
+                    item {
+                        name("Move Feature Down")
+                    }
+                    item {
+                        name("Delete Feature")
+                    }
+                    item {
+                        name("Supress Feature")
+                    }
+                    separator()
+                    item {
+                        name("Feature Properties")
+                        shortcut(KeyCode.SPACE)
+                    }
                 }
             }
             menu {

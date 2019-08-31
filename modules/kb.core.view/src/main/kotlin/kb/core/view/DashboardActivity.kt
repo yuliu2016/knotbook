@@ -90,7 +90,15 @@ class DashboardActivity {
         entityRoot.children?.addAll(listOf(
                 Entity(listOf(EntityText("Memory Repo")), fontIcon(BOLT, 13), mutableListOf(
                         Entity("Empty View", fontIcon(MINUS, 13)),
-                        Entity("2019iri.csv", fontIcon(TABLE, 13))
+                        Entity(listOf(EntityText("2018iri.csv")), fontIcon(TABLE, 13), mutableListOf(
+                                Entity("Filesystem Link", fontIcon(LINK, 13)),
+                                Entity("User Edit Mask", fontIcon(USER_EDIT, 13)),
+                                Entity("Formulas", fontIcon(SUPERSCRIPT, 13)),
+                                Entity(listOf(EntityText("Filter"), EntityText("Team={865}", Color.GRAY)), fontIcon(FILTER, 13)),
+                                Entity(listOf(EntityText("Sort"), EntityText("Scale", Color.GRAY)), fontIcon(SORT_ALPHA_UP, 13)),
+                                Entity(listOf(EntityText("Sort"), EntityText("Switch", Color.GRAY)), fontIcon(SORT_ALPHA_UP, 13)),
+                                Entity(listOf(EntityText("Colour Scale"), EntityText("Auto Switch", Color.GRAY)), fontIcon(PAINT_BRUSH, 13))
+                        ))
                 )),
                 Entity(listOf(EntityText("Local File"), EntityText("~/kb192/data", Color.GRAY)), fontIcon(DESKTOP, 13)),
                 Entity("Android Scouting App", fontIcon(QRCODE, 13)),

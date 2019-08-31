@@ -139,7 +139,6 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 
 .menu {
     -fx-padding: 3 8 3 8;
-    -fx-font-size: 13;
     -fx-background-color: transparent;
     -fx-background-insets: 0;
 }
@@ -163,7 +162,7 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 .context-menu {
     -fx-padding: 0;
     -fx-min-width: 200;
-    -fx-background-color: rgba(255, 255, 255, 0.95);
+    -fx-background-color: rgba(238, 238, 238, 0.95);
 }
 
 .menu-item:focused {
