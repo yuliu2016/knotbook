@@ -1,21 +1,14 @@
 package kb.application;
 
 import javafx.application.Application;
-import javafx.stage.Stage;
 import kb.core.context.ApplicationContext;
 import kb.core.registry.Registry;
-import kb.core.view.AppView;
 
-public class Main extends Application {
+public class Main {
     public static void main(String[] args) {
-        ApplicationContext.doAccess(() -> {
+        ApplicationContext.obtainRoot(() -> {
             Registry.INSTANCE.load();
-            launch(Main.class);
+            Application.launch(KnotBook.class);
         });
-    }
-
-    @Override
-    public void start(Stage primaryStage) {
-        AppView.INSTANCE.show();
     }
 }

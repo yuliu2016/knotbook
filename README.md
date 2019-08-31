@@ -1,9 +1,9 @@
-![Knotbook Icon](tools/assets/knot-small.png)
+![KnotBook Icon](tools/assets/knot-small.png)
 
 |Platform|Build Status|
 |----|----|
 |Windows|[![Build Status](https://dev.azure.com/yuliu2016/knotbook/_apis/build/status/yuliu2016.knotbook?branchName=master&jobName=Windows)](https://dev.azure.com/yuliu2016/knotbook/_build/latest?definitionId=1&branchName=master)|
-|Mac OS|[![Build Status](https://dev.azure.com/yuliu2016/knotbook/_apis/build/status/yuliu2016.knotbook?branchName=master&jobName=macOS)](https://dev.azure.com/yuliu2016/knotbook/_build/latest?definitionId=1&branchName=master)|
+|MacOS|[![Build Status](https://dev.azure.com/yuliu2016/knotbook/_apis/build/status/yuliu2016.knotbook?branchName=master&jobName=macOS)](https://dev.azure.com/yuliu2016/knotbook/_build/latest?definitionId=1&branchName=master)|
 |Linux|[![Build Status](https://dev.azure.com/yuliu2016/knotbook/_apis/build/status/yuliu2016.knotbook?branchName=master&jobName=Linux)](https://dev.azure.com/yuliu2016/knotbook/_build/latest?definitionId=1&branchName=master)|
 
 **KnotBook** is a **JavaFX** data viewing/analysis app for FRC 2020, successor

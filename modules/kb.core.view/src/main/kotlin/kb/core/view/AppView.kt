@@ -275,7 +275,7 @@ object AppView {
 
     fun show() {
         stage.fullScreenExitHint = "Press F11 to Exit"
-        stage.title = "Knotbook"
+        stage.title = "KnotBook"
         stage.icons.add(Image(AppView::class.java.getResourceAsStream("/icon.png")))
         stage.scene = scene
         stage.show()
