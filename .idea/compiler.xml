@@ -4,6 +4,8 @@
     <bytecodeTargetLevel>
       <module name="knotbook.kb.core.system.main" target="12" />
       <module name="knotbook.kb.core.system.test" target="12" />
+      <module name="knotbook.kb.lib.borderless.main" target="12" />
+      <module name="knotbook.kb.lib.borderless.test" target="12" />
     </bytecodeTargetLevel>
   </component>
 </project>
