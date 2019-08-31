@@ -27,11 +27,11 @@ suspend = def() {
 }
 
 @intrinsic
-interface = def<...>(func: TypeScope.def() -> type<...>) -> type<...> {
+interface = def(func: TypeScope.def() -> type) -> type {
     return func()
 }
 
 @intrinsic
-class = def<...>(func: TypeScope.def() -> type<...>) -> type<...> {
+class = def(func: TypeScope.def() -> type) -> type {
     return func()
 }
