@@ -1,0 +1,37 @@
+@intrinsic
+Any = Any
+
+@intrinsic
+None = None
+
+@intrinsic
+True = True
+
+@intrinsic
+False = False
+
+@intrinsic
+TypeScope = None
+
+@intrinsic
+FunctionScope = None
+
+@intrinsic
+<T>.def = def(func: T.def()) -> T.def() {
+    return func
+}
+
+@intrinsic
+suspend = def() {
+    return None
+}
+
+@intrinsic
+interface = def<...>(func: TypeScope.def() -> type<...>) -> type<...> {
+    return func()
+}
+
+@intrinsic
+class = def<...>(func: TypeScope.def() -> type<...>) -> type<...> {
+    return func()
+}

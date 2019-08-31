@@ -67,6 +67,24 @@ finally: pass
 # Classes
 Person = dataclass(name: str, height: int, address: str)
 
+Stack = interface<T> {
+    push: def(value: T)
+    pop: def() -> T
+}
+
+Stack.default = class {
+
+    _li: list<T> = [] # private because it starts with _
+
+    push = def(value: T) {
+        _li.append(value)
+    }
+
+    pop = def() -> T {
+        return _li.pop(0)
+    }
+}
+
 # List function examples
 numbers = (0..100).list()
 squared = numbers.map { it * it }.list()

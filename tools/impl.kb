@@ -10,10 +10,6 @@ GeneratorScope = interface<T> {
 }
 
 @inline
-suspend = def() {
-}
-
-@inline
 generator = def<T>(func: GeneratorScope<T>.def()) -> sequence<T> {
     nextValue: T? = None
     scope = GeneratorScope {
