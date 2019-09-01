@@ -1,11 +1,12 @@
 from typing import *
 from enum import Enum
+from io import StringIO
 
 
-# TODO add multi-line comments
+# TODO
 #  add docstrings
 #  add multi-line strings
-#  add line number preservence
+#  add line number persistence
 #  add floats and exponents
 #  add bin and hex
 
@@ -16,12 +17,13 @@ from enum import Enum
 class TokenType(Enum):
     NEWLINE = 0
     SPACE = 1
-    SYMBOL = 2
-    OP = 3
-    INT = 4
-    STR = 5
-    FLOAT = 6
-    DOCSTR = 7
+    KEYWORD = 2
+    SYMBOL = 3
+    OP = 4
+    INT = 5
+    STR = 6
+    FLOAT = 7
+    DOCSTR = 8
 
 
 #
@@ -157,10 +159,45 @@ triple_ops = {
 }
 
 #
+# Keywords (subset of symbols, easier to check later)
+#
+keywords = [
+    "return",
+    "if",
+    "else",
+    "when",
+    "def",
+    "and",
+    "or",
+    "not",
+    "True",
+    "False",
+    "None",
+    "suspend",
+    "with",
+    "as",
+    "from",
+    "import",
+    "pass",
+    "continue",
+    "break",
+    "try",
+    "except",
+    "finally",
+    "while",
+    "in",
+    "is",
+    "for",
+    "interface",  # ?
+    "class"  # ?
+]
+
+#
 # Constants
 #
 
 OPEN_MULTILINE_COMMENT = "/*"
+OPEN_DOCSTRING = "/**"
 CLOSE_MULTILINE_COMMENT = "*/"
 
 SINGLE_COMMENT_CHAR = "#"
@@ -269,33 +306,66 @@ class _Tokenizer:
         self.p2 = self.peek_or_none(2)
         self.p3 = self.peek_or_none(3)
 
-    def append_spaces(self):
-        # comments and spaces
+    def try_append_spaces(self):
 
-        j = self.i + 1
         in_comment = self.p1 == SINGLE_COMMENT_CHAR
+        in_multi_line_comment = self.p2 == OPEN_MULTILINE_COMMENT
+
+        if not (in_comment
+                or in_multi_line_comment
+                or self.p1.isspace()):
+            return False # not actually a space to be parsed
+
+        assert not (in_comment and in_multi_line_comment)
+
+        if in_multi_line_comment:
+            # start searching after /* to prevent /*/ parsed valid
+            j = self.i + 2
+        else:
+            j = self.i + 1
 
         # make sure that newline is added if it's the first char
         newline = self.is_newline(self.p1)
 
         while j < self.size:
-            peek_ch = self.code[j]
+            peek1 = self.code[j]
+            if j < self.size - 1:
+                peek2 = self.code[j: j + 2]
+            else:
+                peek2 = None
+
+            # check if peek1 is # becuase it could mean the start of
+            # a single-line comment
             if not (in_comment
-                    or peek_ch.isspace()
-                    or peek_ch == SINGLE_COMMENT_CHAR):
+                    or in_multi_line_comment
+                    or peek1.isspace()
+                    or peek1 == SINGLE_COMMENT_CHAR
+                    or peek2 == OPEN_MULTILINE_COMMENT):
                 break
-            if self.is_newline(peek_ch):
+
+            if self.is_newline(peek1):
                 in_comment = False
                 newline = True
-            if peek_ch == SINGLE_COMMENT_CHAR:
+            if peek1 == SINGLE_COMMENT_CHAR:
                 in_comment = True
+            if peek2 == OPEN_MULTILINE_COMMENT:
+                in_multi_line_comment = True
+                # since peek2 is not None, this does not break indexing
+                j += 1
+            elif peek2 == CLOSE_MULTILINE_COMMENT:
+                in_multi_line_comment = False
+                # since peek2 is not None, this does not break indexing
+                j += 1
             j += 1
+
         self.i = j
 
         if newline:
             self.add_token((TokenType.NEWLINE, None))
         else:
             self.add_token((TokenType.SPACE, None))
+
+        return True
 
     def append_numeric_literal(self):
 
@@ -307,13 +377,22 @@ class _Tokenizer:
         self.add_token((TokenType.INT, int(self.code[self.i:j])))
         self.i = j
 
-    def append_symbol(self):
+    def append_symbol_or_keywords(self):
 
         # check for symbols
         j = self.i + 1
         while j < self.size and self.is_symbol(self.code[j]):
             j += 1
-        self.add_token((TokenType.SYMBOL, self.code[self.i:j]))
+
+        symbol_val = self.code[self.i:j]
+
+        # since keywords have the same rules as symbols, just add them
+        # here.
+
+        if symbol_val in keywords:
+            self.add_token((TokenType.KEYWORD, symbol_val))
+        else:
+            self.add_token((TokenType.SYMBOL, symbol_val))
         self.i = j
 
     def append_string(self):
@@ -327,44 +406,63 @@ class _Tokenizer:
         self.add_token((TokenType.STR, self.code[self.i + 1:j]))
         self.i = j + 1
 
+    def try_append_triple_ops(self):
+
+        # three-char operators
+
+        if self.p3 is not None and self.p3 in triple_ops.keys():
+            self.token_is_operator = True
+            self.add_token((TokenType.OP, triple_ops[self.p3]))
+            self.i += 3
+            return True
+
+        return False
+
+    def try_append_double_ops(self):
+
+        # two-char operators
+
+        if self.p2 is not None and self.p2 in double_ops.keys():
+            self.token_is_operator = True
+            self.add_token((TokenType.OP, double_ops[self.p2]))
+            self.i += 2
+            return True
+
+        return False
+
+    def try_append_single_ops(self):
+
+        # one-char operators
+
+        if self.p1 in single_ops.keys():
+            self.token_is_operator = True
+            self.add_token((TokenType.OP, single_ops[self.p1]))
+            self.i += 1
+            return True
+
+        return False
+
     def tokenize(self):
+
         self.reset_state()
+
         while self.i < self.size:
             self.peek_all()
             self.token_is_operator = False
-            if self.p1 == SINGLE_COMMENT_CHAR or self.p1.isspace():
-                self.append_spaces()
-
+            if self.try_append_spaces():
+                pass
             elif self.p1.isnumeric():
                 self.append_numeric_literal()
-
             elif self.p1 == STR_CHAR:
                 self.append_string()
-
             elif self.is_symbol(self.p1):
-                self.append_symbol()
-
-            elif self.p3 is not None and self.p3 in triple_ops.keys():
-
-                # two-char operators
-                self.token_is_operator = True
-                self.add_token((TokenType.OP, triple_ops[self.p3]))
-                self.i += 3
-
-            elif self.p2 is not None and self.p2 in double_ops.keys():
-
-                # two-char operators
-                self.token_is_operator = True
-                self.add_token((TokenType.OP, double_ops[self.p2]))
-                self.i += 2
-
-            elif self.p1 in single_ops.keys():
-
-                # one-char operators
-                self.token_is_operator = True
-                self.add_token((TokenType.OP, single_ops[self.p1]))
-                self.i += 1
-
+                self.append_symbol_or_keywords()
+            elif self.try_append_triple_ops():
+                pass
+            elif self.try_append_double_ops():
+                pass
+            elif self.try_append_single_ops():
+                pass
             else:
                 raise Exception(f"{self.p1} is not a recognized character")
 
@@ -385,23 +483,30 @@ def tokenize(code: str):
 
 
 def print_tokens(tokens: List[Tuple[TokenType, Optional[str]]]):
-    for token in tokens:
-        token_type = token[0]
-        if token_type == TokenType.STR:
-            # print repr for escape chars
-            token_value = repr(token[1])
-        else:
-            token_value = token[1]
-        if token_value is None:
-            print("{:>8}".format(token_type.name))
-        else:
-            print("{:>8} - {}".format(token_type.name, token_value))
+    """
+    Prints out a list of tokens formatted
+    """
+    with StringIO() as io:
+        for token in tokens:
+            tk_type = token[0]
+            if tk_type == TokenType.STR:
+                # print repr for escape chars in strings
+                tk_value = repr(token[1])
+            else:
+                tk_value = token[1]
+
+            tk_name = tk_type.name
+
+            if tk_value is None:
+                print("{:>8}".format(tk_name), file=io)
+            else:
+                print("{:>8} | {}".format(tk_name, tk_value), file=io)
+        print(io.getvalue())
 
 
-test = """
+test_funcdef = """
 
 # A test
-# Two tests
 
 number = Union[int, float]
 
@@ -409,10 +514,23 @@ square = def(x: number) -> number {
     return x * x
 }
 
+# test-test
+
 if __name__ == "__main__" {
     print(square(5))
 }
 """
 
+test_multiline = """
+/*
+Hi
+*/
+print("Hello World")
+/*
+adasd
+*/
+1 + 1
+"""
+
 if __name__ == '__main__':
-    print_tokens(tokenize(test))
+    print_tokens(tokenize(test_multiline))
