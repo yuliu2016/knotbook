@@ -28,6 +28,8 @@ BIT_NOT = "BIT_NOT"
 BIT_XOR = "BIT_XOR"
 OPEN_ANGLE_LT = "OPEN_ANGLE_LT"
 CLOSE_ANGLE_MT = "CLOSE_ANGLE_MT"
+OPEN_ROUND = "OPEN_ROUND"
+CLOSE_ROUND = "CLOSE_ROUND"
 OPEN_SQUARE = "OPEN_SQUARE"
 CLOSE_SQUARE = "CLOSE_SQUARE"
 OPEN_CURLY = "OPEN_CURLY"
@@ -46,8 +48,10 @@ single_ops = {
     "&": BIT_AND,
     "~": BIT_NOT,
     "^": BIT_XOR,
-    "<": OPEN_ANGLE_LT,  # typing and comparison
-    ">": CLOSE_ANGLE_MT,  # typing and comparison
+    "<": OPEN_ANGLE_LT,  # typing and more-than comparison
+    ">": CLOSE_ANGLE_MT,  # typing and more-than comparison
+    "(": OPEN_ROUND,
+    ")": CLOSE_ROUND,
     "[": OPEN_SQUARE,
     "]": CLOSE_SQUARE,
     "{": OPEN_CURLY,
@@ -128,7 +132,9 @@ def is_newline(test_ch: str):
     # checks against newline characters
     return test_ch == NEWLINE_CHAR_1 or test_ch == NEWLINE_CHAR_2
 
+
 class _Tokenizer:
+
     def __init__(self, code: str):
         self.code = code
 
@@ -142,7 +148,7 @@ class _Tokenizer:
         self.tokens = []
 
         # used to remove spacing when the last token is an operation
-        self.last_is_op = False
+        self.last_token_is_operator = False
 
     def canPeek(self, n: int):
         # Decides if the string is long enough to peek
@@ -151,6 +157,12 @@ class _Tokenizer:
     def peek(self, n: int):
         # Peek the code
         return self.code[self.i:self.i + n]
+
+    def peekOrNone(self, n: int):
+        # peek the code or return none
+        if self.canPeek(n):
+            return self.peek(n)
+        return None
 
     def pop_space(self, n: int):
         """
@@ -169,98 +181,117 @@ class _Tokenizer:
     def add_token(self, tok):
         self.tokens.append(tok)
 
-    def tokenize(self):
+    def reset_state(self):
         self.tokens.clear()
         self.i = 0
-        self.last_is_op = False
+        self.last_token_is_operator = False
         self.size = len(self.code)
-        while self.i < self.size:
-            ch = self.code[self.i]
-            in_comment = ch == "#"
-            is_op = False
-            if in_comment or ch.isspace():
 
-                # comments and spaces
-                j = self.i + 1
-                newline = is_newline(ch)
+    def discard_spaces(self):
 
-                while j < self.size:
-                    peek_ch = self.code[j]
-                    if not (in_comment
-                            or peek_ch.isspace()
-                            or peek_ch == SINGLE_COMMENT_CHAR):
-                        break
-                    if is_newline(peek_ch):
-                        in_comment = False
-                        newline = True
-                    if peek_ch == SINGLE_COMMENT_CHAR:
-                        in_comment = True
-                    j += 1
-                self.i = j
-
-                if newline:
-                    self.add_token(NEWLINE)
-                else:
-                    self.add_token(SPACE)
-
-            elif ch.isnumeric():
-
-                # check for numbers
-
-                j = self.i + 1
-                while j < self.size and self.code[j].isnumeric():
-                    j += 1
-                self.add_token((INT, int(self.code[self.i:j])))
-                self.i = j
-                pass
-
-            elif is_symbol(ch):
-
-                # check for symbols
-                j = self.i + 1
-                while j < self.size and is_symbol(self.code[j]):
-                    j += 1
-                self.add_token((SYMBOL, self.code[self.i:j]))
-                self.i = j
-
-            elif self.canPeek(3) and self.peek(3) in triple_ops.keys():
-
-                # two-char operators
-                is_op = True
-                self.add_token((OP, triple_ops[self.peek(3)]))
-                self.i += 3
-
-            elif self.canPeek(2) and self.peek(2) in double_ops.keys():
-
-                # two-char operators
-                is_op = True
-                self.add_token((OP, double_ops[self.peek(2)]))
-                self.i += 2
-
-            elif ch in single_ops.keys():
-                # one-char operators
-                is_op = True
-                self.add_token((OP, single_ops[ch]))
-                self.i += 1
-            else:
-                raise Exception()
-
-            # check whether spaces can be popped off
-            if self.last_is_op:
-                self.pop_space(n=1)
-            if is_op:
-                self.pop_space(n=2)
-                self.last_is_op = True
-            else:
-                self.last_is_op = False
-
-            # Discard spacing at the end of the sequence
+        # Discard spacing at the end of the sequence
         self.pop_space(n=1)
         self.pop_newline(n=1)
 
         # Discard spacing at the beginning of the sequence
         self.pop_space(n=len(self.tokens))
         self.pop_newline(n=len(self.tokens))
+
+    def discard_operator_spaces(self, is_operator: bool):
+        # check whether spaces can be popped off
+        if self.last_token_is_operator:
+            self.pop_space(n=1)
+        if is_operator:
+            self.pop_space(n=2)
+            self.last_token_is_operator = True
+        else:
+            self.last_token_is_operator = False
+
+    def append_spaces(self, ch):
+        # comments and spaces
+
+        j = self.i + 1
+        in_comment = ch == SINGLE_COMMENT_CHAR
+
+        # make sure that newline is added if it's the first char
+        newline = is_newline(ch)
+
+        while j < self.size:
+            peek_ch = self.code[j]
+            if not (in_comment
+                    or peek_ch.isspace()
+                    or peek_ch == SINGLE_COMMENT_CHAR):
+                break
+            if is_newline(peek_ch):
+                in_comment = False
+                newline = True
+            if peek_ch == SINGLE_COMMENT_CHAR:
+                in_comment = True
+            j += 1
+        self.i = j
+
+        if newline:
+            self.add_token(NEWLINE)
+        else:
+            self.add_token(SPACE)
+
+    def append_numeric_literal(self):
+
+        # check for numbers
+
+        j = self.i + 1
+        while j < self.size and self.code[j].isnumeric():
+            j += 1
+        self.add_token((INT, int(self.code[self.i:j])))
+        self.i = j
+
+    def append_symbol(self):
+
+        # check for symbols
+        j = self.i + 1
+        while j < self.size and is_symbol(self.code[j]):
+            j += 1
+        self.add_token((SYMBOL, self.code[self.i:j]))
+        self.i = j
+
+    def tokenize(self):
+        self.reset_state()
+        while self.i < self.size:
+            ch = self.code[self.i]
+            is_operator = False
+            if ch == SINGLE_COMMENT_CHAR or ch.isspace():
+                self.append_spaces(ch)
+            elif ch.isnumeric():
+                self.append_numeric_literal()
+            elif is_symbol(ch):
+                self.append_symbol()
+            elif self.canPeek(3) and self.peek(3) in triple_ops.keys():
+
+                # two-char operators
+                is_operator = True
+                self.add_token((OP, triple_ops[self.peek(3)]))
+                self.i += 3
+
+            elif self.canPeek(2) and self.peek(2) in double_ops.keys():
+
+                # two-char operators
+                is_operator = True
+                self.add_token((OP, double_ops[self.peek(2)]))
+                self.i += 2
+
+            elif ch in single_ops.keys():
+
+                # one-char operators
+                is_operator = True
+                self.add_token((OP, single_ops[ch]))
+                self.i += 1
+
+            else:
+                raise Exception(f"{ch} is not recognized")
+
+            self.discard_operator_spaces(is_operator)
+
+        self.discard_spaces()
 
 
 def tokenize(code: str):
@@ -283,15 +314,15 @@ def print_tokens(tokens):
             print("{:>8}".format(token))
 
 
+test = """
+
+# A test
+# Two tests
+
+dependencies {
+    implementation()
+}
+"""
+
 if __name__ == '__main__':
-
-    test = """
-
-    # A test
-
-    a = 5
-    a += 17 + 1
-
-    """
-
     print_tokens(tokenize(test))
