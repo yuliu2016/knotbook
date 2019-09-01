@@ -6,12 +6,20 @@ whaaat = 1 + 1
 
 """
 
+#
+# OPcode types
+#
+
 SYMBOL = "SYMBOL"
 OP = "OP"
 NEWLINE = "NEWLINE"
 SPACE = "SPACE"
 INT = "INT"
 FLOAT = "FLOAT"
+
+#
+# Single-char operations
+#
 
 DOT = "DOT"
 ASSIGN = "ASSIGN"
@@ -41,6 +49,10 @@ single_ops = {
     ">": MORE_THAN,
 }
 
+#
+# Double-char operations ("//=" and "**=" operations are ignored)
+#
+
 FDIV = "FDIV"
 EXP = "EXP"
 SHL = "SHL"
@@ -50,6 +62,14 @@ NOT_EQUAL = "NOT_EQUAL"
 LESS_EQUAL = "LESS_EQUAL"
 MORE_EQUAL = "MORE_EQUAL"
 RANGE = "RANGE"
+PLUS_ASSIGN = "PLUS_ASSIGN"
+MINUS_ASSIGN = "MINUS_ASSIGN"
+TIMES_ASSIGN = "TIMES_ASSGIN"
+DIV_ASSIGN = "DIV_ASSIGN"
+MODULUS_ASSIGN = "MODULUS_ASSIGN"
+BIT_OR_ASSIGN = "BIT_OR_ASSIGN"
+BIT_AND_ASSIGN = "BIT_AND_ASSIGN"
+BIT_NOT_ASSIGN = "BIT_NOT_ASSIGN"
 
 double_ops = {
     "//": FDIV,
@@ -60,11 +80,38 @@ double_ops = {
     "!=": NOT_EQUAL,
     "<=": LESS_EQUAL,
     ">=": MORE_EQUAL,
-    "..": RANGE
+    "..": RANGE,
+    "+=": PLUS_ASSIGN,
+    "-=": MINUS_ASSIGN,
+    "*=": TIMES_ASSIGN,
+    "/=": DIV_ASSIGN,
+    "%=": MODULUS_ASSIGN,
+    "|=": BIT_OR_ASSIGN,
+    "&=": BIT_AND_ASSIGN,
+    "~=": BIT_NOT_ASSIGN
+}
+
+#
+# Triple-char operations
+#
+
+FDIV_ASSIGN = "FDIV_ASSIGN"
+EXP_ASSIGN = "EXP_ASSIGN"
+
+triple_ops = {
+    "//=": FDIV_ASSIGN,
+    "**=": EXP_ASSIGN
 }
 
 
 def tokenize(code: str):
+    """
+    Tokenizes a piece of code
+    No regular expressions; just char-by-char
+    :param code: the code to parse
+    :return:
+    """
+
     def canPeek(n: int):
         return i + n <= size
 
@@ -104,7 +151,7 @@ def tokenize(code: str):
                 j += 1
             i = j
             if len(tokens) == 0:
-                continue # safe to abandon the space at the top
+                continue  # safe to abandon the space at the top
             if newline:
                 tokens.append(NEWLINE)
             else:
@@ -116,16 +163,21 @@ def tokenize(code: str):
             tokens.append((INT, int(code[i:j])))
             i = j
             pass
-        elif is_symbol(ch):  # symbols
+        elif is_symbol(ch):
+            # check for symbols
             j = i + 1
             while j < size and is_symbol(code[j]):
                 j += 1
             tokens.append((SYMBOL, code[i:j]))
             i = j
+        elif canPeek(3) and peek(3) in triple_ops.keys():  # two-char operators
+            is_op = True
+            tokens.append((OP, triple_ops[peek(3)]))
+            i += 3
         elif canPeek(2) and peek(2) in double_ops.keys():  # two-char operators
             is_op = True
             tokens.append((OP, double_ops[peek(2)]))
-            i += 1
+            i += 2
         elif ch in single_ops.keys():  # one-char operators
             is_op = True
             tokens.append((OP, single_ops[ch]))
