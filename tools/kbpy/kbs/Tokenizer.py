@@ -137,27 +137,48 @@ def tokenize(code: str):
     """
 
     def canPeek(n: int):
+        # Decides if the string is long enough to peek
         return i + n <= size
 
     def peek(n: int):
+        # Peek the code
         return code[i:i + n]
 
-    # pop the space when we know that we can to simplify opcode
     def pop_space(n):
-        last_token = tokens[-n]
-        if last_token == NEWLINE or last_token == SPACE:
+        """
+         pop the space when we know that opcode is simplified
+         """
+        if tokens[-n] == SPACE:
             tokens.pop(len(tokens) - n)
 
-    # checks if it is a symbol name
+    def pop_newline(n):
+        """
+         pop the newline when we know that opcode is simplified
+         """
+        if tokens[-n] == NEWLINE:
+            tokens.pop(len(tokens) - n)
+
     def is_symbol(test_ch: str):
+        # checks if it is a symbol name
         return test_ch.isalnum() or test_ch == UNDERSCORE_CHAR
 
     def is_newline(test_ch: str):
+        # checks against newline characters
         return test_ch == NEWLINE_CHAR_1 or test_ch == NEWLINE_CHAR_2
 
+    def add_token(tok):
+        tokens.append(tok)
+
+    # the caret index
     i = 0
+
+    # the total size of the code
     size = len(code)
+
+    # the list of generated tokens
     tokens = []
+
+    # used to remove spacing when the last token is an operation
     last_is_op = False
 
     while i < size:
@@ -185,9 +206,9 @@ def tokenize(code: str):
             i = j
 
             if newline:
-                tokens.append(NEWLINE)
+                add_token(NEWLINE)
             else:
-                tokens.append(SPACE)
+                add_token(SPACE)
 
         elif ch.isnumeric():
 
@@ -196,7 +217,7 @@ def tokenize(code: str):
             j = i + 1
             while j < size and code[j].isnumeric():
                 j += 1
-            tokens.append((INT, int(code[i:j])))
+            add_token((INT, int(code[i:j])))
             i = j
             pass
 
@@ -206,30 +227,32 @@ def tokenize(code: str):
             j = i + 1
             while j < size and is_symbol(code[j]):
                 j += 1
-            tokens.append((SYMBOL, code[i:j]))
+            add_token((SYMBOL, code[i:j]))
             i = j
 
         elif canPeek(3) and peek(3) in triple_ops.keys():
 
             # two-char operators
             is_op = True
-            tokens.append((OP, triple_ops[peek(3)]))
+            add_token((OP, triple_ops[peek(3)]))
             i += 3
 
         elif canPeek(2) and peek(2) in double_ops.keys():
 
             # two-char operators
             is_op = True
-            tokens.append((OP, double_ops[peek(2)]))
+            add_token((OP, double_ops[peek(2)]))
             i += 2
 
         elif ch in single_ops.keys():
             # one-char operators
             is_op = True
-            tokens.append((OP, single_ops[ch]))
+            add_token((OP, single_ops[ch]))
             i += 1
         else:
             raise Exception()
+
+        # check whether spaces can be popped off
         if last_is_op:
             pop_space(n=1)
         if is_op:
@@ -240,9 +263,11 @@ def tokenize(code: str):
 
     # Discard spacing at the end of the sequence
     pop_space(n=1)
+    pop_newline(n=1)
 
     # Discard spacing at the beginning of the sequence
     pop_space(n=len(tokens))
+    pop_newline(n=len(tokens))
     return tokens
 
 
