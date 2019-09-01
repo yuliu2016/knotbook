@@ -17,17 +17,56 @@ SPACE = "SPACE"
 INT = "INT"
 FLOAT = "FLOAT"
 
+DOT = "DOT"
+ASSIGN = "ASSIGN"
 PLUS = "PLUS"
-EQUALS = "EQUALS"
+MINUS = "MINUS"
+TIMES = "TIMES"
+DIV = "DIV"
+MODULUS = "MODULUS"
+BIT_OR = "BIT_OR"
+BIT_AND = "BIT_AND"
+BIT_NOT = "BIT_NOT"
+LESS_THAN = "LESS_THAN"
+MORE_THAN = "MORE_THAN"
 
 single_ops = {
+    ".": DOT,
+    "=": ASSIGN,
     "+": PLUS,
-    "=": EQUALS
+    "-": MINUS,
+    "*": TIMES,
+    "/": DIV,
+    "%": MODULUS,
+    "|": BIT_OR,
+    "&": BIT_AND,
+    "~": BIT_NOT,
+    "<": LESS_THAN,
+    ">": MORE_THAN,
 }
+
+FDIV = "FDIV"
+EXP = "EXP"
+SHL = "SHL"
+SHR = "SHR"
+EQUAL = "EQUAL"
+NOT_EQUAL = "NOT_EQUAL"
+LESS_EQUAL = "LESS_EQUAL"
+MORE_EQUAL = "MORE_EQUAL"
+RANGE = "RANGE"
 
 double_ops = {
-
+    "//": FDIV,
+    "**": EXP,
+    "<<": SHL,
+    ">>": SHR,
+    "==": EQUAL,
+    "!=": NOT_EQUAL,
+    "<=": LESS_EQUAL,
+    ">=": MORE_EQUAL,
+    "..": RANGE
 }
+
 
 def tokenize(code: str):
     i = 0
@@ -47,13 +86,13 @@ def tokenize(code: str):
             j = i + 1
             newline = False
             while j < size:
-                ch_j = code[j]
-                if not (in_comment or ch_j.isspace() or ch_j == "#"):
+                peek_ch = code[j]
+                if not (in_comment or peek_ch.isspace() or peek_ch == "#"):
                     break
-                if ch_j == "\n" or ch_j == "\r":
+                if peek_ch == "\n" or peek_ch == "\r":
                     in_comment = False
                     newline = True
-                if ch_j == "#":
+                if peek_ch == "#":
                     in_comment = True
                 j += 1
             i = j
@@ -71,22 +110,19 @@ def tokenize(code: str):
             tokens.append(int(code[i:j]))
             i = j
             pass
-        elif is_symbol(ch): # symbols
+        elif is_symbol(ch):  # symbols
             j = i + 1
             while j < size and is_symbol(code[j]):
                 j += 1
             tokens.append(SYMBOL)
             tokens.append(code[i:j])
             i = j
-        elif ch in single_ops.keys():
+        elif canPeek(2) and  peek(2) in double_ops.keys():  # two-char operators
+            tokens.append(double_ops[peek(2)])
+            i += 1
+        elif ch in single_ops.keys():  # one-char operators
             tokens.append(single_ops[ch])
             i += 1
-            continue
-        elif canPeek(2):
-            ch2 = peek(2)
-            if ch in double_ops.keys():
-                tokens.append(double_ops[ch2])
-            continue
         else:
             raise Exception()
     if tokens[-1] == NEWLINE or tokens[-1] == SPACE:
