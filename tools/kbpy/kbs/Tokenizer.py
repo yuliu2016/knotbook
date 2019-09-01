@@ -6,12 +6,8 @@ whaaat = 1 + 1
 
 """
 
-
-def is_symbol(ch: str):
-    return ch.isalnum() or ch == "_"
-
-
 SYMBOL = "SYMBOL"
+OP = "OP"
 NEWLINE = "NEWLINE"
 SPACE = "SPACE"
 INT = "INT"
@@ -69,20 +65,31 @@ double_ops = {
 
 
 def tokenize(code: str):
-    i = 0
-    size = len(code)
-    tokens = []
-
     def canPeek(n: int):
         return i + n <= size
 
     def peek(n: int):
         return code[i:i + n - 1]
 
+    # pop the space when we know that we can to simplify opcode
+    def pop_space(n):
+        last_token = tokens[-n]
+        if last_token == NEWLINE or last_token == SPACE:
+            tokens.pop(len(tokens) - n)
+
+    def is_symbol(test_ch: str):
+        return test_ch.isalnum() or test_ch == "_"
+
+    i = 0
+    size = len(code)
+    tokens = []
+    last_is_op = False
+
     while i < size:
         ch = code[i]
         in_comment = ch == "#"
-        if in_comment or ch.isspace():  # comments spaces
+        is_op = False
+        if in_comment or ch.isspace():  # comments and spaces
             j = i + 1
             newline = False
             while j < size:
@@ -97,7 +104,7 @@ def tokenize(code: str):
                 j += 1
             i = j
             if len(tokens) == 0:
-                continue
+                continue # safe to abandon the space at the top
             if newline:
                 tokens.append(NEWLINE)
             else:
@@ -106,29 +113,43 @@ def tokenize(code: str):
             j = i + 1
             while j < size and code[j].isnumeric():
                 j += 1
-            tokens.append(INT)
-            tokens.append(int(code[i:j]))
+            tokens.append((INT, int(code[i:j])))
             i = j
             pass
         elif is_symbol(ch):  # symbols
             j = i + 1
             while j < size and is_symbol(code[j]):
                 j += 1
-            tokens.append(SYMBOL)
-            tokens.append(code[i:j])
+            tokens.append((SYMBOL, code[i:j]))
             i = j
-        elif canPeek(2) and  peek(2) in double_ops.keys():  # two-char operators
-            tokens.append(double_ops[peek(2)])
+        elif canPeek(2) and peek(2) in double_ops.keys():  # two-char operators
+            is_op = True
+            tokens.append((OP, double_ops[peek(2)]))
             i += 1
         elif ch in single_ops.keys():  # one-char operators
-            tokens.append(single_ops[ch])
+            is_op = True
+            tokens.append((OP, single_ops[ch]))
             i += 1
         else:
             raise Exception()
-    if tokens[-1] == NEWLINE or tokens[-1] == SPACE:
-        tokens.pop()
+        if last_is_op:
+            pop_space(n=1)
+        if is_op:
+            pop_space(n=2)
+            last_is_op = True
+        else:
+            last_is_op = False
+    pop_space(n=1)
     return tokens
 
 
+def print_tokens(tokens):
+    for token in tokens:
+        if type(token) is tuple:
+            print("{:>8}:  {}".format(*token))
+        else:
+            print("{:>8}".format(token))
+
+
 if __name__ == '__main__':
-    print(tokenize(test))
+    print_tokens(tokenize(test))
