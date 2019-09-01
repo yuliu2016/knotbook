@@ -22,31 +22,41 @@ FLOAT = "FLOAT"
 #
 
 DOT = "DOT"
+COMMA = "COMMA"
 ASSIGN = "ASSIGN"
 PLUS = "PLUS"
 MINUS = "MINUS"
-TIMES = "TIMES"
+TIMES_ARGS = "TIMES_ARGS"
 DIV = "DIV"
 MODULUS = "MODULUS"
 BIT_OR = "BIT_OR"
 BIT_AND = "BIT_AND"
 BIT_NOT = "BIT_NOT"
-LESS_THAN = "LESS_THAN"
-MORE_THAN = "MORE_THAN"
+OPEN_ANGLE_LT = "OPEN_ANGLE_LT"
+CLOSE_ANGLE_MT = "CLOSE_ANGLE_MT"
+OPEN_SQUARE = "OPEN_SQUARE"
+CLOSE_SQUARE = "CLOSE_SQUARE"
+OPEN_CURLY = "OPEN_CURLY"
+CLOSE_CURLY = "CLOSE_CURLY"
 
 single_ops = {
     ".": DOT,
+    ",": COMMA,
     "=": ASSIGN,
     "+": PLUS,
     "-": MINUS,
-    "*": TIMES,
+    "*": TIMES_ARGS, # times and def(*args)
     "/": DIV,
     "%": MODULUS,
     "|": BIT_OR,
     "&": BIT_AND,
     "~": BIT_NOT,
-    "<": LESS_THAN,
-    ">": MORE_THAN,
+    "<": OPEN_ANGLE_LT, # typing and comparison
+    ">": CLOSE_ANGLE_MT, # typing and comparison
+    "[": OPEN_SQUARE,
+    "]": CLOSE_SQUARE,
+    "{": OPEN_CURLY,
+    "}": CLOSE_CURLY
 }
 
 #
@@ -54,7 +64,7 @@ single_ops = {
 #
 
 FDIV = "FDIV"
-EXP = "EXP"
+EXP_KWARGS = "EXP_KWARGS"
 SHL = "SHL"
 SHR = "SHR"
 EQUAL = "EQUAL"
@@ -73,7 +83,7 @@ BIT_NOT_ASSIGN = "BIT_NOT_ASSIGN"
 
 double_ops = {
     "//": FDIV,
-    "**": EXP,
+    "**": EXP_KWARGS, # exponents and def(**kwargs)/ {**k, **v} etc
     "<<": SHL,
     ">>": SHR,
     "==": EQUAL,
