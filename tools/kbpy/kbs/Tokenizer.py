@@ -1,16 +1,28 @@
 from typing import *
+from enum import Enum
+
+
+# TODO add multi-line comments
+#  add docstrings
+#  add multi-line strings
+#  add line number preservence
+#  add floats and exponents
+#  add bin and hex
 
 #
-# OPcode types
+# Token types
 #
 
-SYMBOL = "SYMBOL"
-OP = "OP"
-NEWLINE = "NEWLINE"
-SPACE = "SPACE"
-INT = "INT"
-FLOAT = "FLOAT"
-STR = "STR"
+class TokenType(Enum):
+    NEWLINE = 0
+    SPACE = 1
+    SYMBOL = 2
+    OP = 3
+    INT = 4
+    STR = 5
+    FLOAT = 6
+    DOCSTR = 7
+
 
 #
 # Single-char operations
@@ -21,6 +33,7 @@ STR = "STR"
 DOT = "DOT"
 COMMA = "COMMA"
 ASSIGN = "ASSIGN"
+COLON = "COLON"
 
 # second most common - brackets
 
@@ -55,6 +68,7 @@ single_ops = {
     ".": DOT,
     ",": COMMA,
     "=": ASSIGN,
+    ":": COLON,
 
     "(": OPEN_ROUND,
     ")": CLOSE_ROUND,
@@ -86,6 +100,7 @@ NOT_EQUAL = "NOT_EQUAL"
 LESS_EQUAL = "LESS_EQUAL"
 MORE_EQUAL = "MORE_EQUAL"
 
+ARROW = "ARROW"
 RANGE = "RANGE"
 
 FDIV = "FDIV"
@@ -100,14 +115,16 @@ BIT_OR_ASSIGN = "BIT_OR_ASSIGN"
 BIT_AND_ASSIGN = "BIT_AND_ASSIGN"
 BIT_XOR_ASSIGN = "BIT_XOR_ASSIGN"
 
-SHL = "SHL"
-SHR = "SHR"
+SHIFT_LEFT = "SHIFT_LEFT"
+SHIFT_RIGHT = "SHIFT_RIGHT"
 
 double_ops = {
     "==": EQUAL,
     "!=": NOT_EQUAL,
     "<=": LESS_EQUAL,
     ">=": MORE_EQUAL,
+
+    "->": ARROW,
 
     "..": RANGE,
 
@@ -123,8 +140,8 @@ double_ops = {
     "&=": BIT_AND_ASSIGN,
     "^=": BIT_XOR_ASSIGN,
 
-    "<<": SHL,
-    ">>": SHR
+    "<<": SHIFT_LEFT,
+    ">>": SHIFT_RIGHT
 }
 
 #
@@ -178,7 +195,7 @@ class _Tokenizer:
         self.size: int = len(code)
 
         # the list of generated tokens
-        self.tokens: List[str] = []
+        self.tokens: List[Tuple[TokenType, Optional[str]]] = []
 
         # used to remove spacing when the last token is an operation
         self.token_is_operator = False
@@ -207,14 +224,14 @@ class _Tokenizer:
         """
          pop the space when we know that opcode is simplified
          """
-        if self.tokens[-n] == SPACE:
+        if self.tokens[-n][0] == TokenType.SPACE:
             self.tokens.pop(len(self.tokens) - n)
 
     def pop_newline(self, n: int):
         """
          pop the newline when we know that opcode is simplified
          """
-        if self.tokens[-n] == NEWLINE:
+        if self.tokens[-n][0] == TokenType.NEWLINE:
             self.tokens.pop(len(self.tokens) - n)
 
     def add_token(self, tok):
@@ -247,6 +264,11 @@ class _Tokenizer:
         else:
             self.last_token_is_operator = False
 
+    def peek_all(self):
+        self.p1 = self.code[self.i]
+        self.p2 = self.peek_or_none(2)
+        self.p3 = self.peek_or_none(3)
+
     def append_spaces(self):
         # comments and spaces
 
@@ -271,9 +293,9 @@ class _Tokenizer:
         self.i = j
 
         if newline:
-            self.add_token(NEWLINE)
+            self.add_token((TokenType.NEWLINE, None))
         else:
-            self.add_token(SPACE)
+            self.add_token((TokenType.SPACE, None))
 
     def append_numeric_literal(self):
 
@@ -282,7 +304,7 @@ class _Tokenizer:
         j = self.i + 1
         while j < self.size and self.code[j].isnumeric():
             j += 1
-        self.add_token((INT, int(self.code[self.i:j])))
+        self.add_token((TokenType.INT, int(self.code[self.i:j])))
         self.i = j
 
     def append_symbol(self):
@@ -291,13 +313,19 @@ class _Tokenizer:
         j = self.i + 1
         while j < self.size and self.is_symbol(self.code[j]):
             j += 1
-        self.add_token((SYMBOL, self.code[self.i:j]))
+        self.add_token((TokenType.SYMBOL, self.code[self.i:j]))
         self.i = j
 
-    def peek_all(self):
-        self.p1 = self.code[self.i]
-        self.p2 = self.peek_or_none(2)
-        self.p3 = self.peek_or_none(3)
+    def append_string(self):
+        # check for symbols
+
+        # string requires an extra character, so must be accounted
+        # for in the index
+        j = self.i + 1
+        while j < self.size - 1 and self.code[j] != STR_CHAR:
+            j += 1
+        self.add_token((TokenType.STR, self.code[self.i + 1:j]))
+        self.i = j + 1
 
     def tokenize(self):
         self.reset_state()
@@ -310,6 +338,9 @@ class _Tokenizer:
             elif self.p1.isnumeric():
                 self.append_numeric_literal()
 
+            elif self.p1 == STR_CHAR:
+                self.append_string()
+
             elif self.is_symbol(self.p1):
                 self.append_symbol()
 
@@ -317,21 +348,21 @@ class _Tokenizer:
 
                 # two-char operators
                 self.token_is_operator = True
-                self.add_token((OP, triple_ops[self.p3]))
+                self.add_token((TokenType.OP, triple_ops[self.p3]))
                 self.i += 3
 
             elif self.p2 is not None and self.p2 in double_ops.keys():
 
                 # two-char operators
                 self.token_is_operator = True
-                self.add_token((OP, double_ops[self.p2]))
+                self.add_token((TokenType.OP, double_ops[self.p2]))
                 self.i += 2
 
             elif self.p1 in single_ops.keys():
 
                 # one-char operators
                 self.token_is_operator = True
-                self.add_token((OP, single_ops[self.p1]))
+                self.add_token((TokenType.OP, single_ops[self.p1]))
                 self.i += 1
 
             else:
@@ -353,12 +384,18 @@ def tokenize(code: str):
     return tk.tokens
 
 
-def print_tokens(tokens):
+def print_tokens(tokens: List[Tuple[TokenType, Optional[str]]]):
     for token in tokens:
-        if type(token) is tuple:
-            print("{:>8}:  {}".format(*token))
+        token_type = token[0]
+        if token_type == TokenType.STR:
+            # print repr for escape chars
+            token_value = repr(token[1])
         else:
-            print("{:>8}".format(token))
+            token_value = token[1]
+        if token_value is None:
+            print("{:>8}".format(token_type.name))
+        else:
+            print("{:>8} - {}".format(token_type.name, token_value))
 
 
 test = """
@@ -366,8 +403,14 @@ test = """
 # A test
 # Two tests
 
-dependencies {
-    implementation()
+number = Union[int, float]
+
+square = def(x: number) -> number {
+    return x * x
+}
+
+if __name__ == "__main__" {
+    print(square(5))
 }
 """
 

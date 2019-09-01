@@ -13,14 +13,6 @@ Multi-line comments
 msg = "Hello World"
 msg = None
 
-# Static Type Variable (cannot change type after)
-msg := "Hello World" # Inferred
-msg: str = "Hello World" # Explicit
-
-# Optional Static Variable
-msg ?= "Hello World" # Inferred
-msg: str? = "Hello World" # Explicit
-
 # Printing
 print("Hello World")
 
