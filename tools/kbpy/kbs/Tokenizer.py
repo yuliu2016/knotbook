@@ -2,7 +2,8 @@ test = """
 
 # A test
 
-whaaat = 1 + 1
+a = 5
+a += 17 + 1
 
 """
 
@@ -16,6 +17,7 @@ NEWLINE = "NEWLINE"
 SPACE = "SPACE"
 INT = "INT"
 FLOAT = "FLOAT"
+STR = "STR"
 
 #
 # Single-char operations
@@ -32,6 +34,7 @@ MODULUS = "MODULUS"
 BIT_OR = "BIT_OR"
 BIT_AND = "BIT_AND"
 BIT_NOT = "BIT_NOT"
+BIT_XOR = "BIT_XOR"
 OPEN_ANGLE_LT = "OPEN_ANGLE_LT"
 CLOSE_ANGLE_MT = "CLOSE_ANGLE_MT"
 OPEN_SQUARE = "OPEN_SQUARE"
@@ -45,14 +48,15 @@ single_ops = {
     "=": ASSIGN,
     "+": PLUS,
     "-": MINUS,
-    "*": TIMES_ARGS, # times and def(*args)
+    "*": TIMES_ARGS,  # times and def(*args)
     "/": DIV,
     "%": MODULUS,
     "|": BIT_OR,
     "&": BIT_AND,
     "~": BIT_NOT,
-    "<": OPEN_ANGLE_LT, # typing and comparison
-    ">": CLOSE_ANGLE_MT, # typing and comparison
+    "^": BIT_XOR,
+    "<": OPEN_ANGLE_LT,  # typing and comparison
+    ">": CLOSE_ANGLE_MT,  # typing and comparison
     "[": OPEN_SQUARE,
     "]": CLOSE_SQUARE,
     "{": OPEN_CURLY,
@@ -79,11 +83,11 @@ DIV_ASSIGN = "DIV_ASSIGN"
 MODULUS_ASSIGN = "MODULUS_ASSIGN"
 BIT_OR_ASSIGN = "BIT_OR_ASSIGN"
 BIT_AND_ASSIGN = "BIT_AND_ASSIGN"
-BIT_NOT_ASSIGN = "BIT_NOT_ASSIGN"
+BIT_XOR_ASSIGN = "BIT_XOR_ASSIGN"
 
 double_ops = {
     "//": FDIV,
-    "**": EXP_KWARGS, # exponents and def(**kwargs)/ {**k, **v} etc
+    "**": EXP_KWARGS,  # exponents and def(**kwargs)/ {**k, **v} etc
     "<<": SHL,
     ">>": SHR,
     "==": EQUAL,
@@ -98,7 +102,7 @@ double_ops = {
     "%=": MODULUS_ASSIGN,
     "|=": BIT_OR_ASSIGN,
     "&=": BIT_AND_ASSIGN,
-    "~=": BIT_NOT_ASSIGN
+    "^=": BIT_XOR_ASSIGN
 }
 
 #
@@ -113,6 +117,16 @@ triple_ops = {
     "**=": EXP_ASSIGN
 }
 
+#
+# Constants
+#
+
+UNDERSCORE_CHAR = "_"
+SINGLE_COMMENT_CHAR = "#"
+STR_CHAR = "\""
+NEWLINE_CHAR_1 = "\n"
+NEWLINE_CHAR_2 = "\r"
+
 
 def tokenize(code: str):
     """
@@ -126,7 +140,7 @@ def tokenize(code: str):
         return i + n <= size
 
     def peek(n: int):
-        return code[i:i + n - 1]
+        return code[i:i + n]
 
     # pop the space when we know that we can to simplify opcode
     def pop_space(n):
@@ -134,8 +148,12 @@ def tokenize(code: str):
         if last_token == NEWLINE or last_token == SPACE:
             tokens.pop(len(tokens) - n)
 
+    # checks if it is a symbol name
     def is_symbol(test_ch: str):
-        return test_ch.isalnum() or test_ch == "_"
+        return test_ch.isalnum() or test_ch == UNDERSCORE_CHAR
+
+    def is_newline(test_ch: str):
+        return test_ch == NEWLINE_CHAR_1 or test_ch == NEWLINE_CHAR_2
 
     i = 0
     size = len(code)
@@ -146,49 +164,67 @@ def tokenize(code: str):
         ch = code[i]
         in_comment = ch == "#"
         is_op = False
-        if in_comment or ch.isspace():  # comments and spaces
+        if in_comment or ch.isspace():
+
+            # comments and spaces
             j = i + 1
-            newline = False
+            newline = is_newline(ch)
+
             while j < size:
                 peek_ch = code[j]
-                if not (in_comment or peek_ch.isspace() or peek_ch == "#"):
+                if not (in_comment
+                        or peek_ch.isspace()
+                        or peek_ch == SINGLE_COMMENT_CHAR):
                     break
-                if peek_ch == "\n" or peek_ch == "\r":
+                if is_newline(peek_ch):
                     in_comment = False
                     newline = True
-                if peek_ch == "#":
+                if peek_ch == SINGLE_COMMENT_CHAR:
                     in_comment = True
                 j += 1
             i = j
-            if len(tokens) == 0:
-                continue  # safe to abandon the space at the top
+
             if newline:
                 tokens.append(NEWLINE)
             else:
                 tokens.append(SPACE)
+
         elif ch.isnumeric():
+
+            # check for numbers
+
             j = i + 1
             while j < size and code[j].isnumeric():
                 j += 1
             tokens.append((INT, int(code[i:j])))
             i = j
             pass
+
         elif is_symbol(ch):
+
             # check for symbols
             j = i + 1
             while j < size and is_symbol(code[j]):
                 j += 1
             tokens.append((SYMBOL, code[i:j]))
             i = j
-        elif canPeek(3) and peek(3) in triple_ops.keys():  # two-char operators
+
+        elif canPeek(3) and peek(3) in triple_ops.keys():
+
+            # two-char operators
             is_op = True
             tokens.append((OP, triple_ops[peek(3)]))
             i += 3
-        elif canPeek(2) and peek(2) in double_ops.keys():  # two-char operators
+
+        elif canPeek(2) and peek(2) in double_ops.keys():
+
+            # two-char operators
             is_op = True
             tokens.append((OP, double_ops[peek(2)]))
             i += 2
-        elif ch in single_ops.keys():  # one-char operators
+
+        elif ch in single_ops.keys():
+            # one-char operators
             is_op = True
             tokens.append((OP, single_ops[ch]))
             i += 1
@@ -201,7 +237,12 @@ def tokenize(code: str):
             last_is_op = True
         else:
             last_is_op = False
+
+    # Discard spacing at the end of the sequence
     pop_space(n=1)
+
+    # Discard spacing at the beginning of the sequence
+    pop_space(n=len(tokens))
     return tokens
 
 
