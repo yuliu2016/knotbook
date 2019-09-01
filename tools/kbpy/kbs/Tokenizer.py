@@ -1,3 +1,5 @@
+from typing import *
+
 #
 # OPcode types
 #
@@ -14,63 +16,81 @@ STR = "STR"
 # Single-char operations
 #
 
+# most common
+
 DOT = "DOT"
 COMMA = "COMMA"
 ASSIGN = "ASSIGN"
+
+# second most common - brackets
+
+OPEN_ROUND = "OPEN_ROUND"
+CLOSE_ROUND = "CLOSE_ROUND"
+
+OPEN_CURLY = "OPEN_CURLY"
+CLOSE_CURLY = "CLOSE_CURLY"
+
+OPEN_SQUARE = "OPEN_SQUARE"
+CLOSE_SQUARE = "CLOSE_SQUARE"
+
+OPEN_ANGLE_LT = "OPEN_ANGLE_LT"
+CLOSE_ANGLE_MT = "CLOSE_ANGLE_MT"
+
+# math
+
 PLUS = "PLUS"
 MINUS = "MINUS"
 TIMES_ARGS = "TIMES_ARGS"
 DIV = "DIV"
 MODULUS = "MODULUS"
+
+# bitwise ops
+
 BIT_OR = "BIT_OR"
 BIT_AND = "BIT_AND"
 BIT_NOT = "BIT_NOT"
 BIT_XOR = "BIT_XOR"
-OPEN_ANGLE_LT = "OPEN_ANGLE_LT"
-CLOSE_ANGLE_MT = "CLOSE_ANGLE_MT"
-OPEN_ROUND = "OPEN_ROUND"
-CLOSE_ROUND = "CLOSE_ROUND"
-OPEN_SQUARE = "OPEN_SQUARE"
-CLOSE_SQUARE = "CLOSE_SQUARE"
-OPEN_CURLY = "OPEN_CURLY"
-CLOSE_CURLY = "CLOSE_CURLY"
 
 single_ops = {
     ".": DOT,
     ",": COMMA,
     "=": ASSIGN,
+
+    "(": OPEN_ROUND,
+    ")": CLOSE_ROUND,
+    "{": OPEN_CURLY,
+    "}": CLOSE_CURLY,
+    "[": OPEN_SQUARE,
+    "]": CLOSE_SQUARE,
+    "<": OPEN_ANGLE_LT,  # typing and more-than comparison
+    ">": CLOSE_ANGLE_MT,  # typing and more-than comparison
+
     "+": PLUS,
     "-": MINUS,
     "*": TIMES_ARGS,  # times and def(*args)
     "/": DIV,
     "%": MODULUS,
+
     "|": BIT_OR,
     "&": BIT_AND,
     "~": BIT_NOT,
-    "^": BIT_XOR,
-    "<": OPEN_ANGLE_LT,  # typing and more-than comparison
-    ">": CLOSE_ANGLE_MT,  # typing and more-than comparison
-    "(": OPEN_ROUND,
-    ")": CLOSE_ROUND,
-    "[": OPEN_SQUARE,
-    "]": CLOSE_SQUARE,
-    "{": OPEN_CURLY,
-    "}": CLOSE_CURLY
+    "^": BIT_XOR
 }
 
 #
 # Double-char operations ("//=" and "**=" operations are ignored)
 #
 
-FDIV = "FDIV"
-EXP_KWARGS = "EXP_KWARGS"
-SHL = "SHL"
-SHR = "SHR"
 EQUAL = "EQUAL"
 NOT_EQUAL = "NOT_EQUAL"
 LESS_EQUAL = "LESS_EQUAL"
 MORE_EQUAL = "MORE_EQUAL"
+
 RANGE = "RANGE"
+
+FDIV = "FDIV"
+EXP_KWARGS = "EXP_KWARGS"
+
 PLUS_ASSIGN = "PLUS_ASSIGN"
 MINUS_ASSIGN = "MINUS_ASSIGN"
 TIMES_ASSIGN = "TIMES_ASSGIN"
@@ -80,16 +100,20 @@ BIT_OR_ASSIGN = "BIT_OR_ASSIGN"
 BIT_AND_ASSIGN = "BIT_AND_ASSIGN"
 BIT_XOR_ASSIGN = "BIT_XOR_ASSIGN"
 
+SHL = "SHL"
+SHR = "SHR"
+
 double_ops = {
-    "//": FDIV,
-    "**": EXP_KWARGS,  # exponents and def(**kwargs)/ {**k, **v} etc
-    "<<": SHL,
-    ">>": SHR,
     "==": EQUAL,
     "!=": NOT_EQUAL,
     "<=": LESS_EQUAL,
     ">=": MORE_EQUAL,
+
     "..": RANGE,
+
+    "//": FDIV,
+    "**": EXP_KWARGS,  # exponents and def(**kwargs)/ {**k, **v} etc
+
     "+=": PLUS_ASSIGN,
     "-=": MINUS_ASSIGN,
     "*=": TIMES_ASSIGN,
@@ -97,7 +121,10 @@ double_ops = {
     "%=": MODULUS_ASSIGN,
     "|=": BIT_OR_ASSIGN,
     "&=": BIT_AND_ASSIGN,
-    "^=": BIT_XOR_ASSIGN
+    "^=": BIT_XOR_ASSIGN,
+
+    "<<": SHL,
+    ">>": SHR
 }
 
 #
@@ -116,39 +143,51 @@ triple_ops = {
 # Constants
 #
 
-UNDERSCORE_CHAR = "_"
+OPEN_MULTILINE_COMMENT = "/*"
+CLOSE_MULTILINE_COMMENT = "*/"
+
 SINGLE_COMMENT_CHAR = "#"
+
+UNDERSCORE_CHAR = "_"
+
 STR_CHAR = "\""
+
 NEWLINE_CHAR_1 = "\n"
 NEWLINE_CHAR_2 = "\r"
 
 
-def is_symbol(test_ch: str):
-    # checks if it is a symbol name
-    return test_ch.isalnum() or test_ch == UNDERSCORE_CHAR
-
-
-def is_newline(test_ch: str):
-    # checks against newline characters
-    return test_ch == NEWLINE_CHAR_1 or test_ch == NEWLINE_CHAR_2
-
-
 class _Tokenizer:
+
+    @staticmethod
+    def is_symbol(test_ch: str):
+        # checks if it is a symbol name
+        return test_ch.isalnum() or test_ch == UNDERSCORE_CHAR
+
+    @staticmethod
+    def is_newline(test_ch: str):
+        # checks against newline characters
+        return test_ch == NEWLINE_CHAR_1 or test_ch == NEWLINE_CHAR_2
 
     def __init__(self, code: str):
         self.code = code
 
         # the caret index
-        self.i = 0
+        self.i: int = 0
 
         # the total size of the code
-        self.size = len(code)
+        self.size: int = len(code)
 
         # the list of generated tokens
-        self.tokens = []
+        self.tokens: List[str] = []
 
         # used to remove spacing when the last token is an operation
+        self.token_is_operator = False
         self.last_token_is_operator = False
+
+        # used to lookup up to the next three characters
+        self.p1: str = "\0"
+        self.p2: Optional[str] = None
+        self.p3: Optional[str] = None
 
     def canPeek(self, n: int):
         # Decides if the string is long enough to peek
@@ -158,7 +197,7 @@ class _Tokenizer:
         # Peek the code
         return self.code[self.i:self.i + n]
 
-    def peekOrNone(self, n: int):
+    def peek_or_none(self, n: int):
         # peek the code or return none
         if self.canPeek(n):
             return self.peek(n)
@@ -184,10 +223,11 @@ class _Tokenizer:
     def reset_state(self):
         self.tokens.clear()
         self.i = 0
+        self.token_is_operator = False
         self.last_token_is_operator = False
         self.size = len(self.code)
 
-    def discard_spaces(self):
+    def discard_code_spaces(self):
 
         # Discard spacing at the end of the sequence
         self.pop_space(n=1)
@@ -197,24 +237,24 @@ class _Tokenizer:
         self.pop_space(n=len(self.tokens))
         self.pop_newline(n=len(self.tokens))
 
-    def discard_operator_spaces(self, is_operator: bool):
+    def discard_operator_spaces(self):
         # check whether spaces can be popped off
         if self.last_token_is_operator:
             self.pop_space(n=1)
-        if is_operator:
+        if self.token_is_operator:
             self.pop_space(n=2)
             self.last_token_is_operator = True
         else:
             self.last_token_is_operator = False
 
-    def append_spaces(self, ch):
+    def append_spaces(self):
         # comments and spaces
 
         j = self.i + 1
-        in_comment = ch == SINGLE_COMMENT_CHAR
+        in_comment = self.p1 == SINGLE_COMMENT_CHAR
 
         # make sure that newline is added if it's the first char
-        newline = is_newline(ch)
+        newline = self.is_newline(self.p1)
 
         while j < self.size:
             peek_ch = self.code[j]
@@ -222,7 +262,7 @@ class _Tokenizer:
                     or peek_ch.isspace()
                     or peek_ch == SINGLE_COMMENT_CHAR):
                 break
-            if is_newline(peek_ch):
+            if self.is_newline(peek_ch):
                 in_comment = False
                 newline = True
             if peek_ch == SINGLE_COMMENT_CHAR:
@@ -249,49 +289,56 @@ class _Tokenizer:
 
         # check for symbols
         j = self.i + 1
-        while j < self.size and is_symbol(self.code[j]):
+        while j < self.size and self.is_symbol(self.code[j]):
             j += 1
         self.add_token((SYMBOL, self.code[self.i:j]))
         self.i = j
 
+    def peek_all(self):
+        self.p1 = self.code[self.i]
+        self.p2 = self.peek_or_none(2)
+        self.p3 = self.peek_or_none(3)
+
     def tokenize(self):
         self.reset_state()
         while self.i < self.size:
-            ch = self.code[self.i]
-            is_operator = False
-            if ch == SINGLE_COMMENT_CHAR or ch.isspace():
-                self.append_spaces(ch)
-            elif ch.isnumeric():
+            self.peek_all()
+            self.token_is_operator = False
+            if self.p1 == SINGLE_COMMENT_CHAR or self.p1.isspace():
+                self.append_spaces()
+
+            elif self.p1.isnumeric():
                 self.append_numeric_literal()
-            elif is_symbol(ch):
+
+            elif self.is_symbol(self.p1):
                 self.append_symbol()
-            elif self.canPeek(3) and self.peek(3) in triple_ops.keys():
+
+            elif self.p3 is not None and self.p3 in triple_ops.keys():
 
                 # two-char operators
-                is_operator = True
-                self.add_token((OP, triple_ops[self.peek(3)]))
+                self.token_is_operator = True
+                self.add_token((OP, triple_ops[self.p3]))
                 self.i += 3
 
-            elif self.canPeek(2) and self.peek(2) in double_ops.keys():
+            elif self.p2 is not None and self.p2 in double_ops.keys():
 
                 # two-char operators
-                is_operator = True
-                self.add_token((OP, double_ops[self.peek(2)]))
+                self.token_is_operator = True
+                self.add_token((OP, double_ops[self.p2]))
                 self.i += 2
 
-            elif ch in single_ops.keys():
+            elif self.p1 in single_ops.keys():
 
                 # one-char operators
-                is_operator = True
-                self.add_token((OP, single_ops[ch]))
+                self.token_is_operator = True
+                self.add_token((OP, single_ops[self.p1]))
                 self.i += 1
 
             else:
-                raise Exception(f"{ch} is not recognized")
+                raise Exception(f"{self.p1} is not a recognized character")
 
-            self.discard_operator_spaces(is_operator)
-
-        self.discard_spaces()
+            self.discard_operator_spaces()
+        self.discard_code_spaces()
 
 
 def tokenize(code: str):
