@@ -1,7 +1,6 @@
 package kb.core.view
 
 import javafx.scene.control.TreeItem
-import javafx.scene.paint.Color
 import kb.core.fx.fontIcon
 import kb.core.fx.runOnFxThread
 import kb.core.icon.FontIcon
@@ -58,7 +57,7 @@ class DashboardActivity {
 //        selectAndSet(item)
     }
 
-    private val entityRoot = Entity(listOf(), FontIcon.of(ICE_CREAM), mutableListOf())
+    private val entityRoot = Entity(EntityText("Application"), FontIcon.of(ICE_CREAM), null, mutableListOf())
     private val root = TreeItem<Entity>(null)
 
 //    init {
@@ -88,19 +87,19 @@ class DashboardActivity {
 
     init {
         entityRoot.children?.addAll(listOf(
-                Entity(listOf(EntityText("Memory Repo")), fontIcon(BOLT, 13), mutableListOf(
+                Entity(EntityText("Memory Repo"), fontIcon(BOLT, 13), null, mutableListOf(
                         Entity("Empty View", fontIcon(MINUS, 13)),
-                        Entity(listOf(EntityText("2018iri.csv")), fontIcon(TABLE, 13), mutableListOf(
+                        Entity(EntityText("2018iri.csv"), fontIcon(TABLE, 13), null, mutableListOf(
                                 Entity("Filesystem Link", fontIcon(LINK, 13)),
                                 Entity("User Edit Mask", fontIcon(USER_EDIT, 13)),
                                 Entity("Formulas", fontIcon(SUPERSCRIPT, 13)),
-                                Entity(listOf(EntityText("Filter"), EntityText("Team={865}", Color.GRAY)), fontIcon(FILTER, 13)),
-                                Entity(listOf(EntityText("Sort"), EntityText("Scale", Color.GRAY)), fontIcon(SORT_ALPHA_UP, 13)),
-                                Entity(listOf(EntityText("Sort"), EntityText("Switch", Color.GRAY)), fontIcon(SORT_ALPHA_UP, 13)),
-                                Entity(listOf(EntityText("Colour Scale"), EntityText("Auto Switch", Color.GRAY)), fontIcon(PAINT_BRUSH, 13))
+                                Entity(EntityText("Filter"), fontIcon(FILTER, 13), "Team={865}"),
+                                Entity(EntityText("Sort"), fontIcon(SORT_ALPHA_UP, 13), "Scale"),
+                                Entity(EntityText("Sort"), fontIcon(SORT_ALPHA_UP, 13), "Switch"),
+                                Entity(EntityText("Colour Scale"), fontIcon(PAINT_BRUSH, 13), "Auto Switch")
                         ))
                 )),
-                Entity(listOf(EntityText("Local File"), EntityText("~/kb192/data", Color.GRAY)), fontIcon(DESKTOP, 13)),
+                Entity(EntityText("Local File", bold = true), fontIcon(DESKTOP, 13), "~/KB/repo"),
                 Entity("Android Scouting App", fontIcon(QRCODE, 13)),
                 Entity("The Blue Alliance")
         ))

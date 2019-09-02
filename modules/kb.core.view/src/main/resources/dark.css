@@ -196,7 +196,7 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 .context-menu {
     -fx-padding: 0;
     -fx-min-width: 200;
-    -fx-background-color: rgba(68, 68, 68, 0.95);
+    -fx-background-color: #333;
 }
 
 .selection-rectangle {
