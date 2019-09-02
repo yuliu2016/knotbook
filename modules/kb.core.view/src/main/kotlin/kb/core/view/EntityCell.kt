@@ -4,6 +4,7 @@ import javafx.geometry.Pos
 import javafx.scene.control.TreeCell
 import javafx.scene.input.ClipboardContent
 import javafx.scene.input.TransferMode
+import javafx.scene.paint.Color
 import kb.core.fx.*
 
 class EntityCell : TreeCell<Entity>() {
@@ -85,6 +86,7 @@ class EntityCell : TreeCell<Entity>() {
                 if (item.supportText != null) {
                     add(label {
                         text = item.supportText
+                        textFill = Color.GRAY
                     })
                 }
             }

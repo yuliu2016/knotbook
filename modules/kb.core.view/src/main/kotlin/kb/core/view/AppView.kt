@@ -34,10 +34,6 @@ object AppView {
                     item {
                         name("Close Folder")
                     }
-                    item {
-                        name("Create Table")
-                        shortcut(KeyCode.N, control = true)
-                    }
                     separator()
                     item {
                         name("Commit")
@@ -104,17 +100,27 @@ object AppView {
             menu {
                 name("Edit")
                 modify {
-
+                    item {
+                        name("Create Table")
+                        shortcut(KeyCode.N, control = true)
+                        icon(MDI_PLUS, 14)
+                    }
                     item {
                         name("Rename Table")
                         icon(MDI_TEXTBOX, 14)
                         shortcut(KeyCode.F6, shift = true)
                     }
                     item {
+                        name("Lock Table")
+                        shortcut(KeyCode.L, control = true)
+                        icon(MDI_LOCK, 14)
+                    }
+                    item {
                         name("Delete Table")
                         shortcut(KeyCode.DELETE, alt = true)
+                        icon(MDI_DELETE_FOREVER, 14)
                     }
-
+                    separator()
                     item {
                         name("Select All")
                         shortcut(KeyCode.A, control = true)
@@ -124,6 +130,7 @@ object AppView {
                         icon(MDI_FILE_FIND, 14)
                         shortcut(KeyCode.F, control = true)
                     }
+                    separator()
                     item {
                         name("Copy Selected as TSV")
                         icon(MDI_CONTENT_COPY, 14)
@@ -135,10 +142,6 @@ object AppView {
                     item {
                         name("Copy Special")
                         shortcut(KeyCode.C, control = true, shift = true)
-                    }
-                    item {
-                        name("Lock Table")
-                        shortcut(KeyCode.L, control = true)
                     }
                 }
             }

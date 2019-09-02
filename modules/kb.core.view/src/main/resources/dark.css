@@ -197,6 +197,7 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
     -fx-padding: 0;
     -fx-min-width: 200;
     -fx-background-color: #333;
+    -fx-effect: none;
 }
 
 .selection-rectangle {
