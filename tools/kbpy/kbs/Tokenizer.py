@@ -3,9 +3,9 @@ from enum import Enum
 from io import StringIO
 
 # TODO
-#  add docstrings
+#  fix space tokenizer
 #  add multi-line strings
-#  add line number persistence
+#  check closing of docstrings
 #  add floats and exponents
 #  add bin and hex
 #  add long ints
@@ -366,7 +366,38 @@ class _Tokenizer:
         self.last_token_index = self.i
         self.tokens.append(Token(self.line_number, token_type, value))
 
+    def tokenize_docstr(self):
+
+        # tokenize a docstr and add it as a token
+        # it does not allow nested multi-line comments
+        in_docstr = self.p3 == OPEN_DOCSTRING  # covers the None case
+        if not in_docstr:
+            return False
+
+        # by above condition this will not break index
+        j = self.i + 3
+
+        while j < self.size - 1:
+            peek2 = self.code[j: j + 2]
+
+            if not (in_docstr
+                    or peek2 == CLOSE_MULTILINE_COMMENT):
+                break
+
+            if peek2 == CLOSE_MULTILINE_COMMENT:
+                in_docstr = False
+                j += 1
+            j += 1
+
+        self.add_token(TokenType.DOCSTR, self.code[self.i + 3: j - 2])
+        self.i = j
+
+        return True
+
     def tokenize_spaces(self):
+
+        # tokenize all spacing as either NEWLINE or SPACE
+        # and ignore all the comments
 
         in_comment = self.p1 == SINGLE_COMMENT_CHAR
 
@@ -552,7 +583,8 @@ class _Tokenizer:
             self.peek_all()
             # reset operator state
             self.token_is_operator = False
-            if not (self.tokenize_spaces()
+            if not (self.tokenize_docstr()
+                    or self.tokenize_spaces()
                     or self.tokenize_number()
                     or self.tokenize_string()
                     or self.tokenize_symbol()
@@ -630,6 +662,11 @@ test_multi_line_comment_nested = """
 Hi
 */
 print("Hello World")
+"""
+
+test_docstr = """
+/** Hello */
+a = 3
 """
 
 if __name__ == '__main__':
