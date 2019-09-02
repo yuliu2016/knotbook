@@ -161,7 +161,7 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 }
 
 .menu-item {
-    -fx-padding: 3 12 3 12;
+    -fx-padding: 3 6 3 6;
     -fx-background-color: #222;
 }
 
@@ -174,7 +174,7 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 }
 
 .menu-item:focused {
-    -fx-background-color: #333;
+    -fx-background-color: #444;
 }
 
 .menu-item:focused .ikonli-font-icon {
@@ -186,11 +186,11 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 }
 
 .menu:hover {
-    -fx-background-color: #333;
+    -fx-background-color: #444;
 }
 
 .menu:showing {
-    -fx-background-color: #444;
+    -fx-background-color: #555;
 }
 
 .context-menu {

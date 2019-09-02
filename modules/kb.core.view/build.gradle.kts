@@ -36,4 +36,5 @@ dependencies {
     implementation(kotlin("stdlib"))
 
     implementation(group = "org.kordamp.ikonli", name = "ikonli-fontawesome5-pack", version = "11.3.4")
+    implementation(group = "org.kordamp.ikonli", name = "ikonli-materialdesign-pack", version = "11.3.4")
 }

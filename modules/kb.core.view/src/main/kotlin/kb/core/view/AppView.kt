@@ -15,6 +15,7 @@ import kb.core.splash.AboutSplash
 import kb.core.splash.GCSplash
 import kb.path.planner.runPathPlanner
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid
+import org.kordamp.ikonli.materialdesign.MaterialDesign
 import kotlin.system.exitProcess
 
 object AppView {
@@ -26,50 +27,66 @@ object AppView {
                 name("File")
                 modify {
                     item {
-                        name("Open Folder")
-                        icon(FontAwesomeSolid.FOLDER_OPEN, 13)
+                        name("Create/Open Folder")
+                        icon(MaterialDesign.MDI_FOLDER_OUTLINE, 14)
                         shortcut(KeyCode.O, control = true)
                     }
-                    item {
-                        name("Close Folder")
-                        shortcut(KeyCode.W, alt = true, shift = true)
-                    }
-                    item {
-                        name("Folder Properties")
-                    }
-                    item {
-                        name("Export as Archive")
-                        shortcut(KeyCode.S, control = true, shift = true)
-                    }
-                    item {
-                        name("Export as Workbook")
-                        shortcut(KeyCode.S, control = true, alt = true)
-                    }
-                    separator()
                     item {
                         name("Create Table")
                         shortcut(KeyCode.N, control = true)
                     }
+                    separator()
                     item {
-                        name("Close Table")
-                        shortcut(KeyCode.W, alt = true, control = true)
+                        name("Commit")
+                        icon(MaterialDesign.MDI_CHECK, 14)
+                        shortcut(KeyCode.K, control = true)
                     }
                     item {
-                        name("Rename Table")
-                        shortcut(KeyCode.DELETE, alt = true)
+                        name("Pull")
+                        icon(MaterialDesign.MDI_SOURCE_PULL, 14)
+                        shortcut(KeyCode.T, control = true)
                     }
                     item {
-                        name("Synchronize Data")
-                        icon(FontAwesomeSolid.SYNC, 12)
-                        shortcut(KeyCode.R, control = true)
+                        name("Push")
+                        icon(MaterialDesign.MDI_CLOUD_UPLOAD, 14)
+                        shortcut(KeyCode.K, control = true, shift = true)
                     }
                     item {
-                        name("Reveal in Local")
-                        shortcut(KeyCode.H, control = true)
+                        name("Show History")
+                        icon(MaterialDesign.MDI_HISTORY, 14)
                     }
                     item {
-                        name("Reveal in Source")
-                        shortcut(KeyCode.J, control = true)
+                        name("Revert Changes")
+                        shortcut(KeyCode.Z, control = true, alt = true)
+                    }
+                    separator()
+                    item {
+                        name("Print")
+                        icon(MaterialDesign.MDI_PRINTER, 14)
+                    }
+                    item {
+                        name("Export as Archive")
+                    }
+                    item {
+                        name("Export as Excel Workbook")
+                    }
+                    separator()
+                    item {
+                        name("Synchronize")
+                        icon(MaterialDesign.MDI_RELOAD, 14)
+                        shortcut(KeyCode.Y, control = true, alt = true)
+                    }
+                    separator()
+                    item {
+                        name("Open Terminal in Folder")
+                        icon(MaterialDesign.MDI_CONSOLE, 14)
+                        shortcut(KeyCode.F12, alt = true)
+                    }
+                    item {
+                        name("Reveal in Local Cache")
+                    }
+                    item {
+                        name("Reveal in Data Source")
                     }
                     separator()
                     item {
@@ -82,11 +99,18 @@ object AppView {
                 name("Edit")
                 modify {
                     item {
+                        name("Rename Table")
+                        icon(MaterialDesign.MDI_TEXTBOX, 14)
+                        shortcut(KeyCode.F6, shift = true)
+                    }
+                    item {
                         name("Find")
                         icon(FontAwesomeSolid.SEARCH, 13)
+                        shortcut(KeyCode.F, control = true)
                     }
                     item {
                         name("Replace")
+                        shortcut(KeyCode.R, control = true)
                     }
                     item {
                         name("Copy")
@@ -98,11 +122,7 @@ object AppView {
                         shortcut(KeyCode.C, control = true, shift = true)
                     }
                     item {
-                        name("Toggle Read-Only for Repository")
-                        shortcut(KeyCode.L, control = true, shift = true)
-                    }
-                    item {
-                        name("Toggle Read-Only for Table")
+                        name("Lock Table")
                         shortcut(KeyCode.L, control = true)
                     }
                 }
@@ -135,6 +155,14 @@ object AppView {
                     }
                     item {
                         name("Reset Zoom")
+                    }
+                    separator()
+                    item {
+                        name("Open Table in New Window")
+                    }
+                    item {
+                        name("Hide Table")
+                        shortcut(KeyCode.W, control = true)
                     }
                 }
             }
