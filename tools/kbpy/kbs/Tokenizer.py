@@ -219,9 +219,11 @@ class TokenType(Enum):
     SYMBOL = 3
     OPERATOR = 4
     INT = 5
-    STRING = 6
-    FLOAT = 7
-    DOCSTR = 8
+    LONG = 6
+    COMPLEX = 7
+    FLOAT = 8
+    STRING = 9
+    DOCSTR = 10
 
 
 class Token(NamedTuple):
@@ -624,9 +626,11 @@ class TColor:
 
 
 def wrapc(c: str, s: str):
+    # wraps a terminal style to be displayed
     return f"{c}{s}{TColor.END}"
 
 def limit_str(s: str):
+    # limit the length of strings
     if len(s) > 20:
         return f"{s[:17]}..."
     return s
@@ -672,6 +676,12 @@ def format_token_for_print(tokens: List[Tuple[int, TokenType, Any]]):
 
         print("{} | {}".format(tk_tf, tk_vf), file=io)
 
+    return io.getvalue()
+
+def format_tokens_for_tests(tokens: List[Tuple[int, TokenType, Any]]):
+    io = StringIO()
+    for token in tokens:
+        print(repr(token), file=io)
     return io.getvalue()
 
 
