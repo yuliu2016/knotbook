@@ -225,14 +225,26 @@ class TokenType(Enum):
     STRING = 9
     DOCSTR = 10
 
+#
+# Token tuple
+#
 
 class Token(NamedTuple):
     line: int
+    start_index: int
     token_type: TokenType
     value: Any
 
+    def __repr__(self):
+        return f"Token({self.line:<3}, {self.start_index:<4},"\
+               f"{self.token_type.name:>9}, {self.value})"
 
-class _Tokenizer:
+
+class _Visitor:
+    pass
+
+
+class _Tokenizer(_Visitor):
 
     @staticmethod
     def is_symbol(test_ch: str):
@@ -369,7 +381,7 @@ class _Tokenizer:
                 self.line_number += 1
 
         self.last_token_index = self.i
-        self.tokens.append(Token(self.line_number, token_type, value))
+        self.tokens.append(Token(self.line_number, self.i, token_type, value))
 
     def tokenize_docstr(self):
 
