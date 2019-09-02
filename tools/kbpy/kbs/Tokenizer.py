@@ -746,5 +746,18 @@ test_docstr = """
 a = 3
 """
 
+test_recursive_fibonacci = """
+/**
+ * Calculates a fibonacci number
+ */
+fib = def(n: int) {
+    if n < 2: return 1
+    return fib(n - 1) + fib(n - 2)
+}
+
+print(fib(10))
+
+"""
+
 if __name__ == '__main__':
-    print(format_token_for_print(tokenize(test_funcdef)))
+    print(format_token_for_print(tokenize(test_recursive_fibonacci)))
