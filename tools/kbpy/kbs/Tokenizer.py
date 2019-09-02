@@ -161,7 +161,7 @@ triple_operators = {
 #
 # Keywords (subset of symbols, easier to check later)
 #
-keywords = { # set notation
+keywords = {  # set notation
 
     # Functional keywords
     "return",
@@ -219,6 +219,7 @@ UNDERSCORE_CHAR = "_"
 
 STR_CHAR = "\""
 
+
 class _Tokenizer:
 
     @staticmethod
@@ -235,10 +236,10 @@ class _Tokenizer:
         self.code = code
 
         # the caret index
-        self.i: int = 0
+        self.i = 0
 
         # the total size of the code
-        self.size: int = len(code)
+        self.size = len(code)
 
         # the list of generated tokens
         self.tokens: List[Tuple[int, TokenType, Optional[str]]] = []
@@ -248,12 +249,31 @@ class _Tokenizer:
         self.last_token_is_operator = False
 
         # used to lookup up to the next three characters
+        # p2 and p3 are optional because it could be reading into EOF
         self.p1: str = "\0"
         self.p2: Optional[str] = None
         self.p3: Optional[str] = None
 
+        # used to lookup newline characters from the last i value
+        # -1 because the first token might be from 0
+        self.last_token_index = -1
+        # Assume we start on the first line
+        self.line_number = 1
+
     def raise_syntax_error(self):
-        raise SyntaxError(f"{self.p1} is not a recognized syntax")
+        raise RuntimeError(f"{self.p1} is not a recognized syntax")
+
+    def reset_state(self):
+        self.tokens.clear()
+        self.i = 0
+        self.token_is_operator = False
+        self.last_token_is_operator = False
+        self.size = len(self.code)
+        self.p1 = "\0"
+        self.p2 = None
+        self.p3 = None
+        self.last_token_index = -1
+        self.line_number = 1
 
     def canPeek(self, n: int):
         # Decides if the string is long enough to peek
@@ -269,29 +289,25 @@ class _Tokenizer:
             return self.peek(n)
         return None
 
+    def peek_all(self):
+        # peek into the future...
+        self.p1 = self.code[self.i]
+        self.p2 = self.peek_or_none(2)
+        self.p3 = self.peek_or_none(3)
+
     def pop_space(self, n: int):
         """
          pop the space when we know that opcode is simplified
          """
-        if self.tokens[-n][0] == TokenType.SPACE:
+        if self.tokens[-n][1] == TokenType.SPACE:
             self.tokens.pop(len(self.tokens) - n)
 
     def pop_newline(self, n: int):
         """
          pop the newline when we know that opcode is simplified
          """
-        if self.tokens[-n][0] == TokenType.NEWLINE:
+        if self.tokens[-n][1] == TokenType.NEWLINE:
             self.tokens.pop(len(self.tokens) - n)
-
-    def add_token(self, token_type: TokenType, value):
-        self.tokens.append((self.i, token_type, value))
-
-    def reset_state(self):
-        self.tokens.clear()
-        self.i = 0
-        self.token_is_operator = False
-        self.last_token_is_operator = False
-        self.size = len(self.code)
 
     def discard_code_spaces(self):
         # Discard spacing at the end of the sequence
@@ -316,10 +332,20 @@ class _Tokenizer:
         else:
             self.last_token_is_operator = False
 
-    def peek_all(self):
-        self.p1 = self.code[self.i]
-        self.p2 = self.peek_or_none(2)
-        self.p3 = self.peek_or_none(3)
+    def add_token(self, token_type: TokenType, value):
+        # Adds a token with the proper line numbering
+
+        # i must be increased from the last call to this function
+        assert self.i != self.last_token_index
+
+        # iterate through the section of the string that
+        # has been added to the token to search for newlines
+        for ch in self.code[self.last_token_index:self.i]:
+            if self.is_newline(ch):
+                self.line_number += 1
+
+        self.last_token_index = self.i
+        self.tokens.append((self.line_number, token_type, value))
 
     def try_append_spaces(self):
 
@@ -363,16 +389,20 @@ class _Tokenizer:
             if self.is_newline(peek1):
                 in_comment = False
                 newline = True
+
             if peek1 == SINGLE_COMMENT_CHAR:
                 in_comment = True
+
             if peek2 == OPEN_MULTILINE_COMMENT:
                 in_multi_line_comment = True
                 # since peek2 is not None, this does not break indexing
                 j += 1
+
             elif peek2 == CLOSE_MULTILINE_COMMENT:
                 in_multi_line_comment = False
                 # since peek2 is not None, this does not break indexing
                 j += 1
+
             j += 1
 
         # NEWLINE and SPACE are the only symbols that have a value of None
@@ -514,7 +544,7 @@ def tokenize(code: str):
     return tk.tokens
 
 
-def print_tokens(tokens: List[Tuple[int, TokenType, Any]]):
+def format_tokens(tokens: List[Tuple[int, TokenType, Any]]):
     """
     Prints out a list of tokens formatted
     """
@@ -523,7 +553,7 @@ def print_tokens(tokens: List[Tuple[int, TokenType, Any]]):
         for token in tokens:
             tk_line, tk_type, tk_value = token
 
-            print("{:>4}:".format(tk_line), end="", file=io)
+            print("{:>3}:".format(tk_line), end="", file=io)
 
             if tk_value is None:
                 print("{:>9}".format(tk_type.name), file=io)
@@ -538,7 +568,7 @@ def print_tokens(tokens: List[Tuple[int, TokenType, Any]]):
 
             print("{:>9} | {}".format(tk_type.name, tk_vf), file=io)
 
-        print(io.getvalue())
+        return io.getvalue()
 
 
 test_funcdef = """
@@ -559,11 +589,11 @@ if __name__ == "__main__" {
 """
 
 test_multi_line_comment_nested = """
-/*/*
+/*
 Hi
-*/*/
+*/
 print("Hello World")
 """
 
 if __name__ == '__main__':
-    print_tokens(tokenize(test_multi_line_comment_nested))
+    print(format_tokens(tokenize(test_funcdef)))
