@@ -1,10 +1,15 @@
 package kb.core.view
 
+import javafx.beans.property.SimpleStringProperty
+import javafx.geometry.Orientation
 import javafx.scene.Scene
 import javafx.scene.control.Alert
+import javafx.scene.control.SelectionMode
+import javafx.scene.control.TableColumn
 import javafx.scene.control.TableView
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
+import javafx.scene.layout.Region
 import javafx.stage.Stage
 import kb.core.bowline.testBowline
 import kb.core.camera.fx.KnotCameraTest
@@ -307,20 +312,40 @@ object AppView {
         box.stylesheets.setAll("/knotbook.css", theme.fileName)
     }
 
-    val stage = Stage()
+    private val stage = Stage()
+    private val indexTree = IndexTree()
 
     private val box = vbox {
-        val bowline = TableView<Void>()
+        val table = TableView<Int>()
+        table.items = (0..100).toList().observable()
         stylesheets.addAll("/knotbook.css", Theme.Light.fileName)
         prefWidth = 1120.0
         prefHeight = 630.0
         add(bar)
-        add(hbox {
-            add(DashboardActivity().view.indexTree)
+        add(splitPane {
+            orientation = Orientation.HORIZONTAL
             vgrow()
-            add(bowline.hgrow())
+            addFixed(indexTree.tree, vbox {
+                add(textField {
+                    promptText = "Enter formula here"
+                })
+                add(table.vgrow())
+            })
+            setDividerPositions(0.2)
         })
-        bowline.requestFocus()
+        table.columns.addAll((0..10).map { col ->
+            TableColumn<Int, String>(col.toString()).apply {
+                this.setCellValueFactory {
+                    SimpleStringProperty((col * it.value).toString())
+                }
+                this.prefWidth = 100.0
+                isSortable = false
+            }
+        })
+        table.fixedCellSize = Region.USE_COMPUTED_SIZE
+        table.selectionModel.isCellSelectionEnabled = true
+        table.selectionModel.selectionMode = SelectionMode.MULTIPLE
+        table.requestFocus()
     }
 
     private val scene = Scene(box)

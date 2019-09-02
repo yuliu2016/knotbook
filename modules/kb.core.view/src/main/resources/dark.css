@@ -150,12 +150,12 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 }
 
 .menu-bar {
-    -fx-padding: 0 9 0 9;
+    -fx-padding: 0 12 0 12;
     -fx-background-color: #222;
 }
 
 .menu {
-    -fx-padding: 3 8 3 8;
+    -fx-padding: 4 8 4 8;
     -fx-background-color: transparent;
     -fx-background-insets: 0;
 }
@@ -291,20 +291,11 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
     -fx-background-color: transparent;
 }
 
-.split-pane-divider {
+.split-pane:horizontal .split-pane-divider {
     -fx-background-color: #888;
-    -fx-padding: 1;
-}
-
-.split-pane-section {
-    -fx-border-color: #888;
-    -fx-border-width: 0 0 1 0;
-}
-
-.split-pane-section .label {
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-font-size: 16;
+    -fx-background-insets: 0 2 0 2;
+    -fx-padding: 0;
+    -fx-pref-width: 5;
 }
 
 .split-pane-section .ikonli-font-icon {

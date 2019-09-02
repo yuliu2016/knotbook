@@ -1,14 +1,15 @@
 package kb.core.view
 
 import javafx.scene.control.TreeItem
+import javafx.scene.control.TreeView
 import kb.core.fx.fontIcon
 import kb.core.fx.runOnFxThread
 import kb.core.icon.FontIcon
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 
 @Suppress("unused")
-class DashboardActivity {
-    internal val view = DashboardView()
+class IndexTree {
+    val tree = TreeView<Entity>()
 
 //    private val memoryRepository = MemoryRepository()
 //
@@ -29,9 +30,9 @@ class DashboardActivity {
 //    }
 
     private fun selectAndFocus(item: TreeItem<Entity>) {
-        view.indexTree.selectionModel.select(item)
+        tree.selectionModel.select(item)
         runOnFxThread {
-            view.indexTree.requestFocus()
+            tree.requestFocus()
         }
     }
 
@@ -87,7 +88,8 @@ class DashboardActivity {
 
     init {
         entityRoot.children?.addAll(listOf(
-                Entity(EntityText("In-Memory Data"), fontIcon(MDI_MEMORY, 14), null, mutableListOf(
+                Entity(EntityText("In-Memory Data"), fontIcon(MDI_MEMORY, 14), null, (0..15).flatMap {
+                    listOf(
                         Entity("Empty View", fontIcon(MDI_BORDER_NONE, 14)),
                         Entity(EntityText("2018iri.csv"), fontIcon(MDI_FILE_DELIMITED, 14), null, mutableListOf(
                                 Entity("Filesystem Link", fontIcon(MDI_LINK, 14)),
@@ -97,15 +99,16 @@ class DashboardActivity {
                                 Entity(EntityText("Sort", bold = true), fontIcon(MDI_SORT_ASCENDING, 14), "Scale"),
                                 Entity(EntityText("Sort", bold = true), fontIcon(MDI_SORT_DESCENDING, 14), "Switch"),
                                 Entity(EntityText("Colour Scale", bold = true), fontIcon(MDI_GRADIENT, 14), "Auto Switch")
-                        ))
-                )),
+                        )))
+                }.toMutableList()
+                ),
                 Entity(EntityText("Local Folder", bold = true), fontIcon(MDI_MONITOR, 14), "~/KB/repo"),
                 Entity("Android Scouting App", fontIcon(MDI_QRCODE, 14)),
                 Entity("The Blue Alliance", fontIcon(MDI_LAMP, 14))
         ))
-        view.indexTree.setCellFactory { EntityCell() }
-        view.indexTree.root = root
-        view.indexTree.isShowRoot = false
+        tree.setCellFactory { EntityCell() }
+        tree.root = root
+        tree.isShowRoot = false
         regenerate()
     }
 
@@ -120,6 +123,7 @@ class DashboardActivity {
                     regenerateChildren(item, entity)
                 }
             })
+            root.isExpanded = true
         }
     }
 }
