@@ -2,10 +2,11 @@ package kb.core.view
 
 import javafx.scene.Scene
 import javafx.scene.control.Alert
+import javafx.scene.control.TableView
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
 import javafx.stage.Stage
-import kb.core.bowline.Bowline
+import kb.core.bowline.testBowline
 import kb.core.camera.fx.KnotCameraTest
 import kb.core.code.CodeEditor
 import kb.core.code.Syntax
@@ -14,8 +15,7 @@ import kb.core.fx.*
 import kb.core.splash.AboutSplash
 import kb.core.splash.GCSplash
 import kb.path.planner.runPathPlanner
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid
-import org.kordamp.ikonli.materialdesign.MaterialDesign
+import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 import kotlin.system.exitProcess
 
 object AppView {
@@ -28,8 +28,11 @@ object AppView {
                 modify {
                     item {
                         name("Create/Open Folder")
-                        icon(MaterialDesign.MDI_FOLDER_OUTLINE, 14)
+                        icon(MDI_FOLDER_OUTLINE, 14)
                         shortcut(KeyCode.O, control = true)
+                    }
+                    item {
+                        name("Close Folder")
                     }
                     item {
                         name("Create Table")
@@ -38,22 +41,22 @@ object AppView {
                     separator()
                     item {
                         name("Commit")
-                        icon(MaterialDesign.MDI_CHECK, 14)
+                        icon(MDI_CHECK, 14)
                         shortcut(KeyCode.K, control = true)
                     }
                     item {
                         name("Pull")
-                        icon(MaterialDesign.MDI_SOURCE_PULL, 14)
+                        icon(MDI_SOURCE_PULL, 14)
                         shortcut(KeyCode.T, control = true)
                     }
                     item {
                         name("Push")
-                        icon(MaterialDesign.MDI_CLOUD_UPLOAD, 14)
+                        icon(MDI_CLOUD_UPLOAD, 14)
                         shortcut(KeyCode.K, control = true, shift = true)
                     }
                     item {
                         name("Show History")
-                        icon(MaterialDesign.MDI_HISTORY, 14)
+                        icon(MDI_HISTORY, 14)
                     }
                     item {
                         name("Revert Changes")
@@ -62,10 +65,13 @@ object AppView {
                     separator()
                     item {
                         name("Print")
-                        icon(MaterialDesign.MDI_PRINTER, 14)
+                        icon(MDI_PRINTER, 14)
                     }
                     item {
-                        name("Export as Archive")
+                        name("Export as CSV")
+                    }
+                    item {
+                        name("Export as Zip Archive")
                     }
                     item {
                         name("Export as Excel Workbook")
@@ -73,13 +79,13 @@ object AppView {
                     separator()
                     item {
                         name("Synchronize")
-                        icon(MaterialDesign.MDI_RELOAD, 14)
+                        icon(MDI_RELOAD, 14)
                         shortcut(KeyCode.Y, control = true, alt = true)
                     }
                     separator()
                     item {
                         name("Open Terminal in Folder")
-                        icon(MaterialDesign.MDI_CONSOLE, 14)
+                        icon(MDI_CONSOLE, 14)
                         shortcut(KeyCode.F12, alt = true)
                     }
                     item {
@@ -98,24 +104,33 @@ object AppView {
             menu {
                 name("Edit")
                 modify {
+
                     item {
                         name("Rename Table")
-                        icon(MaterialDesign.MDI_TEXTBOX, 14)
+                        icon(MDI_TEXTBOX, 14)
                         shortcut(KeyCode.F6, shift = true)
                     }
                     item {
-                        name("Find")
-                        icon(FontAwesomeSolid.SEARCH, 13)
+                        name("Delete Table")
+                        shortcut(KeyCode.DELETE, alt = true)
+                    }
+
+                    item {
+                        name("Select All")
+                        shortcut(KeyCode.A, control = true)
+                    }
+                    item {
+                        name("Find and Replace")
+                        icon(MDI_FILE_FIND, 14)
                         shortcut(KeyCode.F, control = true)
                     }
                     item {
-                        name("Replace")
-                        shortcut(KeyCode.R, control = true)
+                        name("Copy Selected as TSV")
+                        icon(MDI_CONTENT_COPY, 14)
+                        shortcut(KeyCode.C, control = true)
                     }
                     item {
-                        name("Copy")
-                        icon(FontAwesomeSolid.COPY, 13)
-                        shortcut(KeyCode.C, control = true)
+                        name("Copy Selected as CSV")
                     }
                     item {
                         name("Copy Special")
@@ -133,7 +148,7 @@ object AppView {
                     item {
                         name("Toggle Theme")
                         shortcut(KeyCode.F3)
-                        icon(FontAwesomeSolid.ADJUST, 13)
+                        icon(MDI_COMPARE, 14)
                         action { toggleTheme() }
                     }
                     item {
@@ -147,11 +162,11 @@ object AppView {
                     separator()
                     item {
                         name("Zoom In")
-                        icon(FontAwesomeSolid.SEARCH_PLUS, 13)
+                        icon(MDI_MAGNIFY_PLUS, 14)
                     }
                     item {
                         name("Zoom Out")
-                        icon(FontAwesomeSolid.SEARCH_MINUS, 13)
+                        icon(MDI_MAGNIFY_PLUS, 14)
                     }
                     item {
                         name("Reset Zoom")
@@ -160,10 +175,6 @@ object AppView {
                     item {
                         name("Open Table in New Window")
                     }
-                    item {
-                        name("Hide Table")
-                        shortcut(KeyCode.W, control = true)
-                    }
                 }
             }
             menu {
@@ -171,15 +182,7 @@ object AppView {
                 modify {
                     item {
                         name("Toggle Visibility")
-                        icon(FontAwesomeSolid.EYE, 13)
-                    }
-                    item {
-                        name("Toggle Logs")
-                        icon(FontAwesomeSolid.HISTORY, 13)
-                    }
-                    item {
-                        name("Toggle Metric View")
-                        icon(FontAwesomeSolid.TAPE, 13)
+                        icon(MDI_EYE, 14)
                     }
                     separator()
                     item {
@@ -209,6 +212,7 @@ object AppView {
                     }
                     separator()
                     item {
+                        icon(MDI_INFORMATION, 14)
                         name("Feature Properties")
                         shortcut(KeyCode.SPACE)
                     }
@@ -219,32 +223,37 @@ object AppView {
                 modify {
                     item {
                         name("Data Agent Manager")
-                        icon(FontAwesomeSolid.FILE_IMPORT, 13)
+                        icon(MDI_FILE_IMPORT, 14)
                     }
                     item {
                         name("WebCam View")
-                        icon(FontAwesomeSolid.CAMERA_RETRO, 13)
+                        icon(MDI_CAMERA, 14)
                         action {
                             KnotCameraTest.test()
                         }
                     }
                     item {
                         name("Plugin Manager")
-                        icon(FontAwesomeSolid.CUBE, 13)
+                        icon(MDI_PUZZLE, 14)
                     }
                     item {
                         name("Drive Path Planner")
-                        icon(FontAwesomeSolid.LOCATION_ARROW, 13)
+                        icon(MDI_NAVIGATION, 13)
                         action { runPathPlanner() }
                     }
                     item {
                         name("Scenic View")
                         action { Alert(Alert.AlertType.INFORMATION, "Scenic View is not supported in this build").show() }
-                        icon(FontAwesomeSolid.IMAGE, 13)
+                        icon(MDI_CLOUD_OUTLINE, 14)
+                    }
+                    item {
+                        name("Bowline Table")
+                        icon(MDI_BOWL, 14)
+                        action { testBowline() }
                     }
                     item {
                         name("Application Properties")
-                        icon(FontAwesomeSolid.TOOLS, 13)
+                        icon(MDI_TUNE, 14)
                         shortcut(KeyCode.P, control = true)
                         action {
                             CodeEditor("Application Properties", true,
@@ -298,7 +307,7 @@ object AppView {
     val stage = Stage()
 
     private val box = vbox {
-        val bowline = Bowline()
+        val bowline = TableView<Void>()
         stylesheets.addAll("/knotbook.css", Theme.Light.fileName)
         prefWidth = 1120.0
         prefHeight = 630.0
