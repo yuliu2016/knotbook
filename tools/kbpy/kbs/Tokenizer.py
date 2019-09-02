@@ -225,6 +225,7 @@ class TokenType(Enum):
     STRING = 9
     DOCSTR = 10
 
+
 #
 # Token tuple
 #
@@ -236,41 +237,24 @@ class Token(NamedTuple):
     value: Any
 
     def __repr__(self):
-        return f"Token({self.line:<3}, {self.start_index:<4},"\
-               f"{self.token_type.name:>9}, {self.value})"
+        return f"Token({self.line}, {self.start_index}," \
+               f"{self.token_type.name}, {self.value})"
 
 
 class _Visitor:
-    pass
+    """
+    Defines a visitor to a piece of code
+    Allows peeking and moving indices
+    """
 
-
-class _Tokenizer(_Visitor):
-
-    @staticmethod
-    def is_symbol(test_ch: str):
-        # checks if it is a symbol name
-        return test_ch.isalnum() or test_ch == UNDERSCORE_CHAR
-
-    @staticmethod
-    def is_newline(test_ch: str):
-        # checks against newline characters
-        return test_ch == "\n" or test_ch == "\r"
-
-    def __init__(self, code: str):
+    def __init__(self, code: str, initial_index=0, allow_backtrack=False):
         self.code = code
+        self.allow_backtrack = allow_backtrack
 
         # the caret index
-        self.i = 0
+        self.i = initial_index
 
-        # the total size of the code
         self.size = len(code)
-
-        # the list of generated tokens
-        self.tokens: List[Token] = []
-
-        # used to remove spacing when the last token is an operation
-        self.token_is_operator = False
-        self.last_token_is_operator = False
 
         # used to lookup up to the next three characters
         # p2 and p3 are optional because it could be reading into EOF
@@ -278,26 +262,14 @@ class _Tokenizer(_Visitor):
         self.p2: Optional[str] = None
         self.p3: Optional[str] = None
 
-        # used to lookup newline characters from the last i value
-        # -1 because the first token might be from 0
-        self.last_token_index = -1
-        # Assume we start on the first line
-        self.line_number = 1
-
-    def raise_syntax_error(self):
-        raise SyntaxError(f"{self.p1} is not a recognized syntax")
-
     def reset_state(self):
+        # resets the visitor
         self.tokens.clear()
         self.i = 0
-        self.token_is_operator = False
-        self.last_token_is_operator = False
         self.size = len(self.code)
         self.p1 = "\0"
         self.p2 = None
         self.p3 = None
-        self.last_token_index = -1
-        self.line_number = 1
 
     def canPeek(self, n: int):
         # Decides if the string is long enough to peek
@@ -318,6 +290,47 @@ class _Tokenizer(_Visitor):
         self.p1 = self.code[self.i]
         self.p2 = self.peek_or_none(2)
         self.p3 = self.peek_or_none(3)
+
+
+class _Tokenizer(_Visitor):
+
+    @staticmethod
+    def is_symbol(test_ch: str):
+        # checks if it is a symbol name
+        return test_ch.isalnum() or test_ch == UNDERSCORE_CHAR
+
+    @staticmethod
+    def is_newline(test_ch: str):
+        # checks against newline characters
+        return test_ch == "\n" or test_ch == "\r"
+
+    def __init__(self, code: str):
+
+        # delegate to superclass
+        super().__init__(code)
+
+        # the list of generated tokens
+        self.tokens: List[Token] = []
+
+        # used to remove spacing when the last token is an operation
+        self.token_is_operator = False
+        self.last_token_is_operator = False
+
+        # used to lookup newline characters from the last i value
+        # -1 because the first token might be from 0
+        self.last_token_index = -1
+        # Assume we start on the first line
+        self.line_number = 1
+
+    def raise_syntax_error(self):
+        raise SyntaxError(f"{self.p1} is not a recognized syntax")
+
+    def reset_state(self):
+        super().reset_state()
+        self.token_is_operator = False
+        self.last_token_is_operator = False
+        self.last_token_index = -1
+        self.line_number = 1
 
     def pop_space(self, n: int):
         """
@@ -368,10 +381,12 @@ class _Tokenizer(_Visitor):
         else:
             self.last_token_is_operator = False
 
-    def add_token(self, token_type: TokenType, value):
+    def add_token(self, tk_type: TokenType, tk_value):
+
         # Adds a token with the proper line numbering
 
         # i must be increased from the last call to this function
+        # otherwise breaks contract
         assert self.i != self.last_token_index
 
         # iterate through the section of the string that
@@ -381,13 +396,15 @@ class _Tokenizer(_Visitor):
                 self.line_number += 1
 
         self.last_token_index = self.i
-        self.tokens.append(Token(self.line_number, self.i, token_type, value))
+        self.tokens.append(Token(self.line_number, self.i, tk_type, tk_value))
 
     def tokenize_docstr(self):
 
         # tokenize a docstr and add it as a token
         # it does not allow nested multi-line comments
-        in_docstr = self.p3 == OPEN_DOCSTRING  # covers the None case
+
+        in_docstr = self.p3 == OPEN_DOCSTRING
+
         if not in_docstr:
             return False
 
@@ -420,6 +437,7 @@ class _Tokenizer(_Visitor):
 
         # Use an int instead of boolean because it needs a
         # counter to keep track of nested multi-line comments
+
         in_multi_line_comment = int(self.p2 == OPEN_MULTILINE_COMMENT)
 
         if not (in_comment
@@ -641,6 +659,7 @@ def wrapc(c: str, s: str):
     # wraps a terminal style to be displayed
     return f"{c}{s}{TColor.END}"
 
+
 def limit_str(s: str):
     # limit the length of strings
     if len(s) > 20:
@@ -648,7 +667,7 @@ def limit_str(s: str):
     return s
 
 
-def format_token_for_print(tokens: List[Tuple[int, TokenType, Any]]):
+def format_token_for_print(tokens: List[Token]):
     """
     Prints out a list of tokens formatted
     """
@@ -656,7 +675,7 @@ def format_token_for_print(tokens: List[Tuple[int, TokenType, Any]]):
     last_line = 0
 
     for token in tokens:
-        tk_line, tk_type, tk_value = token
+        tk_line, _, tk_type, tk_value = token
 
         if tk_line != last_line:
             ln = wrapc(TColor.BOLD, "L{:03d} ".format(tk_line))
@@ -690,7 +709,8 @@ def format_token_for_print(tokens: List[Tuple[int, TokenType, Any]]):
 
     return io.getvalue()
 
-def format_tokens_for_tests(tokens: List[Tuple[int, TokenType, Any]]):
+
+def format_tokens_for_tests(tokens: List[Token]):
     io = StringIO()
     for token in tokens:
         print(repr(token), file=io)
