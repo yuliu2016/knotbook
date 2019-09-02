@@ -2,30 +2,15 @@ from typing import *
 from enum import Enum
 from io import StringIO
 
-
 # TODO
 #  add docstrings
 #  add multi-line strings
 #  add line number persistence
 #  add floats and exponents
 #  add bin and hex
-#  add multi-stack multi-line comments eg. /*/* hi */*/
-
-#
-# Token types
-#
-
-class TokenType(Enum):
-    NEWLINE = 0
-    SPACE = 1
-    KEYWORD = 2
-    SYMBOL = 3
-    OPERATOR = 4
-    INT = 5
-    STRING = 6
-    FLOAT = 7
-    DOCSTR = 8
-
+#  add long ints
+#  add underscore_delimiter
+#  add escape chars
 
 #
 # Single-char operations
@@ -220,6 +205,28 @@ UNDERSCORE_CHAR = "_"
 STR_CHAR = "\""
 
 
+#
+# Token types
+#
+
+class TokenType(Enum):
+    NEWLINE = 0
+    SPACE = 1
+    KEYWORD = 2
+    SYMBOL = 3
+    OPERATOR = 4
+    INT = 5
+    STRING = 6
+    FLOAT = 7
+    DOCSTR = 8
+
+
+class Token(NamedTuple):
+    line: int
+    token_type: TokenType
+    value: Any
+
+
 class _Tokenizer:
 
     @staticmethod
@@ -242,7 +249,7 @@ class _Tokenizer:
         self.size = len(code)
 
         # the list of generated tokens
-        self.tokens: List[Tuple[int, TokenType, Optional[str]]] = []
+        self.tokens: List[Token] = []
 
         # used to remove spacing when the last token is an operation
         self.token_is_operator = False
@@ -261,7 +268,7 @@ class _Tokenizer:
         self.line_number = 1
 
     def raise_syntax_error(self):
-        raise RuntimeError(f"{self.p1} is not a recognized syntax")
+        raise SyntaxError(f"{self.p1} is not a recognized syntax")
 
     def reset_state(self):
         self.tokens.clear()
@@ -299,14 +306,26 @@ class _Tokenizer:
         """
          pop the space when we know that opcode is simplified
          """
-        if self.tokens[-n][1] == TokenType.SPACE:
+
+        # fixes trying to pop the space when there is no tokens
+        # (such as an unclosed multi-line comment or string)
+        if len(self.tokens) == 0:
+            return
+
+        if self.tokens[-n].token_type == TokenType.SPACE:
             self.tokens.pop(len(self.tokens) - n)
 
     def pop_newline(self, n: int):
         """
          pop the newline when we know that opcode is simplified
          """
-        if self.tokens[-n][1] == TokenType.NEWLINE:
+
+        # fixes trying to pop the space when there is no tokens
+        # (such as an unclosed multi-line comment or string)
+        if len(self.tokens) == 0:
+            return
+
+        if self.tokens[-n].token_type == TokenType.NEWLINE:
             self.tokens.pop(len(self.tokens) - n)
 
     def discard_code_spaces(self):
@@ -345,21 +364,24 @@ class _Tokenizer:
                 self.line_number += 1
 
         self.last_token_index = self.i
-        self.tokens.append((self.line_number, token_type, value))
+        self.tokens.append(Token(self.line_number, token_type, value))
 
-    def try_append_spaces(self):
+    def tokenize_spaces(self):
 
         in_comment = self.p1 == SINGLE_COMMENT_CHAR
-        in_multi_line_comment = self.p2 == OPEN_MULTILINE_COMMENT
+
+        # Use an int instead of boolean because it needs a
+        # counter to keep track of nested multi-line comments
+        in_multi_line_comment = int(self.p2 == OPEN_MULTILINE_COMMENT)
 
         if not (in_comment
-                or in_multi_line_comment
+                or in_multi_line_comment > 0
                 or self.p1.isspace()):
             return False  # not actually a space to be parsed
 
         # ensures condition: not (in_comment and in_multi_line_comment)
 
-        if in_multi_line_comment:
+        if in_multi_line_comment > 0:
             # start searching after /* to prevent /*/ parsed valid
             j = self.i + 2
         else:
@@ -373,14 +395,14 @@ class _Tokenizer:
 
             # try to peek two nodes ahead
             if j < self.size - 1:
-                peek2 = self.code[j: j + 2]
+                peek2 = self.code[j:j + 2]
             else:
                 peek2 = None
 
             # check if peek1 is # becuase it could mean the start of
             # a single-line comment
             if not (in_comment
-                    or in_multi_line_comment
+                    or in_multi_line_comment > 0
                     or peek1.isspace()
                     or peek1 == SINGLE_COMMENT_CHAR
                     or peek2 == OPEN_MULTILINE_COMMENT):
@@ -394,19 +416,23 @@ class _Tokenizer:
                 in_comment = True
 
             if peek2 == OPEN_MULTILINE_COMMENT:
-                in_multi_line_comment = True
+                in_multi_line_comment += 1
                 # since peek2 is not None, this does not break indexing
                 j += 1
 
             elif peek2 == CLOSE_MULTILINE_COMMENT:
-                in_multi_line_comment = False
+                in_multi_line_comment -= 1
                 # since peek2 is not None, this does not break indexing
                 j += 1
 
             j += 1
 
-        # NEWLINE and SPACE are the only symbols that have a value of None
+        # This is the case when in_multi_line_comment is not 0
+        # when the while loop has iterated through the entire piece of code
+        if in_multi_line_comment > 0:
+            raise SyntaxError("Multi-line comments not closed off")
 
+        # NEWLINE and SPACE are the only symbols that have a value of None
         if newline:
             # This is relevant because of the short-hand syntax
             # (using ':' and '\n' as delimiters instead of curly brackets)
@@ -419,7 +445,10 @@ class _Tokenizer:
 
         return True
 
-    def append_numeric_literal(self):
+    def tokenize_number(self):
+
+        if not self.p1.isnumeric():
+            return False
 
         # check for numbers
 
@@ -431,7 +460,12 @@ class _Tokenizer:
         # this line must be after add_token for lineno to be correct
         self.i = j
 
-    def append_symbol_or_keywords(self):
+        return True
+
+    def tokenize_symbol(self):
+
+        if not self.is_symbol(self.p1):
+            return False
 
         # check for symbols
         j = self.i + 1
@@ -451,7 +485,13 @@ class _Tokenizer:
         # this line must be after add_token for lineno to be correct
         self.i = j
 
-    def append_string(self):
+        return True
+
+    def tokenize_string(self):
+
+        if self.p1 != STR_CHAR:
+            return False
+
         # check for symbols
 
         # string requires an extra character, so must be accounted
@@ -464,7 +504,9 @@ class _Tokenizer:
         # this line must be after add_token for lineno to be correct
         self.i = j + 1
 
-    def try_append_triple_ops(self):
+        return True
+
+    def tokenize_triple_operator(self):
 
         # three-char operators
 
@@ -476,7 +518,7 @@ class _Tokenizer:
 
         return False
 
-    def try_append_double_ops(self):
+    def tokenize_double_operator(self):
 
         # two-char operators
 
@@ -488,7 +530,7 @@ class _Tokenizer:
 
         return False
 
-    def try_append_single_ops(self):
+    def tokenize_single_operator(self):
 
         # one-char operators
 
@@ -510,23 +552,13 @@ class _Tokenizer:
             self.peek_all()
             # reset operator state
             self.token_is_operator = False
-
-            # enumerate all possible types at the current index
-            if self.try_append_spaces():
-                pass
-            elif self.p1.isnumeric():
-                self.append_numeric_literal()
-            elif self.p1 == STR_CHAR:
-                self.append_string()
-            elif self.is_symbol(self.p1):
-                self.append_symbol_or_keywords()
-            elif self.try_append_triple_ops():
-                pass
-            elif self.try_append_double_ops():
-                pass
-            elif self.try_append_single_ops():
-                pass
-            else:
+            if not (self.tokenize_spaces()
+                    or self.tokenize_number()
+                    or self.tokenize_string()
+                    or self.tokenize_symbol()
+                    or self.tokenize_triple_operator()
+                    or self.tokenize_double_operator()
+                    or self.tokenize_single_operator()):
                 self.raise_syntax_error()
             self.discard_operator_spaces()
         self.discard_code_spaces()
@@ -548,27 +580,32 @@ def format_tokens(tokens: List[Tuple[int, TokenType, Any]]):
     """
     Prints out a list of tokens formatted
     """
-    with StringIO() as io:
+    io = StringIO()
+    last_line = 0
 
-        for token in tokens:
-            tk_line, tk_type, tk_value = token
+    for token in tokens:
+        tk_line, tk_type, tk_value = token
 
-            print("{:>3}:".format(tk_line), end="", file=io)
+        if tk_line != last_line:
+            print("L{:03d} ".format(tk_line), end="", file=io)
+        else:
+            print("     ", end="", file=io)
+        last_line = tk_line
 
-            if tk_value is None:
-                print("{:>9}".format(tk_type.name), file=io)
-                continue
+        if tk_value is None:
+            print("{:>9}".format(tk_type.name), file=io)
+            continue
 
-            if tk_type == TokenType.STRING or tk_type == TokenType.DOCSTR:
-                # print repr for escape chars in strings
-                tk_vf = repr(tk_value)
-            else:
-                # to line up with repr calls
-                tk_vf = f" {tk_value}"
+        if tk_type == TokenType.STRING or tk_type == TokenType.DOCSTR:
+            # print repr for escape chars in strings
+            tk_vf = repr(tk_value)
+        else:
+            # to line up with repr calls
+            tk_vf = f" {tk_value}"
 
-            print("{:>9} | {}".format(tk_type.name, tk_vf), file=io)
+        print("{:>9} | {}".format(tk_type.name, tk_vf), file=io)
 
-        return io.getvalue()
+    return io.getvalue()
 
 
 test_funcdef = """
@@ -577,19 +614,19 @@ test_funcdef = """
 
 number = Union[int, float]
 
-square = def(x: number) -> number {
-    return x * x
+sqrt = def(x: number) -> number {
+    return x ** (1 / 2)
 }
 
 # test-test
 
 if __name__ == "__main__" {
-    print(square(5))
+    print(sqrt(9))
 }
 """
 
 test_multi_line_comment_nested = """
-/*
+/*/* */
 Hi
 */
 print("Hello World")
