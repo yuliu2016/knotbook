@@ -23,6 +23,8 @@ COMMA = "COMMA"
 ASSIGN = "ASSIGN"
 COLON = "COLON"
 
+DECORATOR = "DECORATOR"
+
 # second most common - brackets
 
 OPEN_ROUND = "OPEN_ROUND"
@@ -57,6 +59,7 @@ single_operators = {
     ",": COMMA,
     "=": ASSIGN,
     ":": COLON,
+    "@": DECORATOR,
 
     "(": OPEN_ROUND,
     ")": CLOSE_ROUND,
@@ -608,7 +611,28 @@ def tokenize(code: str):
     return tk.tokens
 
 
-def format_tokens(tokens: List[Tuple[int, TokenType, Any]]):
+class TColor:
+    BACK_BLACK = "\033[40m"
+    BACK_WHITE = "\033[47m"
+    WHITE = "\033[37m"
+    BOLD = "\033[1m"
+    GREEN = "\033[32m"
+    BLUE = "\033[34m"
+    BRIGHT_BLUE = "\033[34;1m"
+    MAGENTA = "\033[35m"
+    END = "\033[0m"
+
+
+def wrapc(c: str, s: str):
+    return f"{c}{s}{TColor.END}"
+
+def limit_str(s: str):
+    if len(s) > 20:
+        return f"{s[:17]}..."
+    return s
+
+
+def format_token_for_print(tokens: List[Tuple[int, TokenType, Any]]):
     """
     Prints out a list of tokens formatted
     """
@@ -619,23 +643,34 @@ def format_tokens(tokens: List[Tuple[int, TokenType, Any]]):
         tk_line, tk_type, tk_value = token
 
         if tk_line != last_line:
-            print("L{:03d} ".format(tk_line), end="", file=io)
+            ln = wrapc(TColor.BOLD, "L{:03d} ".format(tk_line))
+            print(ln, end="", file=io)
         else:
             print("     ", end="", file=io)
         last_line = tk_line
 
+        tk_tf = "{:>9}".format(tk_type.name)
+
         if tk_value is None:
-            print("{:>9}".format(tk_type.name), file=io)
+            print(wrapc(TColor.WHITE, tk_tf), file=io)
             continue
 
         if tk_type == TokenType.STRING or tk_type == TokenType.DOCSTR:
             # print repr for escape chars in strings
-            tk_vf = repr(tk_value)
+
+            tk_vf = wrapc(TColor.GREEN, repr(limit_str(tk_value)))
         else:
             # to line up with repr calls
             tk_vf = f" {tk_value}"
 
-        print("{:>9} | {}".format(tk_type.name, tk_vf), file=io)
+            if tk_type == TokenType.KEYWORD:
+                tk_vf = wrapc(TColor.BRIGHT_BLUE, tk_vf)
+            elif tk_type == TokenType.SYMBOL:
+                tk_vf = wrapc(TColor.MAGENTA, tk_vf)
+            elif tk_type == TokenType.INT:
+                tk_vf = wrapc(TColor.BLUE, tk_vf)
+
+        print("{} | {}".format(tk_tf, tk_vf), file=io)
 
     return io.getvalue()
 
@@ -670,4 +705,4 @@ a = 3
 """
 
 if __name__ == '__main__':
-    print(format_tokens(tokenize(test_funcdef)))
+    print(format_token_for_print(tokenize(test_funcdef)))
