@@ -116,6 +116,7 @@ class Operator(Enum):
     MORE_EQUAL = ">="
 
     ARROW = "->"
+    ELVIS = "?:"
 
     FDIV = "//"
     EXP_KWARGS = "**"
@@ -188,6 +189,7 @@ double_operators_set = {
     Operator.MORE_EQUAL,
 
     Operator.ARROW,
+    Operator.ELVIS,
 
     Operator.FDIV,
     Operator.EXP_KWARGS,  # exponents and def(**kwargs)/ {**k, **v} etc
@@ -530,18 +532,59 @@ class _TokenizerBase(_Visitor):
         self.tokens.append(Token(self.line_number, self.i, tk_type, tk_value))
 
 
-class _DocStringTokenizer(_Visitor):
-    def __init__(self, parent: _TokenizerBase, in_docstr: bool):
-        super().__init__(parent.code, parent.i)
-        self.parent = parent
-        self.in_docstr = in_docstr
+class _HandoffTokenizer(_TokenizerBase):
+    """
+    A TokenizerBase that is derived from another TokenizerBase.
+
+    This allows another tokenizer to perform operations on the original
+    tokenizer
+    """
+
+    def __init__(self, pred: _TokenizerBase):
+        # hold off on initializing until the actual call
+        super().__init__("")
+
+        # make the predecessor a protected member
+        self._p = pred
 
     def tokenize(self):
-        # todo cleanup this!!!
+        self.tokens = self._p.tokens
+        self.i = self._p.i
+        self.line_number = self._p.line_number
+        self.code = self._p.code
+        self.size = self._p.size
+        self.last_token_index = self._p.last_token_index
+
+        # p1, p2, and p3 not copied over
+
+        self.tokenize_in_context()
+
+        # assumed that this tokenizer will not be used again
+        # so no need to copy
+        self._p.tokens = self.tokens
+        self._p.i = self.i
+        self._p.line_number = self.line_number
+        self._p.last_token_index = self.last_token_index
+
+        # code does not need to be copied over now
+
+    def tokenize_in_context(self):
+        """
+        To be overriden
+        """
+        pass
+
+
+class _DocTokenizer(_HandoffTokenizer):
+    def __init__(self, parent: _TokenizerBase, in_docstr: bool):
+        super().__init__(parent)
+        self.in_docstr = in_docstr
+
+    def tokenize_in_context(self):
         j = self.i + 3
 
-        self.parent.add_token(TokenType.DOCSTART, None)
-        self.parent.i = j
+        self.add_token(TokenType.DOCSTART, None)
+        self.i = j
 
         while j < self.size - 1:
             peek2 = self.code[j: j + 2]
@@ -554,12 +597,12 @@ class _DocStringTokenizer(_Visitor):
                 j += 1
             j += 1
 
-        self.parent.add_token(TokenType.DOCSTR,
-                              self.code[self.parent.i: j - 2])
-        self.parent.i = j - 2  # this makes it not break contract
+        self.add_token(TokenType.DOCSTR,
+                              self.code[self.i: j - 2])
+        self.i = j - 2  # this makes it not break contract
 
-        self.parent.add_token(TokenType.DOCEND, None)
-        self.parent.i = j
+        self.add_token(TokenType.DOCEND, None)
+        self.i = j
 
 
 class _Tokenizer(_TokenizerBase):
@@ -606,7 +649,7 @@ class _Tokenizer(_TokenizerBase):
         if not in_docstr:
             return False
 
-        tk = _DocStringTokenizer(self, in_docstr)
+        tk = _DocTokenizer(self, in_docstr)
         tk.tokenize()
 
         return True
