@@ -2,6 +2,7 @@ from typing import *
 from enum import Enum
 from io import StringIO
 
+
 # TODO
 #  fix space tokenizer
 #  add multi-line strings
@@ -11,140 +12,167 @@ from io import StringIO
 #  add long ints
 #  add underscore_delimiter
 #  add escape chars
+#  add enums for operators
+#  ordered set for operators?
 
-#
-# Single-char operations
-#
 
-# most common
+class Operator(Enum):
+    """
+    Includes all operators of the language. This includes delimiters
+    such as brackets
+    """
 
-DOT = "DOT"
-COMMA = "COMMA"
-ASSIGN = "ASSIGN"
-COLON = "COLON"
+    #
+    #
+    # Single-char operators
+    #
+    #
 
-DECORATOR = "DECORATOR"
+    DOT = "."
+    COMMA = ","
+    ASSIGN = "="
+    COLON = ":"
+    DECORATOR = "@"
 
-# second most common - brackets
+    # second most common - brackets
 
-OPEN_ROUND = "OPEN_ROUND"
-CLOSE_ROUND = "CLOSE_ROUND"
+    OPEN_ROUND = "("
+    CLOSE_ROUND = ")"
 
-OPEN_CURLY = "OPEN_CURLY"
-CLOSE_CURLY = "CLOSE_CURLY"
+    OPEN_CURLY = "{"
+    CLOSE_CURLY = "}"
 
-OPEN_SQUARE = "OPEN_SQUARE"
-CLOSE_SQUARE = "CLOSE_SQUARE"
+    OPEN_SQUARE = "["
+    CLOSE_SQUARE = "]"
 
-OPEN_ANGLE_LT = "OPEN_ANGLE_LT"
-CLOSE_ANGLE_MT = "CLOSE_ANGLE_MT"
+    OPEN_ANGLE_LT = "<"
+    CLOSE_ANGLE_MT = ">"
 
-# math
+    # arithmetic
 
-PLUS = "PLUS"
-MINUS = "MINUS"
-TIMES_ARGS = "TIMES_ARGS"
-DIV = "DIV"
-MODULUS = "MODULUS"
+    PLUS = "+"
+    MINUS = "-"
+    TIMES_ARGS = "*"
+    DIV = "/"
+    MODULUS = "%"
 
-# bitwise ops
+    # bitwise operators
 
-BIT_OR = "BIT_OR"
-BIT_AND = "BIT_AND"
-BIT_NOT = "BIT_NOT"
-BIT_XOR = "BIT_XOR"
+    BIT_OR = "|"
+    BIT_AND = "&"
+    BIT_NOT = "~"
+    BIT_XOR = "^"
 
-single_operators = {
-    ".": DOT,
-    ",": COMMA,
-    "=": ASSIGN,
-    ":": COLON,
-    "@": DECORATOR,
+    #
+    #
+    # Double-char operators
+    #
+    #
 
-    "(": OPEN_ROUND,
-    ")": CLOSE_ROUND,
-    "{": OPEN_CURLY,
-    "}": CLOSE_CURLY,
-    "[": OPEN_SQUARE,
-    "]": CLOSE_SQUARE,
-    "<": OPEN_ANGLE_LT,  # typing and more-than comparison
-    ">": CLOSE_ANGLE_MT,  # typing and more-than comparison
+    EQUAL = "=="
+    NOT_EQUAL = "!="
+    LESS_EQUAL = "<="
+    MORE_EQUAL = ">="
 
-    "+": PLUS,
-    "-": MINUS,
-    "*": TIMES_ARGS,  # times and def(*args)
-    "/": DIV,
-    "%": MODULUS,
+    ARROW = "->"
 
-    "|": BIT_OR,
-    "&": BIT_AND,
-    "~": BIT_NOT,
-    "^": BIT_XOR
+    FDIV = "//"
+    EXP_KWARGS = "**"
+
+    PLUS_ASSIGN = "+="
+    MINUS_ASSIGN = "-="
+    TIMES_ASSIGN = "*="
+    DIV_ASSIGN = "/="
+    MODULUS_ASSIGN = "%="
+
+    BIT_OR_ASSIGN = "|="
+    BIT_AND_ASSIGN = "&="
+    BIT_XOR_ASSIGN = "^="
+
+    SHIFT_LEFT = "<<"
+    SHIFT_RIGHT = ">>"
+
+    #
+    #
+    # Triple-char operators
+    #
+    #
+
+    FDIV_ASSIGN = "//="
+    EXP_ASSIGN = "**="
+
+
+single_operators_set = {
+    Operator.DOT,
+    Operator.COMMA,
+    Operator.ASSIGN,
+    Operator.COLON,
+    Operator.DECORATOR,
+
+    Operator.OPEN_ROUND,
+    Operator.CLOSE_ROUND,
+    Operator.OPEN_CURLY,
+    Operator.CLOSE_CURLY,
+    Operator.OPEN_SQUARE,
+    Operator.CLOSE_SQUARE,
+    Operator.OPEN_ANGLE_LT,  # typing and more-than comparison
+    Operator.CLOSE_ANGLE_MT,  # typing and more-than comparison
+
+    Operator.PLUS,
+    Operator.MINUS,
+    Operator.TIMES_ARGS,  # times and def(*args)
+
+    Operator.MODULUS,
+
+    Operator.BIT_OR,
+    Operator.BIT_AND,
+    Operator.BIT_NOT,
+    Operator.BIT_XOR
 }
 
+single_operators = {op.value: op.name for op in single_operators_set}
+
 #
-# Double-char operations ("//=" and "**=" operations are ignored)
+# Double-char operators
 #
 
-EQUAL = "EQUAL"
-NOT_EQUAL = "NOT_EQUAL"
-LESS_EQUAL = "LESS_EQUAL"
-MORE_EQUAL = "MORE_EQUAL"
+double_operators_set = {
+    Operator.EQUAL,
+    Operator.NOT_EQUAL,
+    Operator.LESS_EQUAL,
+    Operator.MORE_EQUAL,
 
-ARROW = "ARROW"
+    Operator.ARROW,
 
-FDIV = "FDIV"
-EXP_KWARGS = "EXP_KWARGS"
+    Operator.FDIV,
+    Operator.EXP_KWARGS,  # exponents and def(**kwargs)/ {**k, **v} etc
 
-PLUS_ASSIGN = "PLUS_ASSIGN"
-MINUS_ASSIGN = "MINUS_ASSIGN"
-TIMES_ASSIGN = "TIMES_ASSGIN"
-DIV_ASSIGN = "DIV_ASSIGN"
-MODULUS_ASSIGN = "MODULUS_ASSIGN"
+    Operator.PLUS_ASSIGN,
+    Operator.MINUS_ASSIGN,
+    Operator.TIMES_ASSIGN,
+    Operator.DIV_ASSIGN,
+    Operator.MODULUS_ASSIGN,
 
-BIT_OR_ASSIGN = "BIT_OR_ASSIGN"
-BIT_AND_ASSIGN = "BIT_AND_ASSIGN"
-BIT_XOR_ASSIGN = "BIT_XOR_ASSIGN"
+    Operator.BIT_OR_ASSIGN,
+    Operator.BIT_AND_ASSIGN,
+    Operator.BIT_XOR_ASSIGN,
 
-SHIFT_LEFT = "SHIFT_LEFT"
-SHIFT_RIGHT = "SHIFT_RIGHT"
-
-double_operators = {
-    "==": EQUAL,
-    "!=": NOT_EQUAL,
-    "<=": LESS_EQUAL,
-    ">=": MORE_EQUAL,
-
-    "->": ARROW,
-
-    "//": FDIV,
-    "**": EXP_KWARGS,  # exponents and def(**kwargs)/ {**k, **v} etc
-
-    "+=": PLUS_ASSIGN,
-    "-=": MINUS_ASSIGN,
-    "*=": TIMES_ASSIGN,
-    "/=": DIV_ASSIGN,
-    "%=": MODULUS_ASSIGN,
-
-    "|=": BIT_OR_ASSIGN,
-    "&=": BIT_AND_ASSIGN,
-    "^=": BIT_XOR_ASSIGN,
-
-    "<<": SHIFT_LEFT,
-    ">>": SHIFT_RIGHT
+    Operator.SHIFT_LEFT,
+    Operator.SHIFT_RIGHT
 }
 
+double_operators = {op.value: op.name for op in double_operators_set}
+
 #
-# Triple-char operations
+# Triple-char operators
 #
 
-FDIV_ASSIGN = "FDIV_ASSIGN"
-EXP_ASSIGN = "EXP_ASSIGN"
-
-triple_operators = {
-    "//=": FDIV_ASSIGN,
-    "**=": EXP_ASSIGN
+triple_operators_set = {
+    Operator.FDIV_ASSIGN,
+    Operator.EXP_ASSIGN
 }
+
+triple_operators = {op.value: op.name for op in triple_operators_set}
 
 #
 # Keywords (subset of symbols, easier to check later)
@@ -466,13 +494,15 @@ class _Tokenizer(_Visitor):
         while vis.i < vis.size:
             vis.peek_all()
 
-            # check if peek1 is # becuase it could mean the start of
-            # a single-line comment
-            if not (in_comment
-                    or in_multi_line_comment > 0
-                    or vis.p1.isspace()
-                    or vis.p1 == SINGLE_COMMENT_CHAR
-                    or vis.p2 == OPEN_MULTILINE_COMMENT):
+            # check that either a docstring starts, or the space ends
+            if (not (in_comment
+                     or in_multi_line_comment > 0
+                     or vis.p1.isspace()
+                     or vis.p1 == SINGLE_COMMENT_CHAR
+                     or vis.p2 == OPEN_MULTILINE_COMMENT)
+                    # Fix: docstring with spaces before it will trigger multi-line
+                    # comments instead of a docstr
+                    or (vis.p3 == OPEN_DOCSTRING and in_multi_line_comment == 0)):
                 break
 
             if self.is_newline(vis.p1):
@@ -661,13 +691,6 @@ def wrapc(c: str, s: str):
     return f"{c}{s}{TColor.END}"
 
 
-def limit_str(s: str):
-    # limit the length of strings
-    if len(s) > 20:
-        return f"{s[:17]}..."
-    return s
-
-
 def format_token_for_print(tokens: List[Token]):
     """
     Prints out a list of tokens formatted
@@ -694,7 +717,7 @@ def format_token_for_print(tokens: List[Token]):
         if tk_type == TokenType.STRING or tk_type == TokenType.DOCSTR:
             # print repr for escape chars in strings
 
-            tk_vf = wrapc(TColor.GREEN, repr(limit_str(tk_value)))
+            tk_vf = wrapc(TColor.GREEN, repr(tk_value))
         else:
             # to line up with repr calls
             tk_vf = f" {tk_value}"
