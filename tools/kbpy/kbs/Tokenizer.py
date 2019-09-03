@@ -16,11 +16,10 @@ from io import StringIO
 #  check CRLF '\r\n' in a new line
 
 
-#
-# Token types
-#
-
 class TokenType(Enum):
+    """
+    Defines the set of token types
+    """
     NEWLINE = 0
     SPACE = 1
     KEYWORD = 2
@@ -38,11 +37,11 @@ class TokenType(Enum):
         return self.name
 
 
-#
-# Token tuple
-#
-
 class Token(NamedTuple):
+    """
+    Defines a Token as a tuple
+    """
+
     line: int
     start_index: int
     token_type: TokenType
@@ -358,7 +357,89 @@ class _Visitor:
         self.p3 = self.peek_or_none(3)
 
 
+class _SpacingVisitor(_Visitor):
+    """
+    A Visitor that takes care of visiting the code to find
+    spaces and comments
+    """
+
+    def __init__(self, code: str,
+                 initial_index: int,
+                 in_comment: bool,
+                 in_multi_comment: int,
+                 newline: bool):
+        # in_multi_comment is an int because it could be nested
+        super().__init__(code, initial_index)
+
+        self.in_comment = in_comment
+        self.in_multi_comment = in_multi_comment
+        self.newline = newline
+
+        if self.in_multi_comment > 0:
+            # because the parsing needs to start an extra char later
+            self.i += 1
+
+    def is_stop_state(self):
+        """
+        Check for the stop state on the visitor
+        """
+
+        # check that it's still in a commenting state, or
+        # the next character is a comment
+        if not (self.in_comment
+                or self.in_multi_comment > 0
+                or self.p1.isspace()
+                or Is.single_comment(self.p1)
+                or Is.open_multi_comment(self.p2)):
+            return True
+
+        # Fix: docstring with spaces before it will trigger multi-line
+        # comments instead of a docstr
+        if Is.open_docstr(self.p3) and self.in_multi_comment == 0:
+            return True
+
+        return False
+
+    def tokenize_spacing(self):
+
+        while self.i < self.size:
+
+            self.peek_all()
+
+            # Check for the stop state
+            if self.is_stop_state():
+                break
+
+            if Is.newline(self.p1):
+                self.in_comment = False
+                self.newline = True
+
+            if Is.single_comment(self.p1):
+                self.in_comment = True
+
+            if Is.open_multi_comment(self.p2):
+                self.in_multi_comment += 1
+                # since peek2 is not None, this does not break indexing
+                self.i += 1
+
+            elif Is.close_multi_comment(self.p2):
+                self.in_multi_comment -= 1
+                # since peek2 is not None, this does not break indexing
+                self.i += 1
+
+            self.i += 1
+
+        # This is the case when in_multi_line_comment is not 0
+        # when the while loop has iterated through the entire piece of code
+        if self.in_multi_comment > 0:
+            raise SyntaxError("Multi-line comments not closed off")
+
+
 class _Tokenizer(_Visitor):
+    """
+    The main tokenizer of the code, responsible for returning
+    a list of Tokens
+    """
 
     def __init__(self, code: str):
 
@@ -473,8 +554,7 @@ class _Tokenizer(_Visitor):
         while j < self.size - 1:
             peek2 = self.code[j: j + 2]
 
-            if not (in_docstr
-                    or Is.close_multi_comment(peek2)):
+            if not (in_docstr or Is.close_multi_comment(peek2)):
                 break
 
             if Is.close_multi_comment(peek2):
@@ -497,6 +577,7 @@ class _Tokenizer(_Visitor):
         # Use an int instead of boolean because it needs a
         # counter to keep track of nested multi-line comments
 
+        # no need to check if p2 is None -- it just returns False
         in_multi_comment = int(Is.open_multi_comment(self.p2))
 
         if not (in_comment
@@ -506,59 +587,15 @@ class _Tokenizer(_Visitor):
 
         # ensures condition: not (in_comment and in_multi_line_comment)
 
-        # Create a visitor
-        visitor = _Visitor(self.code, self.i + 1)
-
-        if in_multi_comment > 0:
-            # because the parsing needs to start an extra char later
-            visitor.i += 1
-
         # make sure that newline is added if it's the first char
         newline = Is.newline(self.p1)
 
-        while visitor.i < visitor.size:
-            visitor.peek_all()
-
-            # check that it's still in a commenting state, or
-            # the next character is a comment
-            if not (in_comment
-                    or in_multi_comment > 0
-                    or visitor.p1.isspace()
-                    or Is.single_comment(visitor.p1)
-                    or Is.open_multi_comment(visitor.p2)):
-                break
-
-            # Fix: docstring with spaces before it will trigger multi-line
-            # comments instead of a docstr
-            if Is.open_docstr(visitor.p3) and in_multi_comment == 0:
-                break
-
-            if Is.newline(visitor.p1):
-                in_comment = False
-                newline = True
-
-            if Is.single_comment(visitor.p1):
-                in_comment = True
-
-            if Is.open_multi_comment(visitor.p2):
-                in_multi_comment += 1
-                # since peek2 is not None, this does not break indexing
-                visitor.i += 1
-
-            elif Is.close_multi_comment(visitor.p2):
-                in_multi_comment -= 1
-                # since peek2 is not None, this does not break indexing
-                visitor.i += 1
-
-            visitor.i += 1
-
-        # This is the case when in_multi_line_comment is not 0
-        # when the while loop has iterated through the entire piece of code
-        if in_multi_comment > 0:
-            raise SyntaxError("Multi-line comments not closed off")
+        visitor = _SpacingVisitor(self.code, self.i + 1,
+                                  in_comment, in_multi_comment, newline)
+        visitor.tokenize_spacing()
 
         # NEWLINE and SPACE are the only symbols that have a value of None
-        if newline:
+        if visitor.newline:
             # This is relevant because of the short-hand syntax
             # (using ':' and '\n' as delimiters instead of curly brackets)
             self.add_token(TokenType.NEWLINE, None)
