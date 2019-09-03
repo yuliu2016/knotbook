@@ -54,10 +54,6 @@ object AppView {
                     name("Show History")
                     icon(MDI_HISTORY, 14)
                 }
-                item {
-                    name("Revert Changes")
-                    shortcut(KeyCode.Z, control = true, alt = true)
-                }
                 separator()
                 item {
                     name("Print")
@@ -76,7 +72,16 @@ object AppView {
                     shortcut(KeyCode.Y, control = true, alt = true)
                 }
                 item {
-                    name("Clear Cache and Synchronize")
+                    name("Application Properties")
+                    icon(MDI_TUNE, 14)
+                    shortcut(KeyCode.P, control = true)
+                    action {
+                        CodeEditor("Application Properties", true,
+                                "Save", "Discard", Registry.join(), { s ->
+                            Registry.parse(s.split("\n"))
+                            Registry.save()
+                        }, Syntax.Properties)
+                    }
                 }
                 separator()
                 item {
@@ -102,22 +107,65 @@ object AppView {
             modify {
 
                 item {
-                    name("Select All")
-                    shortcut(KeyCode.A, control = true)
+                    name("Undo")
+                    shortcut(KeyCode.Z, control = true)
+                }
+
+                item {
+                    name("Redo")
+                    shortcut(KeyCode.Z, control = true, shift = true)
                 }
 
                 separator()
+
                 item {
-                    name("Copy Selected as TSV")
+                    name("Cut")
+                    shortcut(KeyCode.X, control = true)
+                    icon(MDI_CONTENT_CUT, 14)
+                }
+
+                item {
+                    name("Copy Tab-Delimited")
                     icon(MDI_CONTENT_COPY, 14)
                     shortcut(KeyCode.C, control = true)
                 }
                 item {
-                    name("Copy Selected as CSV")
+                    name("Copy Comma-Delimited")
                 }
                 item {
-                    name("Copy Special")
+                    name("Copy Dictionary")
                     shortcut(KeyCode.C, control = true, shift = true)
+                }
+                item {
+                    name("Paste")
+                    shortcut(KeyCode.V, control = true)
+                    icon(MDI_CONTENT_PASTE, 14)
+                }
+                item {
+                    name("Paste From History")
+                    shortcut(KeyCode.V, control = true, shift = true)
+                }
+                item {
+                    name("Select All")
+                    shortcut(KeyCode.A, control = true)
+                }
+                item {
+                    name("Delete")
+                }
+                separator()
+                item {
+                    name("Revert Changes")
+                    shortcut(KeyCode.Z, control = true, alt = true)
+                }
+                separator()
+                item {
+                    name("Edit CSV as Text")
+                    icon(MDI_FILE_DELIMITED, 14)
+                    action {
+                        CodeEditor("Edit CSV", true, "Save", "Discard",
+                                "A,B,C\n1,2,4", {}, Syntax.CSV)
+                    }
+                    shortcut(KeyCode.E, alt = true)
                 }
             }
         }
@@ -269,18 +317,6 @@ object AppView {
                     name("Bowline Table")
                     icon(MDI_BOWL, 14)
                     action { testBowline() }
-                }
-                item {
-                    name("Application Properties")
-                    icon(MDI_TUNE, 14)
-                    shortcut(KeyCode.P, control = true)
-                    action {
-                        CodeEditor("Application Properties", true,
-                                "Save", "Discard", Registry.join(), { s ->
-                            Registry.parse(s.split("\n"))
-                            Registry.save()
-                        }, Syntax.Properties)
-                    }
                 }
                 separator()
                 item {
