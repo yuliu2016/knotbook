@@ -263,47 +263,50 @@ keywords = {  # set notation
 }
 
 
-class Lexing:
+class Is:
+
+    """
+    Lexing equality checkers
+    """
 
     @staticmethod
-    def is_underscore(ch: str):
+    def underscore(ch: str):
         return ch == "_"
 
     @staticmethod
-    def is_identifier_symbol(ch: str):
+    def symbol(ch: str):
         # checks if it is a symbol name
-        return ch.isalnum() or Lexing.is_underscore(ch)
+        return ch.isalnum() or Is.underscore(ch)
 
     @staticmethod
-    def is_newline(ch: str):
+    def newline(ch: str):
         # checks against newline characters
         return ch == "\n" or ch == "\r"
 
     @staticmethod
-    def is_crlf(ch: str):
+    def crlf(ch: str):
         # this needs to be treated as one single newline
         return  ch == "\r\n"
 
     @staticmethod
-    def is_open_multi_comment(ch: str):
+    def open_multi_comment(ch: str):
         return ch == "/*"
 
     @staticmethod
-    def is_open_docstr(ch: str):
+    def close_multi_comment(ch: str):
+        return ch == "*/"
+
+    @staticmethod
+    def open_docstr(ch: str):
         return ch == "/**"
 
-#
-# Other Constants
-#
+    @staticmethod
+    def single_comment(ch: str):
+        return ch == "#"
 
-OPEN_DOCSTRING = "/**"
-CLOSE_MULTILINE_COMMENT = "*/"
-
-SINGLE_COMMENT_CHAR = "#"
-
-UNDERSCORE_CHAR = "_"
-
-STR_CHAR = "\""
+    @staticmethod
+    def double_quote(ch: str):
+        return ch == "\""
 
 
 class _Visitor:
@@ -453,7 +456,7 @@ class _Tokenizer(_Visitor):
         # iterate through the section of the string that
         # has been added to the token to search for newlines
         for ch in self.code[self.last_token_index:self.i]:
-            if Lexing.is_newline(ch):
+            if Is.newline(ch):
                 self.line_number += 1
 
         self.last_token_index = self.i
@@ -464,7 +467,7 @@ class _Tokenizer(_Visitor):
         # tokenize a docstr and add it as a token
         # it does not allow nested multi-line comments
 
-        in_docstr = Lexing.is_open_docstr(self.p3)
+        in_docstr = Is.open_docstr(self.p3)
 
         if not in_docstr:
             return False
@@ -476,10 +479,10 @@ class _Tokenizer(_Visitor):
             peek2 = self.code[j: j + 2]
 
             if not (in_docstr
-                    or peek2 == CLOSE_MULTILINE_COMMENT):
+                    or Is.close_multi_comment(peek2)):
                 break
 
-            if peek2 == CLOSE_MULTILINE_COMMENT:
+            if Is.close_multi_comment(peek2):
                 in_docstr = False
                 j += 1
             j += 1
@@ -494,12 +497,12 @@ class _Tokenizer(_Visitor):
         # tokenize all spacing as either NEWLINE or SPACE
         # and ignore all the comments
 
-        in_comment = self.p1 == SINGLE_COMMENT_CHAR
+        in_comment = Is.single_comment(self.p1)
 
         # Use an int instead of boolean because it needs a
         # counter to keep track of nested multi-line comments
 
-        in_multi_comment = int(Lexing.is_open_multi_comment(self.p2))
+        in_multi_comment = int(Is.open_multi_comment(self.p2))
 
         if not (in_comment
                 or in_multi_comment > 0
@@ -516,7 +519,7 @@ class _Tokenizer(_Visitor):
             vis.i += 1
 
         # make sure that newline is added if it's the first char
-        newline = Lexing.is_newline(self.p1)
+        newline = Is.newline(self.p1)
 
         while vis.i < vis.size:
             vis.peek_all()
@@ -525,26 +528,26 @@ class _Tokenizer(_Visitor):
             if (not (in_comment
                      or in_multi_comment > 0
                      or vis.p1.isspace()
-                     or vis.p1 == SINGLE_COMMENT_CHAR
-                     or Lexing.is_open_multi_comment(vis.p2))
+                     or Is.single_comment(vis.p1)
+                     or Is.open_multi_comment(vis.p2))
                     # Fix: docstring with spaces before it will trigger multi-line
                     # comments instead of a docstr
-                    or (Lexing.is_open_docstr(vis.p3) and in_multi_comment == 0)):
+                    or (Is.open_docstr(vis.p3) and in_multi_comment == 0)):
                 break
 
-            if Lexing.is_newline(vis.p1):
+            if Is.newline(vis.p1):
                 in_comment = False
                 newline = True
 
-            if vis.p1 == SINGLE_COMMENT_CHAR:
+            if Is.single_comment(vis.p1):
                 in_comment = True
 
-            if Lexing.is_open_multi_comment(vis.p2):
+            if Is.open_multi_comment(vis.p2):
                 in_multi_comment += 1
                 # since peek2 is not None, this does not break indexing
                 vis.i += 1
 
-            elif vis.p2 == CLOSE_MULTILINE_COMMENT:
+            elif Is.close_multi_comment(vis.p2):
                 in_multi_comment -= 1
                 # since peek2 is not None, this does not break indexing
                 vis.i += 1
@@ -588,12 +591,12 @@ class _Tokenizer(_Visitor):
 
     def tokenize_symbol(self):
 
-        if not Lexing.is_identifier_symbol(self.p1):
+        if not Is.symbol(self.p1):
             return False
 
         # check for symbols
         j = self.i + 1
-        while j < self.size and Lexing.is_identifier_symbol(self.code[j]):
+        while j < self.size and Is.symbol(self.code[j]):
             j += 1
 
         symbol_val = self.code[self.i:j]
@@ -613,7 +616,7 @@ class _Tokenizer(_Visitor):
 
     def tokenize_string(self):
 
-        if self.p1 != STR_CHAR:
+        if not Is.double_quote(self.p1):
             return False
 
         # check for symbols
@@ -621,7 +624,7 @@ class _Tokenizer(_Visitor):
         # string requires an extra character, so must be accounted
         # for in the index
         j = self.i + 1
-        while j < self.size - 1 and self.code[j] != STR_CHAR:
+        while j < self.size - 1 and not Is.double_quote(self.code[j]):
             j += 1
         self.add_token(TokenType.STRING, self.code[self.i + 1:j])
 
