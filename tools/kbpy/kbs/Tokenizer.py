@@ -1,22 +1,20 @@
 from typing import *
-from enum import Enum
+from enum import IntEnum, Enum
 from io import StringIO
 
 
 # TODO
 #  fix space tokenizer
 #  add multi-line strings
-#  check closing of docstrings
 #  add floats and exponents
 #  add bin and hex
 #  add long ints
 #  add underscore_delimiter
 #  add escape chars
 #  ordered set for operators?
-#  check CRLF '\r\n' in a new line
 
 
-class TokenType(Enum):
+class TokenType(IntEnum):
     """
     Defines the set of token types
     """
@@ -31,6 +29,8 @@ class TokenType(Enum):
     FLOAT = 8
     STRING = 9
     DOCSTR = 10
+    BOOL = 11
+    NONE = 12
 
     def __repr__(self):
         # do this so that tests run properly using repr
@@ -217,7 +217,7 @@ triple_operators = {op.value: op for op in triple_operators_set}
 #
 # Keywords (subset of symbols, easier to check later)
 #
-keywords = {  # set notation
+grammar_keywords = {  # set notation
 
     # Functional keywords
     "return",
@@ -229,17 +229,14 @@ keywords = {  # set notation
     "else",
     "when",
 
-    # Booleans and operations
+    # Boolean comparisions
     "and",
     "or",
     "not",
     "is",
     "in",
-    "True",
-    "False",
 
-    # None
-    "None",
+    # Nothing
     "pass",
 
     # Context keywords
@@ -410,7 +407,14 @@ class _SpacingVisitor(_Visitor):
             if self.is_stop_state():
                 break
 
-            if Is.newline(self.p1):
+            if Is.crlf(self.p2):
+
+                # This is used to support CRLF files
+
+                self.in_comment = False
+                self.newline = True
+                self.i += 2
+            elif Is.newline(self.p1):
                 self.in_comment = False
                 self.newline = True
 
@@ -634,15 +638,20 @@ class _Tokenizer(_Visitor):
         while j < self.size and Is.symbol(self.code[j]):
             j += 1
 
-        symbol_val = self.code[self.i:j]
+        symbol = self.code[self.i:j]
 
         # since keywords have the same rules as symbols, just add them
         # here.
-
-        if symbol_val in keywords:
-            self.add_token(TokenType.KEYWORD, symbol_val)
+        if symbol == "None":
+            self.add_token(TokenType.NONE, None)
+        elif symbol == "True":
+            self.add_token(TokenType.BOOL, True)
+        elif symbol == "False":
+            self.add_token(TokenType.BOOL, False)
+        elif symbol in grammar_keywords:
+            self.add_token(TokenType.KEYWORD, symbol)
         else:
-            self.add_token(TokenType.SYMBOL, symbol_val)
+            self.add_token(TokenType.SYMBOL, symbol)
 
         # this line must be after add_token for lineno to be correct
         self.i = j
