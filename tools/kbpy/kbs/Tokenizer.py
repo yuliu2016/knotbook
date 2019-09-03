@@ -101,6 +101,10 @@ class Operator(Enum):
     FDIV_ASSIGN = "//="
     EXP_ASSIGN = "**="
 
+    def __repr__(self):
+        # do this so that tests run properly using repr
+        return self.name
+
 
 single_operators_set = {
     Operator.DOT,
@@ -121,7 +125,7 @@ single_operators_set = {
     Operator.PLUS,
     Operator.MINUS,
     Operator.TIMES_ARGS,  # times and def(*args)
-
+    Operator.DIV,
     Operator.MODULUS,
 
     Operator.BIT_OR,
@@ -130,7 +134,7 @@ single_operators_set = {
     Operator.BIT_XOR
 }
 
-single_operators = {op.value: op.name for op in single_operators_set}
+single_operators = {op.value: op for op in single_operators_set}
 
 #
 # Double-char operators
@@ -161,7 +165,7 @@ double_operators_set = {
     Operator.SHIFT_RIGHT
 }
 
-double_operators = {op.value: op.name for op in double_operators_set}
+double_operators = {op.value: op for op in double_operators_set}
 
 #
 # Triple-char operators
@@ -172,7 +176,7 @@ triple_operators_set = {
     Operator.EXP_ASSIGN
 }
 
-triple_operators = {op.value: op.name for op in triple_operators_set}
+triple_operators = {op.value: op for op in triple_operators_set}
 
 #
 # Keywords (subset of symbols, easier to check later)
@@ -253,6 +257,10 @@ class TokenType(Enum):
     STRING = 9
     DOCSTR = 10
 
+    def __repr__(self):
+        # do this so that tests run properly using repr
+        return self.name
+
 
 #
 # Token tuple
@@ -265,8 +273,8 @@ class Token(NamedTuple):
     value: Any
 
     def __repr__(self):
-        return f"Token({self.line}, {self.start_index}," \
-               f"{self.token_type.name}, {self.value})"
+        return f"Token({self.line!r}, {self.start_index!r}," \
+               f"{self.token_type!r}, {self.value!r})"
 
 
 class _Visitor:
@@ -348,7 +356,7 @@ class _Tokenizer(_Visitor):
         # -1 because the first token might be from 0
         self.last_token_index = -1
 
-        # Assume we start on the first line
+        # Assume starting on the first line
         # line_number is not a property of _Visitor because it is not
         # aware of newline characters
         self.line_number = 1
@@ -368,7 +376,7 @@ class _Tokenizer(_Visitor):
 
     def pop_space(self, n: int):
         """
-         pop the space when we know that opcode is simplified
+         pop the space when the opcode can be simplified
          """
 
         # fixes trying to pop the space when there is no tokens
@@ -381,7 +389,7 @@ class _Tokenizer(_Visitor):
 
     def pop_newline(self, n: int):
         """
-         pop the newline when we know that opcode is simplified
+         pop the newline when the opcode can be simplified
          """
 
         # fixes trying to pop the space when there is no tokens
@@ -686,7 +694,7 @@ class TColor:
     END = "\033[0m"
 
 
-def wrapc(c: str, s: str):
+def wrap(c: str, s: str):
     # wraps a terminal style to be displayed
     return f"{c}{s}{TColor.END}"
 
@@ -699,37 +707,40 @@ def format_token_for_print(tokens: List[Token]):
     last_line = 0
 
     for token in tokens:
-        tk_line, _, tk_type, tk_value = token
+        line, _, token_type, token_value = token
 
-        if tk_line != last_line:
-            ln = wrapc(TColor.BOLD, "L{:03d} ".format(tk_line))
-            print(ln, end="", file=io)
+        if line != last_line:
+            wrapped_line = wrap(TColor.BOLD, "L{:03d} ".format(line))
+            print(wrapped_line, end="", file=io)
         else:
             print("     ", end="", file=io)
-        last_line = tk_line
+        last_line = line
 
-        tk_tf = "{:>9}".format(tk_type.name)
+        type_padded = "{:>9}".format(token_type.name)
 
-        if tk_value is None:
-            print(wrapc(TColor.WHITE, tk_tf), file=io)
+        if token_type == TokenType.NEWLINE or token_type == TokenType.SPACE:
+            # does not print the value because it's None
+            print(wrap(TColor.WHITE, type_padded), file=io)
             continue
 
-        if tk_type == TokenType.STRING or tk_type == TokenType.DOCSTR:
+        if token_type == TokenType.STRING or token_type == TokenType.DOCSTR:
             # print repr for escape chars in strings
-
-            tk_vf = wrapc(TColor.GREEN, repr(tk_value))
+            value_formatted = wrap(TColor.GREEN, repr(token_value))
+        elif token_type == TokenType.OPERATOR:
+            # token_value is an Operator enum so .value is needed
+            value_formatted = f" {token_value.value}"
         else:
             # to line up with repr calls
-            tk_vf = f" {tk_value}"
+            value_formatted = f" {token_value}"
 
-            if tk_type == TokenType.KEYWORD:
-                tk_vf = wrapc(TColor.BRIGHT_BLUE, tk_vf)
-            elif tk_type == TokenType.SYMBOL:
-                tk_vf = wrapc(TColor.MAGENTA, tk_vf)
-            elif tk_type == TokenType.INT:
-                tk_vf = wrapc(TColor.BLUE, tk_vf)
+        if token_type == TokenType.KEYWORD:
+            value_formatted = wrap(TColor.BRIGHT_BLUE, value_formatted)
+        elif token_type == TokenType.SYMBOL:
+            value_formatted = wrap(TColor.MAGENTA, value_formatted)
+        elif token_type == TokenType.INT:
+            value_formatted = wrap(TColor.BLUE, value_formatted)
 
-        print("{} | {}".format(tk_tf, tk_vf), file=io)
+        print("{}  {}".format(type_padded, value_formatted), file=io)
 
     return io.getvalue()
 
