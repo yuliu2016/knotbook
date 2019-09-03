@@ -28,7 +28,7 @@ class TokenType(IntEnum):
     COMPLEX = 7
     FLOAT = 8
     STRING = 9
-    #10
+    # 10
     BOOL = 11
     NONE = 12
     DOCSTART = 13
@@ -329,7 +329,6 @@ class _Visitor:
 
     def reset_state(self):
         # resets the visitor
-        self.tokens.clear()
         self.i = 0
         self.size = len(self.code)
         self.p1 = "\0"
@@ -355,6 +354,9 @@ class _Visitor:
         self.p1 = self.code[self.i]
         self.p2 = self.peek_or_none(2)
         self.p3 = self.peek_or_none(3)
+
+    def raise_syntax_error(self):
+        raise SyntaxError(f"{self.p1} is not a recognized syntax")
 
 
 class _SpacingVisitor(_Visitor):
@@ -442,23 +444,17 @@ class _SpacingVisitor(_Visitor):
             raise SyntaxError("Multi-line comments not closed off")
 
 
-class _Tokenizer(_Visitor):
+class _TokenizerBase(_Visitor):
     """
-    The main tokenizer of the code, responsible for returning
-    a list of Tokens
+    A Visitor that also keeps track of a list of tokens
     """
 
-    def __init__(self, code: str):
-
+    def __init__(self, code: str, initial_index=0):
         # delegate to superclass
-        super().__init__(code)
+        super().__init__(code, initial_index)
 
         # the list of generated tokens
         self.tokens: List[Token] = []
-
-        # used to remove spacing when the last token is an operation
-        self.token_is_operator = False
-        self.last_token_is_operator = False
 
         # used to lookup newline characters from the last i value
         # -1 because the first token might be from 0
@@ -469,13 +465,9 @@ class _Tokenizer(_Visitor):
         # aware of newline characters
         self.line_number = 1
 
-    def raise_syntax_error(self):
-        raise SyntaxError(f"{self.p1} is not a recognized syntax")
-
     def reset_state(self):
         super().reset_state()
-        self.token_is_operator = False
-        self.last_token_is_operator = False
+        self.tokens.clear()
         self.last_token_index = -1
         self.line_number = 1
 
@@ -514,20 +506,6 @@ class _Tokenizer(_Visitor):
         self.pop_space(n=len(self.tokens))
         self.pop_newline(n=len(self.tokens))
 
-    def discard_operator_spaces(self):
-        # check whether spaces can be popped off around the operator
-
-        if self.last_token_is_operator:
-            # pop the space after the last operator
-            self.pop_space(n=1)
-
-        if self.token_is_operator:
-            # pop the space before the current operator
-            self.pop_space(n=2)
-            self.last_token_is_operator = True
-        else:
-            self.last_token_is_operator = False
-
     def add_token(self, tk_type: TokenType, tk_value):
 
         # Adds a token with the proper line numbering
@@ -544,6 +522,41 @@ class _Tokenizer(_Visitor):
 
         self.last_token_index = self.i
         self.tokens.append(Token(self.line_number, self.i, tk_type, tk_value))
+
+
+class _Tokenizer(_TokenizerBase):
+    """
+    The main tokenizer of the code, responsible for returning
+    a list of Tokens
+    """
+
+    def __init__(self, code: str):
+
+        # delegate to superclass
+        super().__init__(code)
+
+        # used to remove spacing when the last token is an operation
+        self.token_is_operator = False
+        self.last_token_is_operator = False
+
+    def reset_state(self):
+        super().reset_state()
+        self.token_is_operator = False
+        self.last_token_is_operator = False
+
+    def discard_operator_spaces(self):
+        # check whether spaces can be popped off around the operator
+
+        if self.last_token_is_operator:
+            # pop the space after the last operator
+            self.pop_space(n=1)
+
+        if self.token_is_operator:
+            # pop the space before the current operator
+            self.pop_space(n=2)
+            self.last_token_is_operator = True
+        else:
+            self.last_token_is_operator = False
 
     def tokenize_docstr(self):
 
@@ -573,7 +586,7 @@ class _Tokenizer(_Visitor):
             j += 1
 
         self.add_token(TokenType.DOCSTR, self.code[self.i: j - 2])
-        self.i = j - 2 # this makes it not break contract
+        self.i = j - 2  # this makes it not break contract
 
         self.add_token(TokenType.DOCEND, None)
         self.i = j
@@ -745,7 +758,7 @@ class _Tokenizer(_Visitor):
         self.discard_code_spaces()
 
 
-class TColour:
+class Colour:
     """
     Colours
     """
@@ -770,7 +783,8 @@ class TColour:
 
 def wrap(c: str, s: str):
     # wraps a terminal style to be displayed
-    return f"{c}{s}{TColour.END}"
+    return f"{c}{s}{Colour.END}"
+
 
 delimeter_token_types = {
     TokenType.NEWLINE,
@@ -778,6 +792,7 @@ delimeter_token_types = {
     TokenType.DOCSTART,
     TokenType.DOCEND
 }
+
 
 def format_token_for_print(tokens: List[Token]):
     """
@@ -790,7 +805,7 @@ def format_token_for_print(tokens: List[Token]):
         line, _, token_type, token_value = token
 
         if line != last_line:
-            wrapped_line = wrap(TColour.BOLD, "L{:03d} ".format(line))
+            wrapped_line = wrap(Colour.BOLD, "L{:03d} ".format(line))
             print(wrapped_line, end="", file=io)
         else:
             print("     ", end="", file=io)
@@ -800,12 +815,12 @@ def format_token_for_print(tokens: List[Token]):
 
         if token_type in delimeter_token_types:
             # does not print the value because it's None
-            print(wrap(TColour.WHITE, type_padded), file=io)
+            print(wrap(Colour.WHITE, type_padded), file=io)
             continue
 
         if token_type == TokenType.STRING or token_type == TokenType.DOCSTR:
             # print repr for escape chars in strings
-            value_formatted = wrap(TColour.GREEN, repr(token_value))
+            value_formatted = wrap(Colour.GREEN, repr(token_value))
         elif token_type == TokenType.OPERATOR:
             # token_value is an Operator enum so .value is needed
             value_formatted = f" {token_value.value}"
@@ -814,11 +829,11 @@ def format_token_for_print(tokens: List[Token]):
             value_formatted = f" {token_value}"
 
         if token_type == TokenType.KEYWORD:
-            value_formatted = wrap(TColour.BRIGHT_BLUE, value_formatted)
+            value_formatted = wrap(Colour.BRIGHT_BLUE, value_formatted)
         elif token_type == TokenType.SYMBOL:
-            value_formatted = wrap(TColour.MAGENTA, value_formatted)
+            value_formatted = wrap(Colour.MAGENTA, value_formatted)
         elif token_type == TokenType.INT:
-            value_formatted = wrap(TColour.BLUE, value_formatted)
+            value_formatted = wrap(Colour.BLUE, value_formatted)
 
         print("{}  {}".format(type_padded, value_formatted), file=io)
 
