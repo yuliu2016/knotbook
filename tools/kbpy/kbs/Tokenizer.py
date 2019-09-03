@@ -28,9 +28,12 @@ class TokenType(IntEnum):
     COMPLEX = 7
     FLOAT = 8
     STRING = 9
-    DOCSTR = 10
+    #10
     BOOL = 11
     NONE = 12
+    DOCSTART = 13
+    DOCSTR = 14
+    DOCEND = 15
 
     def __repr__(self):
         # do this so that tests run properly using repr
@@ -555,6 +558,9 @@ class _Tokenizer(_Visitor):
         # by above condition this will not break index
         j = self.i + 3
 
+        self.add_token(TokenType.DOCSTART, None)
+        self.i = j
+
         while j < self.size - 1:
             peek2 = self.code[j: j + 2]
 
@@ -566,7 +572,10 @@ class _Tokenizer(_Visitor):
                 j += 1
             j += 1
 
-        self.add_token(TokenType.DOCSTR, self.code[self.i + 3: j - 2])
+        self.add_token(TokenType.DOCSTR, self.code[self.i: j - 2])
+        self.i = j - 2 # this makes it not break contract
+
+        self.add_token(TokenType.DOCEND, None)
         self.i = j
 
         return True
@@ -763,6 +772,12 @@ def wrap(c: str, s: str):
     # wraps a terminal style to be displayed
     return f"{c}{s}{TColour.END}"
 
+delimeter_token_types = {
+    TokenType.NEWLINE,
+    TokenType.SPACE,
+    TokenType.DOCSTART,
+    TokenType.DOCEND
+}
 
 def format_token_for_print(tokens: List[Token]):
     """
@@ -783,7 +798,7 @@ def format_token_for_print(tokens: List[Token]):
 
         type_padded = "{:>9}".format(token_type.name)
 
-        if token_type == TokenType.NEWLINE or token_type == TokenType.SPACE:
+        if token_type in delimeter_token_types:
             # does not print the value because it's None
             print(wrap(TColour.WHITE, type_padded), file=io)
             continue
