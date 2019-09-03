@@ -1,7 +1,7 @@
 from typing import *
 from enum import IntEnum, Enum
 from io import StringIO
-
+import sys
 
 # TODO
 #  fix space tokenizer
@@ -598,8 +598,11 @@ class _DocTokenizer(_HandoffTokenizer):
             j += 1
 
         self.add_token(TokenType.DOCSTR,
-                              self.code[self.i: j - 2])
-        self.i = j - 2  # this makes it not break contract
+                       self.code[self.i: j - 2])
+
+        # this makes it not break the assertion that no two tokens
+        # are inserted on the same index
+        self.i = j - 2
 
         self.add_token(TokenType.DOCEND, None)
         self.i = j
@@ -704,7 +707,12 @@ class _Tokenizer(_TokenizerBase):
         j = self.i + 1
         while j < self.size and self.code[j].isnumeric():
             j += 1
-        self.add_token(TokenType.INT, int(self.code[self.i:j]))
+
+        intval = int(self.code[self.i:j])
+        if intval > sys.maxsize or intval < -sys.maxsize:
+            self.add_token(TokenType.LONG, intval)
+        else:
+            self.add_token(TokenType.INT, intval)
 
         # this line must be after add_token for lineno to be correct
         self.i = j
@@ -796,6 +804,12 @@ class _Tokenizer(_TokenizerBase):
 
         return False
 
+    def tokenize_operators(self):
+
+        return (self.tokenize_triple_operator()
+                or self.tokenize_double_operator()
+                or self.tokenize_single_operator())
+
     def tokenize(self):
         # Runs the tokenization loop
 
@@ -811,9 +825,7 @@ class _Tokenizer(_TokenizerBase):
                     or self.tokenize_number()
                     or self.tokenize_string()
                     or self.tokenize_symbol()
-                    or self.tokenize_triple_operator()
-                    or self.tokenize_double_operator()
-                    or self.tokenize_single_operator()):
+                    or self.tokenize_operators()):
                 self.raise_syntax_error()
             self.discard_operator_spaces()
         self.discard_code_spaces()
@@ -855,7 +867,7 @@ delimeter_token_types = {
 }
 
 
-def format_token_for_print(tokens: List[Token]):
+def format_printing(tokens: List[Token]):
     """
     Prints out a list of tokens formatted
     """
@@ -901,7 +913,7 @@ def format_token_for_print(tokens: List[Token]):
     return io.getvalue()
 
 
-def format_tokens_for_tests(tokens: List[Token]):
+def format_testing(tokens: List[Token]):
     io = StringIO()
     for token in tokens:
         print(repr(token), file=io)
@@ -920,6 +932,18 @@ def tokenize(code: str):
     return tk.tokens
 
 
+def tokenize_t(code: str):
+    from timeit import default_timer as timer
+
+    start = timer()
+    result = tokenize(code)
+    end = timer()
+
+    print(f"Time: {end - start}s")
+
+    return result
+
+
 test_funcdef = """
 
 # A test
@@ -927,7 +951,7 @@ test_funcdef = """
 number = Union[int, float]
 
 sqrt = def(x: number) -> number {
-    return x ** (1 / 2)
+    return x ** 0.5
 }
 
 # test-test
@@ -963,4 +987,4 @@ print(fib(10))
 """
 
 if __name__ == '__main__':
-    print(format_token_for_print(tokenize(test_recursive_fibonacci)))
+    print(format_printing(tokenize_t(test_funcdef)))
