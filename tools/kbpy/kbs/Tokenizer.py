@@ -28,12 +28,14 @@ class TokenType(IntEnum):
     COMPLEX = 7
     FLOAT = 8
     STRING = 9
-    # 10
-    BOOL = 11
-    NONE = 12
-    DOCSTART = 13
-    DOCSTR = 14
-    DOCEND = 15
+    FSTR_NEW = 10
+    FSTR_END = 11
+    BOOL = 12
+    NONE = 13
+    DOCSTART = 14
+    DOCSTR = 15
+    DOCREF = 16
+    DOCEND = 17
 
     def __repr__(self):
         # do this so that tests run properly using repr
@@ -306,6 +308,10 @@ class Is:
     def double_quote(ch: str):
         return ch == "\""
 
+    @staticmethod
+    def any_space(ch: str):
+        return ch.isspace()
+
 
 class _Visitor:
     """
@@ -359,7 +365,7 @@ class _Visitor:
         raise SyntaxError(f"{self.p1} is not a recognized syntax")
 
 
-class _SpacingVisitor(_Visitor):
+class _SpaceTokenizer(_Visitor):
     """
     A Visitor that takes care of visiting the code to find
     spaces and comments
@@ -390,7 +396,7 @@ class _SpacingVisitor(_Visitor):
         # the next character is a comment
         if not (self.in_comment
                 or self.in_multi_comment > 0
-                or self.p1.isspace()
+                or Is.any_space(self.p1)
                 or Is.single_comment(self.p1)
                 or Is.open_multi_comment(self.p2)):
             return True
@@ -402,7 +408,7 @@ class _SpacingVisitor(_Visitor):
 
         return False
 
-    def tokenize_spacing(self):
+    def tokenize(self):
 
         while self.i < self.size:
 
@@ -524,6 +530,38 @@ class _TokenizerBase(_Visitor):
         self.tokens.append(Token(self.line_number, self.i, tk_type, tk_value))
 
 
+class _DocStringTokenizer(_Visitor):
+    def __init__(self, parent: _TokenizerBase, in_docstr: bool):
+        super().__init__(parent.code, parent.i)
+        self.parent = parent
+        self.in_docstr = in_docstr
+
+    def tokenize(self):
+        # todo cleanup this!!!
+        j = self.i + 3
+
+        self.parent.add_token(TokenType.DOCSTART, None)
+        self.parent.i = j
+
+        while j < self.size - 1:
+            peek2 = self.code[j: j + 2]
+
+            if not (self.in_docstr or Is.close_multi_comment(peek2)):
+                break
+
+            if Is.close_multi_comment(peek2):
+                self.in_docstr = False
+                j += 1
+            j += 1
+
+        self.parent.add_token(TokenType.DOCSTR,
+                              self.code[self.parent.i: j - 2])
+        self.parent.i = j - 2  # this makes it not break contract
+
+        self.parent.add_token(TokenType.DOCEND, None)
+        self.parent.i = j
+
+
 class _Tokenizer(_TokenizerBase):
     """
     The main tokenizer of the code, responsible for returning
@@ -568,28 +606,8 @@ class _Tokenizer(_TokenizerBase):
         if not in_docstr:
             return False
 
-        # by above condition this will not break index
-        j = self.i + 3
-
-        self.add_token(TokenType.DOCSTART, None)
-        self.i = j
-
-        while j < self.size - 1:
-            peek2 = self.code[j: j + 2]
-
-            if not (in_docstr or Is.close_multi_comment(peek2)):
-                break
-
-            if Is.close_multi_comment(peek2):
-                in_docstr = False
-                j += 1
-            j += 1
-
-        self.add_token(TokenType.DOCSTR, self.code[self.i: j - 2])
-        self.i = j - 2  # this makes it not break contract
-
-        self.add_token(TokenType.DOCEND, None)
-        self.i = j
+        tk = _DocStringTokenizer(self, in_docstr)
+        tk.tokenize()
 
         return True
 
@@ -608,7 +626,7 @@ class _Tokenizer(_TokenizerBase):
 
         if not (in_comment
                 or in_multi_comment > 0
-                or self.p1.isspace()):
+                or Is.any_space(self.p1)):
             return False  # not actually a space to be parsed
 
         # ensures condition: not (in_comment and in_multi_line_comment)
@@ -616,12 +634,12 @@ class _Tokenizer(_TokenizerBase):
         # make sure that newline is added if it's the first char
         newline = Is.newline(self.p1)
 
-        visitor = _SpacingVisitor(self.code, self.i + 1,
-                                  in_comment, in_multi_comment, newline)
-        visitor.tokenize_spacing()
+        tk = _SpaceTokenizer(self.code, self.i + 1,
+                             in_comment, in_multi_comment, newline)
+        tk.tokenize()
 
         # NEWLINE and SPACE are the only symbols that have a value of None
-        if visitor.newline:
+        if tk.newline:
             # This is relevant because of the short-hand syntax
             # (using ':' and '\n' as delimiters instead of curly brackets)
             self.add_token(TokenType.NEWLINE, None)
@@ -629,7 +647,7 @@ class _Tokenizer(_TokenizerBase):
             self.add_token(TokenType.SPACE, None)
 
         # this line must be after add_token for lineno to be correct
-        self.i = visitor.i
+        self.i = tk.i
 
         return True
 
@@ -830,7 +848,7 @@ def format_token_for_print(tokens: List[Token]):
 
         if token_type == TokenType.KEYWORD:
             value_formatted = wrap(Colour.BRIGHT_BLUE, value_formatted)
-        elif token_type == TokenType.SYMBOL:
+        elif token_type == TokenType.SYMBOL or token_value == TokenType.DOCREF:
             value_formatted = wrap(Colour.MAGENTA, value_formatted)
         elif token_type == TokenType.INT:
             value_formatted = wrap(Colour.BLUE, value_formatted)
@@ -890,7 +908,7 @@ a = 3
 
 test_recursive_fibonacci = """
 /**
- * Calculates a fibonacci number
+ * [fib]Calculates a fibonacci number
  */
 fib = def(n: int) {
     if n < 2: return 1
