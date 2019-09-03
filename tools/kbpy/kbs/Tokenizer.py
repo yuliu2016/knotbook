@@ -319,7 +319,10 @@ class _Tokenizer(_Visitor):
         # used to lookup newline characters from the last i value
         # -1 because the first token might be from 0
         self.last_token_index = -1
+
         # Assume we start on the first line
+        # line_number is not a property of _Visitor because it is not
+        # aware of newline characters
         self.line_number = 1
 
     def raise_syntax_error(self):
@@ -331,6 +334,9 @@ class _Tokenizer(_Visitor):
         self.last_token_is_operator = False
         self.last_token_index = -1
         self.line_number = 1
+
+    def visitor_from_next_index(self):
+        return _Visitor(self.code, self.i + 1, False)
 
     def pop_space(self, n: int):
         """
@@ -447,51 +453,46 @@ class _Tokenizer(_Visitor):
 
         # ensures condition: not (in_comment and in_multi_line_comment)
 
+        # Create a visitor
+        vis = self.visitor_from_next_index()
+
         if in_multi_line_comment > 0:
-            # start searching after /* to prevent /*/ parsed valid
-            j = self.i + 2
-        else:
-            j = self.i + 1
+            # because the parsing needs to start an extra char later
+            vis.i += 1
 
         # make sure that newline is added if it's the first char
         newline = self.is_newline(self.p1)
 
-        while j < self.size:
-            peek1 = self.code[j]
-
-            # try to peek two nodes ahead
-            if j < self.size - 1:
-                peek2 = self.code[j:j + 2]
-            else:
-                peek2 = None
+        while vis.i < vis.size:
+            vis.peek_all()
 
             # check if peek1 is # becuase it could mean the start of
             # a single-line comment
             if not (in_comment
                     or in_multi_line_comment > 0
-                    or peek1.isspace()
-                    or peek1 == SINGLE_COMMENT_CHAR
-                    or peek2 == OPEN_MULTILINE_COMMENT):
+                    or vis.p1.isspace()
+                    or vis.p1 == SINGLE_COMMENT_CHAR
+                    or vis.p2 == OPEN_MULTILINE_COMMENT):
                 break
 
-            if self.is_newline(peek1):
+            if self.is_newline(vis.p1):
                 in_comment = False
                 newline = True
 
-            if peek1 == SINGLE_COMMENT_CHAR:
+            if vis.p1 == SINGLE_COMMENT_CHAR:
                 in_comment = True
 
-            if peek2 == OPEN_MULTILINE_COMMENT:
+            if vis.p2 == OPEN_MULTILINE_COMMENT:
                 in_multi_line_comment += 1
                 # since peek2 is not None, this does not break indexing
-                j += 1
+                vis.i += 1
 
-            elif peek2 == CLOSE_MULTILINE_COMMENT:
+            elif vis.p2 == CLOSE_MULTILINE_COMMENT:
                 in_multi_line_comment -= 1
                 # since peek2 is not None, this does not break indexing
-                j += 1
+                vis.i += 1
 
-            j += 1
+            vis.i += 1
 
         # This is the case when in_multi_line_comment is not 0
         # when the while loop has iterated through the entire piece of code
@@ -507,7 +508,7 @@ class _Tokenizer(_Visitor):
             self.add_token(TokenType.SPACE, None)
 
         # this line must be after add_token for lineno to be correct
-        self.i = j
+        self.i = vis.i
 
         return True
 
