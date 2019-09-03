@@ -264,7 +264,6 @@ keywords = {  # set notation
 
 
 class Is:
-
     """
     Lexing equality checkers
     """
@@ -286,7 +285,7 @@ class Is:
     @staticmethod
     def crlf(ch: str):
         # this needs to be treated as one single newline
-        return  ch == "\r\n"
+        return ch == "\r\n"
 
     @staticmethod
     def open_multi_comment(ch: str):
@@ -315,9 +314,8 @@ class _Visitor:
     Allows peeking and moving indices
     """
 
-    def __init__(self, code: str, initial_index=0, allow_backtrack=False):
+    def __init__(self, code: str, initial_index=0):
         self.code = code
-        self.allow_backtrack = allow_backtrack
 
         # the caret index
         self.i = initial_index
@@ -392,9 +390,6 @@ class _Tokenizer(_Visitor):
         self.last_token_is_operator = False
         self.last_token_index = -1
         self.line_number = 1
-
-    def visitor_from_next_index(self):
-        return _Visitor(self.code, self.i + 1, False)
 
     def pop_space(self, n: int):
         """
@@ -492,7 +487,7 @@ class _Tokenizer(_Visitor):
 
         return True
 
-    def tokenize_spaces(self):
+    def tokenize_spacing(self):
 
         # tokenize all spacing as either NEWLINE or SPACE
         # and ignore all the comments
@@ -512,47 +507,50 @@ class _Tokenizer(_Visitor):
         # ensures condition: not (in_comment and in_multi_line_comment)
 
         # Create a visitor
-        vis = self.visitor_from_next_index()
+        visitor = _Visitor(self.code, self.i + 1)
 
         if in_multi_comment > 0:
             # because the parsing needs to start an extra char later
-            vis.i += 1
+            visitor.i += 1
 
         # make sure that newline is added if it's the first char
         newline = Is.newline(self.p1)
 
-        while vis.i < vis.size:
-            vis.peek_all()
+        while visitor.i < visitor.size:
+            visitor.peek_all()
 
-            # check that either a docstring starts, or the space ends
-            if (not (in_comment
-                     or in_multi_comment > 0
-                     or vis.p1.isspace()
-                     or Is.single_comment(vis.p1)
-                     or Is.open_multi_comment(vis.p2))
-                    # Fix: docstring with spaces before it will trigger multi-line
-                    # comments instead of a docstr
-                    or (Is.open_docstr(vis.p3) and in_multi_comment == 0)):
+            # check that it's still in a commenting state, or
+            # the next character is a comment
+            if not (in_comment
+                    or in_multi_comment > 0
+                    or visitor.p1.isspace()
+                    or Is.single_comment(visitor.p1)
+                    or Is.open_multi_comment(visitor.p2)):
                 break
 
-            if Is.newline(vis.p1):
+            # Fix: docstring with spaces before it will trigger multi-line
+            # comments instead of a docstr
+            if Is.open_docstr(visitor.p3) and in_multi_comment == 0:
+                break
+
+            if Is.newline(visitor.p1):
                 in_comment = False
                 newline = True
 
-            if Is.single_comment(vis.p1):
+            if Is.single_comment(visitor.p1):
                 in_comment = True
 
-            if Is.open_multi_comment(vis.p2):
+            if Is.open_multi_comment(visitor.p2):
                 in_multi_comment += 1
                 # since peek2 is not None, this does not break indexing
-                vis.i += 1
+                visitor.i += 1
 
-            elif Is.close_multi_comment(vis.p2):
+            elif Is.close_multi_comment(visitor.p2):
                 in_multi_comment -= 1
                 # since peek2 is not None, this does not break indexing
-                vis.i += 1
+                visitor.i += 1
 
-            vis.i += 1
+            visitor.i += 1
 
         # This is the case when in_multi_line_comment is not 0
         # when the while loop has iterated through the entire piece of code
@@ -568,7 +566,7 @@ class _Tokenizer(_Visitor):
             self.add_token(TokenType.SPACE, None)
 
         # this line must be after add_token for lineno to be correct
-        self.i = vis.i
+        self.i = visitor.i
 
         return True
 
@@ -680,7 +678,7 @@ class _Tokenizer(_Visitor):
             # reset operator state
             self.token_is_operator = False
             if not (self.tokenize_docstr()
-                    or self.tokenize_spaces()
+                    or self.tokenize_spacing()
                     or self.tokenize_number()
                     or self.tokenize_string()
                     or self.tokenize_symbol()
@@ -692,33 +690,32 @@ class _Tokenizer(_Visitor):
         self.discard_code_spaces()
 
 
-def tokenize(code: str):
+class TColour:
     """
-    Tokenizes a piece of code
-    No regular expressions; just char-by-char
+    Colours
     """
-
-    tk = _Tokenizer(code)
-    tk.tokenize()
-
-    return tk.tokens
-
-
-class TColor:
     BACK_BLACK = "\033[40m"
+
     BACK_WHITE = "\033[47m"
+
     WHITE = "\033[37m"
+
     BOLD = "\033[1m"
+
     GREEN = "\033[32m"
+
     BLUE = "\033[34m"
+
     BRIGHT_BLUE = "\033[34;1m"
+
     MAGENTA = "\033[35m"
+
     END = "\033[0m"
 
 
 def wrap(c: str, s: str):
     # wraps a terminal style to be displayed
-    return f"{c}{s}{TColor.END}"
+    return f"{c}{s}{TColour.END}"
 
 
 def format_token_for_print(tokens: List[Token]):
@@ -732,7 +729,7 @@ def format_token_for_print(tokens: List[Token]):
         line, _, token_type, token_value = token
 
         if line != last_line:
-            wrapped_line = wrap(TColor.BOLD, "L{:03d} ".format(line))
+            wrapped_line = wrap(TColour.BOLD, "L{:03d} ".format(line))
             print(wrapped_line, end="", file=io)
         else:
             print("     ", end="", file=io)
@@ -742,12 +739,12 @@ def format_token_for_print(tokens: List[Token]):
 
         if token_type == TokenType.NEWLINE or token_type == TokenType.SPACE:
             # does not print the value because it's None
-            print(wrap(TColor.WHITE, type_padded), file=io)
+            print(wrap(TColour.WHITE, type_padded), file=io)
             continue
 
         if token_type == TokenType.STRING or token_type == TokenType.DOCSTR:
             # print repr for escape chars in strings
-            value_formatted = wrap(TColor.GREEN, repr(token_value))
+            value_formatted = wrap(TColour.GREEN, repr(token_value))
         elif token_type == TokenType.OPERATOR:
             # token_value is an Operator enum so .value is needed
             value_formatted = f" {token_value.value}"
@@ -756,11 +753,11 @@ def format_token_for_print(tokens: List[Token]):
             value_formatted = f" {token_value}"
 
         if token_type == TokenType.KEYWORD:
-            value_formatted = wrap(TColor.BRIGHT_BLUE, value_formatted)
+            value_formatted = wrap(TColour.BRIGHT_BLUE, value_formatted)
         elif token_type == TokenType.SYMBOL:
-            value_formatted = wrap(TColor.MAGENTA, value_formatted)
+            value_formatted = wrap(TColour.MAGENTA, value_formatted)
         elif token_type == TokenType.INT:
-            value_formatted = wrap(TColor.BLUE, value_formatted)
+            value_formatted = wrap(TColour.BLUE, value_formatted)
 
         print("{}  {}".format(type_padded, value_formatted), file=io)
 
@@ -772,6 +769,18 @@ def format_tokens_for_tests(tokens: List[Token]):
     for token in tokens:
         print(repr(token), file=io)
     return io.getvalue()
+
+
+def tokenize(code: str):
+    """
+    Tokenizes a piece of code
+    No regular expressions; just char-by-char
+    """
+
+    tk = _Tokenizer(code)
+    tk.tokenize()
+
+    return tk.tokens
 
 
 test_funcdef = """
