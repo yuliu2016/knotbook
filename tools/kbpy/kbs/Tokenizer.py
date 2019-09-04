@@ -3,6 +3,7 @@ from enum import IntEnum, Enum
 from io import StringIO
 import sys
 
+
 # TODO
 #  fix space tokenizer
 #  add multi-line strings
@@ -265,6 +266,11 @@ grammar_keywords = {  # set notation
     "raise"
 }
 
+MAX_SIZE = min(sys.maxsize, 2 ** 31 - 1)
+MIN_SIZE = -MAX_SIZE
+
+HEX_CHARS = {"a", "b", "c", "d", "e", "f"}
+
 
 class Is:
     """
@@ -313,6 +319,42 @@ class Is:
     @staticmethod
     def any_space(ch: str):
         return ch.isspace()
+
+    @staticmethod
+    def zero(ch: str):
+        return ch == "0"
+
+    @staticmethod
+    def any_digit(ch: str):
+        return ch.isnumeric()
+
+    @staticmethod
+    def any_hex(ch: str):
+        return Is.any_digit(ch) or ch.lower() in HEX_CHARS
+
+    @staticmethod
+    def any_bin(ch: str):
+        return ch == "0" or ch == "1"
+
+    @staticmethod
+    def any_oct(ch: str):
+        return Is.any_digit(ch) and not (ch == "9" or ch == "8")
+
+    @staticmethod
+    def hex_lead(ch: str):
+        return ch == "0x"
+
+    @staticmethod
+    def oct_lead(ch: str):
+        return ch == "0o"
+
+    @staticmethod
+    def bin_lead(ch: str):
+        return ch == "0b"
+
+    @staticmethod
+    def floating_point(ch: str):
+        return ch == "."
 
 
 class _Visitor:
@@ -697,10 +739,72 @@ class _Tokenizer(_TokenizerBase):
 
         return True
 
+    def add_int_or_long(self, s: str, base=10):
+        intval = int(s, base)
+        if intval > MAX_SIZE or intval < MIN_SIZE:
+            self.add_token(TokenType.LONG, intval)
+        else:
+            self.add_token(TokenType.INT, intval)
+
     def tokenize_number(self):
 
         if not self.p1.isnumeric():
             return False
+
+        leading_zero = Is.zero(self.p1)
+
+        if leading_zero:
+            if Is.hex_lead(self.p2):
+                # hexadecimal number
+                j = self.i + 2
+                digits = []
+
+                while j < self.size:
+                    peek1 = self.code[j]
+                    if Is.underscore(peek1):
+                        pass
+                    elif Is.any_hex(peek1):
+                        digits.append(peek1)
+                    else:
+                        break
+                    j += 1
+                self.add_int_or_long("".join(digits), 16)
+                self.i = j
+                return True
+            elif Is.bin_lead(self.p2):
+                # hexadecimal number
+                j = self.i + 2
+                digits = []
+
+                while j < self.size:
+                    peek1 = self.code[j]
+                    if Is.underscore(peek1):
+                        pass
+                    elif Is.any_bin(peek1):
+                        digits.append(peek1)
+                    else:
+                        break
+                    j += 1
+                self.add_int_or_long("".join(digits), 2)
+                self.i = j
+                return True
+            elif Is.oct_lead(self.p2):
+                # oct number
+                j = self.i + 2
+                digits = []
+
+                while j < self.size:
+                    peek1 = self.code[j]
+                    if Is.underscore(peek1):
+                        pass
+                    elif Is.any_oct(peek1):
+                        digits.append(peek1)
+                    else:
+                        break
+                    j += 1
+                self.add_int_or_long("".join(digits), 8)
+                self.i = j
+                return True
 
         # check for numbers
 
@@ -708,11 +812,8 @@ class _Tokenizer(_TokenizerBase):
         while j < self.size and self.code[j].isnumeric():
             j += 1
 
-        intval = int(self.code[self.i:j])
-        if intval > sys.maxsize or intval < -sys.maxsize:
-            self.add_token(TokenType.LONG, intval)
-        else:
-            self.add_token(TokenType.INT, intval)
+        self.add_int_or_long(self.code[self.i:j])
+
 
         # this line must be after add_token for lineno to be correct
         self.i = j
@@ -957,7 +1058,7 @@ sqrt = def(x: number) -> number {
 # test-test
 
 if __name__ == "__main__" {
-    print(sqrt(9))
+    print(sqrt(0x33))
 }
 """
 
