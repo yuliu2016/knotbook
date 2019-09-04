@@ -11,7 +11,8 @@ import sys
 #  add underscore_delimiter
 #  add escape chars
 #  ordered set for operators?
-#  check for negative numbers (only if it's preceeded by an operator, or if it's the first)
+#  check for negative numbers
+#  (only if it's preceeded by an operator, or if it's the first)
 #  check for starting float points
 #  prevent two underscores in numbers
 
@@ -25,8 +26,8 @@ class TokenType(IntEnum):
     KEYWORD = 2
     SYMBOL = 3
     OPERATOR = 4
-    INT = 5
-    LONG = 6
+    INTEGER = 5
+    LONGINT = 6
     COMPLEX = 7
     FLOAT = 8
     STRING = 9
@@ -34,10 +35,10 @@ class TokenType(IntEnum):
     FSTR_END = 11
     BOOL = 12
     NONE = 13
-    DOCSTART = 14
-    DOCSTR = 15
-    DOCREF = 16
-    DOCEND = 17
+    DOC_NEW = 14
+    DOC_STR = 15
+    DOC_REF = 16
+    DOC_END = 17
 
     def __repr__(self):
         # do this so that tests run properly using repr
@@ -267,7 +268,10 @@ grammar_keywords = {  # set notation
     "raise"
 }
 
+# maximum size before int becomes long
+
 MAX_SIZE = min(sys.maxsize, 2 ** 31 - 1)
+
 MIN_SIZE = -MAX_SIZE
 
 HEX_CHARS = {"a", "b", "c", "d", "e", "f"}
@@ -496,7 +500,7 @@ class _SpaceTokenizer(_Visitor):
         # This is the case when in_multi_line_comment is not 0
         # when the while loop has iterated through the entire piece of code
         if self.in_multi_comment > 0:
-            raise SyntaxError("Multi-line comments not closed off")
+            raise SyntaxError("Comments not closed; Unexpected EOF")
 
 
 class _TokenizerBase(_Visitor):
@@ -576,7 +580,8 @@ class _TokenizerBase(_Visitor):
                 self.line_number += 1
 
         self.last_token_index = self.i
-        self.tokens.append(Token(self.line_number, self.i, tk_type, tk_value))
+        tk = Token(self.line_number, self.i, tk_type, tk_value)
+        self.tokens.append(tk)
 
 
 class _HandoffTokenizer(_TokenizerBase):
@@ -630,29 +635,32 @@ class _DocTokenizer(_HandoffTokenizer):
     def tokenize_in_context(self):
         j = self.i + 3
 
-        self.add_token(TokenType.DOCSTART, None)
+        self.add_token(TokenType.DOC_NEW, None)
         self.i = j
 
-        while j < self.size - 1:
-            peek2 = self.code[j: j + 2]
+        visitor = _Visitor(self.code, self.i)
 
-            if not (self.in_docstr or Is.close_multi_comment(peek2)):
+        while visitor.i < self.size:
+            visitor.peek_all()
+
+            if not (self.in_docstr or Is.close_multi_comment(visitor.p2)):
                 break
 
-            if Is.close_multi_comment(peek2):
+            if Is.close_multi_comment(visitor.p2):
                 self.in_docstr = False
-                j += 1
-            j += 1
+                # add extra char
+                visitor.i += 1
+            visitor.i += 1
 
-        self.add_token(TokenType.DOCSTR,
-                       self.code[self.i: j - 2])
+        self.add_token(TokenType.DOC_STR,
+                       self.code[self.i: visitor.i - 2])
 
         # this makes it not break the assertion that no two tokens
         # are inserted on the same index
-        self.i = j - 2
+        self.i = visitor.i - 2
 
-        self.add_token(TokenType.DOCEND, None)
-        self.i = j
+        self.add_token(TokenType.DOC_END, None)
+        self.i = visitor.i
 
 
 class _Tokenizer(_TokenizerBase):
@@ -745,13 +753,16 @@ class _Tokenizer(_TokenizerBase):
         return True
 
     def add_int_or_long(self, s: str, base=10):
+
         intval = int(s, base)
+
         if intval > MAX_SIZE or intval < MIN_SIZE:
-            self.add_token(TokenType.LONG, intval)
+            self.add_token(TokenType.LONGINT, intval)
         else:
-            self.add_token(TokenType.INT, intval)
+            self.add_token(TokenType.INTEGER, intval)
 
     def tokenize_hex(self):
+
         # hexadecimal number
         j = self.i + 2
         digits = []
@@ -769,6 +780,7 @@ class _Tokenizer(_TokenizerBase):
         self.i = j
 
     def tokenize_bin(self):
+
         # bin number
         j = self.i + 2
         digits = []
@@ -786,6 +798,7 @@ class _Tokenizer(_TokenizerBase):
         self.i = j
 
     def tokenize_oct(self):
+
         # oct number
         j = self.i + 2
         digits = []
@@ -803,6 +816,8 @@ class _Tokenizer(_TokenizerBase):
         self.i = j
 
     def tokenize_int_or_float(self, leading_zero: bool):
+
+        # decimal number
 
         is_float = False
         is_complex = False
@@ -835,7 +850,6 @@ class _Tokenizer(_TokenizerBase):
         if is_float:
             self.add_token(TokenType.FLOAT, float("".join(digits)))
         elif is_complex:
-            print(digits)
             self.add_token(TokenType.COMPLEX, float("".join(digits)))
         else:
             if leading_zero:
@@ -1011,8 +1025,8 @@ def wrap(c: str, s: str):
 delimeter_token_types = {
     TokenType.NEWLINE,
     TokenType.SPACE,
-    TokenType.DOCSTART,
-    TokenType.DOCEND
+    TokenType.DOC_NEW,
+    TokenType.DOC_END
 }
 
 
@@ -1040,7 +1054,7 @@ def format_printing(tokens: List[Token]):
             print(wrap(Colour.WHITE, type_padded), file=io)
             continue
 
-        if token_type == TokenType.STRING or token_type == TokenType.DOCSTR:
+        if token_type == TokenType.STRING or token_type == TokenType.DOC_STR:
             # print repr for escape chars in strings
             value_formatted = wrap(Colour.GREEN, repr(token_value))
         elif token_type == TokenType.OPERATOR:
@@ -1052,9 +1066,9 @@ def format_printing(tokens: List[Token]):
 
         if token_type == TokenType.KEYWORD:
             value_formatted = wrap(Colour.BRIGHT_BLUE, value_formatted)
-        elif token_type == TokenType.SYMBOL or token_value == TokenType.DOCREF:
+        elif token_type == TokenType.SYMBOL or token_value == TokenType.DOC_REF:
             value_formatted = wrap(Colour.MAGENTA, value_formatted)
-        elif token_type == TokenType.INT:
+        elif token_type == TokenType.INTEGER:
             value_formatted = wrap(Colour.BLUE, value_formatted)
 
         print("{}  {}".format(type_padded, value_formatted), file=io)
@@ -1136,4 +1150,4 @@ print(fib(10))
 """
 
 if __name__ == '__main__':
-    print(format_printing(tokenize_t(test_funcdef)))
+    print(format_printing(tokenize_t(test_recursive_fibonacci)))
