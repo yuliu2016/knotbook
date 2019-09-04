@@ -8,11 +8,11 @@ import sys
 #  fix space tokenizer
 #  add multi-line strings
 #  add floats and exponents
-#  add bin and hex
-#  add long ints
 #  add underscore_delimiter
 #  add escape chars
 #  ordered set for operators?
+#  check for negative numbers
+#  check for starting float points
 
 
 class TokenType(IntEnum):
@@ -746,6 +746,91 @@ class _Tokenizer(_TokenizerBase):
         else:
             self.add_token(TokenType.INT, intval)
 
+    def tokenize_hex(self):
+        # hexadecimal number
+        j = self.i + 2
+        digits = []
+
+        while j < self.size:
+            peek1 = self.code[j]
+            if Is.underscore(peek1):
+                pass
+            elif Is.any_hex(peek1):
+                digits.append(peek1)
+            else:
+                break
+            j += 1
+        self.add_int_or_long("".join(digits), 16)
+        self.i = j
+
+    def tokenize_bin(self):
+        # bin number
+        j = self.i + 2
+        digits = []
+
+        while j < self.size:
+            peek1 = self.code[j]
+            if Is.underscore(peek1):
+                pass
+            elif Is.any_bin(peek1):
+                digits.append(peek1)
+            else:
+                break
+            j += 1
+        self.add_int_or_long("".join(digits), 2)
+        self.i = j
+
+    def tokenize_oct(self):
+        # oct number
+        j = self.i + 2
+        digits = []
+
+        while j < self.size:
+            peek1 = self.code[j]
+            if Is.underscore(peek1):
+                pass
+            elif Is.any_oct(peek1):
+                digits.append(peek1)
+            else:
+                break
+            j += 1
+        self.add_int_or_long("".join(digits), 8)
+        self.i = j
+
+    def tokenize_int_or_float(self, leading_zero: bool):
+
+        fp = False
+        digits = []
+
+        j = self.i + 1
+        while j < self.size:
+            peek1 = self.code[j]
+            if Is.floating_point(peek1):
+                if fp:
+                    # second floating-point char
+                    # breaking so it can be used as
+                    # getattr
+                    break
+                else:
+                    fp = True
+                    digits.append(".")
+            elif Is.any_digit(peek1):
+                digits.append(peek1)
+            else:
+                break
+            j += 1
+
+        if fp:
+            self.add_token(TokenType.FLOAT, float("".join(digits)))
+        else:
+            if leading_zero:
+                raise SyntaxError("Integer with leading zero")
+            else:
+                self.add_int_or_long("".join(digits))
+
+        # this line must be after add_token for lineno to be correct
+        self.i = j
+
     def tokenize_number(self):
 
         if not self.p1.isnumeric():
@@ -755,68 +840,16 @@ class _Tokenizer(_TokenizerBase):
 
         if leading_zero:
             if Is.hex_lead(self.p2):
-                # hexadecimal number
-                j = self.i + 2
-                digits = []
-
-                while j < self.size:
-                    peek1 = self.code[j]
-                    if Is.underscore(peek1):
-                        pass
-                    elif Is.any_hex(peek1):
-                        digits.append(peek1)
-                    else:
-                        break
-                    j += 1
-                self.add_int_or_long("".join(digits), 16)
-                self.i = j
+                self.tokenize_hex()
                 return True
             elif Is.bin_lead(self.p2):
-                # hexadecimal number
-                j = self.i + 2
-                digits = []
-
-                while j < self.size:
-                    peek1 = self.code[j]
-                    if Is.underscore(peek1):
-                        pass
-                    elif Is.any_bin(peek1):
-                        digits.append(peek1)
-                    else:
-                        break
-                    j += 1
-                self.add_int_or_long("".join(digits), 2)
-                self.i = j
+                self.tokenize_bin()
                 return True
             elif Is.oct_lead(self.p2):
-                # oct number
-                j = self.i + 2
-                digits = []
-
-                while j < self.size:
-                    peek1 = self.code[j]
-                    if Is.underscore(peek1):
-                        pass
-                    elif Is.any_oct(peek1):
-                        digits.append(peek1)
-                    else:
-                        break
-                    j += 1
-                self.add_int_or_long("".join(digits), 8)
-                self.i = j
+                self.tokenize_oct()
                 return True
 
-        # check for numbers
-
-        j = self.i + 1
-        while j < self.size and self.code[j].isnumeric():
-            j += 1
-
-        self.add_int_or_long(self.code[self.i:j])
-
-
-        # this line must be after add_token for lineno to be correct
-        self.i = j
+        self.tokenize_int_or_float(leading_zero)
 
         return True
 
@@ -1052,7 +1085,7 @@ test_funcdef = """
 number = Union[int, float]
 
 sqrt = def(x: number) -> number {
-    return x ** 0.5
+    return x ** 0.5001
 }
 
 # test-test
