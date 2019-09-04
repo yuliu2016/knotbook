@@ -11,8 +11,9 @@ import sys
 #  add underscore_delimiter
 #  add escape chars
 #  ordered set for operators?
-#  check for negative numbers
+#  check for negative numbers (only if it's preceeded by an operator, or if it's the first)
 #  check for starting float points
+#  prevent two underscores in numbers
 
 
 class TokenType(IntEnum):
@@ -355,6 +356,10 @@ class Is:
     @staticmethod
     def floating_point(ch: str):
         return ch == "."
+
+    @staticmethod
+    def complex_postfix(ch: str):
+        return ch == "j"
 
 
 class _Visitor:
@@ -799,29 +804,39 @@ class _Tokenizer(_TokenizerBase):
 
     def tokenize_int_or_float(self, leading_zero: bool):
 
-        fp = False
-        digits = []
+        is_float = False
+        is_complex = False
+
+        # there is already a digit in here
+        digits = [self.p1]
 
         j = self.i + 1
         while j < self.size:
             peek1 = self.code[j]
             if Is.floating_point(peek1):
-                if fp:
+                if is_float:
                     # second floating-point char
                     # breaking so it can be used as
                     # getattr
                     break
                 else:
-                    fp = True
+                    is_float = True
                     digits.append(".")
             elif Is.any_digit(peek1):
                 digits.append(peek1)
+            elif Is.complex_postfix(peek1):
+                # used to create a imaginary or complex number
+                is_complex = True
+                break
             else:
                 break
             j += 1
 
-        if fp:
+        if is_float:
             self.add_token(TokenType.FLOAT, float("".join(digits)))
+        elif is_complex:
+            print(digits)
+            self.add_token(TokenType.COMPLEX, float("".join(digits)))
         else:
             if leading_zero:
                 raise SyntaxError("Integer with leading zero")
@@ -1085,7 +1100,7 @@ test_funcdef = """
 number = Union[int, float]
 
 sqrt = def(x: number) -> number {
-    return x ** 0.5001
+    return x ** (0.5001 + 2j)
 }
 
 # test-test
