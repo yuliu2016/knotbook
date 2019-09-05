@@ -109,11 +109,13 @@ object AppView {
                 item {
                     name("Undo")
                     shortcut(KeyCode.Z, control = true)
+                    icon(MDI_UNDO, 14)
                 }
 
                 item {
                     name("Redo")
                     shortcut(KeyCode.Z, control = true, shift = true)
+                    icon(MDI_REDO, 14)
                 }
 
                 separator()
@@ -146,11 +148,16 @@ object AppView {
                     shortcut(KeyCode.V, control = true, shift = true)
                 }
                 item {
+                    name("Delete")
+                }
+                separator()
+                item {
                     name("Select All")
                     shortcut(KeyCode.A, control = true)
                 }
                 item {
-                    name("Delete")
+                    name("Deselect All")
+                    shortcut(KeyCode.A, control = true, shift = true)
                 }
                 separator()
                 item {
@@ -185,53 +192,51 @@ object AppView {
                 }
                 separator()
                 item {
-                    name("Split Vertically")
+                    name("Expand Tree")
+                    icon(MDI_UNFOLD_MORE, 14)
+                }
+                item {
+                    name("Collapse Tree")
+                    icon(MDI_UNFOLD_LESS, 14)
+                }
+                separator()
+                item {
+                    name("Split Table Vertically")
                     icon(MDI_SWAP_HORIZONTAL, 14)
                 }
                 item {
                     name("Split in New Window")
                     shortcut(KeyCode.N, control = true, shift = true)
                 }
+                item {
+                    name("Close Current Table")
+                    shortcut(KeyCode.W, control = true)
+                }
+                item {
+                    name("Close Others")
+                    shortcut(KeyCode.W, control = true, alt = true)
+                }
                 separator()
                 item {
                     name("Zoom In")
                     icon(MDI_MAGNIFY_PLUS, 14)
+                    shortcut(KeyCode.PLUS, control = true)
                 }
                 item {
                     name("Zoom Out")
                     icon(MDI_MAGNIFY_PLUS, 14)
+                    shortcut(KeyCode.MINUS, control = true)
                 }
                 item {
                     name("Reset Zoom")
-                }
-            }
-        }
-        menu {
-            name("Tree")
-            modify {
-                item {
-                    name("Toggle Visibility")
-                    icon(MDI_EYE, 14)
+                    shortcut(KeyCode.DIGIT0, control = true)
                 }
                 separator()
                 item {
-                    name("Collapse All")
+                    name("Freeze Columns")
                 }
                 item {
-                    name("Expand All")
-                }
-                item {
-                    name("Expand to Current Table")
-                }
-                item {
-                    name("Collapse Tree")
-                }
-                separator()
-                item {
-                    name("Delete Feature")
-                }
-                item {
-                    name("Supress Feature")
+                    name("Unfreeze Columns")
                 }
             }
         }
@@ -289,19 +294,9 @@ object AppView {
             name("Start")
             modify {
                 item {
-                    name("Data Agent Manager")
-                    icon(MDI_FILE_IMPORT, 14)
-                }
-                item {
                     name("WebCam View")
                     icon(MDI_CAMERA, 14)
-                    action {
-                        KnotCameraTest.test()
-                    }
-                }
-                item {
-                    name("Plugin Manager")
-                    icon(MDI_PUZZLE, 14)
+                    action { KnotCameraTest.test() }
                 }
                 item {
                     name("Drive Path Planner")
@@ -330,11 +325,24 @@ object AppView {
             name("Help")
             modify {
                 item {
-                    name("Show releases on GitHub")
+                    name("Show JVM Properties")
+                    icon(MDI_COFFEE, 14)
+                    action {
+                        val properties = System.getProperties().entries.sortedBy { it.key.toString() }
+                                .joinToString("\n") { "${it.key}=${it.value}" }
+                        CodeEditor("JVM Properties", false, "Ok", "Close",
+                                properties, {}, Syntax.Properties)
+                    }
                 }
+                item {
+                    name("Show releases on GitHub")
+                    icon(MDI_GITHUB_CIRCLE, 14)
+                }
+                separator()
                 item {
                     name("About")
                     action { AboutSplash.splash() }
+                    icon(MDI_INFORMATION_OUTLINE, 14)
                     shortcut(KeyCode.F1)
                 }
             }
