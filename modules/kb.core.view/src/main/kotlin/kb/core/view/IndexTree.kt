@@ -1,15 +1,15 @@
 package kb.core.view
 
 import javafx.scene.control.TreeItem
-import javafx.scene.paint.Color
+import javafx.scene.control.TreeView
 import kb.core.fx.fontIcon
 import kb.core.fx.runOnFxThread
 import kb.core.icon.FontIcon
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid.*
+import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 
 @Suppress("unused")
-class DashboardActivity {
-    internal val view = DashboardView()
+class IndexTree {
+    val tree = TreeView<Entity>()
 
 //    private val memoryRepository = MemoryRepository()
 //
@@ -30,9 +30,9 @@ class DashboardActivity {
 //    }
 
     private fun selectAndFocus(item: TreeItem<Entity>) {
-        view.indexTree.selectionModel.select(item)
+        tree.selectionModel.select(item)
         runOnFxThread {
-            view.indexTree.requestFocus()
+            tree.requestFocus()
         }
     }
 
@@ -58,7 +58,7 @@ class DashboardActivity {
 //        selectAndSet(item)
     }
 
-    private val entityRoot = Entity(listOf(), FontIcon.of(ICE_CREAM), mutableListOf())
+    private val entityRoot = Entity(EntityText("Application"), FontIcon.of(MDI_APPLICATION), null, mutableListOf())
     private val root = TreeItem<Entity>(null)
 
 //    init {
@@ -88,25 +88,27 @@ class DashboardActivity {
 
     init {
         entityRoot.children?.addAll(listOf(
-                Entity(listOf(EntityText("Memory Repo")), fontIcon(BOLT, 13), mutableListOf(
-                        Entity("Empty View", fontIcon(MINUS, 13)),
-                        Entity(listOf(EntityText("2018iri.csv")), fontIcon(TABLE, 13), mutableListOf(
-                                Entity("Filesystem Link", fontIcon(LINK, 13)),
-                                Entity("User Edit Mask", fontIcon(USER_EDIT, 13)),
-                                Entity("Formulas", fontIcon(SUPERSCRIPT, 13)),
-                                Entity(listOf(EntityText("Filter"), EntityText("Team={865}", Color.GRAY)), fontIcon(FILTER, 13)),
-                                Entity(listOf(EntityText("Sort"), EntityText("Scale", Color.GRAY)), fontIcon(SORT_ALPHA_UP, 13)),
-                                Entity(listOf(EntityText("Sort"), EntityText("Switch", Color.GRAY)), fontIcon(SORT_ALPHA_UP, 13)),
-                                Entity(listOf(EntityText("Colour Scale"), EntityText("Auto Switch", Color.GRAY)), fontIcon(PAINT_BRUSH, 13))
-                        ))
-                )),
-                Entity(listOf(EntityText("Local File"), EntityText("~/kb192/data", Color.GRAY)), fontIcon(DESKTOP, 13)),
-                Entity("Android Scouting App", fontIcon(QRCODE, 13)),
-                Entity("The Blue Alliance")
+                Entity(EntityText("In-Memory Data"), fontIcon(MDI_MEMORY, 14), null, (0..15).flatMap {
+                    listOf(
+                        Entity("Empty View", fontIcon(MDI_BORDER_NONE, 14)),
+                        Entity(EntityText("2018iri.csv"), fontIcon(MDI_FILE_DELIMITED, 14), null, mutableListOf(
+                                Entity("Filesystem Link", fontIcon(MDI_LINK, 14)),
+                                Entity("User Edit Mask", fontIcon(MDI_PENCIL, 14)),
+                                Entity("Formulas", fontIcon(MDI_FUNCTION, 14)),
+                                Entity(EntityText("Filter"), fontIcon(MDI_FILTER, 14), "Team={865}"),
+                                Entity(EntityText("Sort", bold = true), fontIcon(MDI_SORT_ASCENDING, 14), "Scale"),
+                                Entity(EntityText("Sort", bold = true), fontIcon(MDI_SORT_DESCENDING, 14), "Switch"),
+                                Entity(EntityText("Colour Scale", bold = true), fontIcon(MDI_GRADIENT, 14), "Auto Switch")
+                        )))
+                }.toMutableList()
+                ),
+                Entity(EntityText("Local Folder", bold = true), fontIcon(MDI_MONITOR, 14), "~/KB/repo"),
+                Entity("Android Scouting App", fontIcon(MDI_QRCODE, 14)),
+                Entity("The Blue Alliance", fontIcon(MDI_LAMP, 14))
         ))
-        view.indexTree.setCellFactory { EntityCell() }
-        view.indexTree.root = root
-        view.indexTree.isShowRoot = false
+        tree.setCellFactory { EntityCell() }
+        tree.root = root
+        tree.isShowRoot = false
         regenerate()
     }
 
@@ -121,6 +123,7 @@ class DashboardActivity {
                     regenerateChildren(item, entity)
                 }
             })
+            root.isExpanded = true
         }
     }
 }

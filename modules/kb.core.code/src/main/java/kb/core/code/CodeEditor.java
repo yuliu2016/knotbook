@@ -47,6 +47,8 @@ public class CodeEditor {
             area.setFont(area.getFont().deriveFont(15f));
             area.setText(initialText);
             area.setEditable(editable);
+            area.setLineWrap(true);
+            area.setWrapStyleWord(true);
 
             RTextScrollPane sp = new RTextScrollPane(area);
             sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);

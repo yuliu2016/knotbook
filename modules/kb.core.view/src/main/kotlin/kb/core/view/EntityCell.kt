@@ -4,6 +4,7 @@ import javafx.geometry.Pos
 import javafx.scene.control.TreeCell
 import javafx.scene.input.ClipboardContent
 import javafx.scene.input.TransferMode
+import javafx.scene.paint.Color
 import kb.core.fx.*
 
 class EntityCell : TreeCell<Entity>() {
@@ -71,20 +72,23 @@ class EntityCell : TreeCell<Entity>() {
             alignment = Pos.CENTER_LEFT
             graphic = hbox {
                 alignment = Pos.CENTER_LEFT
-                if (item.icon != null) {
-                    add(item.icon.centerIn(20))
-                }
-                children.addAll(item.text.map {
-                    label {
-                        text = it.string
-                        if (it.color != null) {
-                            textFill = it.color
-                        }
-                        if (it.bold) {
-                            style = "-fx-font-weight:bold"
-                        }
+                add(item.icon.centerIn(20))
+                add(label {
+                    text = item.text.string
+                    alignment = Pos.CENTER_LEFT
+                    if (item.text.color != null) {
+                        textFill = item.text.color
+                    }
+                    if (item.text.bold) {
+                        style = "-fx-font-weight:bold"
                     }
                 })
+                if (item.supportText != null) {
+                    add(label {
+                        text = item.supportText
+                        textFill = Color.GRAY
+                    })
+                }
             }
         }
 

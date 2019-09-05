@@ -36,6 +36,8 @@ fun Menu.icon(icon: Ikon, iconSize: Int) {
 @FXKtDSL
 fun MenuItem.icon(icon: Ikon, iconSize: Int) {
     graphic = fontIcon(icon, iconSize)
+    // this is so that icons are moved away from the text
+    graphic.translateX = -2.0
 }
 
 typealias Combination = KeyCodeCombination
