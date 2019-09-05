@@ -1,14 +1,17 @@
 package kb.core.view
 
 import javafx.beans.property.SimpleStringProperty
+import javafx.geometry.Insets
 import javafx.geometry.Orientation
+import javafx.geometry.Pos
 import javafx.scene.Scene
 import javafx.scene.control.*
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.Region
+import javafx.scene.paint.Color
 import javafx.stage.Stage
-import kb.core.bowline.testBowline
+import kb.core.bowline.Bowline
 import kb.core.camera.fx.KnotCameraTest
 import kb.core.code.CodeEditor
 import kb.core.code.Syntax
@@ -302,42 +305,43 @@ object AppView {
                     icon(MDI_FILTER_OUTLINE, 14)
                 }
                 item {
-                    name("Format Cells")
-                    shortcut(KeyCode.DIGIT1, control = true)
-                    icon(MDI_FORMAT_PAINT, 14)
+                    name("Colour Scales")
+                    icon(MDI_GRADIENT, 14)
+                }
+                item {
+                    name("Histogram")
+                    icon(MDI_CHART_BAR, 14)
+                }
+                item {
+                    name("Statistics")
+                    icon(MDI_TRENDING_UP, 14)
                 }
                 separator()
                 item {
                     name("The Blue Alliance Integration")
                     icon(MDI_CLOUD_SYNC, 14)
-                    shortcut(KeyCode.DIGIT1, alt = true)
                 }
                 item {
                     name("NetworkTables")
                     icon(MDI_ACCESS_POINT, 14)
-                    shortcut(KeyCode.DIGIT2, alt = true)
                 }
                 item {
                     name("Python Script Executor")
                     icon(MDI_LANGUAGE_PYTHON, 14)
-                    shortcut(KeyCode.DIGIT3, alt = true)
                 }
                 item {
                     name("Android Scouting App")
                     icon(MDI_QRCODE, 14)
-                    shortcut(KeyCode.DIGIT4, alt = true)
                 }
                 item {
                     name("WebCam QR Code Scanner")
                     icon(MDI_CAMERA, 14)
                     action { KnotCameraTest.test() }
-                    shortcut(KeyCode.DIGIT5, alt = true)
                 }
                 item {
                     name("Drive Path Planner")
                     icon(MDI_NAVIGATION, 13)
                     action { runPathPlanner() }
-                    shortcut(KeyCode.DIGIT6, alt = true)
                 }
             }
         }
@@ -347,7 +351,15 @@ object AppView {
                 item {
                     name("Try BowlineTableView")
                     icon(MDI_BOWL, 14)
-                    action { testBowline() }
+                    action {
+                        val stage = Stage()
+                        stage.title = "BowlineTableView"
+                        stage.scene = Scene(Bowline())
+                        stage.scene.stylesheets.addAll("/knotbook.css", "/light.css")
+                        stage.width = 900.0
+                        stage.height = 600.0
+                        stage.show()
+                    }
                 }
                 item {
                     name("Debug with Scenic View")
@@ -434,8 +446,16 @@ object AppView {
             orientation = Orientation.HORIZONTAL
             vgrow()
             addFixed(indexTree.tree, vbox {
-                add(textField {
-                    promptText = "Enter formula here"
+                add(hbox {
+
+                    prefHeight = 18.0
+                    align(Pos.CENTER)
+                    add(fontIcon(MDI_MEMORY, 14).centerIn(20))
+                    add(Label("Local Memory/"))
+                    add(Label("Number Generator").apply {
+                        textFill = Color.DARKBLUE
+                    })
+                    padding = Insets(0.0, 4.0, 0.0, 4.0)
                 })
                 add(table.vgrow())
             })
