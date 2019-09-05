@@ -67,11 +67,6 @@ object AppView {
                 }
                 separator()
                 item {
-                    name("Synchronize")
-                    icon(MDI_RELOAD, 14)
-                    shortcut(KeyCode.Y, control = true, alt = true)
-                }
-                item {
                     name("Application Properties")
                     icon(MDI_TUNE, 14)
                     shortcut(KeyCode.P, control = true)
@@ -82,6 +77,14 @@ object AppView {
                             Registry.save()
                         }, Syntax.Properties)
                     }
+                }
+                item {
+                    name("Synchronize")
+                    icon(MDI_RELOAD, 14)
+                    shortcut(KeyCode.Y, control = true, alt = true)
+                }
+                item {
+                    name("Restart")
                 }
                 separator()
                 item {
@@ -205,7 +208,7 @@ object AppView {
                     icon(MDI_SWAP_HORIZONTAL, 14)
                 }
                 item {
-                    name("Split in New Window")
+                    name("Open in New Window")
                     shortcut(KeyCode.N, control = true, shift = true)
                 }
                 item {
@@ -241,7 +244,7 @@ object AppView {
             }
         }
         menu {
-            name("Data")
+            name("Table")
             modify {
                 item {
                     name("Create Empty Table")
@@ -268,56 +271,73 @@ object AppView {
                 }
                 separator()
                 item {
-                    name("Rebuild Toolbar")
+                    name("Rebuild")
                     shortcut(KeyCode.R, control = true)
                     icon(MDI_WRENCH, 14)
                 }
                 item {
-                    name("Find and Replace")
+                    name("Find and Replace in Cells")
                     icon(MDI_FILE_FIND, 14)
                     shortcut(KeyCode.F, control = true)
                 }
                 item {
-                    name("Cell and Formula Editor")
+                    name("Edit Cells")
+                    icon(MDI_TABLE_EDIT, 14)
                 }
                 item {
-                    name("Sort and Filter Toolbar")
-                }
-                item {
-                    name("Format Toolbar")
-                    shortcut(KeyCode.DIGIT1, control = true)
-                    icon(MDI_FORMAT_PAINT, 14)
+                    name("Reshape Grid")
+                    icon(MDI_GRID, 14)
                 }
             }
         }
         menu {
-            name("Start")
+            name("Tools")
             modify {
                 item {
-                    name("WebCam View")
+                    name("Sort Columns")
+                    icon(MDI_SORT, 14)
+                }
+                item {
+                    name("Filter Rows")
+                    icon(MDI_FILTER_OUTLINE, 14)
+                }
+                item {
+                    name("Format Cells")
+                    shortcut(KeyCode.DIGIT1, control = true)
+                    icon(MDI_FORMAT_PAINT, 14)
+                }
+                separator()
+                item {
+                    name("The Blue Alliance Integration")
+                    icon(MDI_CLOUD_SYNC, 14)
+                    shortcut(KeyCode.DIGIT1, alt = true)
+                }
+                item {
+                    name("NetworkTables")
+                    icon(MDI_ACCESS_POINT, 14)
+                    shortcut(KeyCode.DIGIT2, alt = true)
+                }
+                item {
+                    name("Python Script Executor")
+                    icon(MDI_LANGUAGE_PYTHON, 14)
+                    shortcut(KeyCode.DIGIT3, alt = true)
+                }
+                item {
+                    name("Android Scouting App")
+                    icon(MDI_QRCODE, 14)
+                    shortcut(KeyCode.DIGIT4, alt = true)
+                }
+                item {
+                    name("WebCam QR Code Scanner")
                     icon(MDI_CAMERA, 14)
                     action { KnotCameraTest.test() }
+                    shortcut(KeyCode.DIGIT5, alt = true)
                 }
                 item {
                     name("Drive Path Planner")
                     icon(MDI_NAVIGATION, 13)
                     action { runPathPlanner() }
-                }
-                item {
-                    name("Scenic View")
-                    action { Alert(Alert.AlertType.INFORMATION, "Scenic View is not supported in this build").show() }
-                    icon(MDI_CLOUD_OUTLINE, 14)
-                }
-                item {
-                    name("Bowline Table")
-                    icon(MDI_BOWL, 14)
-                    action { testBowline() }
-                }
-                separator()
-                item {
-                    name("Garbage Collection Cycle")
-                    action { GCSplash.splash() }
-                    shortcut(KeyCode.B, control = true)
+                    shortcut(KeyCode.DIGIT6, alt = true)
                 }
             }
         }
@@ -325,7 +345,27 @@ object AppView {
             name("Help")
             modify {
                 item {
-                    name("Show JVM Properties")
+                    name("Try BowlineTableView")
+                    icon(MDI_BOWL, 14)
+                    action { testBowline() }
+                }
+                item {
+                    name("Debug with Scenic View")
+                    action { Alert(Alert.AlertType.INFORMATION, "Scenic View is not supported in this build").show() }
+                    icon(MDI_CLOUD_OUTLINE, 14)
+                }
+                separator()
+                item {
+                    name("Mark for Garbage Collection")
+                    action { GCSplash.splash() }
+                    icon(MDI_DELETE_SWEEP, 14)
+                    shortcut(KeyCode.B, control = true)
+                }
+                item {
+                    name("Revert App Properties to Default")
+                }
+                item {
+                    name("JVM Properties")
                     action {
                         val properties = System
                                 .getProperties()
@@ -345,6 +385,7 @@ object AppView {
                                 properties, {}, Syntax.Properties)
                     }
                 }
+                separator()
                 item {
                     name("Show releases on GitHub")
                     icon(MDI_GITHUB_CIRCLE, 14)
