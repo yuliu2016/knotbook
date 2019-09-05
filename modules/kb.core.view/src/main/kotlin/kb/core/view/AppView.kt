@@ -326,11 +326,22 @@ object AppView {
             modify {
                 item {
                     name("Show JVM Properties")
-                    icon(MDI_COFFEE, 14)
                     action {
-                        val properties = System.getProperties().entries.sortedBy { it.key.toString() }
-                                .joinToString("\n") { "${it.key}=${it.value}" }
-                        CodeEditor("JVM Properties", false, "Ok", "Close",
+                        val properties = System
+                                .getProperties()
+                                .entries
+                                .sortedBy { it.key.toString() }
+                                .joinToString("\n") {
+                                    val strVal = it.value.toString()
+                                    val value = when {
+                                        strVal.endsWith("\\") -> "'$strVal'"
+                                        strVal == System.lineSeparator() -> "LINE_SEPARATOR"
+                                        else -> strVal
+                                    }
+                                    "${it.key}=$value"
+                                }
+                        CodeEditor("JVM Properties (Read-Only)",
+                                false, "Ok", "Close",
                                 properties, {}, Syntax.Properties)
                     }
                 }
