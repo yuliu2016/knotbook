@@ -2,17 +2,15 @@ from typing import *
 from enum import IntEnum, Enum
 from io import StringIO
 import sys
+import struct
 
 
 # TODO
-#  fix space tokenizer
 #  add multi-line strings
 #  add floats and exponents
-#  add underscore_delimiter
 #  add escape chars
-#  ordered set for operators?
 #  check for negative numbers
-#  (only if it's preceeded by an operator, or if it's the first)
+#     (only if it's preceeded by an operator, or if it's the first)
 #  check for starting float points
 #  prevent two underscores in numbers
 
@@ -151,7 +149,7 @@ class Operator(Enum):
         return self.name
 
 
-single_operators_set = {
+single_operators_set = [
     Operator.DOT,
     Operator.COMMA,
     Operator.ASSIGN,
@@ -177,7 +175,7 @@ single_operators_set = {
     Operator.BIT_AND,
     Operator.BIT_NOT,
     Operator.BIT_XOR
-}
+]
 
 single_operators = {op.value: op for op in single_operators_set}
 
@@ -185,7 +183,7 @@ single_operators = {op.value: op for op in single_operators_set}
 # Double-char operators
 #
 
-double_operators_set = {
+double_operators_set = [
     Operator.EQUAL,
     Operator.NOT_EQUAL,
     Operator.LESS_EQUAL,
@@ -209,7 +207,7 @@ double_operators_set = {
 
     Operator.SHIFT_LEFT,
     Operator.SHIFT_RIGHT
-}
+]
 
 double_operators = {op.value: op for op in double_operators_set}
 
@@ -217,10 +215,10 @@ double_operators = {op.value: op for op in double_operators_set}
 # Triple-char operators
 #
 
-triple_operators_set = {
+triple_operators_set = [
     Operator.FDIV_ASSIGN,
     Operator.EXP_ASSIGN
-}
+]
 
 triple_operators = {op.value: op for op in triple_operators_set}
 
@@ -364,6 +362,18 @@ class Is:
     @staticmethod
     def complex_postfix(ch: str):
         return ch == "j"
+
+    @staticmethod
+    def doc_ref_start(ch: str):
+        return ch == "["
+
+    @staticmethod
+    def doc_ref_end(ch: str):
+        return ch == "]"
+
+    @staticmethod
+    def doc_ref_symbol(ch: str):
+        return Is.symbol(ch) or ch == "." or ch == " "
 
 
 class _Visitor:
@@ -584,7 +594,7 @@ class _TokenizerBase(_Visitor):
         self.tokens.append(tk)
 
 
-class _HandoffTokenizer(_TokenizerBase):
+class _ContextTokenizer(_TokenizerBase):
     """
     A TokenizerBase that is derived from another TokenizerBase.
 
@@ -627,18 +637,28 @@ class _HandoffTokenizer(_TokenizerBase):
         pass
 
 
-class _DocTokenizer(_HandoffTokenizer):
+class _DocTokenizer(_ContextTokenizer):
+    """
+    Doc-String Tokenizer
+    """
+
     def __init__(self, parent: _TokenizerBase, in_docstr: bool):
         super().__init__(parent)
         self.in_docstr = in_docstr
 
     def tokenize_in_context(self):
-        j = self.i + 3
+
+        # add a token for the starting characters
 
         self.add_token(TokenType.DOC_NEW, None)
-        self.i = j
+
+        # exclude the starting characters
+        self.i += 3
 
         visitor = _Visitor(self.code, self.i)
+
+        in_ref = False
+        last_i = self.i
 
         while visitor.i < self.size:
             visitor.peek_all()
@@ -646,10 +666,40 @@ class _DocTokenizer(_HandoffTokenizer):
             if not (self.in_docstr or Is.close_multi_comment(visitor.p2)):
                 break
 
+            if in_ref:
+                if Is.doc_ref_end(visitor.p1):
+                    in_ref = False
+
+                    if last_i == visitor.i:
+                        raise SyntaxError("DocRefs cannot be empty")
+
+                    self.add_token(TokenType.DOC_REF,
+                                   self.code[last_i: visitor.i])
+
+                    self.i = visitor.i + 1
+                    last_i = self.i
+
+                elif last_i == visitor.i and Is.any_digit(visitor.p1):
+                    raise SyntaxError("DocRefs cannot start with a digit")
+
+                elif not Is.doc_ref_symbol(visitor.p1):
+                    raise SyntaxError(f"DocRefs cannot contain {visitor.p1}")
+            else:
+                if Is.doc_ref_start(visitor.p1):
+                    in_ref = True
+
+                    self.add_token(TokenType.DOC_STR,
+                                   self.code[last_i: visitor.i])
+
+                    self.i = visitor.i + 1
+                    last_i = self.i
+
             if Is.close_multi_comment(visitor.p2):
                 self.in_docstr = False
+
                 # add extra char
                 visitor.i += 1
+
             visitor.i += 1
 
         self.add_token(TokenType.DOC_STR,
@@ -1066,7 +1116,7 @@ def format_printing(tokens: List[Token]):
 
         if token_type == TokenType.KEYWORD:
             value_formatted = wrap(Colour.BRIGHT_BLUE, value_formatted)
-        elif token_type == TokenType.SYMBOL or token_value == TokenType.DOC_REF:
+        elif token_type == TokenType.SYMBOL or token_type == TokenType.DOC_REF:
             value_formatted = wrap(Colour.MAGENTA, value_formatted)
         elif token_type == TokenType.INTEGER:
             value_formatted = wrap(Colour.BLUE, value_formatted)
@@ -1132,7 +1182,7 @@ print("Hello World")
 """
 
 test_docstr = """
-/** Hello */
+/** [hello.world] */
 a = 3
 """
 
@@ -1150,4 +1200,4 @@ print(fib(10))
 """
 
 if __name__ == '__main__':
-    print(format_printing(tokenize_t(test_recursive_fibonacci)))
+    print(format_printing(tokenize_t(test_docstr)))
