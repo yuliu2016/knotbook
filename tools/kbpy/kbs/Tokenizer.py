@@ -428,91 +428,6 @@ class _Visitor:
         raise SyntaxError(f"{self.p1} is not a recognized syntax")
 
 
-class _SpaceTokenizer(_Visitor):
-    """
-    A Visitor that takes care of visiting the code to find
-    spaces and comments
-    """
-
-    def __init__(self, code: str,
-                 initial_index: int,
-                 in_comment: bool,
-                 in_multi_comment: int,
-                 newline: bool):
-        # in_multi_comment is an int because it could be nested
-        super().__init__(code, initial_index)
-
-        self.in_comment = in_comment
-        self.in_multi_comment = in_multi_comment
-        self.newline = newline
-
-        if self.in_multi_comment > 0:
-            # because the parsing needs to start an extra char later
-            self.i += 1
-
-    def is_stop_state(self):
-        """
-        Check for the stop state on the visitor
-        """
-
-        # check that it's still in a commenting state, or
-        # the next character is a comment
-        if not (self.in_comment
-                or self.in_multi_comment > 0
-                or Is.any_space(self.p1)
-                or Is.single_comment(self.p1)
-                or Is.open_multi_comment(self.p2)):
-            return True
-
-        # Fix: docstring with spaces before it will trigger multi-line
-        # comments instead of a docstr
-        if Is.open_docstr(self.p3) and self.in_multi_comment == 0:
-            return True
-
-        return False
-
-    def tokenize(self):
-
-        while self.i < self.size:
-
-            self.peek_all()
-
-            # Check for the stop state
-            if self.is_stop_state():
-                break
-
-            if Is.crlf(self.p2):
-
-                # This is used to support CRLF files
-
-                self.in_comment = False
-                self.newline = True
-                self.i += 2
-            elif Is.newline(self.p1):
-                self.in_comment = False
-                self.newline = True
-
-            if Is.single_comment(self.p1):
-                self.in_comment = True
-
-            if Is.open_multi_comment(self.p2):
-                self.in_multi_comment += 1
-                # since peek2 is not None, this does not break indexing
-                self.i += 1
-
-            elif Is.close_multi_comment(self.p2):
-                self.in_multi_comment -= 1
-                # since peek2 is not None, this does not break indexing
-                self.i += 1
-
-            self.i += 1
-
-        # This is the case when in_multi_line_comment is not 0
-        # when the while loop has iterated through the entire piece of code
-        if self.in_multi_comment > 0:
-            raise SyntaxError("Comments not closed; Unexpected EOF")
-
-
 class _TokenizerBase(_Visitor):
     """
     A Visitor that also keeps track of a list of tokens
@@ -637,14 +552,105 @@ class _ContextTokenizer(_TokenizerBase):
         pass
 
 
+class _SpaceTokenizer(_Visitor):
+    """
+    A Visitor that takes care of visiting the code to find
+    spaces and comments
+    """
+
+    def __init__(self, code: str,
+                 initial_index: int,
+                 in_comment: bool,
+                 in_multi_comment: int,
+                 newline: bool):
+        # in_multi_comment is an int because it could be nested
+        super().__init__(code, initial_index)
+
+        self.in_comment = in_comment
+        self.in_multi_comment = in_multi_comment
+        self.newline = newline
+
+        if self.in_multi_comment > 0:
+            # because the parsing needs to start an extra char later
+            self.i += 1
+
+    def is_stop_state(self):
+        """
+        Check for the stop state on the visitor
+        """
+
+        # check that it's still in a commenting state, or
+        # the next character is a comment
+        if not (self.in_comment
+                or self.in_multi_comment > 0
+                or Is.any_space(self.p1)
+                or Is.single_comment(self.p1)
+                or Is.open_multi_comment(self.p2)):
+            return True
+
+        # Fix: docstring with spaces before it will trigger multi-line
+        # comments instead of a docstr
+        if Is.open_docstr(self.p3) and self.in_multi_comment == 0:
+            return True
+
+        return False
+
+    def tokenize(self):
+
+        while self.i < self.size:
+
+            self.peek_all()
+
+            # Check for the stop state
+            if self.is_stop_state():
+                break
+
+            if Is.crlf(self.p2):
+
+                # This is used to support CRLF files
+
+                self.in_comment = False
+                self.newline = True
+                self.i += 2
+            elif Is.newline(self.p1):
+                self.in_comment = False
+                self.newline = True
+
+            if Is.single_comment(self.p1):
+                self.in_comment = True
+
+            if Is.open_multi_comment(self.p2):
+                self.in_multi_comment += 1
+                # since peek2 is not None, this does not break indexing
+                self.i += 1
+
+            elif Is.close_multi_comment(self.p2):
+                self.in_multi_comment -= 1
+                # since peek2 is not None, this does not break indexing
+                self.i += 1
+
+            self.i += 1
+
+        # This is the case when in_multi_line_comment is not 0
+        # when the while loop has iterated through the entire piece of code
+        if self.in_multi_comment > 0:
+            raise SyntaxError("Comments not closed; Unexpected EOF")
+
+
 class _DocTokenizer(_ContextTokenizer):
     """
     Doc-String Tokenizer
     """
 
-    def __init__(self, parent: _TokenizerBase, in_docstr: bool):
+    def __init__(self, parent: _TokenizerBase):
         super().__init__(parent)
-        self.in_docstr = in_docstr
+        self.in_docstr = True
+
+    def tokenize_str(self):
+        pass  # TODO
+
+    def tokenize_ref(self):
+        pass  # TODO
 
     def tokenize_in_context(self):
 
@@ -713,6 +719,11 @@ class _DocTokenizer(_ContextTokenizer):
         self.i = visitor.i
 
 
+class _NumberTokenizer(_ContextTokenizer):
+    def __init__(self, pred: _TokenizerBase):
+        super().__init__(pred)
+
+
 class _Tokenizer(_TokenizerBase):
     """
     The main tokenizer of the code, responsible for returning
@@ -757,7 +768,7 @@ class _Tokenizer(_TokenizerBase):
         if not in_docstr:
             return False
 
-        tk = _DocTokenizer(self, in_docstr)
+        tk = _DocTokenizer(self)
         tk.tokenize()
 
         return True
