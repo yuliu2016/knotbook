@@ -903,6 +903,7 @@ class _Tokenizer(_TokenizerBase):
             elif Is.complex_postfix(peek1):
                 # used to create a imaginary or complex number
                 is_complex = True
+                j += 1
                 break
             else:
                 break
@@ -1090,6 +1091,17 @@ delimeter_token_types = {
     TokenType.DOC_END
 }
 
+number_literal_types = {
+    TokenType.INTEGER,
+    TokenType.FLOAT,
+    TokenType.COMPLEX
+}
+
+symbol_types = {
+    TokenType.SYMBOL,
+    TokenType.DOC_REF
+}
+
 
 def format_printing(tokens: List[Token]):
     """
@@ -1118,18 +1130,22 @@ def format_printing(tokens: List[Token]):
         if token_type == TokenType.STRING or token_type == TokenType.DOC_STR:
             # print repr for escape chars in strings
             value_formatted = wrap(Colour.GREEN, repr(token_value))
+
         elif token_type == TokenType.OPERATOR:
             # token_value is an Operator enum so .value is needed
             value_formatted = f" {token_value.value}"
+
         else:
             # to line up with repr calls
             value_formatted = f" {token_value}"
 
         if token_type == TokenType.KEYWORD:
             value_formatted = wrap(Colour.BRIGHT_BLUE, value_formatted)
-        elif token_type == TokenType.SYMBOL or token_type == TokenType.DOC_REF:
+
+        elif token_type in symbol_types:
             value_formatted = wrap(Colour.MAGENTA, value_formatted)
-        elif token_type == TokenType.INTEGER:
+
+        elif token_type in number_literal_types:
             value_formatted = wrap(Colour.BLUE, value_formatted)
 
         print("{}  {}".format(type_padded, value_formatted), file=io)
@@ -1211,4 +1227,4 @@ print(fib(10))
 """
 
 if __name__ == '__main__':
-    print(format_printing(tokenize_t(test_docstr)))
+    print(format_printing(tokenize_t(test_funcdef)))
