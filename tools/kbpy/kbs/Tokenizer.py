@@ -64,11 +64,9 @@ class Operator(Enum):
     such as brackets
     """
 
-    #
-    #
-    # Single-char operators
-    #
-    #
+    """
+    Single-char operators
+    """
 
     DOT = "."
     COMMA = ","
@@ -94,7 +92,7 @@ class Operator(Enum):
 
     PLUS = "+"
     MINUS = "-"
-    TIMES_ARGS = "*"
+    TIMES = "*"
     DIV = "/"
     MODULUS = "%"
 
@@ -105,11 +103,9 @@ class Operator(Enum):
     BIT_NOT = "~"
     BIT_XOR = "^"
 
-    #
-    #
-    # Double-char operators
-    #
-    #
+    """
+    Double-Char Operators
+    """
 
     EQUAL = "=="
     NOT_EQUAL = "!="
@@ -119,8 +115,8 @@ class Operator(Enum):
     ARROW = "->"
     ELVIS = "?:"
 
-    FDIV = "//"
-    EXP_KWARGS = "**"
+    FLOOR_DIV = "//"
+    POWER = "**"
 
     PLUS_ASSIGN = "+="
     MINUS_ASSIGN = "-="
@@ -135,14 +131,12 @@ class Operator(Enum):
     SHIFT_LEFT = "<<"
     SHIFT_RIGHT = ">>"
 
-    #
-    #
-    # Triple-char operators
-    #
-    #
+    """
+    Triple-char operators
+    """
 
-    FDIV_ASSIGN = "//="
-    EXP_ASSIGN = "**="
+    FLOOR_DIV_ASSIGN = "//="
+    POWER_ASSIGN = "**="
 
     def __repr__(self):
         # do this so that tests run properly using repr
@@ -167,7 +161,7 @@ single_operators_set = [
 
     Operator.PLUS,
     Operator.MINUS,
-    Operator.TIMES_ARGS,  # times and def(*args)
+    Operator.TIMES,  # times and def(*args)
     Operator.DIV,
     Operator.MODULUS,
 
@@ -192,8 +186,8 @@ double_operators_set = [
     Operator.ARROW,
     Operator.ELVIS,
 
-    Operator.FDIV,
-    Operator.EXP_KWARGS,  # exponents and def(**kwargs)/ {**k, **v} etc
+    Operator.FLOOR_DIV,
+    Operator.POWER,  # exponents and def(**kwargs)/ {**k, **v} etc
 
     Operator.PLUS_ASSIGN,
     Operator.MINUS_ASSIGN,
@@ -216,8 +210,8 @@ double_operators = {op.value: op for op in double_operators_set}
 #
 
 triple_operators_set = [
-    Operator.FDIV_ASSIGN,
-    Operator.EXP_ASSIGN
+    Operator.FLOOR_DIV_ASSIGN,
+    Operator.POWER_ASSIGN
 ]
 
 triple_operators = {op.value: op for op in triple_operators_set}
