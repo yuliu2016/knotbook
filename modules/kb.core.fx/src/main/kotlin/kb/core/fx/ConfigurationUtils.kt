@@ -70,3 +70,6 @@ inline fun titledPane(builder: TitledPane.() -> Unit): TitledPane = TitledPane()
 
 @FXKtDSL
 inline fun contextMenu(builder: ContextMenu.() -> Unit): ContextMenu = ContextMenu().apply(builder)
+
+@FXKtDSL
+inline fun button(builder: Button.() -> Unit): Button = Button().apply(builder)

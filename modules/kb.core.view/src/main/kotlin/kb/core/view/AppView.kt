@@ -363,7 +363,7 @@ object AppView {
                 }
                 item {
                     name("Debug with Scenic View")
-                    action { Alert(Alert.AlertType.INFORMATION, "Scenic View is not supported in this build").show() }
+                    action { alertDialog("Notice", "Scenic View is not supported in this build") }
                     icon(MDI_CLOUD_OUTLINE, 14)
                 }
                 separator()
