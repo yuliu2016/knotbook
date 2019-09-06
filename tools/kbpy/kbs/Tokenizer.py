@@ -1172,7 +1172,7 @@ def tokenize(code: str):
     return tk.tokens
 
 
-def tokenize_t(code: str):
+def _tokenize_t(code: str):
     from timeit import default_timer as timer
 
     start = timer()
@@ -1184,7 +1184,7 @@ def tokenize_t(code: str):
     return result
 
 
-test_funcdef = """
+_test_funcdef = """
 
 # A test
 
@@ -1201,19 +1201,19 @@ if __name__ == "__main__" {
 }
 """
 
-test_multi_line_comment_nested = """
+_test_multi_line_comment_nested = """
 /*/* */
 Hi
 */
 print("Hello World")
 """
 
-test_docstr = """
+_test_docstr = """
 /** [hello.world] */
 a = 3
 """
 
-test_recursive_fibonacci = """
+_test_recursive_fibonacci = """
 /**
  * [fib]Calculates a fibonacci number
  */
@@ -1227,4 +1227,4 @@ print(fib(10))
 """
 
 if __name__ == '__main__':
-    print(format_printing(tokenize_t(test_funcdef)))
+    print(format_printing(_tokenize_t(_test_funcdef)))
