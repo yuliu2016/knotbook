@@ -224,7 +224,6 @@ grammar_keywords = {  # set notation
     # Functional keywords
     "return",
     "def",
-    "suspend",
 
     # Condition kewords
     "if",
@@ -242,7 +241,6 @@ grammar_keywords = {  # set notation
     "pass",
 
     # Context keywords
-    "with",
     "as",
     "from",
     "import",
