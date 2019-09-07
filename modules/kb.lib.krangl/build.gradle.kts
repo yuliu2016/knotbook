@@ -24,6 +24,8 @@ tasks.withType<Test> {
 }
 
 dependencies {
+    implementation(kotlin("stdlib"))
+    implementation(kotlin("reflect"))
     implementation(group = "org.apache.commons", name = "commons-csv", version = "1.6")
     implementation(group = "com.beust", name = "klaxon", version = "5.0.12")
 

@@ -399,6 +399,9 @@ object AppView {
                 }
                 separator()
                 item {
+                    name("Open Source Licenses")
+                }
+                item {
                     name("Show releases on GitHub")
                     icon(MDI_GITHUB_CIRCLE, 14)
                 }
