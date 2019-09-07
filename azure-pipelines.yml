@@ -13,10 +13,8 @@ jobs:
           mkdir build
           $ProgressPreference = "SilentlyContinue"
           wget "https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_windows-x64_bin.zip" -O "build\jdk.zip"
-        #        condition: ne(variables.JDK_CACHE_RESTORED, 'true')
         displayName: "Download JDK"
       - task: JavaToolInstaller@0
-        #        condition: ne(variables.JDK_CACHE_RESTORED, 'true')
         inputs:
           versionSpec: "12"
           jdkSourceOption: localDirectory
@@ -95,7 +93,7 @@ jobs:
         inputs:
           path: "$(System.DefaultWorkingDirectory)/app-image-$(Build.BuildNumber).zip"
           artifact: "ubuntu"
-  - job: macOS
+  - job: MacOS
     pool:
       vmImage: "macOS-latest"
     steps:
@@ -132,4 +130,4 @@ jobs:
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
           path: "$(System.DefaultWorkingDirectory)/app-image-$(Build.BuildNumber).zip"
-          artifact: "mac"
+          artifact: "macOS"
