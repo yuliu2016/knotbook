@@ -9,13 +9,6 @@ jobs:
     pool:
       vmImage: "windows-latest"
     steps:
-      #      - task: CacheBeta@0
-      #        condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
-      #        inputs:
-      #          key: jdk | $(Agent.OS)
-      #          path: "build/jdk_inst"
-      #          cacheHitVar: JDK_CACHE_RESTORED
-      #        displayName: "JDK Cache"
       - powershell: |
           mkdir build
           $ProgressPreference = "SilentlyContinue"
@@ -30,12 +23,6 @@ jobs:
           jdkFile: "build/jdk.zip"
           jdkDestinationDirectory: "build/jdk_inst"
           jdkArchitectureOption: x64
-      #      - task: CacheBeta@0
-      #        condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
-      #        inputs:
-      #          key: gradle | $(Agent.OS)
-      #          path: $(Pipeline.Workspace)/.gradle
-      #        displayName: "Gradle Cache"
       - task: Gradle@2
         displayName: "Gradle Build"
         inputs:
@@ -74,12 +61,6 @@ jobs:
     pool:
       vmImage: "ubuntu-latest"
     steps:
-      #      - task: CacheBeta@0
-      #        condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
-      #        inputs:
-      #          key: gradle | $(Agent.OS)
-      #          path: $(Pipeline.Workspace)/.gradle
-      #        displayName: "Gradle Cache"
       - task: Gradle@2
         displayName: "Gradle Build"
         inputs:
@@ -118,12 +99,6 @@ jobs:
     pool:
       vmImage: "macOS-latest"
     steps:
-      #      - task: CacheBeta@0
-      #        condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
-      #        inputs:
-      #          key: gradle | $(Agent.OS)
-      #          path: $(Pipeline.Workspace)/.gradle
-      #        displayName: "Gradle Cache"
       - task: Gradle@2
         displayName: "Gradle Build"
         inputs:
