@@ -13,10 +13,6 @@ internal fun getScalarColType(it: DataCol): String = it.javaClass.simpleName.rem
 internal fun tempColumnName() = "tmp_col_" + UUID.randomUUID()
 
 
-// todo what do we actually gain from having this type. It seems to be never used
-abstract class NumberCol(name: String) : DataCol(name)
-
-
 // no na in pandas int columns because of http://pandas.pydata.org/pandas-docs/stable/gotchas.html#support-for-integer-na
 
 
@@ -132,8 +128,8 @@ fun DataCol.asStrings(): Array<String?> = columnCast<StringCol>().values
 
 fun DataCol.asDoubles(): Array<Double?> {
     return when {
-        this is IntCol -> Array(values.size, { (this[it] as Int?)?.toDouble() })
-        this is LongCol -> Array(values.size, { (this[it] as Long?)?.toDouble() })
+        this is IntCol -> Array(values.size) { (this[it] as Int?)?.toDouble() }
+        this is LongCol -> Array(values.size) { (this[it] as Long?)?.toDouble() }
         else -> columnCast<DoubleCol>().values
     }
 }
@@ -156,7 +152,7 @@ internal inline fun <reified R> DataCol.columnCast(): R {
     return try {
         this as R
     } catch (e: ClassCastException) {
-        val msg = "Could not cast column '${name}' of type '${this::class.simpleName}' to type '${R::class}'"
+        val msg = "Could not cast column '${name}' of type '${this::class.java.simpleName}' to type '${R::class}'"
         throw ColumnTypeCastException(msg)
     }
 }
@@ -182,7 +178,7 @@ inline fun <reified R> DataCol.asType(): Array<out R?> {
             else -> throw RuntimeException()
         }
     } catch (e: ClassCastException) {
-        val msg = "Could not cast column '${name}' of type '${this::class.simpleName}' to type '${R::class}'"
+        val msg = "Could not cast column '${name}' of type '${this::class.java.simpleName}' to type '${R::class}'"
         throw ColumnTypeCastException(msg)
     }
 }

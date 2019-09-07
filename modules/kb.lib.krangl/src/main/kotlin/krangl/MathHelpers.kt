@@ -6,7 +6,6 @@ import java.text.DecimalFormat
 // scalar operations
 // remove because we must work with lists here
 //infix operator fun DoubleArray.plus(i: Int): DoubleArray = map { it + i }.toDoubleArray()
-// todo this could also be an extension property
 fun Array<Double>.mean(): Double = map { it.toDouble() }.sum() / size
 
 fun List<Double>.mean(): Double = map { it.toDouble() }.sum() / size
@@ -29,13 +28,7 @@ fun Array<Double>.sd() = if (size == 1) null else Math.sqrt(map { Math.pow(it.to
 
 // inspired by http://stackoverflow.com/questions/3224935/in-scala-how-do-i-fold-a-list-and-return-the-intermediate-results
 fun <T : Number> List<T>.cumSum(): Iterable<Double> {
-    return drop(1).fold(listOf(first().toDouble()), { list, curVal -> list + (list.last().toDouble() + curVal.toDouble()) })
+    return drop(1).fold(listOf(first().toDouble()), { list, curVal ->
+        list + (list.last().toDouble() + curVal.toDouble())
+    })
 }
-
-//
-//def quantile(quantile:Double) = {
-//    assert(quantile >=0 && quantile <=1)
-//    // convert quantile into and index
-//    val quantIndex: Int = (values.length.toDouble*quantile).round.toInt -1
-//    values.sorted.toList(quantIndex)
-//}

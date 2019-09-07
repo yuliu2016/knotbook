@@ -7,23 +7,19 @@ package krangl
  */
 
 
-//
-// Public API
-//
-
-
 class InvalidColumnSelectException(val colNames: List<String>, val selection: List<Boolean?>) : RuntimeException() {
     override val message: String?
         get() {
             val collapsed = colNames.zip(selection).toMap().map { (name, selected) ->
                 when (selected) {
-                    true -> "+" + name
-                    false -> "-" + name
+                    true -> "+$name"
+                    false -> "-$name"
                     else -> "<null>"
                 }
             }.joinToString(",")
 
-            return "Mixing positive and negative selection does not have meaningful semantics and is not supported:\n" + collapsed
+            return "Mixing positive and negative selection does not have meaningful " +
+                    "semantics and is not supported:\n$collapsed"
         }
 
 }
@@ -52,7 +48,7 @@ fun ColNames.endsWith(prefix: String) = names.map { it.endsWith(prefix) }.falseA
 fun ColNames.listOf(vararg someNames: String): List<Boolean?> = names.map { someNames.contains(it) }.falseAsNull()
 fun ColNames.listOf(someNames: List<String>): List<Boolean?> = names.map { someNames.contains(it) }.falseAsNull()
 
-fun ColNames.all() = Array(names.size, { true }).toList() // unclear purpose
+fun ColNames.all() = Array(names.size) { true }.toList() // unclear purpose
 
 fun ColNames.range(from: String, to: String): List<Boolean?> {
     val rangeStart = names.indexOf(from)
@@ -75,21 +71,12 @@ fun ColNames.except(vararg columns: String): List<Boolean?> {
 }
 
 fun ColNames.except(columnSelector: ColumnSelector) = !columnSelector(this)
-//fun ColNames.not(columnSelector: ColumnSelector) = columnSelector(this).not()
 
 operator fun List<Boolean?>.not() = map { it?.not() }
 
 //https://kotlinlang.org/docs/reference/inline-functions.html#reified-type-parameters
 /** Select columns by column type */
-inline fun <reified T : DataCol> DataFrame.select() = select(cols.filter { it is T }.map { it.name })
-
-// more generic users might not get the intention if T is not contrained to TableCol
-//inline fun <reified T> DataFrame.select() = select(cols.filter {
-//    when {
-//        it is AnyCol -> it.values.firstOrNull() is T
-//        else -> it is T
-//    }
-//}.map { it.name })
+inline fun <reified T : DataCol> DataFrame.select() = select(cols.filterIsInstance<T>().map { it.name })
 
 /** Remove columns by column type */
 inline fun <reified T : DataCol> DataFrame.remove() = select(names.minus(select<T>().names))
@@ -104,29 +91,6 @@ fun DataFrame.moveRight(vararg columnNames: String): DataFrame = select((names -
  * Push some columns to the left end of a data-frame.
  */
 fun DataFrame.moveLeft(vararg columnNames: String): DataFrame = select(columnNames.asList() + (names - columnNames))
-
-
-// commented out because it's not clear how to use it
-//val foo: ColumnSelector = { startsWith("foo")
-//sleepData.select(foo AND { endsWith("dfd") })
-//infix fun ColumnSelector.AND(other: ColumnSelector): ColumnSelector = fun ColNames.(): List<Boolean?> {
-//    return this.this@AND().zip(this.other()).map { nullAwareAnd(it.first, it.second) }
-//}
-
-// commented out because it's not clear how to use it
-//fun ColumnSelector.unaryNot(): ColumnSelector = fun ColNames.(): List<Boolean?> = this.this@unaryNot().map { it?.not() }
-
-
-//@Deprecated("will be removed since this affects String namespace it might be not a good idea")
-//operator fun String.unaryMinus() = fun ColNames.(): List<Boolean?> = names.map { it != this@unaryMinus }.trueAsNull()
-//operator fun Iterable<String>.unaryMinus() = fun ColNames.(): List<Boolean> = names.map { !this@unaryMinus.contains(it) }
-//operator fun List<Boolean?>.unaryMinus() = not()
-
-
-//
-// Internal API
-//
-
 
 internal infix fun List<Boolean?>.nullAwareAND(other: List<Boolean?>): List<Boolean?> = this.zip(other).map {
     nullAwareAnd(it.first, it.second)
@@ -162,22 +126,7 @@ internal fun nullAwareOr(first: Boolean?, second: Boolean?): Boolean? {
 
 internal fun DataFrame.select(which: List<Boolean?>): DataFrame = select { which }
 
-//private val <T> List<T>.isPositiveSelect: Boolean
-//    get() =  any { it == true }
-//private val <T> List<T>.isNegativeSelect: Boolean
-//    get() =  !isPositiveSelect
-
 internal fun DataFrame.reduceColSelectors(which: Array<out ColumnSelector>): ColumnSelector {
-    // follow dplyr::select here, to:
-    // If the first expression is negative, select() will automatically start with all variables.
-
-    //    val extWhich = if(which.isNotEmpty() && which.first()(ColNames((names))).isNegativeSelect){
-    //        val seedSelect : ColumnSelector = { all() }
-    //        listOf(seedSelect).toMutableList().apply { addAll(which) }.toTypedArray()
-    //    }else{
-    //        which
-    //    }
-
     return which
             .map { it(ColNames(names)) }
             .reduce { selA, selB -> selA nullAwareAND selB }
@@ -195,9 +144,7 @@ internal fun DataFrame.colSelectAsNames(columnSelect: ColumnSelector): List<Stri
     val isPosSelection = which.count { it == true } > 0 || which.filterNotNull().isEmpty()
     val whichComplete = which.map { it ?: !isPosSelection }
 
-    val colSelection: List<String> = names
+    return names
             .zip(whichComplete)
             .filter { it.second }.map { it.first }
-
-    return colSelection
 }

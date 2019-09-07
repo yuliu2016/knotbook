@@ -1,7 +1,6 @@
 package krangl
 
 import krangl.util.joinToMaxLengthString
-import java.util.*
 
 abstract class DataCol(val name: String) {  // tbd why not: Iterable<Any> ??
 
@@ -55,14 +54,14 @@ abstract class DataCol(val name: String) {  // tbd why not: Iterable<Any> ??
         if (name != other.name) return false
         if (length != other.length) return false
         //        http://stackoverflow.com/questions/35272761/how-to-compare-two-arrays-in-kotlin
-        if (!Arrays.equals(values(), other.values())) return false
+        if (!values().contentEquals(other.values())) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = name.hashCode()
-        result = 31 * result + length + Arrays.hashCode(values())
+        result = 31 * result + length + values().contentHashCode()
         return result
     }
 

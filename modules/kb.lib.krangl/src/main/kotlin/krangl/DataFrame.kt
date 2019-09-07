@@ -121,7 +121,7 @@ interface DataFrame {
      * @sample krangl.samples.selectExamples
      */
     fun remove(vararg columSelects: ColumnSelector): DataFrame =
-            select(*columSelects.map { it -> { x: ColNames -> x.except(it) } }.toTypedArray())
+            select(*columSelects.map { { x: ColNames -> x.except(it) } }.toTypedArray())
 
 
     fun filter(predicate: VectorizedRowPredicate): DataFrame

@@ -65,7 +65,7 @@ internal class SimpleDataFrame(override val cols: List<DataCol>) : DataFrame {
         warnIf(columns.isEmpty() &&
                 // it may happen that internally we do an empty selection. e.g when joining a df on all columns with itself.
                 // to prevent misleading logging we check for that by detecting the context of this call
-                !Thread.currentThread().getStackTrace().map { it.methodName }.contains("join")) {
+                !Thread.currentThread().stackTrace.map { it.methodName }.contains("join")) {
             "Calling select() will always return an empty data-frame"
         }
 
@@ -233,7 +233,7 @@ internal class SimpleDataFrame(override val cols: List<DataCol>) : DataFrame {
 
 
         // see http://stackoverflow.com/questions/11997326/how-to-find-the-permutation-of-a-sort-in-java
-        val permutation = (0..(nrow - 1)).sortedWith(compChain).toIntArray()
+        val permutation = (0 until nrow).sortedWith(compChain).toIntArray()
 
         // apply permutation to all columns
         return cols.map {
@@ -458,16 +458,6 @@ inline fun <reified T> isListOfType(items: List<Any?>): Boolean {
 
     return false
 }
-
-//@Suppress("UNCHECKED_CAST")
-//internal fun handleListErasureOLD(name: String, mutation: List<*>): DataCol = when (mutation.first()) {
-//    is Double -> DoubleCol(name, mutation as List<Double>)
-//    is Int -> IntCol(name, mutation as List<Int>)
-//    is Long -> LongCol(name, mutation as List<Long>)
-//    is String -> StringCol(name, mutation as List<String>)
-//    is Boolean -> BooleanCol(name, mutation as List<Boolean>)
-//    else -> throw UnsupportedOperationException()
-//}
 
 
 internal fun <T> arrayListOf(size: Int, initFun: (Int) -> T?): ArrayList<T?> {

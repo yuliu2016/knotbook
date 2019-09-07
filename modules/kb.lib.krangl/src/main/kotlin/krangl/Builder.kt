@@ -2,10 +2,6 @@ package krangl
 
 import krangl.ArrayUtils.handleListErasure
 import krangl.util.asDF
-import krangl.util.createValidIdentifier
-import java.sql.ResultSet
-import java.time.LocalDate
-import java.time.LocalTime
 
 
 // todo javadoc example needed
@@ -43,48 +39,9 @@ fun <T> DataFrame.Companion.fromRecords(records: Iterable<T>, mapping: (T) -> Da
 }
 
 
-/** Convert rows into objects by using reflection. Only parameters used in constructor will be mapped.
- * Note: This is tested with kotlin data classes only. File a ticket for better type compatibility or any issues!
- * @param mapping parameter mapping scheme to link data frame columns to object properties mapOf("someName" to "lastName", etc.)
- */
-inline fun <reified T> DataFrame.rowsAs(mapping: Map<String, String> = names.map { it to it }.toMap()): Iterable<T> {
-
-    // for each constructor check the best matching one and create an object accordingly
-    val constructors = T::class.constructors
-
-    require(names.containsAll(mapping.keys)) { "Mapping columns ${mapping.keys.minus(names)} missing in data frame!" }
-
-    // append names to mapping table
-    val dummyMap = names.map { it to it }.toMap()
-    val varLookup = (dummyMap.minus(mapping.keys) + mapping).entries.associateBy({ it.value }) { it.key }
-
-    // finally we use the same recoding strategy as in printDataClassSchema to create legit identifiers
-    val legitIdentLookup = varLookup.keys.map { createValidIdentifier(it) to it }.toMap()
-
-
-    val bestConst = constructors
-            // just constructors for which all columns are present
-            .filter { legitIdentLookup.keys.containsAll(it.parameters.map { it.name }) }
-            // select the one with most parameters
-            .maxBy { it.parameters.size }
-
-    if (bestConst == null) error("[krangl] Could not find matching constructor for subset of ${mapping.values}")
-
-    val objects = rows.map { row ->
-        val args = bestConst.parameters.map { constParamName ->
-            row[varLookup[legitIdentLookup[constParamName.name]]]
-        }
-        bestConst.call(*args.toTypedArray())
-    }
-
-    return objects
-}
-
-
 /**
  * Create a new data frame in place.
  *
- * @sample krangl.samples.builderSample
  */
 fun dataFrameOf(vararg header: String) = InplaceDataFrameBuilder(header.toList())
 
@@ -92,15 +49,12 @@ fun dataFrameOf(vararg header: String) = InplaceDataFrameBuilder(header.toList()
 /**
  * Create a new data frame in place.
  *
- * @sample krangl.samples.builderSample
  */
 fun dataFrameOf(header: Iterable<String>) = InplaceDataFrameBuilder(header.toList())
 
 
 /**
  * Create a new data-frame from a list of `DataCol` instances
- *
- * @sample krangl.samples.builderSample
  */
 fun dataFrameOf(vararg columns: DataCol): DataFrame = SimpleDataFrame(*columns)
 
@@ -108,7 +62,6 @@ fun dataFrameOf(vararg columns: DataCol): DataFrame = SimpleDataFrame(*columns)
 /** Create a new data-frame from a records encoded as key-value maps.
  *
  * Column types will be inferred from the value types.
- * @sample krangl.samples.builderSample
  */
 fun dataFrameOf(rows: Iterable<DataFrameRow>): DataFrame {
     val colNames = rows.first().keys
@@ -123,9 +76,8 @@ fun dataFrameOf(rows: Iterable<DataFrameRow>): DataFrame {
 /**
  * Create a new data frame in place.
  *
- * @sample krangl.samples.builderSample
  */
-fun DataFrame.Companion.builder(vararg header: String) = krangl.dataFrameOf(*header)
+fun DataFrame.Companion.builder(vararg header: String) = dataFrameOf(*header)
 
 
 // tbd should we expose this as public API?
@@ -151,7 +103,7 @@ class InplaceDataFrameBuilder(private val header: List<String>) {
         //        }
 
         // is the data vector compatible with the header dimension?
-        require(header.size > 0 && tblData.size.rem(header.size) == 0) {
+        require(header.isNotEmpty() && tblData.size.rem(header.size) == 0) {
             "data dimension ${header.size} is not compatible with length of data vector ${tblData.size}"
         }
 
@@ -159,7 +111,7 @@ class InplaceDataFrameBuilder(private val header: List<String>) {
         val rawColumns: List<List<Any?>> = tblData.toList()
                 .mapIndexed { i, any -> i.rem(header.size) to any }
                 .groupBy { it.first }.values.map {
-            it.map { it.second }
+            it.map { it2 -> it2.second }
         }
 
 
@@ -180,52 +132,5 @@ class InplaceDataFrameBuilder(private val header: List<String>) {
     //    operator fun invoke(values: List<Any?>): DataFrame {
     //        return invoke(values.toTypedArray())
     //    }
-
-}
-
-
-fun DataFrame.Companion.fromResultSet(rs: ResultSet): DataFrame {
-
-    val numColumns = rs.metaData.columnCount
-    val colNames = (1..numColumns).map { rs.metaData.getColumnName(it) }
-
-    // see http://www.h2database.com/html/datatypes.html
-    val colData = listOf<MutableList<Any?>>().toMutableList()
-
-    val colTypes = (1..numColumns).map { rs.metaData.getColumnTypeName(it) }
-
-    //    http://www.cs.toronto.edu/~nn/csc309/guide/pointbase/docs/html/htmlfiles/dev_datatypesandconversionsFIN.html
-    colTypes.map {
-        when (it) {
-            "INTEGER", "INT", "SMALLINT" -> listOf<Int>()
-            "REAL", "FLOAT", "NUMERIC", "DECIMAL" -> listOf<Double?>()
-            "BOOLEAN" -> listOf<Boolean?>()
-            "DATE" -> listOf<LocalDate?>()
-            "TIME" -> listOf<LocalTime?>()
-            "CHAR", "CHARACTER", "VARCHAR" -> listOf<String>()
-            else -> throw IllegalArgumentException("Column type ${it} is not yet supported by {krangl}. $PLEASE_SUBMIT_MSG")
-        }.let { li ->
-            colData.add(li.toMutableList())
-        }
-    }
-
-    // see https://stackoverflow.com/questions/21956042/mapping-a-jdbc-resultset-to-an-object
-    while (rs.next()) {
-        //        val row = mapOf<String, Any?>().toMutableMap()
-
-        for (colIndex in 1..numColumns) {
-            val any: Any? = when (colTypes[colIndex - 1]) {
-                "INTEGER", "INT", "SMALLINT" -> rs.getInt(colIndex)
-                "REAL", "FLOAT", "NUMERIC", "DECIMAL" -> rs.getDouble(colIndex)
-                "BOOLEAN" -> rs.getBoolean(colIndex)
-                "DATE" -> rs.getDate(colIndex).toLocalDate()
-                "TIME" -> rs.getTime(colIndex).toLocalTime()
-                "CHAR", "CHARACTER", "VARCHAR" -> rs.getString(colIndex)
-                else -> throw IllegalArgumentException("Column type ${colTypes[colIndex - 1]} is not yet supported by {krangl}. $PLEASE_SUBMIT_MSG")
-            }
-            colData[colIndex - 1].add(any)
-        }
-    }
-    return SimpleDataFrame(colNames.zip(colData).map { (name, data) -> handleListErasure(name, data) })
 
 }

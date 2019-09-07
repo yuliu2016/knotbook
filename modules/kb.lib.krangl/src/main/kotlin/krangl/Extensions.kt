@@ -32,7 +32,7 @@ open class TableContext(val df: DataFrame) {
 //
 
 data class RenameRule(val oldName: String, val newName: String) {
-    fun asTableFormula() = ColumnFormula(newName, { df -> df[oldName] })
+    fun asTableFormula() = ColumnFormula(newName) { df -> df[oldName] }
 }
 
 
@@ -85,7 +85,6 @@ class ExpressionContext(df: DataFrame) : TableContext(df) {
      * In R the corresoponding pattern would be mutate(df, foo=if_else())
      *<p>
      *
-     * @sample krangl.samples.addColumnExamples
      */
     fun where(booleans: BooleanArray, ifTrue: Any, ifFalse: Any): DataCol {
 
@@ -154,8 +153,6 @@ fun DataFrame.filter(vararg predicates: DataFrame.(DataFrame) -> List<Boolean>):
 
 
 /** Match a text column in a NA-aware manner to create a predicate vector for filtering.
- *
- * @sample krangl.samples.textMatching
  */
 @Suppress("UNCHECKED_CAST")
 inline fun <reified T> DataCol.isMatching(missingAs: Boolean = false, crossinline filter: T.() -> Boolean): BooleanArray =
@@ -402,31 +399,6 @@ class SummarizeBuilder(val df: DataFrame, val columnSelect: ColumnSelector) {
     }
 }
 
-fun main(args: Array<String>) {
-    //        irisData.summarizeEach({ startsWith("foo") },
-    //            "mean" to { it["Species"].mean() },
-    //            "median" to { it["Species"].mean() }
-    //        )
-
-    irisData.select { startsWith("Length") }.head().print()
-    irisData.summarizeAt({ startsWith("Length") }) {
-        add({ mean() }, "mean")
-        add({ median() }, "median")
-        //        mean() //todo add commom suspects
-        //        median
-    }
-
-
-    println("-------")
-
-    irisData.summarizeAt(
-            { startsWith("Length") },
-            SumFuns.mean,
-            AggFun({ mean() }),
-            AggFun({ median() })
-    ).head().print()
-
-}
 ////////////////////////////////////////////////
 // groupBy() convenience
 ////////////////////////////////////////////////
@@ -696,9 +668,7 @@ internal fun getColumnType(col: DataCol, wrapSquares: Boolean = false): String {
 
 
 private fun guessAnyType(col: AnyCol): String {
-    val firstEl = col.values.asSequence().filterNotNull().firstOrNull()
-
-    if (firstEl == null) return "Any"
+    val firstEl = col.values.asSequence().filterNotNull().firstOrNull() ?: return "Any"
 
     return firstEl.javaClass.simpleName
             // tweak types for nested data
