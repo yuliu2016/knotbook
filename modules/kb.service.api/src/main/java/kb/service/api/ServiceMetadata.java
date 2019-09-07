@@ -1,5 +1,6 @@
 package kb.service.api;
 
+@SuppressWarnings("unused")
 public class ServiceMetadata {
     private String packageName;
     private String packageVersion;
