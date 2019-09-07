@@ -19,5 +19,6 @@ tasks {
 }
 
 dependencies {
+    implementation(project(":kb.service.tool"))
     implementation(kotlin("stdlib"))
 }
