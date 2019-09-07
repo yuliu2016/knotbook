@@ -4,8 +4,6 @@ package kb.service.api;
 public class ServiceMetadata {
     private String packageName;
     private String packageVersion;
-    private boolean isUserInterface;
-    private boolean isDataProvider;
 
     /**
      * @return The name of the package. This should be unique and case-insensitive.
@@ -28,21 +26,5 @@ public class ServiceMetadata {
 
     public void setPackageVersion(String packageVersion) {
         this.packageVersion = packageVersion;
-    }
-
-    public boolean isUserInterface() {
-        return isUserInterface;
-    }
-
-    public void setUserInterface(boolean userInterface) {
-        isUserInterface = userInterface;
-    }
-
-    public boolean isDataProvider() {
-        return isDataProvider;
-    }
-
-    public void setDataProvider(boolean dataProvider) {
-        isDataProvider = dataProvider;
     }
 }

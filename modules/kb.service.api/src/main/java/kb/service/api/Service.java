@@ -3,13 +3,7 @@ package kb.service.api;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
-public interface Service {
-
-    /**
-     * Get the metadata for this service
-     */
-    @NotNull
-    ServiceMetadata getMetadata();
+public interface Service extends MetaService {
 
     /**
      * Launch the service with a context

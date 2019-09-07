@@ -9,8 +9,6 @@ class PlannerService : Service {
     private val metadata = ServiceMetadata()
 
     init {
-        metadata.isDataProvider = false
-        metadata.isUserInterface = true
         metadata.packageName = "kb.path.planner"
         metadata.packageVersion = "kb"
     }
