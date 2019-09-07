@@ -22,10 +22,6 @@ internal fun tempColumnName() = "tmp_col_" + UUID.randomUUID()
 
 //for a discussion about operator overloading see https://discuss.kotlinlang.org/t/post-1-0-roadmap/1496/33
 
-//infix fun List<Boolean>.AND(other: List<Boolean>): List<Boolean> = mapIndexed { index, first -> first && other[index] }
-//infix fun List<Boolean>.OR(other: List<Boolean>): List<Boolean> = mapIndexed { index, first -> first || other[index] }
-//infix fun List<Boolean>.XOR(other: List<Boolean>): List<Boolean> = mapIndexed { index, first -> first == other[index] }
-
 infix fun List<Boolean?>.AND(other: List<Boolean?>) = mapIndexed { index, first -> nullAwareAnd(first, other[index]) }
 infix fun List<Boolean?>.OR(other: List<Boolean?>) = mapIndexed { index, first -> nullAwareOr(first, other[index]) }.nullAsFalse()
 infix fun List<Boolean?>.XOR(other: List<Boolean?>) = mapIndexed { index, first -> first == other[index] }.nullAsFalse()
