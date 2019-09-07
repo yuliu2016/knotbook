@@ -1,4 +1,5 @@
 module kb.pathplanner {
+    requires kb.service.api;
     requires kotlin.stdlib;
     requires javafx.controls;
     requires ca.warp_seven.frc;
