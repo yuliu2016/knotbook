@@ -16,9 +16,6 @@ Nice Intro
 enum class JoinType {
     LEFT, RIGHT, INNER, OUTER
 }
-//
-
-// todo more consistent wrappers needed
 
 /** Convenience wrapper around <code>joinInner</code> that works with single single by attribute.*/
 

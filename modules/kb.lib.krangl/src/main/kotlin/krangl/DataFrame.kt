@@ -1,13 +1,6 @@
 package krangl
 
 
-typealias DataFrameRow = Map<String, Any?>
-
-typealias VectorizedRowPredicate = ExpressionContext.(ExpressionContext) -> BooleanArray
-
-typealias TableExpression = ExpressionContext.(ExpressionContext) -> Any?
-
-
 interface DataFrame {
 
     // Accessor functions
@@ -34,12 +27,6 @@ interface DataFrame {
 
     /** Returns a column by index. */
     operator fun get(columnIndex: Int): DataCol = get(names[columnIndex])
-
-    ////    /** Assign a value to a column */
-    //    operator fun set(columnName: String, value: Any) {
-    //
-    //    }
-    ////     disabled because would render dfs mutable, also it is not compatible with
 
     // should we use invoke() style operator here (see https://kotlinlang.org/docs/reference/operator-overloading.html)?
     /** Returns a row by index **/

@@ -1,123 +1,16 @@
 package krangl
 
-import krangl.ArrayUtils.handleArrayErasure
-import krangl.util.joinToMaxLengthString
 import java.util.*
 
 
-abstract class DataCol(val name: String) {  // tbd why not: Iterable<Any> ??
-
-
-    open infix operator fun plus(something: Number): DataCol = plusInternal(something)
-    open infix operator fun plus(something: DataCol): DataCol = plusInternal(something)
-    open infix operator fun plus(something: Iterable<*>): DataCol = plusInternal(handleArrayErasure("foo", something.toList().toTypedArray()))
-    open protected fun plusInternal(something: Any): DataCol = throw UnsupportedOperationException()
-
-
-    open infix operator fun minus(something: Number): DataCol = minusInternal(something)
-    open infix operator fun minus(something: DataCol): DataCol = minusInternal(something)
-    open protected fun minusInternal(something: Any): DataCol = throw UnsupportedOperationException()
-
-    open infix operator fun div(something: Number): DataCol = divInternal(something)
-    open infix operator fun div(something: DataCol): DataCol = divInternal(something)
-    open protected fun divInternal(something: Any): DataCol = throw UnsupportedOperationException()
-
-
-    open infix operator fun times(something: Number): DataCol = timesInternal(something)
-    open infix operator fun times(something: DataCol): DataCol = timesInternal(something)
-    open protected infix fun timesInternal(something: Any): DataCol = throw UnsupportedOperationException()
-
-
-    infix operator fun plus(something: String): DataCol = when (this) {
-        is StringCol -> values.map { naAwarePlus(it, something) }
-        else -> values().map { (it?.toString() ?: MISSING_VALUE) + something }
-    }.toTypedArray().let { StringCol(tempColumnName(), it) }
-
-
-    operator fun unaryMinus(): DataCol = this * -1
-
-    open operator fun not(): DataCol = throw UnsupportedOperationException()
-
-    abstract fun values(): Array<*>
-
-    abstract val length: Int
-
-    override fun toString(): String {
-        val prefix = "$name [${getColumnType(this)}][$length]: "
-        val peek = values().take(255).asSequence()
-                .joinToMaxLengthString(maxLength = PRINT_MAX_WIDTH - prefix.length, transform = createValuePrinter(PRINT_MAX_DIGITS))
-
-        return prefix + peek
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is DataCol) return false
-
-        if (name != other.name) return false
-        if (length != other.length) return false
-        //        http://stackoverflow.com/questions/35272761/how-to-compare-two-arrays-in-kotlin
-        if (!Arrays.equals(values(), other.values())) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = name.hashCode()
-        result = 31 * result + length + Arrays.hashCode(values())
-        return result
-    }
-
-    operator fun get(index: Int) = values()[index]
-}
-
-
-private inline fun <T> naAwareOp(first: T?, second: T?, op: (T, T) -> T): T? {
+internal inline fun <T> naAwareOp(first: T?, second: T?, op: (T, T) -> T): T? {
     return if (first == null || second == null) null else op(first, second)
 }
 
 
 internal fun getScalarColType(it: DataCol): String = it.javaClass.simpleName.removeSuffix("Col")
 
-//        when (it) {
-//    is DoubleCol -> "Double"
-//    is IntCol -> "Int"
-//    is BooleanCol -> "Boolean"
-//    is StringCol -> "String"
-//    else -> throw  UnsupportedOperationException()
-//}
-
 internal fun tempColumnName() = "tmp_col_" + UUID.randomUUID()
-
-
-// https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double-array/index.html
-// most methods are implemented it in kotlin.collections.plus
-class DoubleCol(name: String, val values: Array<Double?>) : DataCol(name) {
-
-    constructor(name: String, values: List<Double?>) : this(name, values.toTypedArray())
-
-    @Suppress("UNCHECKED_CAST")
-    constructor(name: String, values: DoubleArray) : this(name, values.toTypedArray() as Array<Double?>)
-
-    override fun values(): Array<Double?> = values
-
-    override val length = values.size
-
-    override fun plusInternal(something: Any): DataCol = arithOp(something, { a, b -> a + b })
-    override fun minusInternal(something: Any): DataCol = arithOp(something, { a, b -> a - b })
-
-    override fun timesInternal(something: Any): DataCol = arithOp(something, { a, b -> a * b })
-    override fun divInternal(something: Any): DataCol = arithOp(something, { a, b -> a / b })
-
-
-    private fun arithOp(something: Any, op: (Double, Double) -> Double): DataCol = when (something) {
-        is DoubleCol -> Array(values.size) { it -> naAwareOp(this.values[it], something.values[it], op) }
-        is IntCol -> Array(values.size) { it -> naAwareOp(this.values[it], something.values[it]?.toDouble(), op) }
-        is LongCol -> Array(values.size) { it -> naAwareOp(this.values[it], something.values[it]?.toDouble(), op) }
-        is Number -> Array(values.size, { naAwareOp(values[it], something.toDouble(), op) })
-        else -> throw UnsupportedOperationException()
-    }.let { DoubleCol(tempColumnName(), it) }
-}
 
 
 // todo what do we actually gain from having this type. It seems to be never used
@@ -125,158 +18,6 @@ abstract class NumberCol(name: String) : DataCol(name)
 
 
 // no na in pandas int columns because of http://pandas.pydata.org/pandas-docs/stable/gotchas.html#support-for-integer-na
-
-class IntCol(name: String, val values: Array<Int?>) : NumberCol(name) {
-
-    constructor(name: String, values: List<Int?>) : this(name, values.toTypedArray())
-
-    @Suppress("UNCHECKED_CAST")
-    constructor(name: String, values: IntArray) : this(name, values.toTypedArray() as Array<Int?>)
-
-    // does not work because of signature clash
-    // constructor(name: String, vararg values: Int?) : this(name, values.asList().toTypedArray())
-
-    override fun values(): Array<Int?> = values
-
-    override val length = values.size
-
-
-    override fun plusInternal(something: Any): DataCol = genericIntOp(something, { a, b -> a + b }) { a, b -> a + b }
-    override fun minusInternal(something: Any): DataCol = genericIntOp(something, { a, b -> a - b }) { a, b -> a - b }
-    override fun timesInternal(something: Any): DataCol = genericIntOp(something, { a, b -> a * b }, { a, b -> a * b })
-    override fun divInternal(something: Any): DataCol = doubleOp(something, { a, b -> a / b })
-
-
-    private fun genericIntOp(something: Any, intOp: (Int, Int) -> Int, doubleOp: (Double, Double) -> Double): DataCol {
-        return when (something) {
-            is IntCol -> intOp(something, intOp)
-            is DoubleCol -> doubleOp(something, doubleOp)
-
-            is Int -> this.intOp(something, intOp)
-            is Double -> this.doubleOp(something, doubleOp)
-
-
-            else -> throw UnsupportedOperationException()
-        }
-    }
-
-
-    private fun doubleOp(something: Any, op: (Double, Double) -> Double): DataCol = when (something) {
-        is DoubleCol -> Array(values.size) { it -> naAwareOp(this.values[it]?.toDouble(), something.values[it], op) }
-        is Double -> Array(values.size, { naAwareOp(values[it]?.toDouble(), something, op) })
-
-        else -> throw UnsupportedOperationException()
-    }.let { handleArrayErasure(tempColumnName(), it) }
-
-
-    private fun intOp(something: Any, op: (Int, Int) -> Int): DataCol = when (something) {
-        is IntCol -> Array(values.size) { it -> naAwareOp(this.values[it], something.values[it], op) }
-        is Int -> Array(values.size, { naAwareOp(values[it], something, op) })
-
-        else -> throw UnsupportedOperationException()
-    }.let { handleArrayErasure(tempColumnName(), it) }
-}
-
-
-class LongCol(name: String, val values: Array<Long?>) : NumberCol(name) {
-
-    constructor(name: String, values: List<Long?>) : this(name, values.toTypedArray())
-
-    @Suppress("UNCHECKED_CAST")
-    constructor(name: String, values: LongArray) : this(name, values.toTypedArray() as Array<Long?>)
-
-    // does not work because of signature clash
-    // constructor(name: String, vararg values: Int?) : this(name, values.asList().toTypedArray())
-
-    override fun values(): Array<Long?> = values
-
-    override val length = values.size
-
-
-    override fun plusInternal(something: Any): DataCol = genericLongOp(something, { a, b -> a + b }) { a, b -> a + b }
-    override fun minusInternal(something: Any): DataCol = genericLongOp(something, { a, b -> a - b }) { a, b -> a - b }
-    override fun timesInternal(something: Any): DataCol = genericLongOp(something, { a, b -> a * b }, { a, b -> a * b })
-    override fun divInternal(something: Any): DataCol = doubleOp(something, { a, b -> a / b })
-
-
-    private fun genericLongOp(something: Any, longOp: (Long, Long) -> Long, doubleOp: (Double, Double) -> Double): DataCol {
-        return when (something) {
-            is IntCol -> longOp(something, longOp)
-            is LongCol -> longOp(something, longOp)
-            is DoubleCol -> doubleOp(something, doubleOp)
-
-            is Int -> longOp(something, longOp)
-            is Long -> longOp(something, longOp)
-            is Double -> this.doubleOp(something, doubleOp)
-
-
-            else -> throw UnsupportedOperationException()
-        }
-    }
-
-
-    private fun doubleOp(something: Any, op: (Double, Double) -> Double): DataCol = when (something) {
-        is DoubleCol -> Array(values.size) { it -> naAwareOp(this.values[it]?.toDouble(), something.values[it], op) }
-        is Double -> Array(values.size, { naAwareOp(values[it]?.toDouble(), something, op) })
-
-        else -> throw UnsupportedOperationException()
-    }.let { handleArrayErasure(tempColumnName(), it) }
-
-
-    private fun longOp(something: Any, op: (Long, Long) -> Long): DataCol = when (something) {
-        is LongCol -> Array(values.size) { it -> naAwareOp(this.values[it], something.values[it], op) }
-        is Long -> Array(values.size, { naAwareOp(values[it], something, op) })
-        is IntCol -> Array(values.size) { it -> naAwareOp(this.values[it], something.values[it]?.toLong(), op) }
-        is Int -> Array(values.size, { naAwareOp(values[it], something.toLong(), op) })
-
-        else -> throw UnsupportedOperationException()
-    }.let { handleArrayErasure(tempColumnName(), it) }
-}
-
-
-class StringCol(name: String, val values: Array<String?>) : DataCol(name) {
-
-    constructor(name: String, values: List<String?>) : this(name, values.toTypedArray())
-
-    override fun values(): Array<String?> = values
-
-    override val length = values.size
-
-
-    override fun plusInternal(something: Any): DataCol = when (something) {
-        is DataCol -> Array(values.size, { values[it] }).mapIndexed { index, rowVal ->
-            naAwarePlus(rowVal, something.values()[index]?.toString())
-        }
-        else -> throw UnsupportedOperationException()
-    }.let {
-        StringCol(tempColumnName(), it)
-    }
-
-    internal fun naAwarePlus(first: String?, second: String?): String? {
-        return if (first == null || second == null) null else first + second
-    }
-}
-
-class AnyCol(name: String, val values: Array<Any?>) : DataCol(name) {
-    constructor(name: String, values: List<Any?>) : this(name, values.toTypedArray<Any?>())
-
-    override fun values(): Array<Any?> = values
-
-    override val length = values.size
-}
-
-
-class BooleanCol(name: String, val values: Array<Boolean?>) : DataCol(name) {
-    constructor(name: String, values: List<Boolean?>) : this(name, values.toTypedArray())
-
-    override fun not(): DataCol {
-        return BooleanCol(name, values.map { it?.not() })
-    }
-
-    override fun values(): Array<Boolean?> = values
-
-    override val length = values.size
-}
 
 
 //
@@ -298,7 +39,7 @@ infix fun BooleanArray.AND(other: BooleanArray) = mapIndexed { index, first -> f
 
 infix fun BooleanArray.OR(other: BooleanArray) = mapIndexed { index, first -> first || other[index] }.toBooleanArray()
 
-operator fun BooleanArray.not() = BooleanArray(this.size, { !this[it] })
+operator fun BooleanArray.not() = BooleanArray(this.size) { !this[it] }
 
 
 // comparisons against fixed values
@@ -368,11 +109,11 @@ internal fun DataCol._greaterEqualsThan(i: DataCol) = when (this) {
 infix fun DataCol.isEqualTo(i: Any): BooleanArray = eq(i)
 
 infix fun DataCol.eq(i: Any): BooleanArray = when (this) {
-    is DoubleCol -> this.values().map({ it == i })
-    is IntCol -> this.values.map({ it == i })
-    is LongCol -> this.values.map({ it == i })
-    is BooleanCol -> this.values.map({ it == i })
-    is StringCol -> this.values.map({ it == i })
+    is DoubleCol -> this.values().map { it == i }
+    is IntCol -> this.values.map { it == i }
+    is LongCol -> this.values.map { it == i }
+    is BooleanCol -> this.values.map { it == i }
+    is StringCol -> this.values.map { it == i }
     else -> throw UnsupportedOperationException()
 }.toBooleanArray()
 

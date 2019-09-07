@@ -3,12 +3,9 @@ package krangl
 import krangl.ArrayUtils.handleListErasure
 import krangl.util.asDF
 import krangl.util.createValidIdentifier
-import krangl.util.detectPropertiesByReflection
 import java.sql.ResultSet
 import java.time.LocalDate
 import java.time.LocalTime
-import kotlin.reflect.KProperty
-import kotlin.reflect.full.declaredMembers
 
 
 // todo javadoc example needed
@@ -43,64 +40,6 @@ fun <T> DataFrame.Companion.fromRecords(records: Iterable<T>, mapping: (T) -> Da
     }
 
     return columnData.map { (name, data) -> handleListErasure(name, data) }.asDF()
-}
-
-
-/**
- * Turn a list of objects into a data-frame using reflection. Currently just properties without any nesting are supported.
- */
-@Suppress("UNUSED_PARAMETER")
-inline fun <reified T> Iterable<T>.asDataFrame(refAs: String? = null): DataFrame {
-    // val declaredMembers = T::class.declaredMembers
-    //    declaredMembers.first().call(this[0])
-
-    val declaredMembers = T::class.declaredMembers
-
-    val properties = declaredMembers
-            .filter { it.parameters.toList().size == 1 }
-            .filter { it is KProperty }
-
-    // todo call kotlin getters
-    //  declaredMembers.toList()[1].call(first())
-
-    // todo call regular getters
-
-
-    val results = properties.map {
-        it.name to this.map { el -> it.call(el) }
-    }
-
-    val columns = results.map { handleListErasure(it.first, it.second) }
-
-
-    return columns.asDF()
-}
-
-
-inline fun <reified T> DataFrame.unfold(
-        columnName: String,
-        properties: List<String> = detectPropertiesByReflection<T>().map { it.name },
-        keep: Boolean = true
-): DataFrame {
-
-    val extProperties = properties + properties.map { "get" + it.capitalize() }
-    val propsOrGetters = detectPropertiesByReflection<T>()
-
-
-    val filtMembers = propsOrGetters
-            // match by name
-            .filter { extProperties.contains(it.name) }
-
-    // todo make sure that unfolded columns are not yet present in df, and warn if so and append _1, _2, ... suffix
-    val unfolded = filtMembers.fold(this) { df, kCallable ->
-        df.addColumn(kCallable.name) {
-            df[columnName].map<T> {
-                kCallable.call(it)
-            }
-        }
-    }
-
-    return if (keep) unfolded else unfolded.remove(columnName)
 }
 
 
