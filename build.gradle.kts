@@ -1,10 +1,8 @@
 @file:Suppress("SpellCheckingInspection")
 
 plugins {
-    // Applied to root
     `build-scan`
-
-    // Applied to specific modules
+    java
     id("org.jetbrains.kotlin.jvm") version "1.3.50" apply false
     id("org.javamodularity.moduleplugin") version "1.5.0" apply false
     id("org.openjfx.javafxplugin") version "0.0.8" apply false
@@ -26,6 +24,9 @@ subprojects {
         set("junit-version", "5.5.1")
         set("javafx-version", "12.0.2")
         set("kotlin-jvm-target", "11")
+    }
+    dependencies {
+        implementation("org.jetbrains", "annotations", "13.0")
     }
     buildDir = File(rootProject.projectDir, "build/$name")
 }

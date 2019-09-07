@@ -1,20 +1,24 @@
 package kb.service.api;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface TextEditor {
 
     String getSyntax();
 
-    void setSyntax();
+    void setSyntax(String syntax);
 
-    void setInitialText();
+    void setInitialText(String text);
+
+    void setEditable(boolean editable);
 
     String getFinalText();
 
     void show();
 
-    boolean isFileChanged();
+    boolean isTextChanged();
 
     void setTitle(String title);
 
-    void addAction(String name, Runnable action);
+    void addAction(@NotNull String name, @NotNull Runnable action);
 }

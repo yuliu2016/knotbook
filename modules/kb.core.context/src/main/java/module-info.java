@@ -1,9 +1,10 @@
 module kb.core.context {
-    uses kb.service.api.Service;
 
     requires kotlin.stdlib;
-
     requires kb.service.api;
+
+    uses kb.service.api.Service;
+    uses kb.service.api.TextEditorProvider;
 
     exports kb.core.context;
 }
