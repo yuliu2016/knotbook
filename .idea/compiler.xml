@@ -6,8 +6,8 @@
       <module name="knotbook.kb.core.registry.test" target="12" />
       <module name="knotbook.kb.core.system.main" target="12" />
       <module name="knotbook.kb.core.system.test" target="12" />
-      <module name="knotbook.kb.lib.borderless.main" target="12" />
-      <module name="knotbook.kb.lib.borderless.test" target="12" />
+      <module name="knotbook.kb.lib.krangl.main" target="12" />
+      <module name="knotbook.kb.lib.krangl.test" target="12" />
       <module name="knotbook.kb.ss.main" target="12" />
       <module name="knotbook.kb.ss.test" target="12" />
     </bytecodeTargetLevel>
