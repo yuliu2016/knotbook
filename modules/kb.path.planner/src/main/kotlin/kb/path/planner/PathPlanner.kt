@@ -10,7 +10,7 @@ import javafx.scene.paint.Color
 import javafx.stage.Screen
 import javafx.stage.Stage
 import kb.core.fx.*
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid
+import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 
 @Suppress("MemberVisibilityCanBePrivate")
 class PathPlanner {
@@ -27,7 +27,7 @@ class PathPlanner {
         modify {
             +tab {
                 tooltip = Tooltip("Field Model Configuration")
-                graphic = fontIcon(FontAwesomeSolid.FLAG, 13)
+                graphic = fontIcon(MDI_FLAG, 14)
                 content = gridPane {
                     padding = Insets(8.0)
                     hgap = 8.0
@@ -63,7 +63,7 @@ class PathPlanner {
             }
             +tab {
                 tooltip = Tooltip("Path Configuration")
-                graphic = fontIcon(FontAwesomeSolid.BEZIER_CURVE, 13)
+                graphic = fontIcon(MDI_VECTOR_CURVE, 14)
                 content = gridPane {
                     padding = Insets(8.0)
                     hgap = 8.0
@@ -87,7 +87,7 @@ class PathPlanner {
             }
             +tab {
                 tooltip = Tooltip("Trajectory Configuration")
-                graphic = fontIcon(FontAwesomeSolid.CLOCK, 13)
+                graphic = fontIcon(MDI_CLOCK, 14)
                 content = gridPane {
                     padding = Insets(8.0)
                     hgap = 8.0
@@ -106,7 +106,7 @@ class PathPlanner {
             }
             +tab {
                 tooltip = Tooltip("Waypoints")
-                graphic = fontIcon(FontAwesomeSolid.DIRECTIONS, 13)
+                graphic = fontIcon(MDI_DIRECTIONS, 14)
                 content = gridPane {
                     padding = Insets(8.0)
                     hgap = 8.0
@@ -117,7 +117,7 @@ class PathPlanner {
             }
             +tab {
                 tooltip = Tooltip("Path Rendering")
-                graphic = fontIcon(FontAwesomeSolid.FILL, 13)
+                graphic = fontIcon(MDI_FORMAT_COLOR_FILL, 14)
                 content = gridPane {
                     padding = Insets(8.0)
                     hgap = 8.0
@@ -132,7 +132,7 @@ class PathPlanner {
             }
             +tab {
                 tooltip = Tooltip("Plot Rendering")
-                graphic = fontIcon(FontAwesomeSolid.CHART_LINE, 13)
+                graphic = fontIcon(MDI_CHART_LINE, 14)
                 content = gridPane {
                     padding = Insets(8.0)
                     hgap = 8.0
@@ -152,7 +152,7 @@ class PathPlanner {
             }
             +tab {
                 tooltip = Tooltip("Trajectory Simulation")
-                graphic = fontIcon(FontAwesomeSolid.PLAY, 12)
+                graphic = fontIcon(MDI_PLAY, 14)
                 content = gridPane {
                     padding = Insets(8.0)
                     hgap = 8.0
@@ -167,7 +167,7 @@ class PathPlanner {
             }
             +tab {
                 tooltip = Tooltip("Measure and Compare")
-                graphic = fontIcon(FontAwesomeSolid.RULER, 13)
+                graphic = fontIcon(MDI_RULER, 14)
                 content = gridPane {
                     padding = Insets(8.0)
                     hgap = 8.0
@@ -177,7 +177,7 @@ class PathPlanner {
             }
             +tab {
                 tooltip = Tooltip("Load and Save")
-                graphic = fontIcon(FontAwesomeSolid.SAVE, 13)
+                graphic = fontIcon(MDI_CONTENT_SAVE, 14)
                 content = gridPane {
                     padding = Insets(8.0)
                     hgap = 8.0

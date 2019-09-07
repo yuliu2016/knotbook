@@ -5,7 +5,7 @@ module kb.pathplanner {
     requires ca.warp_seven.frc;
     requires kb.core.icon;
     requires org.kordamp.iconli.core;
-    requires org.kordamp.ikonli.fontawesome5;
+    requires org.kordamp.ikonli.materialdesign;
 
     requires kb.core.fx;
 
