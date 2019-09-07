@@ -1,5 +1,5 @@
 module kb.core.context {
-    uses kb.service.api.KBExtensionTool;
+    uses kb.service.api.Service;
 
     requires kotlin.stdlib;
 

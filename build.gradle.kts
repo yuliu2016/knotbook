@@ -13,8 +13,8 @@ plugins {
 }
 
 subprojects {
-    apply(plugin="java")
-    apply(plugin="org.javamodularity.moduleplugin")
+    apply(plugin = "java")
+    apply(plugin = "org.javamodularity.moduleplugin")
     repositories {
         mavenCentral()
         jcenter()

@@ -18,6 +18,7 @@
 package kb.core.icon;
 
 import javafx.scene.text.Font;
+import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.IkonHandler;
 
 import java.util.LinkedHashSet;
@@ -29,8 +30,8 @@ import static java.util.Objects.requireNonNull;
 /**
  * @author Andres Almiray
  */
-@SuppressWarnings({"WeakerAccess", "ConstantConditions"})
-class IkonResolver {
+@SuppressWarnings({"WeakerAccess", "ConstantConditions", "unused"})
+public class IkonResolver {
     private static final IkonResolver INSTANCE;
     private static final Set<IkonHandler> HANDLERS = new LinkedHashSet<>();
 
@@ -61,5 +62,16 @@ class IkonResolver {
             }
         }
         throw new UnsupportedOperationException("Cannot resolve '" + value + "'");
+    }
+
+    /**
+     * Resolves an icon, or return null if there is no handler for it
+     */
+    public static Ikon resolveIcon(String code) {
+        try {
+            return INSTANCE.resolveIkonHandler(code).resolve(code);
+        } catch (UnsupportedOperationException e) {
+            return null;
+        }
     }
 }
