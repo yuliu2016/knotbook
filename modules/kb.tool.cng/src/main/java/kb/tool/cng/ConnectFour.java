@@ -142,11 +142,7 @@ public class ConnectFour extends JComponent {
         // Create window
         frame = new JFrame();
         frame.setSize(kDefaultWidth, kDefaultHeight);
-        frame.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent windowEvent) {
-                System.exit(0);
-            }
-        });
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         // Create window layout
         BorderLayout layout = new BorderLayout();
@@ -171,6 +167,10 @@ public class ConnectFour extends JComponent {
 
     // Main Method; Just initialize the GameView
     public static void main(String[] args) {
+        start();
+    }
+
+    static void start() {
         new ConnectFour();
     }
 

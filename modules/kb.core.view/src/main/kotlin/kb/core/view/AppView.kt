@@ -1,15 +1,10 @@
 package kb.core.view
 
-import javafx.beans.property.SimpleStringProperty
-import javafx.geometry.Insets
 import javafx.geometry.Orientation
-import javafx.geometry.Pos
 import javafx.scene.Scene
-import javafx.scene.control.*
+import javafx.scene.control.Menu
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
-import javafx.scene.layout.Region
-import javafx.scene.paint.Color
 import javafx.stage.Stage
 import kb.core.bowline.Bowline
 import kb.core.camera.fx.KnotCameraTest
@@ -20,6 +15,7 @@ import kb.core.fx.*
 import kb.core.splash.AboutSplash
 import kb.core.splash.GCSplash
 import kb.path.planner.runPathPlanner
+import kb.tool.cng.Connect4
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 import kotlin.system.exitProcess
 
@@ -341,8 +337,13 @@ object AppView {
                 }
                 item {
                     name("Drive Path Planner")
-                    icon(MDI_NAVIGATION, 13)
+                    icon(MDI_NAVIGATION, 14)
                     action { runPathPlanner() }
+                }
+                item {
+                    name("Connect 4 Game")
+                    icon(MDI_RECORD, 14)
+                    action { Connect4.start() }
                 }
             }
         }

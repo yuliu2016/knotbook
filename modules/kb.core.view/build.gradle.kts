@@ -33,6 +33,7 @@ dependencies {
     implementation(project(":kb.core.server"))
     implementation(project(":kb.core.code"))
     implementation(project(":kb.path.planner"))
+    implementation(project(":kb.tool.cng"))
     implementation(kotlin("stdlib"))
 
     implementation(group = "org.kordamp.ikonli", name = "ikonli-materialdesign-pack", version = "11.3.4")
