@@ -28,9 +28,9 @@ https://stackoverflow.com/questions/37524467/remove-all-focus-borders-from-javaf
     -fx-padding: 1;
 }
 
-/*.radio-button > .radio, .radio-button:focused > .radio  {
-    -fx-background-radius: 1.0em; !* large value to make sure this remains circular *!
-    -fx-padding: 0.333333em; !* 4 -- padding from outside edge to the inner black dot *!
+.radio-button > .radio, .radio-button:focused > .radio  {
+    -fx-background-radius: 1.0em; /* large value to make sure this remains circular */
+    -fx-padding: 0.333333em; /* 4 -- padding from outside edge to the inner black dot */
 }
 .split-menu-button:focused {
     -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border;
@@ -42,14 +42,14 @@ https://stackoverflow.com/questions/37524467/remove-all-focus-borders-from-javaf
     -fx-background-color: -fx-inner-border, -fx-body-color;
     -fx-background-insets: 1 0 1 1, 2 1 2 2;
     -fx-background-radius: 2 0 0 2, 1 0 0 1;
-    -fx-padding: 0.333333em 0.667em 0.333333em 0.667em; !* 4 8 4 8 *!
+    -fx-padding: 0.333333em 0.667em 0.333333em 0.667em; /* 4 8 4 8 */
 }
 .split-menu-button:focused > .arrow-button {
     -fx-background-color: -fx-inner-border, -fx-body-color;
     -fx-background-insets: 1, 2;
     -fx-background-radius: 0 2 2 0, 0 1 1 0;
-    -fx-padding: 0.5em 0.667em 0.5em 0.667em; !* 6 8 6 8 *!
-}*/
+    -fx-padding: 0.5em 0.667em 0.5em 0.667em; /* 6 8 6 8 */
+}
 
 /*
 .scroll-bar:focused {

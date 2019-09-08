@@ -4,5 +4,9 @@ import javafx.application.Platform
 
 @Suppress("unused")
 fun runOnFxThread(action: () -> Unit) {
-    Platform.runLater(action)
+    if (Platform.isFxApplicationThread()) {
+        action()
+    } else {
+        Platform.runLater(action)
+    }
 }

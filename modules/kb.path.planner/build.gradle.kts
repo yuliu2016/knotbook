@@ -24,9 +24,10 @@ javafx {
 }
 
 dependencies {
+    implementation(project(":kb.service.api"))
     implementation(project(":kb.core.icon"))
     implementation(project(":kb.core.fx"))
     implementation(kotlin("stdlib"))
     implementation ("com.github.Team865:FRC-Commons-Kotlin:e00ce2ccc6")
-    implementation(group = "org.kordamp.ikonli", name = "ikonli-fontawesome5-pack", version = "11.3.4")
+    implementation(group = "org.kordamp.ikonli", name = "ikonli-materialdesign-pack", version = "11.3.4")
 }

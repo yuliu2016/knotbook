@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 module kb.core.icon {
-    requires org.kordamp.iconli.core;
+    requires transitive org.kordamp.iconli.core;
     requires javafx.controls;
 
     uses org.kordamp.ikonli.IkonHandler;

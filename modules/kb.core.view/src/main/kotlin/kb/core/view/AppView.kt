@@ -1,15 +1,10 @@
 package kb.core.view
 
-import javafx.beans.property.SimpleStringProperty
-import javafx.geometry.Insets
 import javafx.geometry.Orientation
-import javafx.geometry.Pos
 import javafx.scene.Scene
-import javafx.scene.control.*
+import javafx.scene.control.Menu
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
-import javafx.scene.layout.Region
-import javafx.scene.paint.Color
 import javafx.stage.Stage
 import kb.core.bowline.Bowline
 import kb.core.camera.fx.KnotCameraTest
@@ -20,6 +15,7 @@ import kb.core.fx.*
 import kb.core.splash.AboutSplash
 import kb.core.splash.GCSplash
 import kb.path.planner.runPathPlanner
+import kb.tool.cng.Connect4
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 import kotlin.system.exitProcess
 
@@ -319,6 +315,7 @@ object AppView {
                 separator()
                 item {
                     name("The Blue Alliance Integration")
+                    action { TBAView(stage) }
                     icon(MDI_CLOUD_SYNC, 14)
                 }
                 item {
@@ -340,8 +337,13 @@ object AppView {
                 }
                 item {
                     name("Drive Path Planner")
-                    icon(MDI_NAVIGATION, 13)
+                    icon(MDI_NAVIGATION, 14)
                     action { runPathPlanner() }
+                }
+                item {
+                    name("Connect 4 Game")
+                    icon(MDI_RECORD, 14)
+                    action { Connect4.start() }
                 }
             }
         }
@@ -363,7 +365,7 @@ object AppView {
                 }
                 item {
                     name("Debug with Scenic View")
-                    action { Alert(Alert.AlertType.INFORMATION, "Scenic View is not supported in this build").show() }
+                    action { alertDialog("Notice", "Scenic View is not supported in this build") }
                     icon(MDI_CLOUD_OUTLINE, 14)
                 }
                 separator()
@@ -399,6 +401,9 @@ object AppView {
                 }
                 separator()
                 item {
+                    name("Open Source Licenses")
+                }
+                item {
                     name("Show releases on GitHub")
                     icon(MDI_GITHUB_CIRCLE, 14)
                 }
@@ -427,16 +432,16 @@ object AppView {
             Theme.Light -> Theme.Dark
             Theme.Dark -> Theme.Light
         }
-        box.stylesheets.setAll("/knotbook.css", theme.fileName)
+        box.stylesheets.setAll("reset_focus.css", "/knotbook.css", theme.fileName)
     }
 
     private val stage = Stage()
     private val indexTree = IndexTree()
+    private val table1 = TableContainer()
+    private val table2 = TableContainer()
 
     private val box = vbox {
-        val table = TableView<Int>()
-        table.items = (0..100).toList().observable()
-        stylesheets.addAll("/knotbook.css", Theme.Light.fileName)
+        stylesheets.addAll("reset_focus.css", "/knotbook.css", Theme.Light.fileName)
         prefWidth = 1120.0
         prefHeight = 630.0
         val bar = menuBar { modify(barCreator) }
@@ -445,35 +450,9 @@ object AppView {
         add(splitPane {
             orientation = Orientation.HORIZONTAL
             vgrow()
-            addFixed(indexTree.tree, vbox {
-                add(hbox {
-
-                    prefHeight = 18.0
-                    align(Pos.CENTER)
-                    add(fontIcon(MDI_MEMORY, 14).centerIn(20))
-                    add(Label("Local Memory/"))
-                    add(Label("Number Generator").apply {
-                        textFill = Color.DARKBLUE
-                    })
-                    padding = Insets(0.0, 4.0, 0.0, 4.0)
-                })
-                add(table.vgrow())
-            })
-            setDividerPositions(0.2)
+            addFixed(indexTree.tree, table1.view, table2.view)
+            setDividerPositions(0.2, 0.6)
         })
-        table.columns.addAll((0..10).map { col ->
-            TableColumn<Int, String>(col.toString()).apply {
-                this.setCellValueFactory {
-                    SimpleStringProperty((col * it.value).toString())
-                }
-                this.prefWidth = 100.0
-                isSortable = false
-            }
-        })
-        table.fixedCellSize = Region.USE_COMPUTED_SIZE
-        table.selectionModel.isCellSelectionEnabled = true
-        table.selectionModel.selectionMode = SelectionMode.MULTIPLE
-        table.requestFocus()
     }
 
     private val scene = Scene(box)
@@ -484,5 +463,6 @@ object AppView {
         stage.icons.add(Image(AppView::class.java.getResourceAsStream("/icon.png")))
         stage.scene = scene
         stage.show()
+        TBAView(stage)
     }
 }

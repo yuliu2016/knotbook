@@ -8,6 +8,7 @@ import javafx.scene.input.TransferMode
 import javafx.util.Callback
 
 
+@Suppress("unused")
 class PropertyList(vararg initialItems: String) : ListView<String>(initialItems.toMutableList().observable()) {
 
     private inner class Cell : ListCell<String>() {

@@ -66,7 +66,7 @@ public class AboutSplash {
         });
 
         bottom.getChildren().addAll(
-                labelOf("Version LAUNCH (Build 3.0.01) - Powered by Restructured Tables"),
+                labelOf("Version LAUNCH (Build 3.0.0-ea)"),
                 hyperlink,
                 labelOf("Licensed under MIT and powered by open-source software"),
                 labelOf("Runtime: " + System.getProperty("java.vm.name") +
