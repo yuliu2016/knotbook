@@ -319,6 +319,7 @@ object AppView {
                 separator()
                 item {
                     name("The Blue Alliance Integration")
+                    action { TBAView(stage) }
                     icon(MDI_CLOUD_SYNC, 14)
                 }
                 item {
@@ -461,5 +462,6 @@ object AppView {
         stage.icons.add(Image(AppView::class.java.getResourceAsStream("/icon.png")))
         stage.scene = scene
         stage.show()
+        TBAView(stage)
     }
 }
