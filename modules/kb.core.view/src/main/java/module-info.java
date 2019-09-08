@@ -11,7 +11,6 @@ module kb.core.view {
     requires kb.core.bowline;
     requires kb.core.fx;
     requires kb.core.icon;
-    requires kb.core.server;
     requires kb.core.code;
     requires kb.core.context;
 

@@ -435,10 +435,10 @@ object AppView {
 
     private val stage = Stage()
     private val indexTree = IndexTree()
+    private val table1 = TableContainer()
+    private val table2 = TableContainer()
 
     private val box = vbox {
-        val table = TableView<Int>()
-        table.items = (0..100).toList().observable()
         stylesheets.addAll("/knotbook.css", Theme.Light.fileName)
         prefWidth = 1120.0
         prefHeight = 630.0
@@ -448,35 +448,9 @@ object AppView {
         add(splitPane {
             orientation = Orientation.HORIZONTAL
             vgrow()
-            addFixed(indexTree.tree, vbox {
-                add(hbox {
-
-                    prefHeight = 18.0
-                    align(Pos.CENTER)
-                    add(fontIcon(MDI_MEMORY, 14).centerIn(20))
-                    add(Label("Local Memory/"))
-                    add(Label("Number Generator").apply {
-                        textFill = Color.DARKBLUE
-                    })
-                    padding = Insets(0.0, 4.0, 0.0, 4.0)
-                })
-                add(table.vgrow())
-            })
-            setDividerPositions(0.2)
+            addFixed(indexTree.tree, table1.view, table2.view)
+            setDividerPositions(0.2, 0.6)
         })
-        table.columns.addAll((0..10).map { col ->
-            TableColumn<Int, String>(col.toString()).apply {
-                this.setCellValueFactory {
-                    SimpleStringProperty((col * it.value).toString())
-                }
-                this.prefWidth = 100.0
-                isSortable = false
-            }
-        })
-        table.fixedCellSize = Region.USE_COMPUTED_SIZE
-        table.selectionModel.isCellSelectionEnabled = true
-        table.selectionModel.selectionMode = SelectionMode.MULTIPLE
-        table.requestFocus()
     }
 
     private val scene = Scene(box)
