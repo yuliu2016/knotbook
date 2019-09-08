@@ -82,7 +82,6 @@ internal class SimpleDataFrame(override val cols: List<DataCol>) : DataFrame {
                 it.name to when (it) {
                     is DoubleCol -> it.values[rowIndex]
                     is IntCol -> it.values[rowIndex]
-                    is LongCol -> it.values[rowIndex]
                     is BooleanCol -> it.values[rowIndex]
                     is StringCol -> it.values[rowIndex]
                     is AnyCol -> it.values[rowIndex]
@@ -99,7 +98,6 @@ internal class SimpleDataFrame(override val cols: List<DataCol>) : DataFrame {
             null -> 0
             is DoubleCol -> firstCol.values.size
             is IntCol -> firstCol.values.size
-            is LongCol -> firstCol.values.size
             is BooleanCol -> firstCol.values.size
             is StringCol -> firstCol.values.size
             is AnyCol -> firstCol.values.size
@@ -141,7 +139,6 @@ internal class SimpleDataFrame(override val cols: List<DataCol>) : DataFrame {
             when (it) {
                 is DoubleCol -> DoubleCol(it.name, it.values.filterIndexed { index, _ -> indexFilter[index] }.toTypedArray())
                 is IntCol -> IntCol(it.name, it.values.filterIndexed { index, _ -> indexFilter[index] }.toTypedArray())
-                is LongCol -> LongCol(it.name, it.values.filterIndexed { index, _ -> indexFilter[index] }.toTypedArray())
                 is StringCol -> StringCol(it.name, it.values.filterIndexed { index, _ -> indexFilter[index] }.toList().toTypedArray())
                 is BooleanCol -> BooleanCol(it.name, it.values.filterIndexed { index, _ -> indexFilter[index] }.toList().toTypedArray())
                 is AnyCol -> AnyCol(it.name, it.values.filterIndexed { index, _ -> indexFilter[index] }.toList().toTypedArray())
@@ -166,7 +163,6 @@ internal class SimpleDataFrame(override val cols: List<DataCol>) : DataFrame {
             val sumValue = sumRule(this.ec, this.ec)
             when (sumValue) {
                 is Int -> IntCol(key, arrayOf(sumValue as Int?))
-                is Long -> LongCol(key, arrayOf(sumValue as Long?))
                 is Double -> DoubleCol(key, arrayOf(sumValue as Double?))
                 is Boolean -> BooleanCol(key, arrayOf(sumValue as Boolean?))
                 is String -> StringCol(key, arrayOf(sumValue as String?))
@@ -240,7 +236,6 @@ internal class SimpleDataFrame(override val cols: List<DataCol>) : DataFrame {
             when (it) {
                 is DoubleCol -> DoubleCol(it.name, Array(nrow, { index -> it.values[permutation[index]] }))
                 is IntCol -> IntCol(it.name, Array(nrow, { index -> it.values[permutation[index]] }))
-                is LongCol -> LongCol(it.name, Array(nrow, { index -> it.values[permutation[index]] }))
                 is BooleanCol -> BooleanCol(it.name, Array(nrow, { index -> it.values[permutation[index]] }))
                 is StringCol -> StringCol(it.name, Array(nrow, { index -> it.values[permutation[index]] }))
                 is AnyCol -> AnyCol(it.name, Array(nrow, { index -> it.values[permutation[index]] }))
@@ -298,7 +293,6 @@ internal class SimpleDataFrame(override val cols: List<DataCol>) : DataFrame {
             // create new array
             is DoubleCol -> DoubleCol(col.name, Array(groupIndex.rowIndices.size, { col.values[groupIndex.rowIndices[it]] }))
             is IntCol -> IntCol(col.name, Array(groupIndex.rowIndices.size, { col.values[groupIndex.rowIndices[it]] }))
-            is LongCol -> LongCol(col.name, Array(groupIndex.rowIndices.size, { col.values[groupIndex.rowIndices[it]] }))
             is BooleanCol -> BooleanCol(col.name, Array(groupIndex.rowIndices.size, { col.values[groupIndex.rowIndices[it]] }))
             is StringCol -> StringCol(col.name, Array(groupIndex.rowIndices.size, { col.values[groupIndex.rowIndices[it]] }))
             is AnyCol -> AnyCol(col.name, Array(groupIndex.rowIndices.size, { col.values[groupIndex.rowIndices[it]] }))
@@ -370,7 +364,6 @@ internal fun anyAsColumn(mutation: Any?, name: String, nrow: Int): DataCol {
         is DataCol -> when (arrifiedMutation) {
             is DoubleCol -> DoubleCol(name, arrifiedMutation.values)
             is IntCol -> IntCol(name, arrifiedMutation.values)
-            is LongCol -> LongCol(name, arrifiedMutation.values)
             is StringCol -> StringCol(name, arrifiedMutation.values)
             is BooleanCol -> BooleanCol(name, arrifiedMutation.values)
             is AnyCol -> AnyCol(name, arrifiedMutation.values)
@@ -380,7 +373,6 @@ internal fun anyAsColumn(mutation: Any?, name: String, nrow: Int): DataCol {
         // todo still needed?
         is DoubleArray -> DoubleCol(name, arrifiedMutation.run { Array<Double?>(size, { this[it] }) })
         is IntArray -> IntCol(name, arrifiedMutation.run { Array<Int?>(size, { this[it] }) })
-        is LongArray -> LongCol(name, arrifiedMutation.run { Array<Long?>(size, { this[it] }) })
         is BooleanArray -> BooleanCol(name, arrifiedMutation.run { Array<Boolean?>(size, { this[it] }) })
 
         // also handle lists here
@@ -415,7 +407,6 @@ object ArrayUtils {
     internal fun handleArrayErasure(otherCol: DataCol, name: String, mutation: Array<*>): DataCol = when (otherCol) {
         //    isOfType<Int>(mutation as Array<Any?>) -> IntCol(name, mutation as Array<Int?>)
         is IntCol -> IntCol(name, Array<Int?>(mutation.size, { mutation[it] as? Int }))
-        is LongCol -> LongCol(name, Array<Long?>(mutation.size, { mutation[it] as? Long }))
         is StringCol -> StringCol(name, Array<String?>(mutation.size, { mutation[it] as? String }))
         is DoubleCol -> DoubleCol(name, Array<Double?>(mutation.size, { mutation[it] as? Double }))
         is BooleanCol -> BooleanCol(name, Array<Boolean?>(mutation.size, { mutation[it] as? Boolean }))
@@ -426,7 +417,6 @@ object ArrayUtils {
     internal fun handleArrayErasure(name: String, mutation: Array<*>): DataCol = when {
         //    isOfType<Int>(mutation as Array<Any?>) -> IntCol(name, mutation as Array<Int?>)
         isOfType<Int>(mutation as Array<Any?>) -> IntCol(name, Array(mutation.size) { mutation[it] as? Int })
-        isOfType<Long>(mutation) -> LongCol(name, Array(mutation.size) { mutation[it] as? Long })
         isOfType<String>(mutation) -> StringCol(name, Array(mutation.size) { mutation[it] as? String })
         isOfType<Double>(mutation) -> DoubleCol(name, Array(mutation.size) { mutation[it] as? Double })
         isOfType<Boolean>(mutation) -> BooleanCol(name, Array(mutation.size) { mutation[it] as? Boolean })
@@ -438,7 +428,6 @@ object ArrayUtils {
     @Suppress("UNCHECKED_CAST")
     fun handleListErasure(name: String, mutation: List<*>): DataCol = when {
         isListOfType<Int>(mutation) -> IntCol(name, mutation as List<Int>)
-        isListOfType<Long>(mutation) -> LongCol(name, mutation as List<Long>)
         isListOfType<String>(mutation) -> StringCol(name, mutation as List<String>)
         isListOfType<Double>(mutation) -> DoubleCol(name, mutation as List<Double>)
         isListOfType<Boolean>(mutation) -> BooleanCol(name, mutation as List<Boolean>)

@@ -194,7 +194,6 @@ private fun nullRow(df: DataFrame): DataFrame = df.cols.fold(SimpleDataFrame(), 
 
     when (column) {
         is IntCol -> IntCol(column.name, listOf(null))
-        is LongCol -> LongCol(column.name, listOf(null))
         is StringCol -> StringCol(column.name, listOf(null))
         is BooleanCol -> BooleanCol(column.name, listOf(null))
         is DoubleCol -> DoubleCol(column.name, listOf(null))
@@ -253,8 +252,8 @@ internal fun cartesianProduct(left: DataFrame, right: DataFrame): DataFrame {
     //http://codeaffectionate.blogspot.de/2012/09/fun-with-cartesian-products-cartesian.html
 
     //    val leftIndexReplication = IntArray(left.nrow*right.nrow, { index -> }
-    val leftIndexReplication = (0..(right.nrow - 1)).flatMap { IntArray(left.nrow, { it }).toList() }
-    val rightIndexReplication = (0..(right.nrow - 1)).flatMap { leftIt -> IntArray(left.nrow, { leftIt }).toList() }
+    val leftIndexReplication = (0 until right.nrow).flatMap { IntArray(left.nrow, { it }).toList() }
+    val rightIndexReplication = (0 until right.nrow).flatMap { leftIt -> IntArray(left.nrow, { leftIt }).toList() }
 
     // replicate data
     val leftCartesian: DataFrame = replicateByIndex(left, leftIndexReplication)
@@ -267,12 +266,11 @@ internal fun cartesianProduct(left: DataFrame, right: DataFrame): DataFrame {
 internal fun replicateByIndex(df: DataFrame, repIndex: List<Int>): DataFrame {
     val repCols: List<DataCol> = df.cols.map { it ->
         when (it) {
-            is DoubleCol -> DoubleCol(it.name, Array(repIndex.size, { index -> it.values[repIndex[index]] }).toList())
-            is IntCol -> IntCol(it.name, Array(repIndex.size, { index -> it.values[repIndex[index]] }).toList())
-            is LongCol -> LongCol(it.name, Array(repIndex.size, { index -> it.values[repIndex[index]] }).toList())
-            is BooleanCol -> BooleanCol(it.name, Array(repIndex.size, { index -> it.values[repIndex[index]] }).toList())
-            is StringCol -> StringCol(it.name, Array(repIndex.size, { index -> it.values[repIndex[index]] }).toList())
-            is AnyCol -> AnyCol(it.name, Array(repIndex.size, { index -> it.values[repIndex[index]] }).toList())
+            is DoubleCol -> DoubleCol(it.name, Array(repIndex.size) { index -> it.values[repIndex[index]] }.toList())
+            is IntCol -> IntCol(it.name, Array(repIndex.size) { index -> it.values[repIndex[index]] }.toList())
+            is BooleanCol -> BooleanCol(it.name, Array(repIndex.size) { index -> it.values[repIndex[index]] }.toList())
+            is StringCol -> StringCol(it.name, Array(repIndex.size) { index -> it.values[repIndex[index]] }.toList())
+            is AnyCol -> AnyCol(it.name, Array(repIndex.size) { index -> it.values[repIndex[index]] }.toList())
             else -> throw UnsupportedOperationException()
         }
     }
