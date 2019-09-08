@@ -21,7 +21,7 @@ public class ApplicationContext {
     }
 
     private static <T extends MetaService> void print(List<T> services) {
-        System.out.println("Listing " + services.size() + " packages:");
+        System.out.println("\nListing " + services.size() + " package(s):");
         for (T s : services) {
             ServiceMetadata metadata = s.getMetadata();
             System.out.println(metadata.getPackageName() + " => " + metadata.getPackageVersion());
