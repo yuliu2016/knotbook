@@ -658,7 +658,6 @@ internal fun getColumnType(col: DataCol, wrapSquares: Boolean = false): String {
     return when (col) {
         is DoubleCol -> "Dbl"
         is IntCol -> "Int"
-        is LongCol -> "Long"
         is StringCol -> "Str"
         is BooleanCol -> "Bol"
         is AnyCol -> guessAnyType(col)
@@ -767,7 +766,6 @@ fun bindRows(vararg dataFrames: DataFrame): DataFrame { // add options about NA-
         when (dataFrames.first { it.names.contains(colName) }[colName]) {
             is DoubleCol -> DoubleCol(colName, colDataCombined.map { it as Double? })
             is IntCol -> IntCol(colName, colDataCombined.map { it as Int? })
-            is LongCol -> LongCol(colName, colDataCombined.map { it as Long? })
             is StringCol -> StringCol(colName, colDataCombined.map { it as String? })
             is BooleanCol -> BooleanCol(colName, colDataCombined.map { it as Boolean? })
             is AnyCol -> AnyCol(colName, colDataCombined.toList())
@@ -889,7 +887,7 @@ internal val DataFrame.rowNumber: List<Int> get() = (1..nrow).toList()
 
 
 fun DataFrame.toDoubleMatrix(): Array<DoubleArray> {
-    selectIf { !(it is IntCol || it is LongCol || it is DoubleCol) }.names.let {
+    selectIf { !(it is IntCol || it is DoubleCol) }.names.let {
         require(it.isEmpty()) { "Can not cast to double matrix because not all columns are numeric" }
     }
 
@@ -897,7 +895,6 @@ fun DataFrame.toDoubleMatrix(): Array<DoubleArray> {
         when (it) {
             is DoubleCol -> it.values.requireNoNulls().toDoubleArray()
             is IntCol -> it.values.requireNoNulls().map { it.toDouble() }.toDoubleArray()
-            is LongCol -> it.values.requireNoNulls().map { it.toDouble() }.toDoubleArray()
             else -> TODO()
         }
     }.toTypedArray()

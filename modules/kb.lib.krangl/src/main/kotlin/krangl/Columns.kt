@@ -57,14 +57,12 @@ private val longComp = nullsFirst<Long>()
 internal fun DataCol._greaterThan(i: Number) = when (this) {
     is DoubleCol -> this.values.mapNonNull { doubleComp.compare(it, i.toDouble()) > 0 }
     is IntCol -> this.values.mapNonNull { doubleComp.compare(it.toDouble(), i.toDouble()) > 0 }
-    is LongCol -> this.values.mapNonNull { doubleComp.compare(it.toDouble(), i.toDouble()) > 0 }
     else -> throw UnsupportedOperationException()
 }
 
 internal fun DataCol._greaterEqualsThan(i: Number) = when (this) {
     is DoubleCol -> this.values.mapNonNull { doubleComp.compare(it, i.toDouble()) >= 0 }
     is IntCol -> this.values.mapNonNull { doubleComp.compare(it.toDouble(), i.toDouble()) >= 0 }
-    is LongCol -> this.values.mapNonNull { doubleComp.compare(it.toDouble(), i.toDouble()) >= 0 }
     else -> throw UnsupportedOperationException()
 }
 
@@ -85,14 +83,14 @@ fun DataCol.lesserEquals(i: DataCol) = (!_greaterThan(i)).nullAsFalse() //AND is
 
 
 internal fun DataCol._greaterThan(i: DataCol) = when (this) {
-    is DoubleCol, is IntCol, is LongCol -> values().zip(i.values()).map { (a, b) -> doubleComp.compare((a as? Number)?.toDouble(), (b as? Number)?.toDouble()) > 0 }
+    is DoubleCol, is IntCol -> values().zip(i.values()).map { (a, b) -> doubleComp.compare((a as? Number)?.toDouble(), (b as? Number)?.toDouble()) > 0 }
 //    is IntCol -> values.zip(i.values()).map { (a, b) -> intComp.compare(a, (b as Number?)?.toInt()) > 0 }
     else -> throw UnsupportedOperationException()
 }
 
 
 internal fun DataCol._greaterEqualsThan(i: DataCol) = when (this) {
-    is DoubleCol, is IntCol, is LongCol -> values().zip(i.values()).map { (a, b) -> doubleComp.compare((a as? Number)?.toDouble(), (b as? Number)?.toDouble()) >= 0 }
+    is DoubleCol, is IntCol -> values().zip(i.values()).map { (a, b) -> doubleComp.compare((a as? Number)?.toDouble(), (b as? Number)?.toDouble()) >= 0 }
 //    is IntCol -> values.zip(i.values()).map { (a, b) -> intComp.compare(a, (b as Number?)?.toInt()) > 0 }
     else -> throw UnsupportedOperationException()
 }
@@ -103,7 +101,6 @@ infix fun DataCol.isEqualTo(i: Any): BooleanArray = eq(i)
 infix fun DataCol.eq(i: Any): BooleanArray = when (this) {
     is DoubleCol -> this.values().map { it == i }
     is IntCol -> this.values.map { it == i }
-    is LongCol -> this.values.map { it == i }
     is BooleanCol -> this.values.map { it == i }
     is StringCol -> this.values.map { it == i }
     else -> throw UnsupportedOperationException()
@@ -123,16 +120,14 @@ infix fun DataCol.eq(i: Any): BooleanArray = when (this) {
 fun DataCol.asStrings(): Array<String?> = columnCast<StringCol>().values
 
 fun DataCol.asDoubles(): Array<Double?> {
-    return when {
-        this is IntCol -> Array(values.size) { (this[it] as Int?)?.toDouble() }
-        this is LongCol -> Array(values.size) { (this[it] as Long?)?.toDouble() }
+    return when (this) {
+        is IntCol -> Array(values.size) { (this[it] as Int?)?.toDouble() }
         else -> columnCast<DoubleCol>().values
     }
 }
 
 fun DataCol.asBooleans(): Array<Boolean?> = columnCast<BooleanCol>().values
 fun DataCol.asInts(): Array<Int?> = columnCast<IntCol>().values
-fun DataCol.asLongs(): Array<Long?> = columnCast<LongCol>().values
 
 //fun DataCol.s(): Array<String?> = asStrings()
 //fun DataCol.d(): Array<Double?> = asDoubles()
@@ -168,7 +163,6 @@ inline fun <reified R> DataCol.asType(): Array<out R?> {
             this is StringCol -> this.values as Array<R?>
             this is DoubleCol -> values as Array<R?>
             this is BooleanCol -> values as Array<R?>
-            this is LongCol -> values as Array<R?>
             this is IntCol -> values as Array<R?>
             this is AnyCol && values.firstOrNull() is R -> Array(values.size) { index -> values[index] as R }
             else -> throw RuntimeException()
@@ -255,7 +249,6 @@ fun ExpressionContext.isNotNA(columnName: String): BooleanArray = isNA(columnNam
 fun DataCol.min(removeNA: Boolean = false): Double? = when (this) {
     is DoubleCol -> values.run { if (removeNA) filterNotNull().toTypedArray() else forceNotNull() }.min()
     is IntCol -> values.map { it?.toDouble() }.toTypedArray().run { if (removeNA) filterNotNull().toTypedArray() else forceNotNull() }.min()
-    is LongCol -> values.map { it?.toDouble() }.toTypedArray().run { if (removeNA) filterNotNull().toTypedArray() else forceNotNull() }.min()
     else -> throw InvalidColumnOperationException(this)
 }
 
@@ -269,7 +262,6 @@ fun DataCol.min(removeNA: Boolean = false): Double? = when (this) {
 fun DataCol.max(removeNA: Boolean = false): Double? = when (this) {
     is DoubleCol -> values.run { if (removeNA) filterNotNull().toTypedArray() else forceNotNull() }.max()
     is IntCol -> values.map { it?.toDouble() }.toTypedArray().run { if (removeNA) filterNotNull().toTypedArray() else forceNotNull() }.max()
-    is LongCol -> values.map { it?.toDouble() }.toTypedArray().run { if (removeNA) filterNotNull().toTypedArray() else forceNotNull() }.max()
     else -> throw InvalidColumnOperationException(this)
 }
 
@@ -283,7 +275,6 @@ fun DataCol.max(removeNA: Boolean = false): Double? = when (this) {
 fun DataCol.mean(removeNA: Boolean = false): Double? = when (this) {
     is DoubleCol -> values.run { if (removeNA) filterNotNull().toTypedArray() else forceNotNull() }.mean()
     is IntCol -> values.map { it?.toDouble() }.toTypedArray().run { if (removeNA) filterNotNull().toTypedArray() else forceNotNull() }.mean()
-    is LongCol -> values.map { it?.toDouble() }.toTypedArray().run { if (removeNA) filterNotNull().toTypedArray() else forceNotNull() }.mean()
     else -> throw InvalidColumnOperationException(this)
 }
 
@@ -297,7 +288,6 @@ fun DataCol.mean(removeNA: Boolean = false): Double? = when (this) {
 fun DataCol.sum(removeNA: Boolean = false): Number? = when (this) {
     is DoubleCol -> values.run { if (removeNA) filterNotNull().toTypedArray() else forceNotNull() }.sum()
     is IntCol -> values.run { if (removeNA) filterNotNull().toTypedArray() else forceNotNull() }.sum()
-    is LongCol -> values.run { if (removeNA) filterNotNull().toTypedArray() else forceNotNull() }.sum()
     is BooleanCol -> values.run { if (removeNA) filterNotNull().toTypedArray() else forceNotNull() }.sumBy { if (it) 1 else 0 }
     else -> throw InvalidColumnOperationException(this)
 }
@@ -313,7 +303,6 @@ fun DataCol.sum(removeNA: Boolean = false): Number? = when (this) {
 fun DataCol.median(removeNA: Boolean = false): Double? = when (this) {
     is DoubleCol -> values.run { if (removeNA) filterNotNull().toTypedArray() else forceNotNull() }.median()
     is IntCol -> values.map { it?.toDouble() }.toTypedArray().run { if (removeNA) filterNotNull().toTypedArray() else forceNotNull() }.median()
-    is LongCol -> values.map { it?.toDouble() }.toTypedArray().run { if (removeNA) filterNotNull().toTypedArray() else forceNotNull() }.median()
     else -> throw InvalidColumnOperationException(this)
 }
 
@@ -327,7 +316,6 @@ fun DataCol.median(removeNA: Boolean = false): Double? = when (this) {
 fun DataCol.sd(removeNA: Boolean = false): Double? = when (this) {
     is DoubleCol -> values.run { if (removeNA) filterNotNull().toTypedArray() else forceNotNull() }.sd()
     is IntCol -> values.map { it?.toDouble() }.toTypedArray().run { if (removeNA) filterNotNull().toTypedArray() else forceNotNull() }.sd()
-    is LongCol -> values.map { it?.toDouble() }.toTypedArray().run { if (removeNA) filterNotNull().toTypedArray() else forceNotNull() }.sd()
     else -> throw InvalidColumnOperationException(this)
 }
 

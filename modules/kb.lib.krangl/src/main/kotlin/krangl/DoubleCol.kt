@@ -23,7 +23,6 @@ class DoubleCol(name: String, val values: Array<Double?>) : DataCol(name) {
     private fun arithOp(something: Any, op: (Double, Double) -> Double): DataCol = when (something) {
         is DoubleCol -> Array(values.size) { naAwareOp(this.values[it], something.values[it], op) }
         is IntCol -> Array(values.size) { naAwareOp(this.values[it], something.values[it]?.toDouble(), op) }
-        is LongCol -> Array(values.size) { naAwareOp(this.values[it], something.values[it]?.toDouble(), op) }
         is Number -> Array(values.size) { naAwareOp(values[it], something.toDouble(), op) }
         else -> throw UnsupportedOperationException()
     }.let { DoubleCol(tempColumnName(), it) }
