@@ -1,16 +1,15 @@
 package kb.core.view
 
 import javafx.geometry.Insets
+import javafx.geometry.Pos
 import javafx.scene.Scene
 import javafx.scene.control.*
 import javafx.scene.input.KeyCode
-import javafx.stage.Modality
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import javafx.stage.Window
-import kb.core.fx.add
-import kb.core.fx.observable
-import kb.core.fx.vbox
+import kb.core.fx.*
+import org.kordamp.ikonli.materialdesign.MaterialDesign
 
 class TBAView(owner: Window) {
     val stage = Stage()
@@ -19,40 +18,36 @@ class TBAView(owner: Window) {
         stage.title = "The Blue Alliance Integration"
         stage.initStyle(StageStyle.UTILITY)
         stage.initOwner(owner)
-//        stage.isAlwaysOnTop = true
         stage.isResizable = false
 
         stage.scene = Scene(vbox {
             prefWidth = 400.0
-            prefHeight = 200.0
             padding = Insets(8.0)
+            spacing = 8.0
 
-            add(Label("TBA is not connected"))
+            add(hbox {
+                align(Pos.CENTER_LEFT)
+                spacing = 8.0
+                add(hbox {
+                    hgrow()
+                    add(Label("TBA not connected"))
+                })
 
-            add(CheckBox("Use Cache"))
+                add(Button("", fontIcon(MaterialDesign.MDI_REFRESH, 14)))
 
-            add(Button("Test Connection"))
 
-            add(Button("Change Key"))
+                add(CheckBox("Cached"))
+            })
 
-            add(Label("Event: "))
+            add(hbox {
+                spacing = 8.0
 
-            add(TextField(""))
+                add(TextField("").hgrow().apply {
+                    style = "-fx-focus-color: #5a8ade; -fx-padding: 2 6 2 6; -fx-font-weight: bold; -fx-font-size: 13; -fx-faint-focus-color: transparent; -fx-font-family: 'Roboto Mono', monospace;"
+                })
 
-            add(Label("Type: "))
-
-            add(ComboBox<String>(listOf(
-                    "Match Schedule",
-                    "Rankings",
-                    "OPRS",
-                    "Ranking Predictions",
-                    "Match Data",
-                    "Match Results",
-                    "Team Media",
-                    "Match Predictions"
-            ).observable()))
-
-            add(Button("Generate Table"))
+                add(Button("", fontIcon(MaterialDesign.MDI_CLOUD_DOWNLOAD, 14)))
+            })
         })
 
         stage.scene.setOnKeyPressed { e ->

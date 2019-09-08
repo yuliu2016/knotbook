@@ -30,7 +30,12 @@ class TableContainer {
         table.fixedCellSize = Region.USE_COMPUTED_SIZE
         table.selectionModel.isCellSelectionEnabled = true
         table.selectionModel.selectionMode = SelectionMode.MULTIPLE
-        table.requestFocus()
+
+        table.focusedProperty().addListener { _, _, newValue ->
+            if (!newValue) {
+                table.selectionModel.clearSelection()
+            }
+        }
     }
 
     val view = vbox {
