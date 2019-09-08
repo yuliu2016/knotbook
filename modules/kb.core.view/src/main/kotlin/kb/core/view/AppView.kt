@@ -432,7 +432,7 @@ object AppView {
             Theme.Light -> Theme.Dark
             Theme.Dark -> Theme.Light
         }
-        box.stylesheets.setAll("/knotbook.css", theme.fileName)
+        box.stylesheets.setAll("reset_focus.css", "/knotbook.css", theme.fileName)
     }
 
     private val stage = Stage()
@@ -441,7 +441,7 @@ object AppView {
     private val table2 = TableContainer()
 
     private val box = vbox {
-        stylesheets.addAll("/knotbook.css", Theme.Light.fileName)
+        stylesheets.addAll("reset_focus.css", "/knotbook.css", Theme.Light.fileName)
         prefWidth = 1120.0
         prefHeight = 630.0
         val bar = menuBar { modify(barCreator) }

@@ -126,3 +126,7 @@
     -fx-border-insets: 0;
     -fx-background-color: null;
 }
+
+.table-row-cell {
+    -fx-cell-size: 20;
+}

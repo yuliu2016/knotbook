@@ -11,8 +11,14 @@ import javafx.stage.Window
 import kb.core.fx.*
 import org.kordamp.ikonli.materialdesign.MaterialDesign
 
+@Suppress("MemberVisibilityCanBePrivate")
 class TBAView(owner: Window) {
     val stage = Stage()
+
+    val field = AutocompletionTextField().hgrow().apply {
+        entries.addAll(listOf("Hello World", "Wooooo...", "1 <= 2", "2019iri"))
+        style = "-fx-focus-color: #5a8ade; -fx-padding: 2 6 2 6; -fx-font-weight: bold; -fx-faint-focus-color: transparent; -fx-font-family: 'Roboto Mono', monospace;"
+    }
 
     init {
         stage.title = "The Blue Alliance Integration"
@@ -41,11 +47,8 @@ class TBAView(owner: Window) {
 
             add(hbox {
                 spacing = 8.0
-
-                add(TextField("").hgrow().apply {
-                    style = "-fx-focus-color: #5a8ade; -fx-padding: 2 6 2 6; -fx-font-weight: bold; -fx-font-size: 13; -fx-faint-focus-color: transparent; -fx-font-family: 'Roboto Mono', monospace;"
-                })
-
+                align(Pos.CENTER_LEFT)
+                add(field)
                 add(Button("", fontIcon(MaterialDesign.MDI_CLOUD_DOWNLOAD, 14)))
             })
         })
