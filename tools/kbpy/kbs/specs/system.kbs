@@ -1,0 +1,8 @@
+
+ModuleLoader = interface {
+    lookup_modules = def(*query: str) -> sequence[Module]
+}
+
+SystemModuleLoader = class(ModuleLoader) {
+
+}
