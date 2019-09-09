@@ -48,8 +48,11 @@ class TableContainer {
             })
             padding = Insets(0.0, 4.0, 0.0, 4.0)
         })
-        add(AutocompletionTextField().apply {
-            entries.addAll(listOf("2019onto3", "2019onwin", "2019oncmp1", "2019cur", "2019iri"))
+        add(vbox {
+            padding = Insets(2.0, 4.0, 2.0, 4.0)
+            add(AutocompletionTextField().apply {
+                entries.addAll(listOf("2019onto3", "2019onwin", "2019oncmp1", "2019cur", "2019iri"))
+            })
         })
         add(table.vgrow())
     }
