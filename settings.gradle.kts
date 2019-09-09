@@ -4,10 +4,12 @@ val modulesFiles = file("modules/").listFiles()
 val submodules = modulesFiles?.map { it.name } ?: listOf()
 include(*submodules.toTypedArray())
 
-for (project in rootProject.children) {
-    val projectDirName = project.name
-    project.projectDir = file("modules/$projectDirName")
-    require(project.projectDir.isDirectory) {
-        "Project directory ${project.projectDir} for project ${project.name} does not exist."
+for (descriptor in rootProject.children) {
+    val projectName = descriptor.name
+    descriptor.projectDir = file("modules/$projectName")
+    val subModuleName = projectName.split(".").last()
+    descriptor.buildFileName = "$subModuleName.gradle.kts"
+    require(descriptor.projectDir.isDirectory) {
+        "Project directory ${descriptor.projectDir} for project ${descriptor.name} does not exist."
     }
 }
