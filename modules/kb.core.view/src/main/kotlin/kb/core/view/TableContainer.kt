@@ -40,14 +40,16 @@ class TableContainer {
 
     val view = vbox {
         add(hbox {
-
-            prefHeight = 18.0
+            prefHeight = 20.0
             align(Pos.CENTER)
             add(Label("Table Folder/"))
             add(Label("Table Name").apply {
                 textFill = Color.BLUE
             })
             padding = Insets(0.0, 4.0, 0.0, 4.0)
+        })
+        add(AutocompletionTextField().apply {
+            entries.addAll(listOf("2019onto3", "2019onwin", "2019oncmp1", "2019cur", "2019iri"))
         })
         add(table.vgrow())
     }

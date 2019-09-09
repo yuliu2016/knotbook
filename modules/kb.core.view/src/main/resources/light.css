@@ -134,13 +134,19 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 
 .menu-bar {
     -fx-padding: 0 12 0 12;
+    -fx-border-width: 0 0 0.3 0;
+    -fx-border-insets: 0;
+    -fx-background-insets: 0;
+    -fx-border-color: #888;
     -fx-background-color: #eee;
 }
 
 .menu {
-    -fx-padding: 4 8 4 8;
+    -fx-padding: 3 10 3 10;
+    -fx-border-width: 0;
+    -fx-border-insets: 0;
     -fx-background-color: transparent;
-    -fx-background-insets: 0;
+    -fx-background-insets: 0 0 -0.7 0.3;
 }
 
 .menu .label {
@@ -163,7 +169,17 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
     -fx-padding: 0;
     -fx-min-width: 200;
     -fx-background-color: #eee;
+    -fx-border-width: 0.3;
+    -fx-border-insets: 1;
+    -fx-border-color: #888;
+    -fx-background-insets: 1;
     -fx-effect: none;
+}
+
+.context-menu .separator:horizontal .line {
+    -fx-border-color: #888;
+    -fx-border-insets: 0;
+    -fx-border-width: 0.3 0 0 0;
 }
 
 .menu-item:focused {
