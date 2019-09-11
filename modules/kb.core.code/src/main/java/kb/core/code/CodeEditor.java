@@ -1,11 +1,14 @@
 package kb.core.code;
 
+import org.fife.rsta.ui.SizeGripIcon;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.function.Consumer;
@@ -19,7 +22,7 @@ import java.util.function.Consumer;
 @SuppressWarnings({"unused"})
 public class CodeEditor {
 
-    private RSyntaxTextArea area = new RSyntaxTextArea(35, 84);
+    private RSyntaxTextArea area = new RSyntaxTextArea(30, 84);
     private JFrame frame = new JFrame();
 
     public CodeEditor(String title, boolean editable, String yes, String no, String initialText,
@@ -111,6 +114,8 @@ public class CodeEditor {
             frame.setVisible(true);
 
             area.requestFocusInWindow();
+
+            new RSTAUIDemoApp().setVisible(true);
         });
     }
 }

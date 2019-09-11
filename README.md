@@ -3,7 +3,7 @@
 |Platform|Build Status|
 |----|----|
 |Windows|[![Build Status](https://dev.azure.com/yuliu2016/knotbook/_apis/build/status/yuliu2016.knotbook?branchName=master&jobName=Windows)](https://dev.azure.com/yuliu2016/knotbook/_build/latest?definitionId=1&branchName=master)|
-|MacOS|[![Build Status](https://dev.azure.com/yuliu2016/knotbook/_apis/build/status/yuliu2016.knotbook?branchName=master&jobName=macOS)](https://dev.azure.com/yuliu2016/knotbook/_build/latest?definitionId=1&branchName=master)|
+|MacOS|[![Build Status](https://dev.azure.com/yuliu2016/knotbook/_apis/build/status/yuliu2016.knotbook?branchName=master&jobName=MacOS)](https://dev.azure.com/yuliu2016/knotbook/_build/latest?definitionId=1&branchName=master)|
 |Linux|[![Build Status](https://dev.azure.com/yuliu2016/knotbook/_apis/build/status/yuliu2016.knotbook?branchName=master&jobName=Linux)](https://dev.azure.com/yuliu2016/knotbook/_build/latest?definitionId=1&branchName=master)|
 
 **KnotBook** is a **JavaFX** data viewing/analysis app for FRC 2020, successor
@@ -25,7 +25,8 @@ and MacOS; they can be downloadedfrom the build status table above
 Actually, with the early-access builds of `jpackage`, a complete native application
 can be generated based on the jlink tool above
 
-Not including this right now since it's early access and a bit hard to automate
+Not including this right now since it's early access and a bit hard to automate.
+Maybe prebuild and just copy the runtime?
 
 #### Components
 
@@ -51,6 +52,6 @@ The javamodularity gradle plugin is not fully stable and caches things incorrect
 Some gradle tasks fail and require either running `gradlew clean` or just re-running them. 
 They are usually fixed after that
 
-#### Useful Library & Links:
+#### Library & Links:
 
 [paour/natorder](https://github.com/paour/natorder) - Natural Order Comparator
