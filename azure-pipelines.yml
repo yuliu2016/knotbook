@@ -29,7 +29,7 @@ jobs:
           javaHomeOption: "JDKVersion"
           jdkVersionOption: "1.12"
           jdkArchitectureOption: "x64"
-          publishJUnitResults: true
+          publishJUnitResults: false
           testResultsFiles: "**/TEST-*.xml"
           tasks: "build"
       - task: Gradle@2
@@ -67,7 +67,7 @@ jobs:
           javaHomeOption: "JDKVersion"
           jdkVersionOption: "1.12"
           jdkArchitectureOption: "x64"
-          publishJUnitResults: true
+          publishJUnitResults: false
           testResultsFiles: "**/TEST-*.xml"
           tasks: "build"
       - task: Gradle@2
@@ -86,12 +86,13 @@ jobs:
         inputs:
           rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/kb.application/image"
           includeRootFolder: true
-          archiveType: "zip"
-          archiveFile: "$(System.DefaultWorkingDirectory)/app-image-$(Build.BuildNumber).zip"
+          archiveType: "tar"
+          tarCompression: "gz"
+          archiveFile: "$(System.DefaultWorkingDirectory)/app-image-$(Build.BuildNumber).tar.gz"
       - task: PublishPipelineArtifact@1
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
-          path: "$(System.DefaultWorkingDirectory)/app-image-$(Build.BuildNumber).zip"
+          path: "$(System.DefaultWorkingDirectory)/app-image-$(Build.BuildNumber).tar.gz"
           artifact: "ubuntu"
   - job: MacOS
     pool:
@@ -105,7 +106,7 @@ jobs:
           javaHomeOption: "JDKVersion"
           jdkVersionOption: "1.12"
           jdkArchitectureOption: "x64"
-          publishJUnitResults: true
+          publishJUnitResults: false
           testResultsFiles: "**/TEST-*.xml"
           tasks: "build"
       - task: Gradle@2
@@ -124,10 +125,11 @@ jobs:
         inputs:
           rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/kb.application/image"
           includeRootFolder: true
-          archiveType: "zip"
-          archiveFile: "$(System.DefaultWorkingDirectory)/app-image-$(Build.BuildNumber).zip"
+          archiveType: "tar"
+          tarCompression: "gz"
+          archiveFile: "$(System.DefaultWorkingDirectory)/app-image-$(Build.BuildNumber).tar.gz"
       - task: PublishPipelineArtifact@1
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
-          path: "$(System.DefaultWorkingDirectory)/app-image-$(Build.BuildNumber).zip"
+          path: "$(System.DefaultWorkingDirectory)/app-image-$(Build.BuildNumber).tar.gz"
           artifact: "macOS"
