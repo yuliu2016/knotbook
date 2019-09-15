@@ -3,23 +3,15 @@ package kb.service.api.df;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
-public class IntColumn implements DataColumn {
+public class DoubleColumn implements DataColumn {
+
 
     private String name;
-    private int[] values;
-    private boolean[] na;
+    private double[] values;
 
-    public IntColumn(@NotNull String name, int[] values) {
+    public DoubleColumn(String name, double[] values) {
         this.name = name;
         this.values = values;
-        this.na = new boolean[values.length];
-    }
-
-    public IntColumn(@NotNull String name, int[] values, boolean[] na) {
-        this.name = name;
-        this.values = values;
-        this.na = na;
-        assert na.length == values.length;
     }
 
     @Override
@@ -37,7 +29,7 @@ public class IntColumn implements DataColumn {
     public String[] getTextValues() {
         String[] texts = new String[values.length];
         for (int i = 0; i < values.length; i++) {
-            texts[i] = na[i] ? "---" : String.valueOf(values[i]);
+            texts[i] = Double.isNaN(values[i]) ? "---" : String.valueOf(values[i]);
         }
         return texts;
     }
