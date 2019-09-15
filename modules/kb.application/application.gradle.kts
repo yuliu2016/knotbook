@@ -10,6 +10,7 @@ javafx {
 }
 
 dependencies {
+    implementation(project(":kb.service.api"))
     implementation(project(":kb.core.view"))
     implementation(project(":kb.core.context"))
 }

@@ -1,5 +1,7 @@
-package kb.core.context;
+package kb.application;
 
+import javafx.application.Platform;
+import kb.core.context.Registry;
 import kb.service.api.MetaService;
 import kb.service.api.Service;
 import kb.service.api.ServiceMetadata;
@@ -9,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 
-@SuppressWarnings({"unused", "MismatchedQueryAndUpdateOfCollection"})
-public class ApplicationContext {
+@SuppressWarnings("unused")
+class ApplicationContext {
 
     private static <T extends MetaService> List<T> load(Class<T> service) {
         List<T> providers = new ArrayList<>();
@@ -39,11 +41,11 @@ public class ApplicationContext {
     private static final List<TextEditorProvider> textEditors = load(TextEditorProvider.class);
 
 
-    public static void launch(Runnable runnable) {
+    static void launch(Runnable runnable) {
         if (runnable != null) {
             print(extensions);
             print(textEditors);
-            runnable.run();
+            Platform.startup(runnable);
         }
     }
 }
