@@ -3,7 +3,7 @@ package kb.service.api.df;
 import java.util.Arrays;
 import java.util.List;
 
-@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressWarnings({"unused"})
 public class DataFrame {
     private List<DataColumn> columns;
 

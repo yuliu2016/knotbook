@@ -1,5 +1,9 @@
 package kb.core.data
 
+import kb.service.api.df.DataFrame
+import kb.service.api.df.DoubleColumn
+import kb.service.api.df.IntColumn
+import kb.service.api.df.StringColumn
 import org.apache.commons.csv.CSVFormat
 import java.io.InputStream
 import java.io.Reader
@@ -15,7 +19,18 @@ val format: CSVFormat = CSVFormat.DEFAULT
         .withNullString("")
 
 enum class ColType {
-    Double, String
+    Double,
+    String,
+    Int
+}
+
+fun String.isInt(): Boolean {
+    try {
+        toInt()
+    } catch (e: NumberFormatException) {
+        return false
+    }
+    return true
 }
 
 fun String.isDouble(): Boolean {
@@ -48,7 +63,10 @@ fun readData(
 
             if (records.isNotEmpty()) {
                 val guess = records[0][colIndex]
-                if (guess != null && guess.isDouble()) {
+
+                if (guess != null && guess.isInt()) {
+                    colType = ColType.Int
+                } else if (guess != null && guess.isDouble()) {
                     colType = ColType.Double
                 }
             }
@@ -57,6 +75,10 @@ fun readData(
                     DoubleColumn(colName, records.map { record ->
                         record[colIndex]?.toDouble() ?: Double.NaN
                     }.toDoubleArray())
+
+                ColType.Int -> IntColumn(colName, records.map { record ->
+                    record[colIndex]?.toInt() ?: Integer.MIN_VALUE
+                }.toIntArray())
 
                 ColType.String ->
                     StringColumn(colName, records.map { record ->

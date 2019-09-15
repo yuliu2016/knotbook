@@ -7,19 +7,10 @@ public class IntColumn implements DataColumn {
 
     private String name;
     private int[] values;
-    private boolean[] na;
 
     public IntColumn(@NotNull String name, int[] values) {
         this.name = name;
         this.values = values;
-        this.na = new boolean[values.length];
-    }
-
-    public IntColumn(@NotNull String name, int[] values, boolean[] na) {
-        this.name = name;
-        this.values = values;
-        this.na = na;
-        assert na.length == values.length;
     }
 
     @Override
@@ -37,7 +28,7 @@ public class IntColumn implements DataColumn {
     public String[] getTextValues() {
         String[] texts = new String[values.length];
         for (int i = 0; i < values.length; i++) {
-            texts[i] = na[i] ? "---" : String.valueOf(values[i]);
+            texts[i] = values[i] == Integer.MIN_VALUE ? "---" : String.valueOf(values[i]);
         }
         return texts;
     }
