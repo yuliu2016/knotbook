@@ -14,7 +14,7 @@ module kb.core.view {
     requires kb.core.code;
     requires kb.tool.cng;
 
-    requires kb.tool.path.planner;
+//    requires kb.tool.path.planner;
 
     exports kb.core.view;
 }

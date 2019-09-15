@@ -29,9 +29,8 @@ dependencies {
     implementation(project(":kb.core.splash"))
     implementation(project(":kb.core.fx"))
     implementation(project(":kb.core.icon"))
-    implementation(project(":kb.core.server"))
     implementation(project(":kb.core.code"))
-    implementation(project(":kb.tool.path.planner"))
+//    implementation(project(":kb.tool.path.planner"))
     implementation(project(":kb.tool.cng"))
     implementation(kotlin("stdlib"))
 

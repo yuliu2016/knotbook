@@ -14,7 +14,8 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation(project(":kb.service.api"))
     implementation(project(":kb.core.view"))
-//    runtimeOnly(project(":kb."))
+    runtimeOnly(project(":kb.tool.path.planner"))
+    runtimeOnly(project(":kb.core.code"))
 }
 
 val appJVMArgs = listOf(
