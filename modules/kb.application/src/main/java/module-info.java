@@ -1,8 +1,10 @@
 module kb.application {
+    requires javafx.base;
     requires javafx.graphics;
 
+    requires kotlin.stdlib;
+
     requires kb.core.view;
-    requires kb.core.context;
     requires kb.service.api;
 
     uses kb.service.api.Service;

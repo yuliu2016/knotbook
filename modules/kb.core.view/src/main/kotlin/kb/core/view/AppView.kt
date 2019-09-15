@@ -10,7 +10,6 @@ import kb.core.bowline.BowlineTable
 import kb.core.camera.fx.KnotCameraTest
 import kb.core.code.CodeEditor
 import kb.core.code.Syntax
-import kb.core.context.Registry
 import kb.core.fx.*
 import kb.core.splash.AboutSplash
 import kb.core.splash.GCSplash
@@ -69,13 +68,13 @@ object AppView {
                     name("Application Properties")
                     icon(MDI_TUNE, 14)
                     shortcut(KeyCode.P, control = true)
-                    action {
-                        CodeEditor("Application Properties", true,
-                                "Save", "Discard", Registry.join(), { s ->
-                            Registry.parse(s.split("\n"))
-                            Registry.save()
-                        }, Syntax.Properties)
-                    }
+//                    action {
+//                        CodeEditor("Application Properties", true,
+//                                "Save", "Discard", Registry.join(), { s ->
+//                            Registry.parse(s.split("\n"))
+//                            Registry.save()
+//                        }, Syntax.Properties)
+//                    }
                 }
                 item {
                     name("Synchronize")

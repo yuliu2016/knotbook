@@ -1,7 +1,6 @@
 package kb.application;
 
 import javafx.application.Platform;
-import kb.core.context.Registry;
 import kb.service.api.MetaService;
 import kb.service.api.Service;
 import kb.service.api.ServiceMetadata;
