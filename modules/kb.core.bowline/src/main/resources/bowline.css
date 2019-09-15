@@ -2,16 +2,33 @@
     -fx-background-insets: 0;
     -fx-background-radius: 0;
     -fx-background-color: transparent;
+    -fx-opacity: 0;
 }
 
 .scroll-bar .decrement-button {
     -fx-background-insets: 0;
     -fx-background-radius: 0;
     -fx-background-color: transparent;
+    -fx-opacity: 0;
+}
+
+.scroll-bar:horizontal .increment-button {
+    -fx-pref-width: 0;
+}
+
+.scroll-bar:horizontal .decrement-button {
+    -fx-pref-width: 0;
+}
+
+.scroll-bar:vertical .increment-button {
+    -fx-pref-height: 0;
+}
+
+.scroll-bar:vertical .decrement-button {
+    -fx-pref-height: 0;
 }
 
 .scroll-bar {
-    /*-fx-pref-width: 10;*/
     -fx-background-color: transparent;
 }
 
@@ -22,11 +39,14 @@
 
 .scroll-bar .thumb {
     -fx-background-insets: 2;
-    -fx-background-color: rgba(192, 192, 192, 0.5);
+    -fx-background-color: rgba(128, 128, 128, 0.3);
+    -fx-border-insets: 2;
+    -fx-border-width: 0.2;
+    -fx-border-color: gray;
 }
 
 .scroll-bar .thumb:pressed {
-    -fx-background-color: rgba(192, 192, 192, 0.8);;
+    -fx-background-color: rgba(128, 128, 128, 0.75);;
 }
 
 .scroll-bar .increment-button:hover {
@@ -35,4 +55,8 @@
 
 .scroll-bar .decrement-button:hover {
     -fx-background-color: #777;
+}
+
+.root {
+    -fx-background-color: white;
 }

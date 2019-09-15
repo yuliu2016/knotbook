@@ -190,7 +190,7 @@ class PathPlanner {
 
     @Suppress("UNUSED_CHANGED_VALUE")
     val scene = Scene(hbox {
-        prefHeight = 800.0
+        prefHeight = 600.0
         add(pathCanvas.canvas)
         add(vbox {
             add(vbox {
@@ -205,7 +205,6 @@ class PathPlanner {
         pathCanvas.canvas.width = stage.height / 3.0 * 2.0
         pathCanvas.draw {
             fill = Color.BLACK
-//            fillRect(0.0, 0.0, pathCanvas.theCanvas.width, pathCanvas.theCanvas.height)
         }
     }
 
@@ -217,7 +216,6 @@ class PathPlanner {
         })
         stage.maxWidth = Screen.getPrimary().visualBounds.height / 3.0 * 2.0 + 300.0
         stage.width = stage.maxWidth
-//        runLater { updateMainCanvas() }
         stage.show()
     }
 }
