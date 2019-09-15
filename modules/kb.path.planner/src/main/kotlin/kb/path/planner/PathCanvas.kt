@@ -40,11 +40,13 @@ class PathCanvas : CanvasScope {
 
     val Double.my2x: Double get() = (yCenterPx - kPixelsPerMeter * this)
     val Double.mx2y: Double get() = (493.0 - kPixelsPerMeter * this)
+
     val Double.px2y: Double get() = (yCenterPx - this) / kPixelsPerMeter
     val Double.py2x: Double get() = (493.0 - this) / kPixelsPerMeter
 
     val Translation2D.newXY get() = Translation2D(y.my2x, x.mx2y)
     val Translation2D.newXYNoOffset get() = Translation2D(-kPixelsPerMeter * y, -kPixelsPerMeter * x)
+
     val Translation2D.oldXY get() = Translation2D(y.py2x, x.px2y)
     val Translation2D.oldXYNoOffset get() = Translation2D(-y / kPixelsPerMeter, -x / kPixelsPerMeter)
 
@@ -186,22 +188,22 @@ class PathCanvas : CanvasScope {
     }
 
     fun v2T(v: Double, t: Double, max: Double, y: Int) =
-            Translation2D(531 + (t / trajectoryTime) * 474, y - (v / max) * 50)
+            Translation2D(17 + (t / trajectoryTime) * 474, y - (v / max) * 50)
 
     fun v2T2(v: Double, t: Double, max: Double, y: Int) =
-            Translation2D(531 + (t / trajectoryTime) * 474, y - (v / max) * 100)
-
-    fun h2TL(v: Double, t: Double, max: Double, y: Int) =
-            Translation2D(531 + (t / trajectoryTime) * 231, y - (v / max) * 104)
-
-    fun h2TR(v: Double, t: Double, max: Double, y: Int) =
-            Translation2D(774 + (t / trajectoryTime) * 231, y - (v / max) * 104)
+            Translation2D(17 + (t / trajectoryTime) * 474, y - (v / max) * 100)
+//
+//    fun h2TL(v: Double, t: Double, max: Double, y: Int) =
+//            Translation2D(531 + (t / trajectoryTime) * 231, y - (v / max) * 104)
+//
+//    fun h2TR(v: Double, t: Double, max: Double, y: Int) =
+//            Translation2D(774 + (t / trajectoryTime) * 231, y - (v / max) * 104)
 
     fun List<Translation2D>.connect() {
         draw {
             beginPath()
             forEach { vertex(it) }
-            closePath()
+//            closePath()
             stroke()
         }
     }
@@ -219,13 +221,11 @@ class PathCanvas : CanvasScope {
                 }
                 lineWidth = 2.0
                 stroke = Color.rgb(0, 128, 192)
-                map { v2T(it.dv, it.t, model.maxAcceleration, 434) }.connect()
-                //stroke(0f, 192f, 128f)
-                //map { v2T((it.state.curvature * it.acceleration), it.t, maxAngularAcc, 434) }.connect()
+                map { v2T(it.dv, it.t, model.maxAcceleration, 634) }.connect()
                 stroke = Color.rgb(255, 255, 128)
-                map { v2T(it.w, it.t, maxAngular, 290) }.connect()
+                map { v2T(it.w, it.t, maxAngular, 490) }.connect()
                 stroke = Color.rgb(128, 128, 255)
-                map { v2T2(it.v, it.t, model.maxVelocity, 340) }.connect()
+                map { v2T2(it.v, it.t, model.maxVelocity, 640) }.connect()
             }
         }
     }

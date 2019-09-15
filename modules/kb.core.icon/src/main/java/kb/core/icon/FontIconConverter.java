@@ -31,7 +31,7 @@ public class FontIconConverter extends StyleConverter<String, Ikon> {
         static final SequenceConverter SEQUENCE_INSTANCE = new SequenceConverter();
     }
 
-    public static StyleConverter<String, Ikon> getInstance() {
+    static StyleConverter<String, Ikon> getInstance() {
         return Holder.INSTANCE;
     }
 
@@ -51,6 +51,8 @@ public class FontIconConverter extends StyleConverter<String, Ikon> {
     }
 
     public static final class SequenceConverter extends StyleConverter<String, Ikon[]> {
+
+        @SuppressWarnings("unused")
         public static SequenceConverter getInstance() {
             return Holder.SEQUENCE_INSTANCE;
         }
