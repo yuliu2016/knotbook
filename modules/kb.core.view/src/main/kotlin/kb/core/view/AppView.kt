@@ -6,7 +6,7 @@ import javafx.scene.control.Menu
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
 import javafx.stage.Stage
-import kb.core.bowline.Bowline
+import kb.core.bowline.BowlineTable
 import kb.core.camera.fx.KnotCameraTest
 import kb.core.code.CodeEditor
 import kb.core.code.Syntax
@@ -356,8 +356,8 @@ object AppView {
                     action {
                         val stage = Stage()
                         stage.title = "BowlineTableView"
-                        stage.scene = Scene(Bowline())
-                        stage.scene.stylesheets.addAll("/knotbook.css", "/light.css")
+                        stage.scene = Scene(BowlineTable())
+                        stage.scene.stylesheets.addAll("/bowline.css")
                         stage.width = 900.0
                         stage.height = 600.0
                         stage.show()

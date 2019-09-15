@@ -155,14 +155,14 @@ class LinearVirtualFlow {
     /**
      * Constrains [scroll] between [0, 1] and updates the state
      */
-    fun constrainScroll() {
+    fun constrainScrollAndUpdate() {
         if (scroll < 0) {
             scroll = 0.0
         }
         if (scroll > 1) {
             scroll = 1.0
         }
-        updateCellState()
+        updateVirtualCellPos()
     }
 
     /**
@@ -171,7 +171,7 @@ class LinearVirtualFlow {
     fun scrollTo(newScroll: Double) {
         if (newScroll != scroll) {
             scroll = newScroll
-            constrainScroll()
+            constrainScrollAndUpdate()
         }
     }
 
@@ -187,16 +187,28 @@ class LinearVirtualFlow {
      *
      * Should be called from a scroll event listener
      */
+    @Deprecated("", ReplaceWith("scrollTo(scrollByAndGet(ds))"))
     fun scrollBy(ds: Double) {
+        scrollTo(scrollByAndGet(ds))
+    }
 
+    /**
+     * Same as [scrollTo], but doesn't actually change [scroll].
+     *
+     * Returns a new [scroll] value after scrolling by a [ds] amount
+     *
+     * This is a requirement because of how observer properties work,
+     * so as this method is not called twice from the event source and
+     * the property change
+     */
+    fun scrollByAndGet(ds: Double): Double {
         val effectiveClipSize = computeEffectiveClipSize()
 
-        if (kotlin.math.abs(ds) > 0 && totalSize > effectiveClipSize) {
-
-            scroll -= ds / (totalSize - effectiveClipSize)
-
-            constrainScroll()
+        if (ds != 0.0 && totalSize > effectiveClipSize) {
+            return scroll - ds / (totalSize - effectiveClipSize)
         }
+
+        return scroll
     }
 
     /**
@@ -209,7 +221,7 @@ class LinearVirtualFlow {
     /**
      * Update the row state and mark for update
      */
-    fun updateCellState() {
+    fun updateVirtualCellPos() {
 
         check(virtualCellPos.size >= virtualCellCount) {
             "Cannot update row state - Position bound limited"
@@ -251,7 +263,7 @@ class LinearVirtualFlow {
 
         if (virtualCellCount > virtualCellPos.size) {
             virtualCellPos = DoubleArray(virtualCellCount)
-            updateCellState()
+            updateVirtualCellPos()
         }
     }
 
