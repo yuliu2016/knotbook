@@ -1,15 +1,14 @@
 package kb.service.api.application;
 
 import kb.service.api.ServiceProps;
+import org.jetbrains.annotations.NotNull;
 
 public interface ApplicationProps {
     String getJoinedText();
 
-    void setInputText(String inputText);
+    void setInputText(@NotNull String inputText);
 
-    ServiceProps get(String name);
+    ServiceProps getProps(@NotNull String name);
 
-    boolean contains(String name);
-
-    boolean remove(String name);
+    boolean contains(@NotNull String name);
 }

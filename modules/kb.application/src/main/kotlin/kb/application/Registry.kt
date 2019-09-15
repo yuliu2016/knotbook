@@ -1,25 +1,46 @@
 package kb.application
 
+import kb.service.api.ServiceProps
+import kb.service.api.application.ApplicationProps
 import java.io.File
 
-@Suppress("unused")
-object Registry {
+class Registry : ApplicationProps {
+
+    override fun getJoinedText(): String {
+        return map.entries.joinToString("\n") { "${it.key}=${it.value}" }
+    }
+
+    override fun setInputText(inputText: String) {
+        parse(inputText.split("\n"))
+        save()
+    }
+
+    override fun getProps(name: String): ServiceProps {
+        TODO("not implemented")
+    }
+
+    override fun contains(name: String): Boolean {
+        return map.any { it.key.startsWith(name) }
+    }
 
     private val map: MutableMap<String, String> = mutableMapOf()
 
     private val home = System.getProperty("user.home").replace(File.separatorChar, '/')
-    private const val version = "RISE"
 
     private val registryFile = File(home, ".kb-registry.txt")
 
-    @Suppress("SpellCheckingInspection")
-    private val defaultProps = mapOf(
-            "USERPATH" to home,
-            "VERSION_PREFIX" to version,
-            "SYSTEM_PATH" to "$home/$version/System"
-    )
 
-    fun parse(lines: List<String>) {
+    private fun load() {
+        registryFile.createNewFile()
+        val data = registryFile.readLines()
+        parse(data)
+    }
+
+    init {
+        load()
+    }
+
+    private fun parse(lines: List<String>) {
         map.clear()
         lines.map { it.trim() }
                 .filter { it.isNotEmpty() && !it.startsWith("#") && it.contains("=") }
@@ -28,34 +49,15 @@ object Registry {
     }
 
     operator fun get(key: String): String? {
-        return map[key]?.run {
-            var replaced = this
-            defaultProps.forEach {
-                replaced = replaced.replace("{${it.key}}", it.value)
-            }
-            return@run replaced
-        }
-    }
-
-    fun getHomeRelativePath(key: String): String? {
-        return get(key)?.replace(home, "~")
+        return map[key]
     }
 
     operator fun set(key: String, value: String) {
         map[key] = value
     }
 
-    fun join(): String {
-        return map.entries.joinToString("\n") { "${it.key}=${it.value}" }
+    private fun save() {
+        registryFile.writeText(joinedText)
     }
 
-    fun save() {
-        registryFile.writeText(join())
-    }
-
-    fun load() {
-        registryFile.createNewFile()
-        val data = registryFile.readLines()
-        parse(data)
-    }
 }

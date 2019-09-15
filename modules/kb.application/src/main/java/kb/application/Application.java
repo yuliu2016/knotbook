@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.ServiceLoader;
 
 @SuppressWarnings("unused")
-class ApplicationContext {
+class Application {
 
     private static <T extends MetaService> List<T> load(Class<T> service) {
         List<T> providers = new ArrayList<>();
@@ -29,16 +29,14 @@ class ApplicationContext {
         }
     }
 
-    static {
-        Registry.INSTANCE.load();
-    }
-
     // All extensions
     private static final List<Service> extensions = load(Service.class);
 
     // Text Editor implementation
     private static final List<TextEditorProvider> textEditors = load(TextEditorProvider.class);
 
+    // App Registry
+    private static final Registry registry = new Registry();
 
     static void launch(Runnable runnable) {
         if (runnable != null) {
