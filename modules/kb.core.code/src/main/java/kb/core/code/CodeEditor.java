@@ -114,8 +114,6 @@ public class CodeEditor {
             frame.setVisible(true);
 
             area.requestFocusInWindow();
-
-            new RSTAUIDemoApp().setVisible(true);
         });
     }
 }
