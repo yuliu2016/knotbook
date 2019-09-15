@@ -12,6 +12,7 @@ javafx {
 
 dependencies {
     implementation(kotlin("stdlib"))
+    implementation(group = "org.apache.commons", name = "commons-lang3", version = "3.9")
     implementation(project(":kb.service.api"))
     implementation(project(":kb.core.view"))
     runtimeOnly(project(":kb.tool.path.planner"))

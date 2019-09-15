@@ -5,6 +5,7 @@ import kb.service.api.MetaService;
 import kb.service.api.Service;
 import kb.service.api.ServiceMetadata;
 import kb.service.api.TextEditorProvider;
+import kb.service.api.application.ApplicationService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.ServiceLoader;
 @SuppressWarnings("unused")
 class Application {
 
-    private static <T extends MetaService> List<T> load(Class<T> service) {
+    private static <T extends MetaService> List<T> loadServices(Class<T> service) {
         List<T> providers = new ArrayList<>();
         for (T provider : ServiceLoader.load(service)) {
             providers.add(provider);
@@ -29,17 +30,21 @@ class Application {
         }
     }
 
+    // application
+    private static final List<ApplicationService> apps = loadServices(ApplicationService.class);
+
     // All extensions
-    private static final List<Service> extensions = load(Service.class);
+    private static final List<Service> extensions = loadServices(Service.class);
 
     // Text Editor implementation
-    private static final List<TextEditorProvider> textEditors = load(TextEditorProvider.class);
+    private static final List<TextEditorProvider> textEditors = loadServices(TextEditorProvider.class);
 
     // App Registry
     private static final Registry registry = new Registry();
 
     static void launch(Runnable runnable) {
         if (runnable != null) {
+            print(apps);
             print(extensions);
             print(textEditors);
             Platform.startup(runnable);
