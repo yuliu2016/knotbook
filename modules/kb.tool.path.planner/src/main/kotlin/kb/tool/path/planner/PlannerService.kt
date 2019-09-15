@@ -1,4 +1,4 @@
-package kb.path.planner
+package kb.tool.path.planner
 
 import kb.service.api.Service
 import kb.service.api.ServiceContext
@@ -9,7 +9,7 @@ class PlannerService : Service {
     private val metadata = ServiceMetadata()
 
     init {
-        metadata.packageName = "kb.path.planner"
+        metadata.packageName = "kb.tool.path.planner"
         metadata.packageVersion = "kb"
     }
 

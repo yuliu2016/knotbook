@@ -13,7 +13,7 @@ import kb.core.code.Syntax
 import kb.core.fx.*
 import kb.core.splash.AboutSplash
 import kb.core.splash.GCSplash
-import kb.path.planner.runPathPlanner
+import kb.tool.path.planner.runPathPlanner
 import kb.tool.cng.Connect4
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 import kotlin.system.exitProcess

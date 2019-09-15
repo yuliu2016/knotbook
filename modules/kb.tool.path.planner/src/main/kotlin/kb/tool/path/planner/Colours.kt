@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package kb.path.planner
+package kb.tool.path.planner
 
 import javafx.scene.paint.Color
 

@@ -31,7 +31,7 @@ dependencies {
     implementation(project(":kb.core.icon"))
     implementation(project(":kb.core.server"))
     implementation(project(":kb.core.code"))
-    implementation(project(":kb.path.planner"))
+    implementation(project(":kb.tool.path.planner"))
     implementation(project(":kb.tool.cng"))
     implementation(kotlin("stdlib"))
 

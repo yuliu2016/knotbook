@@ -1,4 +1,4 @@
-package kb.path.planner
+package kb.tool.path.planner
 
 import ca.warp7.frc.drive.DifferentialDriveModel
 import ca.warp7.frc.drive.trajectory.TrajectoryState

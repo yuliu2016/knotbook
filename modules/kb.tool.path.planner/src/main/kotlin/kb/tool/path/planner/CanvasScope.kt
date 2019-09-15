@@ -1,4 +1,4 @@
-package kb.path.planner
+package kb.tool.path.planner
 
 import javafx.scene.canvas.Canvas
 
