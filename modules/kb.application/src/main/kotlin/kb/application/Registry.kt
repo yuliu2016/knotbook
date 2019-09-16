@@ -1,6 +1,5 @@
 package kb.application
 
-import kb.service.api.ServicePropListener
 import kb.service.api.ServiceProps
 import kb.service.api.application.ApplicationProps
 import java.io.File
@@ -44,6 +43,14 @@ class Registry : ApplicationProps {
         map[key] = value
     }
 
+    fun remove(key: String) {
+        map.remove(key)
+    }
+
+    operator fun contains(key: String): Boolean {
+        return key in map
+    }
+
     private fun save() {
         try {
             registryFile.writeText(joinedText)
@@ -60,57 +67,11 @@ class Registry : ApplicationProps {
         save()
     }
 
-    override fun contains(name: String): Boolean {
+    override fun hasProps(name: String): Boolean {
         return map.any { it.key.startsWith(name) }
     }
 
-    inner class ServicePropsWrapper(val name: String) : ServiceProps {
-        override fun put(key: String, value: Boolean) {
-            TODO("not implemented")
-        }
-
-        override fun put(key: String, value: Int) {
-            TODO("not implemented")
-        }
-
-        override fun put(key: String, value: String) {
-            TODO("not implemented")
-        }
-
-        override fun get(key: String): String {
-            TODO("not implemented")
-        }
-
-        override fun get(key: String, defVal: String): String {
-            TODO("not implemented")
-        }
-
-        override fun getBoolean(key: String, defVal: Boolean): Boolean {
-            TODO("not implemented")
-        }
-
-        override fun getInt(key: String, defVal: Int): Int {
-            TODO("not implemented")
-        }
-
-        override fun remove(key: String) {
-            TODO("not implemented")
-        }
-
-        override fun contains(key: String): Boolean {
-            TODO("not implemented")
-        }
-
-        override fun commit() {
-            TODO("not implemented")
-        }
-
-        override fun addListener(key: String, listener: ServicePropListener) {
-            TODO("not implemented")
-        }
-    }
-
     override fun getProps(name: String): ServiceProps {
-        return ServicePropsWrapper(name)
+        return ServicePropsWrapper(this, name)
     }
 }

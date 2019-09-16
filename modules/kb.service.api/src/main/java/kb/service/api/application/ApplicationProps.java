@@ -10,5 +10,5 @@ public interface ApplicationProps {
 
     ServiceProps getProps(@NotNull String name);
 
-    boolean contains(@NotNull String name);
+    boolean hasProps(@NotNull String name);
 }

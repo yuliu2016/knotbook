@@ -8,6 +8,7 @@ import kb.service.api.TextEditorProvider;
 import kb.service.api.application.ApplicationService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ServiceLoader;
 
@@ -44,6 +45,7 @@ class Application {
 
     static void launch(Runnable runnable) {
         if (runnable != null) {
+            System.out.println(Arrays.toString(JVMInstance.args));
             print(apps);
             print(extensions);
             print(textEditors);
