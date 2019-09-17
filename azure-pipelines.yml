@@ -49,12 +49,12 @@ jobs:
           rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/kb.application/image"
           includeRootFolder: true
           archiveType: "tar"
-          tarCompression: "gz"
-          archiveFile: "$(System.DefaultWorkingDirectory)/windows-$(Build.BuildNumber).tar.gz"
+          tarCompression: "xz"
+          archiveFile: "$(System.DefaultWorkingDirectory)/windows-$(Build.BuildNumber).tar.xz"
       - task: PublishPipelineArtifact@1
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
-          path: "$(System.DefaultWorkingDirectory)/windows-$(Build.BuildNumber).tar.gz"
+          path: "$(System.DefaultWorkingDirectory)/windows-$(Build.BuildNumber).tar.xz"
           artifact: "windows"
   - job: Linux
     pool:
@@ -88,12 +88,12 @@ jobs:
           rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/kb.application/image"
           includeRootFolder: true
           archiveType: "tar"
-          tarCompression: "gz"
-          archiveFile: "$(System.DefaultWorkingDirectory)/ubuntu-$(Build.BuildNumber).tar.gz"
+          tarCompression: "xz"
+          archiveFile: "$(System.DefaultWorkingDirectory)/ubuntu-$(Build.BuildNumber).tar.xz"
       - task: PublishPipelineArtifact@1
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
-          path: "$(System.DefaultWorkingDirectory)/ubuntu-$(Build.BuildNumber).tar.gz"
+          path: "$(System.DefaultWorkingDirectory)/ubuntu-$(Build.BuildNumber).tar.xz"
           artifact: "ubuntu"
   - job: MacOS
     pool:
@@ -127,10 +127,10 @@ jobs:
           rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/kb.application/image"
           includeRootFolder: true
           archiveType: "tar"
-          tarCompression: "gz"
-          archiveFile: "$(System.DefaultWorkingDirectory)/macOS-$(Build.BuildNumber).tar.gz"
+          tarCompression: "xz"
+          archiveFile: "$(System.DefaultWorkingDirectory)/macOS-$(Build.BuildNumber).tar.xz"
       - task: PublishPipelineArtifact@1
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
-          path: "$(System.DefaultWorkingDirectory)/macOS-$(Build.BuildNumber).tar.gz"
+          path: "$(System.DefaultWorkingDirectory)/macOS-$(Build.BuildNumber).tar.xz"
           artifact: "macOS"
