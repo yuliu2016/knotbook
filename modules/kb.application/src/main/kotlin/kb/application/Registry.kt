@@ -11,7 +11,7 @@ class Registry : ApplicationProps {
 
     private val home = System.getProperty("user.home").replace(File.separatorChar, '/')
 
-    private val registryFile = File(home, ".kb-registry.txt")
+    private val registryFile = File(home, "knotbook.properties")
 
 
     private fun load() {

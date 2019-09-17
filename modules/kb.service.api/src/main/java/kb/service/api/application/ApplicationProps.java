@@ -3,6 +3,7 @@ package kb.service.api.application;
 import kb.service.api.ServiceProps;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("unused")
 public interface ApplicationProps {
     String getJoinedText();
 

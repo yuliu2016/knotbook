@@ -26,7 +26,7 @@ subprojects {
         set("kotlin-jvm-target", "11")
     }
     dependencies {
-        implementation("org.jetbrains", "annotations", "13.0")
+        compileOnly("org.jetbrains", "annotations", "13.0")
     }
     buildDir = File(rootProject.projectDir, "build/$name")
 }
