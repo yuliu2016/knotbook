@@ -48,12 +48,13 @@ jobs:
         inputs:
           rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/kb.application/image"
           includeRootFolder: true
-          archiveType: "7z"
-          archiveFile: "$(System.DefaultWorkingDirectory)/app-image-$(Build.BuildNumber)"
+          archiveType: "tar"
+          tarCompression: "gz"
+          archiveFile: "$(System.DefaultWorkingDirectory)/windows-$(Build.BuildNumber).tar.gz"
       - task: PublishPipelineArtifact@1
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
-          path: "$(System.DefaultWorkingDirectory)/app-image-$(Build.BuildNumber)"
+          path: "$(System.DefaultWorkingDirectory)/windows-$(Build.BuildNumber).tar.gz"
           artifact: "windows"
   - job: Linux
     pool:
@@ -88,11 +89,11 @@ jobs:
           includeRootFolder: true
           archiveType: "tar"
           tarCompression: "gz"
-          archiveFile: "$(System.DefaultWorkingDirectory)/app-image-$(Build.BuildNumber).tar.gz"
+          archiveFile: "$(System.DefaultWorkingDirectory)/ubuntu-$(Build.BuildNumber).tar.gz"
       - task: PublishPipelineArtifact@1
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
-          path: "$(System.DefaultWorkingDirectory)/app-image-$(Build.BuildNumber).tar.gz"
+          path: "$(System.DefaultWorkingDirectory)/ubuntu-$(Build.BuildNumber).tar.gz"
           artifact: "ubuntu"
   - job: MacOS
     pool:
@@ -127,9 +128,9 @@ jobs:
           includeRootFolder: true
           archiveType: "tar"
           tarCompression: "gz"
-          archiveFile: "$(System.DefaultWorkingDirectory)/app-image-$(Build.BuildNumber).tar.gz"
+          archiveFile: "$(System.DefaultWorkingDirectory)/macOS-$(Build.BuildNumber).tar.gz"
       - task: PublishPipelineArtifact@1
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
-          path: "$(System.DefaultWorkingDirectory)/app-image-$(Build.BuildNumber).tar.gz"
+          path: "$(System.DefaultWorkingDirectory)/macOS-$(Build.BuildNumber).tar.gz"
           artifact: "macOS"

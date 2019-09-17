@@ -10,11 +10,10 @@ import kb.core.bowline.BowlineTable
 import kb.core.camera.fx.KnotCameraTest
 import kb.core.code.CodeEditor
 import kb.core.code.Syntax
-import kb.core.context.Registry
 import kb.core.fx.*
 import kb.core.splash.AboutSplash
 import kb.core.splash.GCSplash
-import kb.path.planner.runPathPlanner
+//import kb.tool.path.planner.runPathPlanner
 import kb.tool.cng.Connect4
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 import kotlin.system.exitProcess
@@ -69,13 +68,13 @@ object AppView {
                     name("Application Properties")
                     icon(MDI_TUNE, 14)
                     shortcut(KeyCode.P, control = true)
-                    action {
-                        CodeEditor("Application Properties", true,
-                                "Save", "Discard", Registry.join(), { s ->
-                            Registry.parse(s.split("\n"))
-                            Registry.save()
-                        }, Syntax.Properties)
-                    }
+//                    action {
+//                        CodeEditor("Application Properties", true,
+//                                "Save", "Discard", Registry.join(), { s ->
+//                            Registry.parse(s.split("\n"))
+//                            Registry.save()
+//                        }, Syntax.Properties)
+//                    }
                 }
                 item {
                     name("Synchronize")
@@ -338,7 +337,7 @@ object AppView {
                 item {
                     name("Drive Path Planner")
                     icon(MDI_NAVIGATION, 14)
-                    action { runPathPlanner() }
+//                    action { runPathPlanner() }
                 }
                 item {
                     name("Connect 4 Game")

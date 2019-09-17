@@ -1,7 +1,8 @@
-module kb.lib.krangl {
+module kb.core.data {
     requires kotlin.stdlib;
     requires commons.csv;
-    requires kotlinx.coroutines.core;
+
+    requires kb.service.api;
 
     exports kb.core.data;
 }

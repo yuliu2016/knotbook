@@ -1,25 +1,58 @@
 package kb.service.api;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+@SuppressWarnings("unused")
 public interface ServiceProps {
-    void put(String key, boolean value);
 
-    void put(String key, int value);
+    void put(@NotNull String key, @NotNull String value);
 
-    void put(String key, String value);
+    default void put(@NotNull String key, boolean value) {
+        put(key, String.valueOf(value));
+    }
 
-    String get(String key);
+    default void put(@NotNull String key, int value) {
+        put(key, String.valueOf(value));
+    }
 
-    String get(String key, String defVal);
+    @Nullable
+    String get(@NotNull String key);
 
-    boolean getBoolean(String key, boolean defVal);
+    @NotNull
+    default String get(@NotNull String key, @NotNull String defVal) {
+        String v = get(key);
+        return v == null ? defVal : v;
+    }
 
-    int getInt(String key, int defVal);
+    default boolean getBoolean(@NotNull String key, boolean defVal) {
+        String v = get(key);
+        if (v == null) {
+            return defVal;
+        }
+        String s = v.strip();
+        return s.equalsIgnoreCase("true") || (!s.equalsIgnoreCase("false") && defVal);
+    }
 
-    void remove(String key);
+    default int getInt(@NotNull String key, int defVal) {
+        String v = get(key);
+        if (v == null) {
+            return defVal;
+        }
+        try {
+            return Integer.parseInt(v);
+        } catch (NumberFormatException e) {
+            return defVal;
+        }
+    }
 
-    boolean contains(String key);
+    void remove(@NotNull String key);
+
+    boolean contains(@NotNull String key);
 
     void commit();
 
-    void addListener(String key, ServicePropListener listener);
+    void addListener(@NotNull String key, @NotNull ServicePropListener listener);
+
+    void removeListener(@NotNull String key);
 }

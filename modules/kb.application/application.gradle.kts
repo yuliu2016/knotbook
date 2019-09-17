@@ -3,6 +3,7 @@ plugins {
     application
     id("org.openjfx.javafxplugin")
     id("org.beryx.jlink")
+    kotlin("jvm")
 }
 
 javafx {
@@ -10,8 +11,12 @@ javafx {
 }
 
 dependencies {
+    implementation(kotlin("stdlib"))
+    implementation(group = "org.apache.commons", name = "commons-lang3", version = "3.9")
+    implementation(project(":kb.service.api"))
     implementation(project(":kb.core.view"))
-    implementation(project(":kb.core.context"))
+    runtimeOnly(project(":kb.tool.path.planner"))
+    runtimeOnly(project(":kb.core.code"))
 }
 
 val appJVMArgs = listOf(
