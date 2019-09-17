@@ -3,6 +3,7 @@ from urllib.parse import urlparse
 from typing import Iterable
 from subprocess import Popen, PIPE
 from threading import Thread
+from traceback import print_exc
 import json
 import sys
 import platform
@@ -12,6 +13,9 @@ import os
 import os.path
 import venv
 import time
+import datetime
+import argparse
+import shutil
 
 
 # See https://docs.python.org/3/library/venv.html
@@ -143,77 +147,73 @@ class ExtendedEnvBuilder(venv.EnvBuilder):
 
 
 def env_main(args=None):
-    compatible = True
-    if not hasattr(sys, 'base_prefix'):
-        compatible = False
-    if not compatible:
-        raise ValueError('This script is only for use with '
-                         'Python 3.3 or later')
+    parser = argparse.ArgumentParser(prog=__name__,
+                                     description='Creates virtual Python '
+                                                 'environments in one or '
+                                                 'more target '
+                                                 'directories.')
+    parser.add_argument('dirs', metavar='ENV_DIR', nargs='+',
+                        help='A directory in which to create the'
+                             'virtual environment.')
+    parser.add_argument('--no-setuptools', default=False,
+                        action='store_true', dest='nodist',
+                        help="Don't install setuptools or pip in the "
+                             "virtual environment.")
+    parser.add_argument('--no-pip', default=False,
+                        action='store_true', dest='nopip',
+                        help="Don't install pip in the virtual "
+                             "environment.")
+    parser.add_argument('--system-site-packages', default=False,
+                        action='store_true', dest='system_site',
+                        help='Give the virtual environment access to the '
+                             'system site-packages dir.')
+    if os.name == 'nt':
+        use_symlinks = False
     else:
-        import argparse
-
-        parser = argparse.ArgumentParser(prog=__name__,
-                                         description='Creates virtual Python '
-                                                     'environments in one or '
-                                                     'more target '
-                                                     'directories.')
-        parser.add_argument('dirs', metavar='ENV_DIR', nargs='+',
-                            help='A directory in which to create the'
-                                 'virtual environment.')
-        parser.add_argument('--no-setuptools', default=False,
-                            action='store_true', dest='nodist',
-                            help="Don't install setuptools or pip in the "
-                                 "virtual environment.")
-        parser.add_argument('--no-pip', default=False,
-                            action='store_true', dest='nopip',
-                            help="Don't install pip in the virtual "
-                                 "environment.")
-        parser.add_argument('--system-site-packages', default=False,
-                            action='store_true', dest='system_site',
-                            help='Give the virtual environment access to the '
-                                 'system site-packages dir.')
-        if os.name == 'nt':
-            use_symlinks = False
-        else:
-            use_symlinks = True
-        parser.add_argument('--symlinks', default=use_symlinks,
-                            action='store_true', dest='symlinks',
-                            help='Try to use symlinks rather than copies, '
-                                 'when symlinks are not the default for '
-                                 'the platform.')
-        parser.add_argument('--clear', default=False, action='store_true',
-                            dest='clear', help='Delete the contents of the '
-                                               'virtual environment '
-                                               'directory if it already '
-                                               'exists, before virtual '
-                                               'environment creation.')
-        parser.add_argument('--upgrade', default=False, action='store_true',
-                            dest='upgrade', help='Upgrade the virtual '
-                                                 'environment directory to '
-                                                 'use this version of '
-                                                 'Python, assuming Python '
-                                                 'has been upgraded '
-                                                 'in-place.')
-        parser.add_argument('--verbose', default=False, action='store_true',
-                            dest='verbose', help='Display the output '
-                                                 'from the scripts which '
-                                                 'install setuptools and pip.')
-        options = parser.parse_args(args)
-        if options.upgrade and options.clear:
-            raise ValueError('you cannot supply --upgrade and --clear together.')
-        builder = ExtendedEnvBuilder(system_site_packages=options.system_site,
-                                     clear=options.clear,
-                                     symlinks=options.symlinks,
-                                     upgrade=options.upgrade,
-                                     nodist=options.nodist,
-                                     nopip=options.nopip,
-                                     verbose=options.verbose)
-        for d in options.dirs:
-            builder.create(d)
+        use_symlinks = True
+    parser.add_argument('--symlinks', default=use_symlinks,
+                        action='store_true', dest='symlinks',
+                        help='Try to use symlinks rather than copies, '
+                             'when symlinks are not the default for '
+                             'the platform.')
+    parser.add_argument('--clear', default=False, action='store_true',
+                        dest='clear', help='Delete the contents of the '
+                                           'virtual environment '
+                                           'directory if it already '
+                                           'exists, before virtual '
+                                           'environment creation.')
+    parser.add_argument('--upgrade', default=False, action='store_true',
+                        dest='upgrade', help='Upgrade the virtual '
+                                             'environment directory to '
+                                             'use this version of '
+                                             'Python, assuming Python '
+                                             'has been upgraded '
+                                             'in-place.')
+    parser.add_argument('--verbose', default=False, action='store_true',
+                        dest='verbose', help='Display the output '
+                                             'from the scripts which '
+                                             'install setuptools and pip.')
+    options = parser.parse_args(args)
+    if options.upgrade and options.clear:
+        raise ValueError('you cannot supply --upgrade and --clear together.')
+    builder = ExtendedEnvBuilder(system_site_packages=options.system_site,
+                                 clear=options.clear,
+                                 symlinks=options.symlinks,
+                                 upgrade=options.upgrade,
+                                 nodist=options.nodist,
+                                 nopip=options.nopip,
+                                 verbose=options.verbose)
+    for d in options.dirs:
+        builder.create(d)
 
 
 def make_venv():
     venv.create(env_dir="venv/", with_pip=True, clear=True)
+
+
+def parse_build_id(build_id: str):
+    a, b = build_id.split(".")
+    return a, b
 
 
 def download_files(target: "str"):
@@ -222,7 +222,8 @@ def download_files(target: "str"):
 
     try:
         build_id = json.loads(urlopen(build_url).read())["value"][0]["id"]
-    except:
+    except Exception:
+        print_exc()
         print("Failed to get latest build")
         input()
         sys.exit(1)
@@ -233,9 +234,7 @@ def download_files(target: "str"):
     try:
         download_url = json.loads(urlopen(artifact_url).read())["resource"]["downloadUrl"]
     except Exception:
-        import traceback
-
-        traceback.print_exc()
+        print_exc()
         print("Failed to get artifact url")
         input()
         sys.exit()
@@ -256,32 +255,39 @@ def download_files(target: "str"):
 
                 mb = file_size_downloaded / 1000000
                 print(f"Application Image: Downloaded {mb:.2f}MB")
-    except Exception:
-        import traceback
 
-        traceback.print_exc()
+    except Exception:
+        print_exc()
         print("Failed to download files")
         input()
-        sys.exit()
+        sys.exit(1)
 
 
 # See https://stackoverflow.com/questions/3667865/python-tarfile-progress-output
 def track_progress(members: Iterable[tarfile.TarInfo]):
     for member in members:
         yield member
-        print(f"Extracted (size:{member.size:<8}) {member.name}")
+        print(f"Extracted (size:{member.size // 1000:>5} KB) {member.name}")
 
 
 def extract_files(target: "str"):
-    with zipfile.ZipFile("tempfile", "r") as z:
-        z.extractall()
+    try:
+        with zipfile.ZipFile("tempfile", "r") as z:
+            z.extractall()
+    except Exception:
+        print_exc()
+        print_exc("Failed to extract target")
+        input()
+        sys.exit(1)
 
     if os.path.isdir(target):
         files = os.listdir(target)
+
         if len(files) != 1:
             print("Invalid zip content")
             input()
             sys.exit(1)
+
         data_file = files[0]
 
         print("Found Data File: ", data_file)
@@ -295,10 +301,6 @@ def extract_files(target: "str"):
 
     else:
         print("Target file is not found")
-
-    # tar = tarfile.open(fname, "r:gz")
-    # tar.extractall()
-    # tar.close()
 
 
 def main():
@@ -316,6 +318,11 @@ def main():
         print("This script must run on a 64-bit architecture")
         input()
         sys.exit(1)
+
+    if hasattr(sys, 'base_prefix'):
+        print("Cannot install a virtual environment "
+              "because the script is currently running in one")
+        pass
 
     system = platform.system()
 
