@@ -1,11 +1,32 @@
 from urllib.request import urlopen
+from typing import Iterable
 import json
 import sys
 import platform
-import tkinter
 import tarfile
 import zipfile
 import os
+import venv
+import time
+
+MIN_VERSION = (3, 7)
+
+is_python37_or_above = sys.version_info >= MIN_VERSION
+if not is_python37_or_above:
+    print("This script is only compatible with Python " + str(MIN_VERSION) +
+          " and above, found version " + sys.version + " instead.")
+    input()
+    sys.exit(1)
+
+is_64bit = sys.maxsize > 2 ** 32
+if not is_64bit:
+    print("This script must run on a 64-bit architecture")
+    input()
+    sys.exit(1)
+
+
+def make_venv():
+    venv.create(env_dir="venv/", with_pip=True, clear=True)
 
 
 def download_files(target: "str"):
@@ -19,7 +40,7 @@ def download_files(target: "str"):
         input()
         sys.exit(1)
 
-    print(f"Using latest build ID {build_id}")
+    print(f"Using latest build ID: #{build_id}")
     artifact_url = f"{api}/builds/{build_id}/artifacts?&api-version=5.1&artifactName={target}"
 
     try:
@@ -36,16 +57,18 @@ def download_files(target: "str"):
 
     try:
         u = urlopen(download_url)
+        block_size = 2 ** 20  # 1 block per Mb
         with open("tempfile", 'wb') as f:
             file_size_downloaded = 0
-            block_size = 65536
             while True:
                 buffer = u.read(block_size)
                 if not buffer:
                     break
                 file_size_downloaded += len(buffer)
                 f.write(buffer)
-                print(f"Downloaded {file_size_downloaded / 1000000 :.2f}Mb")
+
+                mb = file_size_downloaded / 1000000
+                print(f"Application File: Downloaded {mb:.2f}MB")
     except Exception:
         import traceback
 
@@ -53,6 +76,13 @@ def download_files(target: "str"):
         print("Failed to download files")
         input()
         sys.exit()
+
+
+# See https://stackoverflow.com/questions/3667865/python-tarfile-progress-output
+def track_progress(members: Iterable[tarfile.TarInfo]):
+    for member in members:
+        yield member
+        print(f"Extracted (size:{member.size:<8}) {member.name}")
 
 
 def extract_files(target: "str"):
@@ -66,7 +96,16 @@ def extract_files(target: "str"):
             input()
             sys.exit(1)
         data_file = files[0]
-        print(data_file)
+
+        print("Found Data File: ", data_file)
+        print("Extracting...")
+        s = time.time()
+
+        with tarfile.open(f"{target}/{data_file}", "r:xz") as tar:
+            tar.extractall(members=track_progress(tar))
+
+        print(f"Done Extracting in {time.time() - s} seconds")
+
     else:
         print("No files...")
 
