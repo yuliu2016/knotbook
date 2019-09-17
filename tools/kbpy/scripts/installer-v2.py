@@ -13,21 +13,6 @@ import os.path
 import venv
 import time
 
-MIN_VERSION = (3, 7)
-
-is_python37_or_above = sys.version_info >= MIN_VERSION
-if not is_python37_or_above:
-    print("This script is only compatible with Python " + str(MIN_VERSION) +
-          " and above, found version " + sys.version + " instead.")
-    input()
-    sys.exit(1)
-
-is_64bit = sys.maxsize > 2 ** 32
-if not is_64bit:
-    print("This script must run on a 64-bit architecture")
-    input()
-    sys.exit(1)
-
 
 # See https://docs.python.org/3/library/venv.html
 class ExtendedEnvBuilder(venv.EnvBuilder):
@@ -157,7 +142,7 @@ class ExtendedEnvBuilder(venv.EnvBuilder):
         self.install_script(context, 'pip', url)
 
 
-def main(args=None):
+def env_main(args=None):
     compatible = True
     if not hasattr(sys, 'base_prefix'):
         compatible = False
@@ -306,7 +291,7 @@ def extract_files(target: "str"):
         with tarfile.open(f"{target}/{data_file}", "r:xz") as tar:
             tar.extractall(members=track_progress(tar))
 
-        print(f"Done Extracting in {time.time() - s} seconds")
+        print(f"Done Extracting in {time.time() - s:.3f} seconds")
 
     else:
         print("Target file is not found")
@@ -316,8 +301,24 @@ def extract_files(target: "str"):
     # tar.close()
 
 
-if __name__ == '__main__':
+def main():
+    MIN_VERSION = (3, 7)
+
+    is_python37_or_above = sys.version_info >= MIN_VERSION
+    if not is_python37_or_above:
+        print("This script is only compatible with Python " + str(MIN_VERSION) +
+              " and above, found version " + sys.version + " instead.")
+        input()
+        sys.exit(1)
+
+    is_64bit = sys.maxsize > 2 ** 32
+    if not is_64bit:
+        print("This script must run on a 64-bit architecture")
+        input()
+        sys.exit(1)
+
     system = platform.system()
+
     if system == "Windows":
         artifact_target = "windows"
     elif system == "Linux":
@@ -325,11 +326,16 @@ if __name__ == '__main__':
     elif system == "Darwin":
         artifact_target = "macOS"
     else:
-        print("Unsupported System")
+        print(f"The system {system} is unsupported")
         input()
         sys.exit(1)
+
     if os.path.exists("tempfile"):
         print("File already downloaded. Continuing...")
     else:
         download_files(artifact_target)
     extract_files(artifact_target)
+
+
+if __name__ == '__main__':
+    main()
