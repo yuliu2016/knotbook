@@ -15,5 +15,5 @@ tasks.register("runCP", ModularJavaExec::class.java) {
 }
 
 configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_12
+    sourceCompatibility = JavaVersion.VERSION_11
 }
