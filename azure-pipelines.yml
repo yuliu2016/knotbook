@@ -9,25 +9,25 @@ jobs:
     pool:
       vmImage: "windows-latest"
     steps:
-      - powershell: |
-          mkdir build
-          $ProgressPreference = "SilentlyContinue"
-          wget "https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_windows-x64_bin.zip" -O "build\jdk.zip"
-        displayName: "Download JDK"
-      - task: JavaToolInstaller@0
-        inputs:
-          versionSpec: "12"
-          jdkSourceOption: localDirectory
-          jdkFile: "build/jdk.zip"
-          jdkDestinationDirectory: "build/jdk_inst"
-          jdkArchitectureOption: x64
+#      - powershell: |
+#          mkdir build
+#          $ProgressPreference = "SilentlyContinue"
+#          wget "https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_windows-x64_bin.zip" -O "build\jdk.zip"
+#        displayName: "Download JDK"
+#      - task: JavaToolInstaller@0
+#        inputs:
+#          versionSpec: "12"
+#          jdkSourceOption: localDirectory
+#          jdkFile: "build/jdk.zip"
+#          jdkDestinationDirectory: "build/jdk_inst"
+#          jdkArchitectureOption: x64
       - task: Gradle@2
         displayName: "Gradle Build"
         inputs:
           workingDirectory: ""
           gradleWrapperFile: "gradlew"
           javaHomeOption: "JDKVersion"
-          jdkVersionOption: "1.12"
+          jdkVersionOption: "1.11"
           jdkArchitectureOption: "x64"
           publishJUnitResults: false
           testResultsFiles: "**/TEST-*.xml"
@@ -39,7 +39,7 @@ jobs:
           workingDirectory: ""
           gradleWrapperFile: "gradlew"
           javaHomeOption: "JDKVersion"
-          jdkVersionOption: "1.12"
+          jdkVersionOption: "1.11"
           jdkArchitectureOption: "x64"
           publishJUnitResults: false
           tasks: "jlink"
@@ -66,7 +66,7 @@ jobs:
           workingDirectory: ""
           gradleWrapperFile: "gradlew"
           javaHomeOption: "JDKVersion"
-          jdkVersionOption: "1.12"
+          jdkVersionOption: "1.11"
           jdkArchitectureOption: "x64"
           publishJUnitResults: false
           testResultsFiles: "**/TEST-*.xml"
@@ -78,7 +78,7 @@ jobs:
           workingDirectory: ""
           gradleWrapperFile: "gradlew"
           javaHomeOption: "JDKVersion"
-          jdkVersionOption: "1.12"
+          jdkVersionOption: "1.11"
           jdkArchitectureOption: "x64"
           publishJUnitResults: false
           tasks: "jlink"
@@ -105,7 +105,7 @@ jobs:
           workingDirectory: ""
           gradleWrapperFile: "gradlew"
           javaHomeOption: "JDKVersion"
-          jdkVersionOption: "1.12"
+          jdkVersionOption: "1.11"
           jdkArchitectureOption: "x64"
           publishJUnitResults: false
           testResultsFiles: "**/TEST-*.xml"
@@ -117,7 +117,7 @@ jobs:
           workingDirectory: ""
           gradleWrapperFile: "gradlew"
           javaHomeOption: "JDKVersion"
-          jdkVersionOption: "1.12"
+          jdkVersionOption: "1.11"
           jdkArchitectureOption: "x64"
           publishJUnitResults: false
           tasks: "jlink"
