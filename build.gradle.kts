@@ -9,14 +9,17 @@ plugins {
     id("org.beryx.jlink") version "2.15.1" apply false
 }
 
-subprojects {
-    apply(plugin = "java")
-    apply(plugin = "org.javamodularity.moduleplugin")
+allprojects {
     repositories {
         mavenCentral()
         jcenter()
         maven { setUrl("https://jitpack.io") }
     }
+}
+
+subprojects {
+    apply(plugin = "java")
+    apply(plugin = "org.javamodularity.moduleplugin")
     dependencies {
         compileOnly("org.jetbrains", "annotations", "13.0")
     }
@@ -35,10 +38,14 @@ subprojects {
                 }
             }
         }
+        dependencies {
+            implementation(kotlin("stdlib"))
+        }
     }
     pluginManager.withPlugin("org.openjfx.javafxplugin") {
         javafx {
             version = "13"
+            modules("javafx.base", "javafx.graphics", "javafx.controls")
         }
     }
     buildDir = File(rootProject.projectDir, "build/$name")
