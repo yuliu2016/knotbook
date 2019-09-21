@@ -6,6 +6,7 @@ import javafx.scene.input.ClipboardContent
 import javafx.scene.input.TransferMode
 import javafx.scene.paint.Color
 import kb.core.fx.*
+import kb.core.icon.centered
 
 class EntityCell : TreeCell<Entity>() {
 
@@ -72,7 +73,7 @@ class EntityCell : TreeCell<Entity>() {
             alignment = Pos.CENTER_LEFT
             graphic = hbox {
                 alignment = Pos.CENTER_LEFT
-                add(item.icon.centerIn(20))
+                add(item.icon.centered(20))
                 add(label {
                     text = item.text.string
                     alignment = Pos.CENTER_LEFT

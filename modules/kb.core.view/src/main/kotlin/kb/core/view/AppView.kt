@@ -11,6 +11,7 @@ import kb.core.camera.fx.KnotCameraTest
 import kb.core.code.CodeEditor
 import kb.core.code.Syntax
 import kb.core.fx.*
+import kb.core.icon.icon
 import kb.core.splash.AboutSplash
 import kb.core.splash.GCSplash
 //import kb.tool.path.planner.runPathPlanner

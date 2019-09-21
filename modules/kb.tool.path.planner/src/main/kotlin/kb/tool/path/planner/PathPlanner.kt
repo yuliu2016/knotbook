@@ -10,6 +10,7 @@ import javafx.scene.paint.Color
 import javafx.stage.Screen
 import javafx.stage.Stage
 import kb.core.fx.*
+import kb.core.icon.fontIcon
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 
 @Suppress("MemberVisibilityCanBePrivate")

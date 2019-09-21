@@ -2,7 +2,7 @@ package kb.core.view
 
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
-import kb.core.fx.fontIcon
+import kb.core.icon.fontIcon
 import kb.core.fx.runOnFxThread
 import kb.core.icon.FontIcon
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*

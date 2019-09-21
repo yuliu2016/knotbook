@@ -17,7 +17,10 @@
  */
 module kb.core.icon {
     requires transitive org.kordamp.iconli.core;
+    requires javafx.base;
+    requires javafx.graphics;
     requires javafx.controls;
+    requires kotlin.stdlib;
 
     uses org.kordamp.ikonli.IkonHandler;
 
