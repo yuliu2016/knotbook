@@ -1,7 +1,7 @@
 package kb.core.view
 
-import kb.core.fx.fontIcon
 import kb.core.icon.FontIcon
+import kb.core.icon.fontIcon
 import org.kordamp.ikonli.materialdesign.MaterialDesign
 
 class Entity(

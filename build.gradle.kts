@@ -3,30 +3,50 @@
 plugins {
     `build-scan`
     java
-    id("org.jetbrains.kotlin.jvm") version "1.3.50" apply false
-    id("org.javamodularity.moduleplugin") version "1.5.0" apply false
-    id("org.openjfx.javafxplugin") version "0.0.8" apply false
+    id("org.jetbrains.kotlin.jvm") version "1.3.50"
+    id("org.javamodularity.moduleplugin") version "1.5.0"
+    id("org.openjfx.javafxplugin") version "0.0.8"
     id("org.beryx.jlink") version "2.15.1" apply false
-    id("com.github.gmazzo.buildconfig") version "1.5.0" apply false
 }
 
-subprojects {
-    apply(plugin = "java")
-    apply(plugin = "org.javamodularity.moduleplugin")
+allprojects {
     repositories {
         mavenCentral()
         jcenter()
         maven { setUrl("https://jitpack.io") }
     }
-    ext {
-        set("ikonli-version", "11.3.4")
-        set("kotlin-coroutines-version", "1.3.1")
-        set("junit-version", "5.5.1")
-        set("javafx-version", "12.0.2")
-        set("kotlin-jvm-target", "11")
-    }
+}
+
+subprojects {
+    apply(plugin = "java")
+    apply(plugin = "org.javamodularity.moduleplugin")
     dependencies {
         compileOnly("org.jetbrains", "annotations", "13.0")
+    }
+    pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
+        tasks {
+            compileKotlin {
+                kotlinOptions {
+                    freeCompilerArgs = listOf("-Xnew-inference")
+                    jvmTarget = "11"
+                }
+            }
+            compileTestKotlin {
+                kotlinOptions {
+                    freeCompilerArgs = listOf("-Xnew-inference")
+                    jvmTarget = "11"
+                }
+            }
+        }
+        dependencies {
+            implementation(kotlin("stdlib"))
+        }
+    }
+    pluginManager.withPlugin("org.openjfx.javafxplugin") {
+        javafx {
+            version = "13"
+            modules("javafx.base", "javafx.graphics", "javafx.controls")
+        }
     }
     buildDir = File(rootProject.projectDir, "build/$name")
 }
