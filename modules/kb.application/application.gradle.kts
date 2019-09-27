@@ -19,21 +19,14 @@ dependencies {
     runtimeOnly(project(":kb.core.code"))
 }
 
-val appJVMArgs = listOf(
-        "-XX:+UseG1GC",
-        "-Xms64m",
-        "-Xmx1024m"
-)
 
 application {
-    applicationDefaultJvmArgs = appJVMArgs
     mainClassName = "kb.application/kb.application.Main"
 }
 
 jlink {
     launcher {
         name = "run"
-        jvmArgs = appJVMArgs
     }
 
     addOptions(
