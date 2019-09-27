@@ -1,5 +1,6 @@
 package kb.application
 
+import kb.service.api.ServicePropListener
 import kb.service.api.ServiceProps
 import kb.service.api.application.ApplicationProps
 import java.io.File
@@ -8,6 +9,7 @@ import java.io.IOException
 class Registry : ApplicationProps {
 
     private val map: MutableMap<String, String> = mutableMapOf()
+    private val listeners: MutableMap<String, ServicePropListener> = mutableMapOf()
 
     private val home = System.getProperty("user.home").replace(File.separatorChar, '/')
 
@@ -17,7 +19,7 @@ class Registry : ApplicationProps {
     private fun load() {
         try {
             registryFile.createNewFile()
-            val data = registryFile.readLines()
+            val data = registryFile.readText().split("\n")
             parse(data)
         } catch (e: IOException) {
         }
@@ -39,8 +41,12 @@ class Registry : ApplicationProps {
         return map[key]
     }
 
-    operator fun set(key: String, value: String) {
-        map[key] = value
+    operator fun set(key: String, newValue: String) {
+        val oldValue = map[key]
+        map[key] = newValue
+        if (oldValue == null || oldValue != newValue) {
+            listeners[key]?.propertyChanged(oldValue, newValue)
+        }
     }
 
     fun remove(key: String) {
@@ -73,5 +79,13 @@ class Registry : ApplicationProps {
 
     override fun getProps(name: String): ServiceProps {
         return ServicePropsWrapper(this, name)
+    }
+
+    fun addListener(key: String, listener: ServicePropListener) {
+        listeners[key] = listener
+    }
+
+    fun removeListener(key: String) {
+        listeners.remove(key)
     }
 }

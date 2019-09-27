@@ -5,30 +5,40 @@ import kb.service.api.ServiceProps
 
 class ServicePropsWrapper(private val registry: Registry, private val name: String) : ServiceProps {
 
-    private val String.wrapped get() = "$name/$this"
+    private fun String.wrap(): String {
+        return "$name/$this"
+    }
+
+    private fun isValid(key: String): Boolean {
+        return key.isNotEmpty() and key[0].isLetter() and
+                key.all { it.isLetterOrDigit() || it == '.' }
+    }
 
     override fun put(key: String, value: String) {
-        registry[key.wrapped] = value
+        if (isValid(key)) {
+            registry[key.wrap()] = value
+        }
     }
 
     override fun get(key: String): String? {
-        return registry[key.wrapped]
+        return registry[key.wrap()]
     }
 
     override fun remove(key: String) {
-        registry.remove(key.wrapped)
+        registry.remove(key.wrap())
     }
 
     override fun contains(key: String): Boolean {
-        return key.wrapped in registry
-    }
-
-    override fun commit() {
+        return key.wrap() in registry
     }
 
     override fun addListener(key: String, listener: ServicePropListener) {
+        if (isValid(key)) {
+            registry.addListener(key.wrap(), listener)
+        }
     }
 
     override fun removeListener(key: String) {
+        registry.removeListener(key.wrap())
     }
 }
