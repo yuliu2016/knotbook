@@ -1,0 +1,5 @@
+pyfrc
+robotpy-ctre
+robotpy-navx
+pynetworktables
+numpy

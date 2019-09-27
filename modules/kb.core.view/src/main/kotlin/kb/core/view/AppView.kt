@@ -463,6 +463,5 @@ object AppView {
         stage.icons.add(Image(AppView::class.java.getResourceAsStream("/icon.png")))
         stage.scene = scene
         stage.show()
-        TBAView(stage)
     }
 }
