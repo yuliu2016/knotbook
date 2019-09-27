@@ -9,20 +9,8 @@ jobs:
     pool:
       vmImage: "windows-latest"
     steps:
-#      - powershell: |
-#          mkdir build
-#          $ProgressPreference = "SilentlyContinue"
-#          wget "https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_windows-x64_bin.zip" -O "build\jdk.zip"
-#        displayName: "Download JDK"
-#      - task: JavaToolInstaller@0
-#        inputs:
-#          versionSpec: "12"
-#          jdkSourceOption: localDirectory
-#          jdkFile: "build/jdk.zip"
-#          jdkDestinationDirectory: "build/jdk_inst"
-#          jdkArchitectureOption: x64
       - task: Gradle@2
-        displayName: "Gradle Build"
+        displayName: "Gradle Assemble"
         inputs:
           workingDirectory: ""
           gradleWrapperFile: "gradlew"
@@ -31,7 +19,7 @@ jobs:
           jdkArchitectureOption: "x64"
           publishJUnitResults: false
           testResultsFiles: "**/TEST-*.xml"
-          tasks: "build"
+          tasks: "assemble"
       - task: Gradle@2
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         displayName: "Generate Runtime Image"
@@ -61,7 +49,7 @@ jobs:
       vmImage: "ubuntu-latest"
     steps:
       - task: Gradle@2
-        displayName: "Gradle Build"
+        displayName: "Gradle Assemble"
         inputs:
           workingDirectory: ""
           gradleWrapperFile: "gradlew"
@@ -70,7 +58,7 @@ jobs:
           jdkArchitectureOption: "x64"
           publishJUnitResults: false
           testResultsFiles: "**/TEST-*.xml"
-          tasks: "build"
+          tasks: "assemble"
       - task: Gradle@2
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         displayName: "Generate Runtime Image"
@@ -95,12 +83,12 @@ jobs:
         inputs:
           path: "$(System.DefaultWorkingDirectory)/ubuntu-$(Build.BuildNumber).tar.xz"
           artifact: "ubuntu"
-  - job: MacOS
+  - job: macOS
     pool:
       vmImage: "macOS-latest"
     steps:
       - task: Gradle@2
-        displayName: "Gradle Build"
+        displayName: "Gradle Assemble"
         inputs:
           workingDirectory: ""
           gradleWrapperFile: "gradlew"
@@ -109,7 +97,7 @@ jobs:
           jdkArchitectureOption: "x64"
           publishJUnitResults: false
           testResultsFiles: "**/TEST-*.xml"
-          tasks: "build"
+          tasks: "assemble"
       - task: Gradle@2
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         displayName: "Generate Runtime Image"
