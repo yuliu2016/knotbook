@@ -1,11 +1,9 @@
 package kb.application;
 
 import javafx.application.Platform;
-import kb.service.api.MetaService;
-import kb.service.api.Service;
-import kb.service.api.ServiceMetadata;
-import kb.service.api.TextEditorProvider;
+import kb.service.api.*;
 import kb.service.api.application.ApplicationService;
+import kb.service.api.application.JVMInstance;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,7 +43,7 @@ class Application {
 
     static void launch(Runnable runnable) {
         if (runnable != null) {
-            System.out.println(Arrays.toString(JVMInstance.args));
+            System.out.println(Arrays.toString(JVMInstance.getArgs()));
             print(apps);
             print(extensions);
             print(textEditors);
