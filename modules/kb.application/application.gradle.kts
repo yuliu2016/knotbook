@@ -17,6 +17,7 @@ dependencies {
     implementation(project(":kb.core.view"))
     runtimeOnly(project(":kb.tool.path.planner"))
     runtimeOnly(project(":kb.core.code"))
+    runtimeOnly(project(":kb.tool.cng"))
 }
 
 

@@ -14,8 +14,6 @@ import kb.core.fx.*
 import kb.core.icon.icon
 import kb.core.splash.AboutSplash
 import kb.core.splash.GCSplash
-//import kb.tool.path.planner.runPathPlanner
-import kb.tool.cng.Connect4
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 import kotlin.system.exitProcess
 
@@ -338,12 +336,10 @@ object AppView {
                 item {
                     name("Drive Path Planner")
                     icon(MDI_NAVIGATION, 14)
-//                    action { runPathPlanner() }
                 }
                 item {
                     name("Connect 4 Game")
                     icon(MDI_RECORD, 14)
-                    action { Connect4.start() }
                 }
             }
         }
