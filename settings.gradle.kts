@@ -5,7 +5,7 @@ pluginManagement {
     }
 }
 
-rootProject.name = "knotbook"
+rootProject.name = "KnotBook"
 
 val submodules = file("modules/").listFiles()
         ?.filter { it.isDirectory && it.name.startsWith("kb") }
