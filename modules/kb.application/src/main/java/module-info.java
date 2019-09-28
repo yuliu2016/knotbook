@@ -3,7 +3,6 @@ module kb.application {
     requires javafx.graphics;
 
     requires kotlin.stdlib;
-    requires org.apache.commons.lang3;
 
     requires kb.core.view;
     requires kb.service.api;
