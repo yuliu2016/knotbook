@@ -39,7 +39,7 @@ class Application {
     private static final List<TextEditorProvider> textEditors = loadServices(TextEditorProvider.class);
 
     // App Registry
-    private static final Registry registry = new Registry();
+    private static final Registry registry = new Registry(new UserFile());
 
     static void launch(Runnable runnable) {
         if (runnable != null) {

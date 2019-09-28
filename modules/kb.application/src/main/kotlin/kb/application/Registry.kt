@@ -3,30 +3,14 @@ package kb.application
 import kb.service.api.ServicePropListener
 import kb.service.api.ServiceProps
 import kb.service.api.application.ApplicationProps
-import java.io.File
-import java.io.IOException
 
-class Registry : ApplicationProps {
+class Registry(private val handle: RegistryHandle) : ApplicationProps {
 
     private val map: MutableMap<String, String> = mutableMapOf()
     private val listeners: MutableMap<String, ServicePropListener> = mutableMapOf()
 
-    private val home = System.getProperty("user.home").replace(File.separatorChar, '/')
-
-    private val registryFile = File(home, "knotbook.properties")
-
-
-    private fun load() {
-        try {
-            registryFile.createNewFile()
-            val data = registryFile.readText().split("\n")
-            parse(data)
-        } catch (e: IOException) {
-        }
-    }
-
     init {
-        load()
+        parse(handle.load().split("\n"))
     }
 
     private fun parse(lines: List<String>) {
@@ -58,10 +42,7 @@ class Registry : ApplicationProps {
     }
 
     private fun save() {
-        try {
-            registryFile.writeText(joinedText)
-        } catch (e: IOException) {
-        }
+        handle.save(joinedText)
     }
 
     override fun getJoinedText(): String {
