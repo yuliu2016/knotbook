@@ -3,7 +3,7 @@ package kb.application;
 import kb.service.api.MetaService;
 import kb.service.api.Service;
 import kb.service.api.ServiceMetadata;
-import kb.service.api.TextEditorProvider;
+import kb.service.api.TextEditorService;
 import kb.service.api.application.ApplicationService;
 import kb.service.api.application.JVMInstance;
 
@@ -38,7 +38,7 @@ class Application {
     private static final List<Service> extensions = loadServices(Service.class);
 
     // Text Editor implementation
-    private static final List<TextEditorProvider> textEditors = loadServices(TextEditorProvider.class);
+    private static final List<TextEditorService> textEditors = loadServices(TextEditorService.class);
 
     // App Registry
     private static final Registry registry = new Registry(new UserFile());

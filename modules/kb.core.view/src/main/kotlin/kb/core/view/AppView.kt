@@ -7,7 +7,6 @@ import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
 import javafx.stage.Stage
 import kb.core.bowline.BowlineTable
-import kb.core.camera.fx.KnotCameraTest
 import kb.core.code.CodeEditor
 import kb.core.code.Syntax
 import kb.core.fx.*
@@ -331,7 +330,6 @@ object AppView {
                 item {
                     name("WebCam QR Code Scanner")
                     icon(MDI_CAMERA, 14)
-                    action { KnotCameraTest.test() }
                 }
                 item {
                     name("Drive Path Planner")

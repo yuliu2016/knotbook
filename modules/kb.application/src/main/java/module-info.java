@@ -6,7 +6,7 @@ module kb.application {
 
     uses kb.service.api.application.ApplicationService;
     uses kb.service.api.Service;
-    uses kb.service.api.TextEditorProvider;
+    uses kb.service.api.TextEditorService;
 
     exports kb.application;
 }

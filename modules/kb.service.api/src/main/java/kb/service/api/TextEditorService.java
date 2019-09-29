@@ -2,7 +2,7 @@ package kb.service.api;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface TextEditorProvider extends MetaService {
+public interface TextEditorService extends MetaService {
 
     @NotNull
     TextEditor create();

@@ -7,7 +7,6 @@ module kb.core.view {
     requires org.kordamp.ikonli.materialdesign;
 
     requires kb.service.api;
-    requires kb.core.camera.fx;
     requires kb.core.splash;
     requires kb.core.bowline;
     requires kb.core.fx;
