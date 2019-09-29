@@ -19,7 +19,7 @@ dependencies {
 
 
 application {
-    mainClassName = "kb.application/kb.application.Main"
+    mainClassName = "kb.application/kb.application.KnotBook"
 }
 
 jlink {

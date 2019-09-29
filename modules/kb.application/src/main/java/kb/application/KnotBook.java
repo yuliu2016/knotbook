@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.ServiceLoader;
 
 @SuppressWarnings("unused")
-class Application {
+public class KnotBook {
 
     private static <T extends MetaService> List<T> loadServices(Class<T> service) {
         List<T> providers = new ArrayList<>();
@@ -43,7 +43,7 @@ class Application {
     // App Registry
     private static final Registry registry = new Registry(new UserFile());
 
-    static void launch() {
+    private static void launch() {
         System.out.println(Arrays.toString(JVMInstance.getArgs()));
         print(apps);
         print(extensions);
@@ -51,5 +51,10 @@ class Application {
         for (ApplicationService app : apps) {
             app.launchFast();
         }
+    }
+
+    public static void main(String[] args) {
+        JVMInstance.setArgs(args);
+        launch();
     }
 }
