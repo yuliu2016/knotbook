@@ -1,4 +1,4 @@
-package kb.service.api;
+package kb.service.api.table;
 
 public interface TableViewProvider {
 }
