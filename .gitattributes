@@ -1,1 +1,3 @@
 *.kbs linguist-language=Ruby
+modules/kb.tba.client/src/main/kotlin/kb/tba/client/Models.kt linguist-generated=true
+modules/kb.tba.client/src/main/kotlin/kb/tba/client/Paths.kt linguist-generated=true
