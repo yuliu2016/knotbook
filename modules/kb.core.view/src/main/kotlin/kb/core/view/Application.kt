@@ -1,5 +1,6 @@
 package kb.core.view
 
+import javafx.application.Platform
 import kb.service.api.ServiceMetadata
 import kb.service.api.application.ApplicationService
 import kb.service.api.application.PrivilagedContext
@@ -18,6 +19,12 @@ class Application : ApplicationService {
     }
 
     override fun launch(context: PrivilagedContext) {
+    }
+
+    override fun launchFast() {
+        Platform.startup {
+            AppView.show()
+        }
     }
 
 }
