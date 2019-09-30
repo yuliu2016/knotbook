@@ -7,7 +7,6 @@ module kb.core.camera.fx {
 
     requires annotations;
     requires kb.service.api;
-    requires kb.core.splash;
 
     provides kb.service.api.Service
             with kb.core.camera.fx.KBCameraService;
