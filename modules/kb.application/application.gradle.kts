@@ -15,6 +15,8 @@ dependencies {
     runtimeOnly(project(":kb.core.code"))
     runtimeOnly(project(":kb.tool.cng"))
     runtimeOnly(project(":kb.core.camera.fx"))
+    runtimeOnly(project(":kb.core.server"))
+    runtimeOnly(project(":kb.tba.client"))
 }
 
 

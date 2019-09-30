@@ -19,6 +19,7 @@ tasks {
 }
 
 dependencies {
+    implementation(project(":kb.service.api"))
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
     // Kotlin Coroutines
