@@ -7,8 +7,6 @@ import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
 import javafx.stage.Stage
 import kb.core.bowline.BowlineTable
-import kb.core.code.CodeEditor
-import kb.core.code.Syntax
 import kb.core.fx.*
 import kb.core.icon.icon
 import kb.core.splash.AboutSplash
@@ -168,8 +166,8 @@ object AppView {
                     name("Edit CSV as Text")
                     icon(MDI_FILE_DELIMITED, 14)
                     action {
-                        CodeEditor("Edit CSV", true, "Save", "Discard",
-                                "A,B,C\n1,2,4", {}, Syntax.CSV)
+//                        CodeEditor("Edit CSV", true, "Save", "Discard",
+//                                "A,B,C\n1,2,4", {}, Syntax.CSV)
                     }
                     shortcut(KeyCode.E, alt = true)
                 }
@@ -374,24 +372,24 @@ object AppView {
                 }
                 item {
                     name("JVM Properties")
-                    action {
-                        val properties = System
-                                .getProperties()
-                                .entries
-                                .sortedBy { it.key.toString() }
-                                .joinToString("\n") {
-                                    val strVal = it.value.toString()
-                                    val value = when {
-                                        strVal.endsWith("\\") -> "'$strVal'"
-                                        strVal == System.lineSeparator() -> "LINE_SEPARATOR"
-                                        else -> strVal
-                                    }
-                                    "${it.key}=$value"
-                                }
-                        CodeEditor("JVM Properties (Read-Only)",
-                                false, "Ok", "Close",
-                                properties, {}, Syntax.Properties)
-                    }
+//                    action {
+//                        val properties = System
+//                                .getProperties()
+//                                .entries
+//                                .sortedBy { it.key.toString() }
+//                                .joinToString("\n") {
+//                                    val strVal = it.value.toString()
+//                                    val value = when {
+//                                        strVal.endsWith("\\") -> "'$strVal'"
+//                                        strVal == System.lineSeparator() -> "LINE_SEPARATOR"
+//                                        else -> strVal
+//                                    }
+//                                    "${it.key}=$value"
+//                                }
+//                        CodeEditor("JVM Properties (Read-Only)",
+//                                false, "Ok", "Close",
+//                                properties, {}, Syntax.Properties)
+//                    }
                 }
                 separator()
                 item {

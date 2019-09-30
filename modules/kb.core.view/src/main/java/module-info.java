@@ -11,7 +11,6 @@ module kb.core.view {
     requires kb.core.bowline;
     requires kb.core.fx;
     requires kb.core.icon;
-    requires kb.core.code;
 
     provides kb.service.api.application.ApplicationService
             with kb.core.view.Application;

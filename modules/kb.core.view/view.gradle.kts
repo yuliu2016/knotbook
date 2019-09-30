@@ -29,7 +29,6 @@ dependencies {
     implementation(project(":kb.core.splash"))
     implementation(project(":kb.core.fx"))
     implementation(project(":kb.core.icon"))
-    implementation(project(":kb.core.code"))
     implementation(kotlin("stdlib"))
 
     implementation(group = "org.kordamp.ikonli", name = "ikonli-materialdesign-pack", version = "11.3.4")
