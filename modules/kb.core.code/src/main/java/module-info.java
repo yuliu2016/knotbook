@@ -5,7 +5,6 @@ module kb.core.code {
     requires annotations;
 
     requires rsyntaxtextarea;
-    requires rstaui;
 
     requires kb.service.api;
     provides TextEditorService
