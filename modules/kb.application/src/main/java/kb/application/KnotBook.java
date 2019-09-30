@@ -6,6 +6,7 @@ import kb.service.api.ServiceMetadata;
 import kb.service.api.TextEditorService;
 import kb.service.api.application.ApplicationService;
 import kb.service.api.application.JVMInstance;
+import kb.service.api.application.PrivilagedContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,13 +44,29 @@ public class KnotBook {
     // App Registry
     private static final Registry registry = new Registry(new UserFile());
 
-    private static void launch() {
-        System.out.println(Arrays.toString(JVMInstance.getArgs()));
+    static {
         print(apps);
         print(extensions);
         print(textEditors);
+    }
+
+    // App Context
+    private static final PrivilagedContext context = new AppContextImpl(
+            extensions,
+            textEditors.get(0),
+            registry
+    );
+
+    private static void launch() {
+        System.out.println(Arrays.toString(JVMInstance.getArgs()));
+
         for (ApplicationService app : apps) {
             app.launchFast();
+            app.launch(context);
+        }
+
+        for (Service service : extensions) {
+            service.launch(new ServiceContextImpl(service, context));
         }
     }
 

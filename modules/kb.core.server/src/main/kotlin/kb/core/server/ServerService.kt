@@ -21,7 +21,7 @@ class ServerService : Service {
     }
 
     override fun launch(context: ServiceContext) {
-        server.server.start()
+//        server.server.start()
     }
 
     override fun terminate(): Boolean {

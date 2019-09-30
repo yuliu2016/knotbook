@@ -5,7 +5,7 @@ import java.io.PrintWriter
 import java.net.InetSocketAddress
 
 class Server {
-    val server = HttpServer.create(InetSocketAddress(8080), 0).apply {
+    val server = HttpServer.create(InetSocketAddress(865), 0).apply {
 
         createContext("/hello") { http ->
             http.responseHeaders.add("Content-type", "text/plain")
