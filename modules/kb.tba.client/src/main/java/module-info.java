@@ -1,8 +1,6 @@
 module kb.tba.client {
     requires kotlin.stdlib;
-    requires fuel;
     requires klaxon;
-    requires fuel.coroutines;
 
     requires kb.service.api;
 
