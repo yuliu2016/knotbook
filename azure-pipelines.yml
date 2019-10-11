@@ -22,7 +22,7 @@ jobs:
           tasks: "assemble"
       - task: Gradle@2
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-        displayName: "Generate Runtime Image"
+        displayName: "Collect Jars"
         inputs:
           workingDirectory: ""
           gradleWrapperFile: "gradlew"
@@ -30,19 +30,19 @@ jobs:
           jdkVersionOption: "1.11"
           jdkArchitectureOption: "x64"
           publishJUnitResults: false
-          tasks: "jlink"
+          tasks: "collectJars"
       - task: ArchiveFiles@2
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
-          rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/kb.application/image"
+          rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/kb.abc/collected/"
           includeRootFolder: true
           archiveType: "tar"
-          tarCompression: "xz"
-          archiveFile: "$(System.DefaultWorkingDirectory)/windows-$(Build.BuildNumber).tar.xz"
+          tarCompression: "gz"
+          archiveFile: "$(System.DefaultWorkingDirectory)/windows-$(Build.BuildNumber).tar.gz"
       - task: PublishPipelineArtifact@1
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
-          path: "$(System.DefaultWorkingDirectory)/windows-$(Build.BuildNumber).tar.xz"
+          path: "$(System.DefaultWorkingDirectory)/windows-$(Build.BuildNumber).tar.gz"
           artifact: "windows"
   - job: Linux
     pool:
@@ -61,7 +61,7 @@ jobs:
           tasks: "assemble"
       - task: Gradle@2
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-        displayName: "Generate Runtime Image"
+        displayName: "Collect Jars"
         inputs:
           workingDirectory: ""
           gradleWrapperFile: "gradlew"
@@ -69,19 +69,19 @@ jobs:
           jdkVersionOption: "1.11"
           jdkArchitectureOption: "x64"
           publishJUnitResults: false
-          tasks: "jlink"
+          tasks: "collectJars"
       - task: ArchiveFiles@2
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
-          rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/kb.application/image"
+          rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/kb.abc/collected/"
           includeRootFolder: true
           archiveType: "tar"
-          tarCompression: "xz"
-          archiveFile: "$(System.DefaultWorkingDirectory)/ubuntu-$(Build.BuildNumber).tar.xz"
+          tarCompression: "gz"
+          archiveFile: "$(System.DefaultWorkingDirectory)/ubuntu-$(Build.BuildNumber).tar.gz"
       - task: PublishPipelineArtifact@1
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
-          path: "$(System.DefaultWorkingDirectory)/ubuntu-$(Build.BuildNumber).tar.xz"
+          path: "$(System.DefaultWorkingDirectory)/ubuntu-$(Build.BuildNumber).tar.gz"
           artifact: "ubuntu"
   - job: macOS
     pool:
@@ -100,7 +100,7 @@ jobs:
           tasks: "assemble"
       - task: Gradle@2
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-        displayName: "Generate Runtime Image"
+        displayName: "Collect Jars"
         inputs:
           workingDirectory: ""
           gradleWrapperFile: "gradlew"
@@ -108,17 +108,17 @@ jobs:
           jdkVersionOption: "1.11"
           jdkArchitectureOption: "x64"
           publishJUnitResults: false
-          tasks: "jlink"
+          tasks: "collectJars"
       - task: ArchiveFiles@2
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
-          rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/kb.application/image"
+          rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/kb.abc/collected/"
           includeRootFolder: true
           archiveType: "tar"
-          tarCompression: "xz"
-          archiveFile: "$(System.DefaultWorkingDirectory)/macOS-$(Build.BuildNumber).tar.xz"
+          tarCompression: "gz"
+          archiveFile: "$(System.DefaultWorkingDirectory)/macOS-$(Build.BuildNumber).tar.gz"
       - task: PublishPipelineArtifact@1
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
-          path: "$(System.DefaultWorkingDirectory)/macOS-$(Build.BuildNumber).tar.xz"
+          path: "$(System.DefaultWorkingDirectory)/macOS-$(Build.BuildNumber).tar.gz"
           artifact: "macOS"

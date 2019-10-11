@@ -11,7 +11,14 @@ dependencies {
 
 
 tasks.register("run", ModularJavaExec::class.java) {
-    main = "kb.abc/kb.abc.Main"
     group = "abc"
-    description = "Hello World"
+    main = "kb.abc/kb.abc.Main"
+}
+
+tasks.register("collectJars", Copy::class.java){
+    group = "abc"
+    from(configurations.runtimeClasspath) {
+        exclude("javafx-*")
+    }
+    into(File(buildDir, "collected"))
 }
