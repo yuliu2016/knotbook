@@ -1,4 +1,4 @@
-package kb.application
+package kb.core.application
 
 import kb.service.api.Service
 import kb.service.api.ServiceContext

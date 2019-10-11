@@ -1,4 +1,4 @@
-module kb.application {
+module kb.core.application {
 
     requires kotlin.stdlib;
 
@@ -8,5 +8,5 @@ module kb.application {
     uses kb.service.api.Service;
     uses kb.service.api.TextEditorService;
 
-    exports kb.application;
+    exports kb.core.application;
 }

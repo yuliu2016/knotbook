@@ -1,7 +1,9 @@
 package kb.abc;
 
+import kb.core.application.KnotBook;
+
 public class Main {
     public static void main(String[] args) {
-        kb.application.KnotBook.main(args);
+        KnotBook.main(args);
     }
 }

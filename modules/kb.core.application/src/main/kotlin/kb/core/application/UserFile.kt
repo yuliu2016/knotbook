@@ -1,4 +1,4 @@
-package kb.application
+package kb.core.application
 
 import java.io.File
 import java.io.IOException

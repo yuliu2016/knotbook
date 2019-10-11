@@ -1,4 +1,4 @@
-package kb.application;
+package kb.core.application;
 
 public interface RegistryHandle {
     String load();

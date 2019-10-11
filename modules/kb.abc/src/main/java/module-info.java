@@ -1,3 +1,3 @@
 module kb.abc {
-    requires kb.application;
+    requires kb.core.application;
 }

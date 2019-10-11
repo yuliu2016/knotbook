@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":kb.application"))
+    implementation(project(":kb.core.application"))
 }
 
 
