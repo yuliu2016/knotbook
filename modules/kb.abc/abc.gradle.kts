@@ -10,8 +10,8 @@ dependencies {
 }
 
 
-tasks.register("foo", ModularJavaExec::class.java) {
+tasks.register("run", ModularJavaExec::class.java) {
     main = "kb.abc/kb.abc.Main"
-    group = "Demo Foo"
+    group = "abc"
     description = "Hello World"
 }

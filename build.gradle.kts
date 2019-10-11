@@ -4,7 +4,7 @@ plugins {
     `build-scan`
     java
     id("org.jetbrains.kotlin.jvm") version "1.3.50"
-    id("org.javamodularity.moduleplugin") version "1.6.1-SNAPSHOT"
+    id("org.javamodularity.moduleplugin") version "1.6.0"
     id("org.openjfx.javafxplugin") version "0.0.9-SNAPSHOT"
 }
 
