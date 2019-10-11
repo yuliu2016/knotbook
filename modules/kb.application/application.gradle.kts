@@ -1,7 +1,5 @@
 plugins {
     java
-    application
-    id("org.beryx.jlink")
     kotlin("jvm")
 }
 
@@ -17,21 +15,4 @@ dependencies {
     runtimeOnly(project(":kb.core.camera.fx"))
     runtimeOnly(project(":kb.core.server"))
     runtimeOnly(project(":kb.tba.client"))
-}
-
-
-application {
-    mainClassName = "kb.application/kb.application.KnotBook"
-}
-
-jlink {
-    launcher {
-        name = "run"
-    }
-
-    addOptions(
-            "--no-header-files",
-            "--no-man-pages",
-            "--strip-debug"
-    )
 }

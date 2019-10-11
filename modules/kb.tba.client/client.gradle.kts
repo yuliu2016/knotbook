@@ -21,7 +21,6 @@ tasks {
 dependencies {
     implementation(project(":kb.service.api"))
     implementation(kotlin("stdlib"))
-    implementation(kotlin("reflect"))
 
     // JSON Library
     implementation(group = "com.beust", name = "klaxon", version = "5.0.13")

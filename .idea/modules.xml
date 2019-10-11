@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/KnotBook.iml" filepath="$PROJECT_DIR$/.idea/modules/KnotBook.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.abc/KnotBook.kb.abc.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.abc/KnotBook.kb.abc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.abc/KnotBook.kb.abc.main.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.abc/KnotBook.kb.abc.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.abc/KnotBook.kb.abc.test.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.abc/KnotBook.kb.abc.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.application/KnotBook.kb.application.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.application/KnotBook.kb.application.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.application/KnotBook.kb.application.main.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.application/KnotBook.kb.application.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.application/KnotBook.kb.application.test.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.application/KnotBook.kb.application.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.bowline/KnotBook.kb.core.bowline.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.bowline/KnotBook.kb.core.bowline.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.bowline/KnotBook.kb.core.bowline.main.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.bowline/KnotBook.kb.core.bowline.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.bowline/KnotBook.kb.core.bowline.test.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.bowline/KnotBook.kb.core.bowline.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.camera.fx/KnotBook.kb.core.camera.fx.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.camera.fx/KnotBook.kb.core.camera.fx.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.camera.fx/KnotBook.kb.core.camera.fx.main.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.camera.fx/KnotBook.kb.core.camera.fx.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.camera.fx/KnotBook.kb.core.camera.fx.test.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.camera.fx/KnotBook.kb.core.camera.fx.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.code/KnotBook.kb.core.code.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.code/KnotBook.kb.core.code.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.code/KnotBook.kb.core.code.main.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.code/KnotBook.kb.core.code.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.code/KnotBook.kb.core.code.test.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.code/KnotBook.kb.core.code.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.data/KnotBook.kb.core.data.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.data/KnotBook.kb.core.data.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.data/KnotBook.kb.core.data.main.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.data/KnotBook.kb.core.data.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.data/KnotBook.kb.core.data.test.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.data/KnotBook.kb.core.data.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.fx/KnotBook.kb.core.fx.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.fx/KnotBook.kb.core.fx.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.fx/KnotBook.kb.core.fx.main.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.fx/KnotBook.kb.core.fx.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.fx/KnotBook.kb.core.fx.test.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.fx/KnotBook.kb.core.fx.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.icon/KnotBook.kb.core.icon.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.icon/KnotBook.kb.core.icon.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.icon/KnotBook.kb.core.icon.main.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.icon/KnotBook.kb.core.icon.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.icon/KnotBook.kb.core.icon.test.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.icon/KnotBook.kb.core.icon.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.server/KnotBook.kb.core.server.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.server/KnotBook.kb.core.server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.server/KnotBook.kb.core.server.main.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.server/KnotBook.kb.core.server.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.server/KnotBook.kb.core.server.test.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.server/KnotBook.kb.core.server.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.splash/KnotBook.kb.core.splash.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.splash/KnotBook.kb.core.splash.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.splash/KnotBook.kb.core.splash.main.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.splash/KnotBook.kb.core.splash.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.splash/KnotBook.kb.core.splash.test.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.splash/KnotBook.kb.core.splash.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.view/KnotBook.kb.core.view.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.view/KnotBook.kb.core.view.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.view/KnotBook.kb.core.view.main.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.view/KnotBook.kb.core.view.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.core.view/KnotBook.kb.core.view.test.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.core.view/KnotBook.kb.core.view.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.service.api/KnotBook.kb.service.api.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.service.api/KnotBook.kb.service.api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.service.api/KnotBook.kb.service.api.main.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.service.api/KnotBook.kb.service.api.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.service.api/KnotBook.kb.service.api.test.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.service.api/KnotBook.kb.service.api.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.tba.client/KnotBook.kb.tba.client.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.tba.client/KnotBook.kb.tba.client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.tba.client/KnotBook.kb.tba.client.main.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.tba.client/KnotBook.kb.tba.client.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.tba.client/KnotBook.kb.tba.client.test.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.tba.client/KnotBook.kb.tba.client.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.tool.cng/KnotBook.kb.tool.cng.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.tool.cng/KnotBook.kb.tool.cng.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.tool.cng/KnotBook.kb.tool.cng.main.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.tool.cng/KnotBook.kb.tool.cng.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.tool.cng/KnotBook.kb.tool.cng.test.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.tool.cng/KnotBook.kb.tool.cng.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.tool.path.planner/KnotBook.kb.tool.path.planner.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.tool.path.planner/KnotBook.kb.tool.path.planner.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.tool.path.planner/KnotBook.kb.tool.path.planner.main.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.tool.path.planner/KnotBook.kb.tool.path.planner.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/kb.tool.path.planner/KnotBook.kb.tool.path.planner.test.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/kb.tool.path.planner/KnotBook.kb.tool.path.planner.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/KnotBook.main.iml" filepath="$PROJECT_DIR$/.idea/modules/KnotBook.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/KnotBook.test.iml" filepath="$PROJECT_DIR$/.idea/modules/KnotBook.test.iml" />
+    </modules>
+  </component>
+</project>

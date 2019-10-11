@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="KnotBook.kb.abc.main" target="11" />
+      <module name="KnotBook.kb.abc.test" target="11" />
+      <module name="KnotBook.kb.application.main" target="11" />
+      <module name="KnotBook.kb.application.test" target="11" />
+      <module name="KnotBook.kb.core.bowline.main" target="11" />
+      <module name="KnotBook.kb.core.bowline.test" target="11" />
+      <module name="KnotBook.kb.core.camera.fx.main" target="11" />
+      <module name="KnotBook.kb.core.camera.fx.test" target="11" />
+      <module name="KnotBook.kb.core.code.main" target="11" />
+      <module name="KnotBook.kb.core.code.test" target="11" />
+      <module name="KnotBook.kb.core.data.main" target="11" />
+      <module name="KnotBook.kb.core.data.test" target="11" />
+      <module name="KnotBook.kb.core.fx.main" target="11" />
+      <module name="KnotBook.kb.core.fx.test" target="11" />
+      <module name="KnotBook.kb.core.icon.main" target="11" />
+      <module name="KnotBook.kb.core.icon.test" target="11" />
+      <module name="KnotBook.kb.core.server.main" target="11" />
+      <module name="KnotBook.kb.core.server.test" target="11" />
+      <module name="KnotBook.kb.core.splash.main" target="11" />
+      <module name="KnotBook.kb.core.splash.test" target="11" />
+      <module name="KnotBook.kb.core.view.main" target="11" />
+      <module name="KnotBook.kb.core.view.test" target="11" />
+      <module name="KnotBook.kb.service.api.main" target="11" />
+      <module name="KnotBook.kb.service.api.test" target="11" />
+      <module name="KnotBook.kb.tba.client.main" target="11" />
+      <module name="KnotBook.kb.tba.client.test" target="11" />
+      <module name="KnotBook.kb.tool.cng.main" target="11" />
+      <module name="KnotBook.kb.tool.cng.test" target="11" />
+      <module name="KnotBook.kb.tool.path.planner.main" target="11" />
+      <module name="KnotBook.kb.tool.path.planner.test" target="11" />
+      <module name="KnotBook.main" target="11" />
+      <module name="KnotBook.test" target="11" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
