@@ -88,18 +88,10 @@ class IndexTree {
 
     init {
         entityRoot.children?.addAll(listOf(
-                Entity(EntityText("In-Memory Data"), fontIcon(MDI_MEMORY, 14), null, (0..15).flatMap {
+                Entity(EntityText("In-Memory Data", bold=true), fontIcon(MDI_MEMORY, 14), null, (0..8).flatMap {
                     listOf(
-                        Entity("Empty View", fontIcon(MDI_BORDER_NONE, 14)),
-                        Entity(EntityText("2018iri.csv"), fontIcon(MDI_FILE_DELIMITED, 14), null, mutableListOf(
-                                Entity("Filesystem Link", fontIcon(MDI_LINK, 14)),
-                                Entity("User Edit Mask", fontIcon(MDI_PENCIL, 14)),
-                                Entity("Formulas", fontIcon(MDI_FUNCTION, 14)),
-                                Entity(EntityText("Filter"), fontIcon(MDI_FILTER, 14), "Team={865}"),
-                                Entity(EntityText("Sort", bold = true), fontIcon(MDI_SORT_ASCENDING, 14), "Scale"),
-                                Entity(EntityText("Sort", bold = true), fontIcon(MDI_SORT_DESCENDING, 14), "Switch"),
-                                Entity(EntityText("Colour Scale", bold = true), fontIcon(MDI_GRADIENT, 14), "Auto Switch")
-                        )))
+//                        Entity("Empty View", fontIcon(MDI_BORDER_NONE, 14)),
+                        Entity(EntityText("2018iri.csv"), fontIcon(MDI_FILE_DELIMITED, 14), null))
                 }.toMutableList()
                 ),
                 Entity(EntityText("Local Folder", bold = true), fontIcon(MDI_MONITOR, 14), "~/KB/repo"),

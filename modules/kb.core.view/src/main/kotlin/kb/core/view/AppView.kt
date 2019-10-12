@@ -14,7 +14,7 @@ import kb.core.splash.GCSplash
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 import kotlin.system.exitProcess
 
-object AppView {
+class AppView {
 
     private val barCreator: Modifier<Menu>.() -> Unit = {
         menu {
@@ -445,11 +445,32 @@ object AppView {
             addFixed(indexTree.tree, table1.view)
             setDividerPositions(0.2, 0.6)
         })
+        add(hbox {
+            prefHeight =20.0
+            style = "-fx-background-color: #5a8ade"
+        })
+        isSnapToPixel = false
     }
 
     private val scene = Scene(box)
 
+    private var lastShift = 0L
+
     fun show() {
+        scene.setOnKeyPressed {
+            if (it.code == KeyCode.SHIFT) {
+                if (lastShift == 0L) {
+                    lastShift = System.nanoTime()
+                } else {
+                    val dt = (System.nanoTime() - lastShift) / 1E9
+                    lastShift = 0L
+                    if (dt < 1.0) {
+                        val s = Stage()
+                        s.show()
+                    }
+                }
+            }
+        }
         stage.fullScreenExitHint = "Press F11 to Exit Full Screen"
         stage.title = "KnotBook"
         stage.icons.add(Image(AppView::class.java.getResourceAsStream("/icon.png")))

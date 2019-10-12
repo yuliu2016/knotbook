@@ -6,6 +6,7 @@ module kb.core.view {
 
     requires org.kordamp.iconli.core;
     requires org.kordamp.ikonli.materialdesign;
+    requires krangl;
 
     requires kb.service.api;
     requires kb.core.splash;

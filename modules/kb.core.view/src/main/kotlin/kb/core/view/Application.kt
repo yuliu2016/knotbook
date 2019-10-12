@@ -23,7 +23,7 @@ class Application : ApplicationService {
 
     override fun launchFast() {
         Platform.startup {
-            AppView.show()
+            AppView().show()
         }
     }
 
