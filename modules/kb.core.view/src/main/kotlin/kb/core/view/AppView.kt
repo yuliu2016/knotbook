@@ -430,7 +430,7 @@ object AppView {
     private val stage = Stage()
     private val indexTree = IndexTree()
     private val table1 = TableContainer()
-    private val table2 = TableContainer()
+//    private val table2 = TableContainer()
 
     private val box = vbox {
         stylesheets.addAll("/knotbook.css", Theme.Light.fileName)
@@ -442,7 +442,7 @@ object AppView {
         add(splitPane {
             orientation = Orientation.HORIZONTAL
             vgrow()
-            addFixed(indexTree.tree, table1.view, table2.view)
+            addFixed(indexTree.tree, table1.view)
             setDividerPositions(0.2, 0.6)
         })
     }

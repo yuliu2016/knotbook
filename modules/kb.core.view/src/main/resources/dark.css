@@ -87,15 +87,23 @@
     -fx-padding: 0 0 0 1;
 }
 
+/*SPREADSHEET VIEW*/
+
 /* NORMAL CELL */
 .spreadsheet-cell:filled:selected,
 .spreadsheet-cell:filled:focused:selected,
 .spreadsheet-cell:filled:focused:selected:hover {
     /*-fx-background-color: #8cb1ff;*/
     -fx-background-color: #333;
-    -fx-border-color: #555;
-    -fx-border-width: 1px;
+    /*-fx-border-color: #555;*/
+    /*-fx-border-width: 1px;*/
     -fx-text-fill: white;
+}
+
+.selection-rectangle {
+    -fx-fill: transparent;
+    -fx-stroke: #3c5c94;
+    -fx-stroke-width: 1.5;
 }
 
 .spreadsheet-cell:hover,
@@ -107,8 +115,8 @@
 
 .spreadsheet-cell {
     -fx-padding: 0 0 0 0.2em;
-    -fx-border-color: #555;
-    -fx-border-width: 1px;
+    -fx-border-color: white;
+    -fx-border-width: 0.2 0 0 0.2;
     -fx-text-fill: white;
     -fx-font-weight: normal;
     /*-fx-background-color: -fx-table-cell-border-color, white;*/
@@ -214,12 +222,6 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
     -fx-border-color: #888;
     -fx-border-insets: 0;
     -fx-border-width: 0.3 0 0 0;
-}
-
-.selection-rectangle {
-    -fx-fill: transparent;
-    -fx-stroke: #3c5c94;
-    -fx-stroke-width: 2;
 }
 
 .button {

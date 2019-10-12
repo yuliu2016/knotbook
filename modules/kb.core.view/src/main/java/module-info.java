@@ -2,6 +2,7 @@ module kb.core.view {
     requires kotlin.stdlib;
     requires javafx.graphics;
     requires javafx.controls;
+    requires org.controlsfx.controls;
 
     requires org.kordamp.iconli.core;
     requires org.kordamp.ikonli.materialdesign;
