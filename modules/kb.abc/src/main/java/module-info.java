@@ -1,3 +1,6 @@
 module kb.abc {
-    requires kb.core.application;
+    requires kb.service.abc;
+    exports kb.abc;
+
+    uses kb.service.abc.ABC;
 }

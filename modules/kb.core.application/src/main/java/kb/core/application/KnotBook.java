@@ -57,7 +57,7 @@ public class KnotBook {
             registry
     );
 
-    private static void launch() {
+    static void launch() {
         System.out.println(Arrays.toString(JVMInstance.getArgs()));
 
         for (ApplicationService app : apps) {
@@ -68,10 +68,5 @@ public class KnotBook {
         for (Service service : extensions) {
             service.launch(new ServiceContextImpl(service, context));
         }
-    }
-
-    public static void main(String[] args) {
-        JVMInstance.setArgs(args);
-        launch();
     }
 }

@@ -6,7 +6,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":kb.core.application"))
+    implementation(project(":kb.service.abc"))
+    runtimeOnly(project(":kb.core.application"))
 }
 
 

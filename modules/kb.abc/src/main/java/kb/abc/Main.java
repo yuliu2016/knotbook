@@ -1,9 +1,15 @@
 package kb.abc;
 
-import kb.core.application.KnotBook;
+import kb.service.abc.ABC;
+
+import java.util.ServiceLoader;
 
 public class Main {
     public static void main(String[] args) {
-        KnotBook.main(args);
+        ServiceLoader
+                .load(ABC.class)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("ABC class not found"))
+                .launch(args);
     }
 }

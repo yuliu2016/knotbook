@@ -6,6 +6,7 @@ plugins {
 
 dependencies {
     implementation(kotlin("stdlib"))
+    implementation(project(":kb.service.abc"))
     implementation(project(":kb.service.api"))
 
     runtimeOnly(project(":kb.core.view"))
