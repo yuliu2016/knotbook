@@ -276,11 +276,11 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 
 
 .formula-field {
-    -fx-padding: 2 6 2 6;
+    -fx-padding: 3 6 3 6;
     -fx-background-color: #f8f8f8;
     -fx-border-color: #888;
     -fx-border-radius: 0;
-    -fx-border-width: 0.7;
+    -fx-border-width: 1;
     -fx-prompt-text-fill: #888;
     -fx-text-fill: black;
     -fx-border-insets: 0;

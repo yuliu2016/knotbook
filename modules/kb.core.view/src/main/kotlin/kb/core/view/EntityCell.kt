@@ -4,7 +4,6 @@ import javafx.geometry.Pos
 import javafx.scene.control.TreeCell
 import javafx.scene.input.ClipboardContent
 import javafx.scene.input.TransferMode
-import javafx.scene.paint.Color
 import kb.core.fx.*
 import kb.core.icon.centered
 
@@ -63,7 +62,6 @@ class EntityCell : TreeCell<Entity>() {
 
     override fun updateItem(item: Entity?, empty: Boolean) {
         super.updateItem(item, empty)
-        super.updateItem(item, empty)
 
         if (item == null || empty) {
             graphic = null
@@ -75,19 +73,16 @@ class EntityCell : TreeCell<Entity>() {
                 alignment = Pos.CENTER_LEFT
                 add(item.icon.centered(20))
                 add(label {
-                    text = item.text.string
+                    text = item.text
                     alignment = Pos.CENTER_LEFT
-                    if (item.text.color != null) {
-                        textFill = item.text.color
+                    if (item.color != null) {
+                        textFill = item.color
                     }
-                    if (item.text.bold) {
-                        style = "-fx-font-weight:bold"
-                    }
+                    style = "-fx-font-weight:bold"
                 })
                 if (item.supportText != null) {
                     add(label {
                         text = item.supportText
-                        textFill = Color.GRAY
                     })
                 }
             }

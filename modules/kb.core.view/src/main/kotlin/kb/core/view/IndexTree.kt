@@ -2,9 +2,9 @@ package kb.core.view
 
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
-import kb.core.icon.fontIcon
 import kb.core.fx.runOnFxThread
 import kb.core.icon.FontIcon
+import kb.core.icon.fontIcon
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 
 @Suppress("unused")
@@ -58,7 +58,7 @@ class IndexTree {
 //        selectAndSet(item)
     }
 
-    private val entityRoot = Entity(EntityText("Application"), FontIcon.of(MDI_APPLICATION), null, mutableListOf())
+    private val entityRoot = Entity("Application", null, FontIcon.of(MDI_APPLICATION), null, mutableListOf())
     private val root = TreeItem<Entity>(null)
 
 //    init {
@@ -88,15 +88,15 @@ class IndexTree {
 
     init {
         entityRoot.children?.addAll(listOf(
-                Entity(EntityText("In-Memory Data", bold=true), fontIcon(MDI_MEMORY, 14), null, (0..8).flatMap {
+                Entity("In-Memory Data", null, fontIcon(MDI_MEMORY, 14), null, (0..8).flatMap {
                     listOf(
 //                        Entity("Empty View", fontIcon(MDI_BORDER_NONE, 14)),
-                        Entity(EntityText("2018iri.csv"), fontIcon(MDI_FILE_DELIMITED, 14), null))
+                            Entity(null, "2018iri.csv", fontIcon(MDI_FILE_DELIMITED, 14), null))
                 }.toMutableList()
                 ),
-                Entity(EntityText("Local Folder", bold = true), fontIcon(MDI_MONITOR, 14), "~/KB/repo"),
-                Entity("Android Scouting App", fontIcon(MDI_QRCODE, 14)),
-                Entity("The Blue Alliance", fontIcon(MDI_LAMP, 14))
+                Entity("Local Folder", "~/KB/repo", fontIcon(MDI_MONITOR, 14), null),
+                Entity("Android Scouting App", null, fontIcon(MDI_QRCODE, 14)),
+                Entity("The Blue Alliance", null, fontIcon(MDI_LAMP, 14))
         ))
         tree.setCellFactory { EntityCell() }
         tree.root = root

@@ -1,8 +1,17 @@
 package kb.core.view
 
+import javafx.event.ActionEvent
+import javafx.event.EventHandler
+import javafx.geometry.Insets
 import javafx.geometry.Orientation
+import javafx.geometry.Pos
 import javafx.scene.Scene
+import javafx.scene.control.Button
+import javafx.scene.control.Label
 import javafx.scene.control.Menu
+import javafx.scene.control.TextField
+import javafx.scene.effect.BlurType
+import javafx.scene.effect.DropShadow
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
 import javafx.stage.Stage
@@ -13,6 +22,13 @@ import kb.core.splash.AboutSplash
 import kb.core.splash.GCSplash
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 import kotlin.system.exitProcess
+import java.util.Collections.addAll
+import javafx.scene.layout.HBox
+import javafx.scene.paint.Color
+import javafx.scene.paint.Color.AQUAMARINE
+import javafx.scene.shape.Circle
+import javafx.stage.Popup
+
 
 class AppView {
 
@@ -456,6 +472,42 @@ class AppView {
 
     private var lastShift = 0L
 
+    private fun shift() {
+        val popup = Popup()
+        popup.content.add(vbox {
+            stylesheets.addAll("/knotbook.css", Theme.Light.fileName)
+            style = "-fx-background-color: white"
+            effect = DropShadow().apply {
+                color = Color.GRAY
+                height = 10.0
+                width = 10.0
+                radius = 10.0
+            }
+            prefWidth = 600.0
+            prefHeight = 400.0
+            add(vbox {
+                align(Pos.TOP_CENTER)
+                add(Label("Enter a Command or Formula "))
+                padding = Insets(8.0)
+                spacing = 4.0
+                add(textField {
+                    styleClass("formula-field")
+                })
+            })
+
+            add(listView<Entity> {
+                items = getList().observable()
+                setCellFactory {
+                    EntityListCell()
+                }
+            })
+
+        })
+        popup.isAutoHide = true
+        popup.show(stage)
+        popup.centerOnScreen()
+    }
+
     fun show() {
         scene.setOnKeyPressed {
             if (it.code == KeyCode.SHIFT) {
@@ -465,8 +517,7 @@ class AppView {
                     val dt = (System.nanoTime() - lastShift) / 1E9
                     lastShift = 0L
                     if (dt < 1.0) {
-                        val s = Stage()
-                        s.show()
+                        shift()
                     }
                 }
             }
