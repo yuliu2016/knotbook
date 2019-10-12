@@ -28,6 +28,8 @@ tasks.register("collectJars", Copy::class.java){
     group = "abc"
     from(configurations.runtimeClasspath) {
         exclude("javafx-*")
+        exclude("kotlin-*")
+        exclude("kb.service.abc.jar")
     }
     into(File(buildDir, "collected"))
 }
