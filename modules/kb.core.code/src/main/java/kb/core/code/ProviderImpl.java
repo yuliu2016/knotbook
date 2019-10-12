@@ -2,10 +2,10 @@ package kb.core.code;
 
 import kb.service.api.ServiceMetadata;
 import kb.service.api.TextEditor;
-import kb.service.api.TextEditorProvider;
+import kb.service.api.TextEditorService;
 import org.jetbrains.annotations.NotNull;
 
-public class ProviderImpl implements TextEditorProvider {
+public class ProviderImpl implements TextEditorService {
 
     private ServiceMetadata metadata = new ServiceMetadata();
 

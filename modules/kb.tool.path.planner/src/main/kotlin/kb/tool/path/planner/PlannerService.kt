@@ -10,7 +10,7 @@ class PlannerService : Service {
 
     init {
         metadata.packageName = "kb.tool.path.planner"
-        metadata.packageVersion = "kb"
+        metadata.packageVersion = "1.0"
     }
 
     override fun getMetadata(): ServiceMetadata {

@@ -6,38 +6,35 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonBase
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
-import com.github.kittinunf.fuel.Fuel
-import com.github.kittinunf.fuel.coroutines.awaitString
+import java.net.HttpURLConnection
+import java.net.URL
+import kotlin.concurrent.thread
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 
-object ConfigSystem {
-    fun getTBAKey(): String? = TODO()
-    fun getUserAgent(): String = TODO()
-}
-
-private var authKey = ConfigSystem.getTBAKey()
-private var loadingCache = false
-private var savingCache = false
-
-fun TBA.hasKey() = authKey == null
-
-fun TBA.setKey(key: String) {
-    authKey = key
-}
-
-fun TBA.setOptions(
-        loadCache: Boolean = true,
-        saveCache: Boolean = true
-) {
-    loadingCache = loadCache
-    savingCache = saveCache
+private suspend fun TBA.getTBAString(
+        requestURL: String
+): String = suspendCoroutine { cont ->
+    thread {
+        try {
+            val url = URL("https://www.thebluealliance.com/api/v3$requestURL")
+            val conn = url.openConnection() as HttpURLConnection
+            conn.requestMethod = "GET"
+            conn.useCaches = false
+            conn.setRequestProperty("X-TBA-Auth-Key", authKey)
+            conn.setRequestProperty("User-Agent", userAgent)
+            val response = conn.inputStream.bufferedReader().use { br -> br.readText() }
+            cont.resume(response)
+        } catch (e: Throwable) {
+            cont.resumeWithException(e)
+        }
+    }
 }
 
 private suspend fun TBA.getParsed(requestURL: String): JsonBase {
-    val response = Fuel
-            .get("http://www.thebluealliance.com/api/v3$requestURL")
-            .header("X-TBA-Auth-Key" to authKey!!, "User-Agent" to ConfigSystem.getUserAgent())
-            .awaitString()
+    val response = getTBAString(requestURL)
     return Parser.default().parse(StringBuilder(response)) as JsonBase
 }
 

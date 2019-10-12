@@ -10,33 +10,34 @@ import javafx.scene.control.TableView
 import javafx.scene.layout.Region
 import javafx.scene.paint.Color
 import kb.core.fx.*
+import org.controlsfx.control.spreadsheet.SpreadsheetView
 
 class TableContainer {
-
-    private val table = TableView<Int>()
-
-    init {
-        table.items = (0..100).toList().observable()
-
-        table.columns.addAll((0..10).map { col ->
-            TableColumn<Int, String>(col.toString()).apply {
-                this.setCellValueFactory {
-                    SimpleStringProperty((col * it.value).toString())
-                }
-                this.prefWidth = 84.0
-                isSortable = false
-            }
-        })
-        table.fixedCellSize = Region.USE_COMPUTED_SIZE
-        table.selectionModel.isCellSelectionEnabled = true
-        table.selectionModel.selectionMode = SelectionMode.MULTIPLE
-
-        table.focusedProperty().addListener { _, _, newValue ->
-            if (!newValue) {
-                table.selectionModel.clearSelection()
-            }
-        }
-    }
+//
+//    private val table = TableView<Int>()
+//
+//    init {
+//        table.items = (0..100).toList().observable()
+//
+//        table.columns.addAll((0..10).map { col ->
+//            TableColumn<Int, String>(col.toString()).apply {
+//                this.setCellValueFactory {
+//                    SimpleStringProperty((col * it.value).toString())
+//                }
+//                this.prefWidth = 84.0
+//                isSortable = false
+//            }
+//        })
+//        table.fixedCellSize = Region.USE_COMPUTED_SIZE
+//        table.selectionModel.isCellSelectionEnabled = true
+//        table.selectionModel.selectionMode = SelectionMode.MULTIPLE
+//
+//        table.focusedProperty().addListener { _, _, newValue ->
+//            if (!newValue) {
+//                table.selectionModel.clearSelection()
+//            }
+//        }
+//    }
 
     val view = vbox {
         add(hbox {
@@ -54,6 +55,8 @@ class TableContainer {
                 entries.addAll(listOf("2019onto3", "2019onwin", "2019oncmp1", "2019cur", "2019iri"))
             })
         })
-        add(table.vgrow())
+        add(SpreadsheetView().vgrow().apply {
+            isEditable = false
+        })
     }
 }

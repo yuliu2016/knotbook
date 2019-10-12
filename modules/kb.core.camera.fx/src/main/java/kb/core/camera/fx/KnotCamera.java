@@ -6,16 +6,13 @@ import com.google.zxing.BinaryBitmap;
 import com.google.zxing.MultiFormatReader;
 import com.google.zxing.NotFoundException;
 import com.google.zxing.Result;
-import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
 import javafx.animation.AnimationTimer;
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import kb.core.splash.GCSplash;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -115,7 +112,7 @@ public class KnotCamera {
             }
             webcam.close();
             timer.stop();
-            Platform.runLater(GCSplash::splash);
+            new Thread(() -> Runtime.getRuntime().gc()).start();
         }
     }
 

@@ -7,15 +7,10 @@ import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
 import javafx.stage.Stage
 import kb.core.bowline.BowlineTable
-import kb.core.camera.fx.KnotCameraTest
-import kb.core.code.CodeEditor
-import kb.core.code.Syntax
 import kb.core.fx.*
 import kb.core.icon.icon
 import kb.core.splash.AboutSplash
 import kb.core.splash.GCSplash
-//import kb.tool.path.planner.runPathPlanner
-import kb.tool.cng.Connect4
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 import kotlin.system.exitProcess
 
@@ -171,8 +166,8 @@ object AppView {
                     name("Edit CSV as Text")
                     icon(MDI_FILE_DELIMITED, 14)
                     action {
-                        CodeEditor("Edit CSV", true, "Save", "Discard",
-                                "A,B,C\n1,2,4", {}, Syntax.CSV)
+//                        CodeEditor("Edit CSV", true, "Save", "Discard",
+//                                "A,B,C\n1,2,4", {}, Syntax.CSV)
                     }
                     shortcut(KeyCode.E, alt = true)
                 }
@@ -333,17 +328,14 @@ object AppView {
                 item {
                     name("WebCam QR Code Scanner")
                     icon(MDI_CAMERA, 14)
-                    action { KnotCameraTest.test() }
                 }
                 item {
                     name("Drive Path Planner")
                     icon(MDI_NAVIGATION, 14)
-//                    action { runPathPlanner() }
                 }
                 item {
                     name("Connect 4 Game")
                     icon(MDI_RECORD, 14)
-                    action { Connect4.start() }
                 }
             }
         }
@@ -380,24 +372,24 @@ object AppView {
                 }
                 item {
                     name("JVM Properties")
-                    action {
-                        val properties = System
-                                .getProperties()
-                                .entries
-                                .sortedBy { it.key.toString() }
-                                .joinToString("\n") {
-                                    val strVal = it.value.toString()
-                                    val value = when {
-                                        strVal.endsWith("\\") -> "'$strVal'"
-                                        strVal == System.lineSeparator() -> "LINE_SEPARATOR"
-                                        else -> strVal
-                                    }
-                                    "${it.key}=$value"
-                                }
-                        CodeEditor("JVM Properties (Read-Only)",
-                                false, "Ok", "Close",
-                                properties, {}, Syntax.Properties)
-                    }
+//                    action {
+//                        val properties = System
+//                                .getProperties()
+//                                .entries
+//                                .sortedBy { it.key.toString() }
+//                                .joinToString("\n") {
+//                                    val strVal = it.value.toString()
+//                                    val value = when {
+//                                        strVal.endsWith("\\") -> "'$strVal'"
+//                                        strVal == System.lineSeparator() -> "LINE_SEPARATOR"
+//                                        else -> strVal
+//                                    }
+//                                    "${it.key}=$value"
+//                                }
+//                        CodeEditor("JVM Properties (Read-Only)",
+//                                false, "Ok", "Close",
+//                                properties, {}, Syntax.Properties)
+//                    }
                 }
                 separator()
                 item {
@@ -438,7 +430,7 @@ object AppView {
     private val stage = Stage()
     private val indexTree = IndexTree()
     private val table1 = TableContainer()
-    private val table2 = TableContainer()
+//    private val table2 = TableContainer()
 
     private val box = vbox {
         stylesheets.addAll("/knotbook.css", Theme.Light.fileName)
@@ -450,7 +442,7 @@ object AppView {
         add(splitPane {
             orientation = Orientation.HORIZONTAL
             vgrow()
-            addFixed(indexTree.tree, table1.view, table2.view)
+            addFixed(indexTree.tree, table1.view)
             setDividerPositions(0.2, 0.6)
         })
     }
@@ -463,6 +455,5 @@ object AppView {
         stage.icons.add(Image(AppView::class.java.getResourceAsStream("/icon.png")))
         stage.scene = scene
         stage.show()
-        TBAView(stage)
     }
 }

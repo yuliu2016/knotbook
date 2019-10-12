@@ -2,10 +2,13 @@ pluginManagement {
     repositories {
         mavenLocal()
         gradlePluginPortal()
+        maven {
+            setUrl("https://oss.sonatype.org/content/repositories/snapshots")
+        }
     }
 }
 
-rootProject.name = "knotbook"
+rootProject.name = "KnotBook"
 
 val submodules = file("modules/").listFiles()
         ?.filter { it.isDirectory && it.name.startsWith("kb") }

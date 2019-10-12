@@ -50,8 +50,6 @@ public interface ServiceProps {
 
     boolean contains(@NotNull String key);
 
-    void commit();
-
     void addListener(@NotNull String key, @NotNull ServicePropListener listener);
 
     void removeListener(@NotNull String key);
