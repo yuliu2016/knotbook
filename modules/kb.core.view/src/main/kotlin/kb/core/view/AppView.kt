@@ -10,10 +10,11 @@ import javafx.scene.control.Separator
 import javafx.scene.effect.DropShadow
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyCodeCombination
+import javafx.scene.input.KeyCombination
 import javafx.scene.paint.Color
 import javafx.stage.Popup
 import javafx.stage.Stage
-import kb.core.bowline.BowlineTable
 import kb.core.fx.*
 import kb.core.icon.fontIcon
 import kb.core.icon.icon
@@ -30,7 +31,7 @@ class AppView {
             name("File")
             modify {
                 item {
-                    name("Create/Open Folder")
+                    name("Open Folder")
                     icon(MDI_FOLDER_OUTLINE, 14)
                     shortcut(KeyCode.O, control = true)
                 }
@@ -39,36 +40,29 @@ class AppView {
                 }
                 separator()
                 item {
-                    name("Commit")
-                    icon(MDI_CHECK, 14)
-                    shortcut(KeyCode.K, control = true)
+                    name("Open Table from File")
                 }
                 item {
-                    name("Pull")
-                    icon(MDI_SOURCE_PULL, 14)
-                    shortcut(KeyCode.T, control = true)
+                    name("Create Empty Table")
+                    shortcut(KeyCode.N, control = true)
+                    icon(MDI_PLUS, 14)
                 }
                 item {
-                    name("Push")
-                    icon(MDI_CLOUD_UPLOAD, 14)
-                    shortcut(KeyCode.K, control = true, shift = true)
+                    name("Rename Table")
+                    icon(MDI_TEXTBOX, 14)
+                    shortcut(KeyCode.F6, shift = true)
                 }
                 item {
-                    name("Show History")
-                    icon(MDI_HISTORY, 14)
-                }
-                separator()
-                item {
-                    name("Print")
-                    icon(MDI_PRINTER, 14)
+                    name("Mark Table Read-Only")
+                    shortcut(KeyCode.L, control = true)
+                    icon(MDI_LOCK, 14)
                 }
                 item {
-                    name("Export as Zip Archive")
+                    name("Delete Table")
+                    shortcut(KeyCode.DELETE, alt = true)
+                    icon(MDI_DELETE_FOREVER, 14)
                 }
-                item {
-                    name("Export as Excel Workbook")
-                }
-                separator()
+/*                separator()
                 item {
                     name("Application Properties")
                     icon(MDI_TUNE, 14)
@@ -80,28 +74,11 @@ class AppView {
 //                            Registry.save()
 //                        }, Syntax.Properties)
 //                    }
-                }
-                item {
-                    name("Synchronize")
-                    icon(MDI_RELOAD, 14)
-                    shortcut(KeyCode.Y, control = true, alt = true)
-                }
+                }*/
+                separator()
                 item {
                     name("Restart")
                 }
-                separator()
-                item {
-                    name("Open Terminal in Folder")
-                    icon(MDI_CONSOLE, 14)
-                    shortcut(KeyCode.F12, alt = true)
-                }
-                item {
-                    name("Reveal in Local Cache")
-                }
-                item {
-                    name("Reveal in Data Source")
-                }
-                separator()
                 item {
                     name("Exit")
                     action { exitProcess(0) }
@@ -165,21 +142,6 @@ class AppView {
                     name("Deselect All")
                     shortcut(KeyCode.A, control = true, shift = true)
                 }
-                separator()
-                item {
-                    name("Revert Changes")
-                    shortcut(KeyCode.Z, control = true, alt = true)
-                }
-                separator()
-                item {
-                    name("Edit CSV as Text")
-                    icon(MDI_FILE_DELIMITED, 14)
-                    action {
-                        //                        CodeEditor("Edit CSV", true, "Save", "Discard",
-//                                "A,B,C\n1,2,4", {}, Syntax.CSV)
-                    }
-                    shortcut(KeyCode.E, alt = true)
-                }
             }
         }
         menu {
@@ -207,20 +169,12 @@ class AppView {
                 }
                 separator()
                 item {
-                    name("Split Table Vertically")
-                    icon(MDI_SWAP_HORIZONTAL, 14)
-                }
-                item {
                     name("Open in New Window")
                     shortcut(KeyCode.N, control = true, shift = true)
                 }
                 item {
                     name("Close Current Table")
                     shortcut(KeyCode.W, control = true)
-                }
-                item {
-                    name("Close Others")
-                    shortcut(KeyCode.W, control = true, alt = true)
                 }
                 separator()
                 item {
@@ -237,146 +191,37 @@ class AppView {
                     name("Reset Zoom")
                     shortcut(KeyCode.DIGIT0, control = true)
                 }
-                separator()
-                item {
-                    name("Freeze Columns")
-                }
-                item {
-                    name("Unfreeze Columns")
-                }
-            }
-        }
-        menu {
-            name("Table")
-            modify {
-                item {
-                    name("Create Empty Table")
-                    shortcut(KeyCode.N, control = true)
-                    icon(MDI_PLUS, 14)
-                }
-                item {
-                    name("Duplicate Table")
-                }
-                item {
-                    name("Rename Table")
-                    icon(MDI_TEXTBOX, 14)
-                    shortcut(KeyCode.F6, shift = true)
-                }
-                item {
-                    name("Mark Table Read-Only")
-                    shortcut(KeyCode.L, control = true)
-                    icon(MDI_LOCK, 14)
-                }
-                item {
-                    name("Delete Table")
-                    shortcut(KeyCode.DELETE, alt = true)
-                    icon(MDI_DELETE_FOREVER, 14)
-                }
-                separator()
-                item {
-                    name("Rebuild")
-                    shortcut(KeyCode.R, control = true)
-                    icon(MDI_WRENCH, 14)
-                }
-                item {
-                    name("Find and Replace in Cells")
-                    icon(MDI_FILE_FIND, 14)
-                    shortcut(KeyCode.F, control = true)
-                }
-                item {
-                    name("Edit Cells")
-                    icon(MDI_TABLE_EDIT, 14)
-                }
-                item {
-                    name("Reshape Grid")
-                    icon(MDI_GRID, 14)
-                }
-            }
-        }
-        menu {
-            name("Tools")
-            modify {
-                item {
-                    name("Sort Columns")
-                    icon(MDI_SORT, 14)
-                }
-                item {
-                    name("Filter Rows")
-                    icon(MDI_FILTER_OUTLINE, 14)
-                }
-                item {
-                    name("Colour Scales")
-                    icon(MDI_GRADIENT, 14)
-                }
-                item {
-                    name("Histogram")
-                    icon(MDI_CHART_BAR, 14)
-                }
-                item {
-                    name("Statistics")
-                    icon(MDI_TRENDING_UP, 14)
-                }
-                separator()
-                item {
-                    name("The Blue Alliance Integration")
-                    action { TBAView(stage) }
-                    icon(MDI_CLOUD_SYNC, 14)
-                }
-                item {
-                    name("NetworkTables")
-                    icon(MDI_ACCESS_POINT, 14)
-                }
-                item {
-                    name("Python Script Executor")
-                    icon(MDI_LANGUAGE_PYTHON, 14)
-                }
-                item {
-                    name("Android Scouting App")
-                    icon(MDI_QRCODE, 14)
-                }
-                item {
-                    name("WebCam QR Code Scanner")
-                    icon(MDI_CAMERA, 14)
-                }
-                item {
-                    name("Drive Path Planner")
-                    icon(MDI_NAVIGATION, 14)
-                }
-                item {
-                    name("Connect 4 Game")
-                    icon(MDI_RECORD, 14)
-                }
             }
         }
         menu {
             name("Help")
             modify {
-                item {
-                    name("Try BowlineTableView")
-                    icon(MDI_BOWL, 14)
-                    action {
-                        val stage = Stage()
-                        stage.title = "BowlineTableView"
-                        stage.scene = Scene(BowlineTable())
-                        stage.scene.stylesheets.addAll("/bowline.css")
-                        stage.width = 900.0
-                        stage.height = 600.0
-                        stage.show()
-                    }
-                }
-                item {
-                    name("Debug with Scenic View")
-                    action { alertDialog("Notice", "Scenic View is not supported in this build") }
-                    icon(MDI_CLOUD_OUTLINE, 14)
-                }
-                separator()
+                //                item {
+//                    name("Try BowlineTableView")
+//                    icon(MDI_BOWL, 14)
+//                    action {
+//                        val stage = Stage()
+//                        stage.title = "BowlineTableView"
+//                        stage.scene = Scene(BowlineTable())
+//                        stage.scene.stylesheets.addAll("/bowline.css")
+//                        stage.width = 900.0
+//                        stage.height = 600.0
+//                        stage.show()
+//                    }
+//                }
+//                item {
+//                    name("Debug with Scenic View")
+//                    action { alertDialog("Notice", "Scenic View is not supported in this build") }
+//                    icon(MDI_CLOUD_OUTLINE, 14)
+//                }
+//                separator()
                 item {
                     name("Mark for Garbage Collection")
                     action { GCSplash.splash() }
                     icon(MDI_DELETE_SWEEP, 14)
                     shortcut(KeyCode.B, control = true)
                 }
-                item {
+                /*item {
                     name("Revert App Properties to Default")
                 }
                 item {
@@ -399,15 +244,7 @@ class AppView {
 //                                false, "Ok", "Close",
 //                                properties, {}, Syntax.Properties)
 //                    }
-                }
-                separator()
-                item {
-                    name("Open Source Licenses")
-                }
-                item {
-                    name("Show releases on GitHub")
-                    icon(MDI_GITHUB_CIRCLE, 14)
-                }
+                }*/
                 separator()
                 item {
                     name("About")
@@ -415,6 +252,10 @@ class AppView {
                     icon(MDI_INFORMATION_OUTLINE, 14)
                     shortcut(KeyCode.F1)
                 }
+                item {
+                    name("Open Source Licenses")
+                }
+
             }
         }
     }
@@ -552,6 +393,9 @@ class AppView {
                     }
                 }
             }
+        }
+        scene.accelerators[KeyCodeCombination(KeyCode.BACK_QUOTE, KeyCombination.CONTROL_DOWN)] = Runnable {
+            shift()
         }
         stage.fullScreenExitHint = "Press F11 to Exit Full Screen"
         stage.title = "KnotBook"

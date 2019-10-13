@@ -50,5 +50,10 @@ fun getList(): List<Entity> = listOf(
         Entity("Experimental:", "BowlineTableView", fontIcon(MDI_BOWL, 14)),
         Entity("Python:", "Execute A Script", fontIcon(MDI_LANGUAGE_PYTHON, 14)),
         Entity("Scouting App:", "Set Event"),
-        Entity("Scouting App:", "Start Scanner", fontIcon(MDI_QRCODE, 14))
+        Entity("Scouting App:", "Start Scanner", fontIcon(MDI_QRCODE, 14)),
+        Entity("Colour Scale:", "Add for Selection", fontIcon(MDI_GRADIENT, 14)),
+        Entity("Colour Scale:", "Clear for Selection"),
+        Entity("Folder:", "Open in Command Prompt", fontIcon(MDI_CONSOLE, 14)),
+        Entity("Table:", "Duplicate Data"),
+        Entity("Table:", "Find in Cells", fontIcon(MDI_FILE_FIND, 14))
 )
