@@ -1,5 +1,6 @@
 package kb.core.view
 
+import javafx.application.Platform
 import javafx.geometry.Insets
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
@@ -16,11 +17,11 @@ import javafx.scene.paint.Color
 import javafx.stage.Popup
 import javafx.stage.Stage
 import kb.core.fx.*
-import kb.core.icon.fontIcon
 import kb.core.icon.icon
 import kb.core.splash.AboutSplash
 import kb.core.splash.GCSplash
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
+import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
 
@@ -275,12 +276,14 @@ class AppView {
             Theme.Dark -> Theme.Light
         }
         box.stylesheets.setAll("/knotbook.css", theme.fileName)
+        components.themeLabel.text = theme.name
     }
 
     private val stage = Stage()
     private val indexTree = IndexTree()
     private val table1 = TableContainer()
-//    private val table2 = TableContainer()
+
+    private val components = AppComponents()
 
     private val box = vbox {
         stylesheets.addAll("/knotbook.css", Theme.Light.fileName)
@@ -305,35 +308,15 @@ class AppView {
             hspace()
 
             add(Separator(Orientation.VERTICAL))
-            add(Label("Average=3.0").apply {
-                padding = Insets.EMPTY
-                this.graphic = fontIcon(MDI_CALCULATOR, 14)
-            })
+            add(components.calcLabel)
             add(Separator(Orientation.VERTICAL))
-            add(Label("A1:C8").apply {
-                padding = Insets.EMPTY
-                this.graphic = fontIcon(MDI_MOUSE, 14)
-            })
+            add(components.selectionLabel)
             add(Separator(Orientation.VERTICAL))
-            add(Label("TBA, NT, USB").apply {
-                padding = Insets.EMPTY
-                this.graphic = fontIcon(MDI_ACCESS_POINT, 14)
-            })
+            add(components.zoomLabel)
             add(Separator(Orientation.VERTICAL))
-            add(Label("Light").apply {
-                padding = Insets.EMPTY
-                this.graphic = fontIcon(MDI_COMPARE, 14)
-            })
+            add(components.themeLabel)
             add(Separator(Orientation.VERTICAL))
-            add(Label("100%").apply {
-                padding = Insets.EMPTY
-                this.graphic = fontIcon(MDI_MAGNIFY_PLUS, 14)
-            })
-            add(Separator(Orientation.VERTICAL))
-            add(Label("24M").apply {
-                padding = Insets.EMPTY
-                this.graphic = fontIcon(MDI_MEMORY, 14)
-            })
+            add(components.heapLabel)
 
         })
         isSnapToPixel = false
@@ -381,22 +364,24 @@ class AppView {
     }
 
     fun show() {
-        scene.setOnKeyPressed {
-            if (it.code == KeyCode.SHIFT) {
-                if (lastShift == 0L) {
-                    lastShift = System.nanoTime()
-                } else {
-                    val dt = (System.nanoTime() - lastShift) / 1E9
-                    lastShift = 0L
-                    if (dt < 1.0) {
-                        shift()
-                    }
-                }
-            }
-        }
         scene.accelerators[KeyCodeCombination(KeyCode.BACK_QUOTE, KeyCombination.CONTROL_DOWN)] = Runnable {
             shift()
         }
+
+        thread(isDaemon = true, name = "MemoryObserver") {
+            while (true) {
+                val m  = ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1E6).toInt() + 1
+                Platform.runLater {
+                    components.heapLabel.text = "${m}M"
+                }
+                try {
+                    Thread.sleep(5000)
+                } catch (e: InterruptedException) {
+                    break
+                }
+            }
+        }
+
         stage.fullScreenExitHint = "Press F11 to Exit Full Screen"
         stage.title = "KnotBook"
         stage.icons.add(Image(AppView::class.java.getResourceAsStream("/icon.png")))
