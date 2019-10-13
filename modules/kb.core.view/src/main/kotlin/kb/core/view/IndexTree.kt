@@ -88,15 +88,7 @@ class IndexTree {
 
     init {
         entityRoot.children?.addAll(listOf(
-                Entity("In-Memory Data", null, fontIcon(MDI_MEMORY, 14), (0..8).flatMap {
-                    listOf(
-//                        Entity("Empty View", fontIcon(MDI_BORDER_NONE, 14)),
-                            Entity(null, "2018iri.csv", fontIcon(MDI_FILE_DELIMITED, 14), null))
-                }.toMutableList()
-                ),
-                Entity("Local Folder", "~/KB/repo", fontIcon(MDI_MONITOR, 14), null),
-                Entity("Android Scouting App", null, fontIcon(MDI_QRCODE, 14)),
-                Entity("The Blue Alliance", null, fontIcon(MDI_LAMP, 14))
+                Entity("In-Memory Data", null, fontIcon(MDI_MEMORY, 14), mutableListOf())
         ))
         tree.setCellFactory { EntityCell() }
         tree.root = root
