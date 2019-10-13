@@ -1,33 +1,26 @@
 package kb.core.view
 
-import javafx.event.ActionEvent
-import javafx.event.EventHandler
 import javafx.geometry.Insets
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import javafx.scene.Scene
-import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.control.Menu
-import javafx.scene.control.TextField
-import javafx.scene.effect.BlurType
+import javafx.scene.control.Separator
 import javafx.scene.effect.DropShadow
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
+import javafx.scene.paint.Color
+import javafx.stage.Popup
 import javafx.stage.Stage
 import kb.core.bowline.BowlineTable
 import kb.core.fx.*
+import kb.core.icon.fontIcon
 import kb.core.icon.icon
 import kb.core.splash.AboutSplash
 import kb.core.splash.GCSplash
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 import kotlin.system.exitProcess
-import java.util.Collections.addAll
-import javafx.scene.layout.HBox
-import javafx.scene.paint.Color
-import javafx.scene.paint.Color.AQUAMARINE
-import javafx.scene.shape.Circle
-import javafx.stage.Popup
 
 
 class AppView {
@@ -182,7 +175,7 @@ class AppView {
                     name("Edit CSV as Text")
                     icon(MDI_FILE_DELIMITED, 14)
                     action {
-//                        CodeEditor("Edit CSV", true, "Save", "Discard",
+                        //                        CodeEditor("Edit CSV", true, "Save", "Discard",
 //                                "A,B,C\n1,2,4", {}, Syntax.CSV)
                     }
                     shortcut(KeyCode.E, alt = true)
@@ -462,8 +455,45 @@ class AppView {
             setDividerPositions(0.2, 0.6)
         })
         add(hbox {
-            prefHeight =20.0
-            style = "-fx-background-color: #5a8ade"
+            align(Pos.CENTER_LEFT)
+            padding = Insets(0.0, 8.0, 0.0, 8.0)
+            prefHeight = 20.0
+            styleClass("status-bar")
+            spacing = 8.0
+            add(Label("Ready"))
+            hspace()
+
+            add(Separator(Orientation.VERTICAL))
+            add(Label("Average=3.0").apply {
+                padding = Insets.EMPTY
+                this.graphic = fontIcon(MDI_CALCULATOR, 14)
+            })
+            add(Separator(Orientation.VERTICAL))
+            add(Label("A1:C8").apply {
+                padding = Insets.EMPTY
+                this.graphic = fontIcon(MDI_MOUSE, 14)
+            })
+            add(Separator(Orientation.VERTICAL))
+            add(Label("TBA, NT, USB").apply {
+                padding = Insets.EMPTY
+                this.graphic = fontIcon(MDI_ACCESS_POINT, 14)
+            })
+            add(Separator(Orientation.VERTICAL))
+            add(Label("Light").apply {
+                padding = Insets.EMPTY
+                this.graphic = fontIcon(MDI_COMPARE, 14)
+            })
+            add(Separator(Orientation.VERTICAL))
+            add(Label("100%").apply {
+                padding = Insets.EMPTY
+                this.graphic = fontIcon(MDI_MAGNIFY_PLUS, 14)
+            })
+            add(Separator(Orientation.VERTICAL))
+            add(Label("24M").apply {
+                padding = Insets.EMPTY
+                this.graphic = fontIcon(MDI_MEMORY, 14)
+            })
+
         })
         isSnapToPixel = false
     }
@@ -484,7 +514,7 @@ class AppView {
                 radius = 10.0
             }
             prefWidth = 600.0
-            prefHeight = 400.0
+            prefHeight = 480.0
             add(vbox {
                 align(Pos.TOP_CENTER)
                 add(Label("Enter a Command or Formula "))
@@ -496,6 +526,7 @@ class AppView {
             })
 
             add(listView<Entity> {
+                vgrow()
                 items = getList().observable()
                 setCellFactory {
                     EntityListCell()

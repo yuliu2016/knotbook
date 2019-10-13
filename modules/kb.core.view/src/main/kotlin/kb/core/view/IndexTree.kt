@@ -58,7 +58,7 @@ class IndexTree {
 //        selectAndSet(item)
     }
 
-    private val entityRoot = Entity("Application", null, FontIcon.of(MDI_APPLICATION), null, mutableListOf())
+    private val entityRoot = Entity("Application", null, FontIcon.of(MDI_APPLICATION), mutableListOf())
     private val root = TreeItem<Entity>(null)
 
 //    init {
@@ -88,7 +88,7 @@ class IndexTree {
 
     init {
         entityRoot.children?.addAll(listOf(
-                Entity("In-Memory Data", null, fontIcon(MDI_MEMORY, 14), null, (0..8).flatMap {
+                Entity("In-Memory Data", null, fontIcon(MDI_MEMORY, 14), (0..8).flatMap {
                     listOf(
 //                        Entity("Empty View", fontIcon(MDI_BORDER_NONE, 14)),
                             Entity(null, "2018iri.csv", fontIcon(MDI_FILE_DELIMITED, 14), null))

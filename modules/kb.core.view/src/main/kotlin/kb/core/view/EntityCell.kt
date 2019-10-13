@@ -71,18 +71,17 @@ class EntityCell : TreeCell<Entity>() {
             alignment = Pos.CENTER_LEFT
             graphic = hbox {
                 alignment = Pos.CENTER_LEFT
-                add(item.icon.centered(20))
+                if (item.icon != null) {
+                    add(item.icon.centered(20))
+                }
                 add(label {
-                    text = item.text
+                    text = item.cat
                     alignment = Pos.CENTER_LEFT
-                    if (item.color != null) {
-                        textFill = item.color
-                    }
                     style = "-fx-font-weight:bold"
                 })
-                if (item.supportText != null) {
+                if (item.name != null) {
                     add(label {
-                        text = item.supportText
+                        text = item.name
                     })
                 }
             }

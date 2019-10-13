@@ -3,9 +3,7 @@ package kb.core.view
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.control.ListCell
-import javafx.scene.control.TreeCell
-import javafx.scene.input.ClipboardContent
-import javafx.scene.input.TransferMode
+import javafx.scene.paint.Color
 import kb.core.fx.*
 import kb.core.icon.centered
 
@@ -26,18 +24,26 @@ class EntityListCell : ListCell<Entity>() {
                 padding = Insets(0.0, 8.0, 0.0, 8.0)
                 alignment = Pos.CENTER_LEFT
                 spacing = 4.0
-                add(item.icon.centered(20))
-                add(label {
-                    text = item.text
-                    alignment = Pos.CENTER_LEFT
-//                    if (item.color != null) {
-//                        textFill = item.color
-//                    }
-//                    style = "-fx-font-weight:bold"
-                })
-                if (item.supportText != null) {
+                if (item.icon != null) {
+                    add(item.icon.centered(20))
+                } else {
+                    add(hbox {
+                        prefWidth = 20.0
+                    })
+                }
+                if (item.cat != null) {
                     add(label {
-                        text = item.supportText
+                        text = item.cat
+                        alignment = Pos.CENTER_LEFT
+                        textFill = Color.valueOf("#3c5c94")
+//                    style = "-fx-font-weight:700"
+                    })
+                }
+                if (item.name != null) {
+                    add(label {
+//                        isUnderline = true
+                        text = item.name
+//                        style = "-fx-font-style:italic"
                     })
                 }
             }

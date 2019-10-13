@@ -1,5 +1,5 @@
 .text {
-    -fx-font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
+    -fx-font-family: "Roboto", "Arial", sans-serif;
     -fx-font-smoothing-type: gray;
 }
 
@@ -129,4 +129,23 @@
 
 .table-row-cell {
     -fx-cell-size: 20;
+}
+
+.status-bar {
+    -fx-background-color: #5a8ade;
+}
+
+.status-bar .label{
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.status-bar .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+.status-bar .separator:vertical .line {
+    -fx-border-color: white;
+    -fx-border-width: 0 1 0 0;
+    -fx-border-insets: 2 0 2 0;
 }
