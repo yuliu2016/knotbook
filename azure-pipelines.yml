@@ -31,19 +31,11 @@ jobs:
           jdkArchitectureOption: "x64"
           publishJUnitResults: false
           tasks: "collectJars"
-      - task: ArchiveFiles@2
-        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-        inputs:
-          rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/kb.abc/collected/"
-          includeRootFolder: true
-          archiveType: "tar"
-          tarCompression: "gz"
-          archiveFile: "$(System.DefaultWorkingDirectory)/windows-$(Build.BuildNumber).tar.gz"
       - task: PublishPipelineArtifact@1
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
-          path: "$(System.DefaultWorkingDirectory)/windows-$(Build.BuildNumber).tar.gz"
-          artifact: "windows"
+          path: "$(System.DefaultWorkingDirectory)/build/kb.abc/collected/"
+          artifact: "windows-$(Build.BuildNumber)"
   - job: Linux
     pool:
       vmImage: "ubuntu-latest"
@@ -70,19 +62,11 @@ jobs:
           jdkArchitectureOption: "x64"
           publishJUnitResults: false
           tasks: "collectJars"
-      - task: ArchiveFiles@2
-        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-        inputs:
-          rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/kb.abc/collected/"
-          includeRootFolder: true
-          archiveType: "tar"
-          tarCompression: "gz"
-          archiveFile: "$(System.DefaultWorkingDirectory)/ubuntu-$(Build.BuildNumber).tar.gz"
       - task: PublishPipelineArtifact@1
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
-          path: "$(System.DefaultWorkingDirectory)/ubuntu-$(Build.BuildNumber).tar.gz"
-          artifact: "ubuntu"
+          path: "$(System.DefaultWorkingDirectory)/build/kb.abc/collected/"
+          artifact: "ubuntu-$(Build.BuildNumber)"
   - job: macOS
     pool:
       vmImage: "macOS-latest"
@@ -109,16 +93,8 @@ jobs:
           jdkArchitectureOption: "x64"
           publishJUnitResults: false
           tasks: "collectJars"
-      - task: ArchiveFiles@2
-        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-        inputs:
-          rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build/kb.abc/collected/"
-          includeRootFolder: true
-          archiveType: "tar"
-          tarCompression: "gz"
-          archiveFile: "$(System.DefaultWorkingDirectory)/macOS-$(Build.BuildNumber).tar.gz"
       - task: PublishPipelineArtifact@1
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
-          path: "$(System.DefaultWorkingDirectory)/macOS-$(Build.BuildNumber).tar.gz"
-          artifact: "macOS"
+          path: "$(System.DefaultWorkingDirectory)/build/kb.abc/collected/"
+          artifact: "macOS-$(Build.BuildNumber)"
