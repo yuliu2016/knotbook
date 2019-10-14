@@ -3,21 +3,6 @@ plugins {
     id("org.openjfx.javafxplugin")
 }
 
-tasks {
-    compileKotlin {
-        kotlinOptions {
-            freeCompilerArgs = listOf("-Xnew-inference")
-            jvmTarget = "11"
-        }
-    }
-    compileTestKotlin {
-        kotlinOptions {
-            freeCompilerArgs = listOf("-Xnew-inference")
-            jvmTarget = "11"
-        }
-    }
-}
-
 tasks.withType<Test> {
     useJUnitPlatform {
     }
@@ -29,6 +14,7 @@ javafx {
 
 dependencies {
     implementation(kotlin("stdlib"))
+    implementation(project(":kb.service.api"))
 
     testImplementation(kotlin("test"))
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = "5.5.1")

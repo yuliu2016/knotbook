@@ -1,5 +1,5 @@
 module kb.service.api {
-    requires annotations;
+    requires transitive annotations;
 
     exports kb.service.api;
     exports kb.service.api.df;

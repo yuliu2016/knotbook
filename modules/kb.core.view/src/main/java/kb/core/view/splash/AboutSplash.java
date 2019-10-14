@@ -1,21 +1,16 @@
-package kb.core.splash;
+package kb.core.view.splash;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import javafx.stage.Popup;
+import javafx.stage.Window;
 
-import java.awt.*;
-import java.net.URI;
 
 public class AboutSplash {
 
@@ -25,8 +20,8 @@ public class AboutSplash {
         return label;
     }
 
-    public static void splash() {
-        Stage stage = new Stage();
+    public static void splash(Window owner) {
+        Popup popup = new Popup();
 
         VBox root = new VBox();
         root.setStyle("-fx-background-color: transparent");
@@ -39,7 +34,7 @@ public class AboutSplash {
         top.setPrefHeight(80.0);
         top.setStyle("-fx-background-color:rgba(96,96,96,0.9)");
 
-        Image iconImage = new Image(AboutSplash.class.getResourceAsStream("/kb/core/splash/icon.png"));
+        Image iconImage = new Image(AboutSplash.class.getResourceAsStream("/icon.png"));
         ImageView icon = new ImageView(iconImage);
         icon.setPreserveRatio(true);
         icon.setFitHeight(80.0);
@@ -55,19 +50,8 @@ public class AboutSplash {
         bottom.setPadding(new Insets(8.0));
         bottom.setSpacing(8.0);
 
-        Hyperlink hyperlink = new Hyperlink("github.com/yuliu2016/knotbook");
-        hyperlink.setStyle("-fx-border-width: 0");
-        hyperlink.setOnAction(event -> {
-            try {
-                Desktop.getDesktop().browse(new URI("https://github.com/yuliu2016/knotbook"));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
         bottom.getChildren().addAll(
                 labelOf("Version LAUNCH (Build 3.0.0-ea)"),
-                hyperlink,
                 labelOf("Licensed under MIT and powered by open-source software"),
                 labelOf("Runtime: " + System.getProperty("java.vm.name") +
                         " " + System.getProperty("java.vm.version") +
@@ -78,19 +62,10 @@ public class AboutSplash {
 
         root.getChildren().addAll(top, bottom);
 
-        Scene scene = new Scene(root);
-        scene.setRoot(root);
-        scene.setFill(Color.TRANSPARENT);
+        popup.getContent().add(root);
 
-        stage.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) stage.close();
-        });
-
-        stage.setScene(scene);
-        stage.initStyle(StageStyle.TRANSPARENT);
-        stage.getIcons().add(iconImage);
-        stage.setAlwaysOnTop(true);
-        stage.setTitle("About");
-        stage.show();
+        popup.centerOnScreen();
+        popup.setAutoHide(true);
+        popup.show(owner);
     }
 }

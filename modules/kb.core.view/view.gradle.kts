@@ -5,28 +5,12 @@ plugins {
     id("org.javamodularity.moduleplugin")
 }
 
-tasks {
-    compileKotlin {
-        kotlinOptions {
-            freeCompilerArgs = listOf("-Xnew-inference")
-            jvmTarget = "11"
-        }
-    }
-    compileTestKotlin {
-        kotlinOptions {
-            freeCompilerArgs = listOf("-Xnew-inference")
-            jvmTarget = "11"
-        }
-    }
-}
-
 javafx {
     modules = listOf("javafx.controls")
 }
 
 dependencies {
     implementation(project(":kb.service.api"))
-    implementation(project(":kb.core.splash"))
     implementation(project(":kb.core.fx"))
     implementation(project(":kb.core.icon"))
     implementation(kotlin("stdlib"))

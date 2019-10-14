@@ -4,7 +4,6 @@ module kb.core.camera.fx {
     requires javafx.controls;
     requires java.desktop;
 
-    requires annotations;
     requires kb.service.api;
 
     provides kb.service.api.Service

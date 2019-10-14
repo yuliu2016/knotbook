@@ -19,8 +19,8 @@ import javafx.stage.Stage
 import kb.core.fx.*
 import kb.core.icon.fontIcon
 import kb.core.icon.icon
-import kb.core.splash.AboutSplash
-import kb.core.splash.GCSplash
+import kb.core.view.splash.AboutSplash
+import kb.core.view.splash.GCSplash
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 import kotlin.system.exitProcess
 
@@ -271,7 +271,7 @@ class AppView {
                 separator()
                 item {
                     name("About")
-                    action { AboutSplash.splash() }
+                    action { AboutSplash.splash(stage) }
                     icon(MDI_INFORMATION_OUTLINE, 14)
                     shortcut(KeyCode.F1)
                 }

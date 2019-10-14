@@ -1,4 +1,4 @@
-package kb.core.splash;
+package kb.core.view.splash;
 
 import javafx.application.Platform;
 import javafx.scene.control.ButtonType;
