@@ -26,7 +26,7 @@ class Application : ApplicationService {
 
             thread(isDaemon = true, name = "MemoryObserver") {
                 while (true) {
-                    val m = ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1E6).toInt() + 1
+                    val m = ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024.0 / 1024.0).toInt() + 1
                     Platform.runLater {
                         Singleton.memoryUsed.value = "${m}M"
                     }

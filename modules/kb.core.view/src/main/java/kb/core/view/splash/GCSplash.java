@@ -17,8 +17,8 @@ public class GCSplash {
             }
             Platform.runLater(() -> {
                 long now = (runtime.totalMemory() - runtime.freeMemory());
-                String mem = String.format("Currently Used Memory: %.3f MB", now / 1000000.0);
-                String freed = String.format("Freed Memory: %.3f MB", (before - now) / 1000000.0);
+                String mem = String.format("Currently Used Memory: %.3f MB", now / 1024.0 / 1024.0);
+                String freed = String.format("Freed Memory: %.3f MB", (before - now) / 1024.0 / 1024.0);
                 String msg = mem + "\n" + freed;
                 Dialog<String> dialog = new Dialog<>();
                 dialog.setTitle("Garbage Collection State");

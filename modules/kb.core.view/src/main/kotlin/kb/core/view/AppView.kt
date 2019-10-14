@@ -268,6 +268,19 @@ class AppView {
                         }
                     }
                 }
+                item {
+                    name("Plugins and Services")
+                    action {
+                        val t = Singleton.context.services.joinToString("\n") {
+                            it.metadata.run { "$packageName => $packageVersion" }
+                        }
+                        Singleton.context.createTextEditor().apply {
+                            title = "Plugins and Services"
+                            setInitialText(t)
+                            show()
+                        }
+                    }
+                }
                 separator()
                 item {
                     name("About")

@@ -10,6 +10,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import javafx.stage.Window;
+import kotlin.KotlinVersion;
 
 
 public class AboutSplash {
@@ -25,38 +26,38 @@ public class AboutSplash {
 
         VBox root = new VBox();
         root.setStyle("-fx-background-color: transparent");
-        root.setPrefWidth(500.0);
-        root.setPrefHeight(340.0);
+        root.setPrefWidth(480.0);
+        root.setPrefHeight(320.0);
 
         HBox top = new HBox();
-        top.setPadding(new Insets(10.0));
-        top.setAlignment(Pos.BASELINE_CENTER);
-        top.setPrefHeight(80.0);
+        top.setPadding(new Insets(16.0, 32.0, 16.0, 32.0));
+        top.setAlignment(Pos.BASELINE_LEFT);
+        top.setMaxHeight(32.0);
         top.setStyle("-fx-background-color:rgba(96,96,96,0.9)");
 
         Image iconImage = new Image(AboutSplash.class.getResourceAsStream("/icon.png"));
         ImageView icon = new ImageView(iconImage);
         icon.setPreserveRatio(true);
-        icon.setFitHeight(80.0);
+        icon.setFitHeight(72.0);
 
         Label label = new Label("notBook");
-        label.setStyle("-fx-font-size: 72;-fx-font-weight:bold;-fx-text-fill: white");
+        label.setStyle("-fx-font-size: 72;-fx-font-weight:normal;-fx-text-fill: white");
         top.getChildren().addAll(icon, label);
 
         VBox bottom = new VBox();
         bottom.setStyle("-fx-background-color:rgba(0,0,0,0.9)");
         VBox.setVgrow(bottom, Priority.ALWAYS);
-        bottom.setAlignment(Pos.TOP_CENTER);
-        bottom.setPadding(new Insets(8.0));
-        bottom.setSpacing(8.0);
+        bottom.setPadding(new Insets(8.0, 32.0, 8.0, 32.0));
 
         bottom.getChildren().addAll(
-                labelOf("Version LAUNCH (Build 3.0.0-ea)"),
+                labelOf("Version 3.10.0-ea"),
                 labelOf("Licensed under MIT and powered by open-source software"),
-                labelOf("Runtime: " + System.getProperty("java.vm.name") +
-                        " " + System.getProperty("java.vm.version") +
-                        " on " + System.getProperty("os.name")),
-                labelOf("Max Processors: " + Runtime.getRuntime().availableProcessors() + "; Max Heap: " +
+                labelOf("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.arch")),
+                labelOf("Java Runtime: " + System.getProperty("java.vm.name") +
+                        " " + System.getProperty("java.vm.version")),
+                labelOf("JavaFX Build: " + System.getProperty("javafx.runtime.version")),
+                labelOf("Kotlin Build: " + KotlinVersion.CURRENT),
+                labelOf("Max Heap Size: " +
                         Runtime.getRuntime().maxMemory() / 1024 / 1024 + "M")
         );
 
