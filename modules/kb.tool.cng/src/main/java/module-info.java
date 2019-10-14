@@ -3,8 +3,6 @@ module kb.tool.cng {
 
     requires kb.service.api;
 
-    requires annotations;
-
     provides kb.service.api.Service
             with kb.tool.cng.CNGService;
 

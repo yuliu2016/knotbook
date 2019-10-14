@@ -1,16 +1,13 @@
 package kb.core.view
 
+import javafx.scene.paint.Color
 import kb.core.icon.FontIcon
 import kb.core.icon.fontIcon
 import org.kordamp.ikonli.materialdesign.MaterialDesign
 
 class Entity(
-        val text: EntityText,
-        val icon: FontIcon = fontIcon(MaterialDesign.MDI_CUBE, 13),
-        val supportText: String? = null,
+        val cat: String? = null,
+        val name: String? = null,
+        val icon: FontIcon? = null,
         val children: MutableList<Entity>? = null
-) {
-    constructor(text: String) : this(EntityText(text))
-
-    constructor(text: String, icon: FontIcon) : this(EntityText(text), icon)
-}
+)

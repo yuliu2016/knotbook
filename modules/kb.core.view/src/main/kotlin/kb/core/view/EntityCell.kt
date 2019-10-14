@@ -4,11 +4,10 @@ import javafx.geometry.Pos
 import javafx.scene.control.TreeCell
 import javafx.scene.input.ClipboardContent
 import javafx.scene.input.TransferMode
-import javafx.scene.paint.Color
 import kb.core.fx.*
 import kb.core.icon.centered
 
-class EntityCell : TreeCell<Entity>() {
+class EntityCell : TreeCell<FolderOrTable>() {
 
     init {
         setOnDragDetected { event ->
@@ -61,8 +60,7 @@ class EntityCell : TreeCell<Entity>() {
         setOnDragDone { it.consume() }
     }
 
-    override fun updateItem(item: Entity?, empty: Boolean) {
-        super.updateItem(item, empty)
+    override fun updateItem(item: FolderOrTable?, empty: Boolean) {
         super.updateItem(item, empty)
 
         if (item == null || empty) {
@@ -75,21 +73,8 @@ class EntityCell : TreeCell<Entity>() {
                 alignment = Pos.CENTER_LEFT
                 add(item.icon.centered(20))
                 add(label {
-                    text = item.text.string
-                    alignment = Pos.CENTER_LEFT
-                    if (item.text.color != null) {
-                        textFill = item.text.color
-                    }
-                    if (item.text.bold) {
-                        style = "-fx-font-weight:bold"
-                    }
+                    text = item.name
                 })
-                if (item.supportText != null) {
-                    add(label {
-                        text = item.supportText
-                        textFill = Color.GRAY
-                    })
-                }
             }
         }
 

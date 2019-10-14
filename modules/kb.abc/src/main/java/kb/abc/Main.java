@@ -1,9 +1,13 @@
 package kb.abc;
 
-import kb.core.application.KnotBook;
+import kb.service.abc.ABC;
+
+import java.util.ServiceLoader;
 
 public class Main {
     public static void main(String[] args) {
-        KnotBook.main(args);
+        for (var abc : ServiceLoader.load(ABC.class)) {
+            abc.launch(args);
+        }
     }
 }

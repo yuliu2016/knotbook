@@ -1,4 +1,4 @@
-*.kbs linguist-language=Ruby
 modules/kb.tba.client/src/main/kotlin/kb/tba/client/Models.kt linguist-generated=true
 modules/kb.tba.client/src/main/kotlin/kb/tba/client/Paths.kt linguist-generated=true
 modules/kb.core.camera.fx/src/main/java/kb/core/camera/fx/BufferedImageLuminanceSource.java linguist-vendor=true
+modules/kb.core.icon/src/main/java/kb/core/icon/ linguist-vendor=true

@@ -6,7 +6,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":kb.core.application"))
+    implementation(project(":kb.service.abc"))
+    runtimeOnly(project(":kb.core.application"))
 }
 
 
@@ -25,8 +26,11 @@ tasks.register("run", ModularJavaExec::class.java) {
 
 tasks.register("collectJars", Copy::class.java){
     group = "abc"
+    dependsOn("jar")
     from(configurations.runtimeClasspath) {
         exclude("javafx-*")
+        exclude("kotlin-*")
     }
+    from(File(buildDir, "libs"))
     into(File(buildDir, "collected"))
 }

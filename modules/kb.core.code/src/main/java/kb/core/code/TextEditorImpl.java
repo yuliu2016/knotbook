@@ -14,6 +14,12 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Code editor in Swing using {@link RSyntaxTextArea},
+ * however, every public method should be called from the JavaFX
+ * application thread
+ */
+
 class TextEditorImpl implements TextEditor {
 
     private String syntax = SyntaxConstants.SYNTAX_STYLE_NONE;
@@ -68,6 +74,11 @@ class TextEditorImpl implements TextEditor {
     @Override
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    @Override
+    public String getTitle() {
+        return title;
     }
 
     @Override

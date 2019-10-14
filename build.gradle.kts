@@ -1,5 +1,7 @@
 @file:Suppress("SpellCheckingInspection")
 
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     `build-scan`
     java
@@ -23,18 +25,10 @@ subprojects {
         compileOnly("org.jetbrains", "annotations", "13.0")
     }
     pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
-        tasks {
-            compileKotlin {
-                kotlinOptions {
-                    freeCompilerArgs = listOf("-Xnew-inference")
-                    jvmTarget = "11"
-                }
-            }
-            compileTestKotlin {
-                kotlinOptions {
-                    freeCompilerArgs = listOf("-Xnew-inference")
-                    jvmTarget = "11"
-                }
+        tasks.withType<KotlinCompile> {
+            kotlinOptions {
+                freeCompilerArgs = listOf("-Xnew-inference")
+                jvmTarget = "11"
             }
         }
         dependencies {

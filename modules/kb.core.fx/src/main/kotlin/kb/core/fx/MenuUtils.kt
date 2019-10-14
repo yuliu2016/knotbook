@@ -8,7 +8,6 @@ import javafx.scene.control.*
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination.*
-import org.kordamp.ikonli.Ikon
 
 @FXKtDSL
 inline fun menuBar(builder: MenuBar.() -> Unit): MenuBar = MenuBar().apply(builder)

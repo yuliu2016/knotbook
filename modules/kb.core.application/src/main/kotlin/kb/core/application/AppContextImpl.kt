@@ -1,33 +1,33 @@
 package kb.core.application
 
 import kb.service.api.Service
-import kb.service.api.ServiceContext
 import kb.service.api.TextEditor
 import kb.service.api.TextEditorService
 import kb.service.api.application.ApplicationProps
-import kb.service.api.application.ApplicationService
-import kb.service.api.application.PrivilagedContext
+import kb.service.api.application.PrivilegedContext
 
 class AppContextImpl(
-        val ext: List<Service>,
-        private val textEdit: TextEditorService,
+        private val ext: List<Service>,
+        private val textEdit: List<TextEditorService>,
         private val props: ApplicationProps
-) : PrivilagedContext {
+) : PrivilegedContext {
 
     override fun getProps(): ApplicationProps {
         return props
     }
 
-    override fun getService(): ApplicationService {
-        TODO("not implemented")
-    }
-
     override fun createTextEditor(): TextEditor {
-        return textEdit.create()
+        if (textEdit.isNotEmpty()) {
+            return textEdit.first().create()
+        }
+        throw NotImplementedError("no text editor is not implemented")
     }
 
-    override fun getContexts(): Array<ServiceContext> {
-        TODO("not implemented")
+    override fun getServices(): List<Service> {
+        return ext
     }
 
+    override fun getVersion(): String {
+        return "3.1.0 - Alpha"
+    }
 }

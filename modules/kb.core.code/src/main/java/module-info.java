@@ -2,7 +2,6 @@ import kb.service.api.TextEditorService;
 
 module kb.core.code {
     requires java.desktop;
-    requires annotations;
 
     requires rsyntaxtextarea;
 

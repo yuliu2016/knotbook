@@ -1,62 +1,77 @@
 package kb.core.view
 
-import javafx.beans.property.SimpleStringProperty
-import javafx.geometry.Insets
-import javafx.geometry.Pos
-import javafx.scene.control.Label
-import javafx.scene.control.SelectionMode
-import javafx.scene.control.TableColumn
-import javafx.scene.control.TableView
-import javafx.scene.layout.Region
-import javafx.scene.paint.Color
+import javafx.scene.input.KeyCode
 import kb.core.fx.*
+import kb.core.icon.icon
+import org.controlsfx.control.spreadsheet.GridBase
 import org.controlsfx.control.spreadsheet.SpreadsheetView
+import org.kordamp.ikonli.materialdesign.MaterialDesign.*
+import java.util.*
 
 class TableContainer {
-//
-//    private val table = TableView<Int>()
-//
-//    init {
-//        table.items = (0..100).toList().observable()
-//
-//        table.columns.addAll((0..10).map { col ->
-//            TableColumn<Int, String>(col.toString()).apply {
-//                this.setCellValueFactory {
-//                    SimpleStringProperty((col * it.value).toString())
-//                }
-//                this.prefWidth = 84.0
-//                isSortable = false
-//            }
-//        })
-//        table.fixedCellSize = Region.USE_COMPUTED_SIZE
-//        table.selectionModel.isCellSelectionEnabled = true
-//        table.selectionModel.selectionMode = SelectionMode.MULTIPLE
-//
-//        table.focusedProperty().addListener { _, _, newValue ->
-//            if (!newValue) {
-//                table.selectionModel.clearSelection()
-//            }
-//        }
-//    }
 
-    val view = vbox {
-        add(hbox {
-            prefHeight = 20.0
-            align(Pos.CENTER)
-            add(Label("Table Folder/"))
-            add(Label("Table Name").apply {
-                textFill = Color.BLUE
-            })
-            padding = Insets(0.0, 4.0, 0.0, 4.0)
-        })
-        add(vbox {
-            padding = Insets(2.0, 4.0, 2.0, 4.0)
-            add(AutocompletionTextField().apply {
-                entries.addAll(listOf("2019onto3", "2019onwin", "2019oncmp1", "2019cur", "2019iri"))
-            })
-        })
-        add(SpreadsheetView().vgrow().apply {
-            isEditable = false
-        })
+    val spreadsheet = SpreadsheetView().apply {
+        hgrow()
+        contextMenu = contextMenu {
+            modify {
+                item {
+                    shortcut(KeyCode.X, control = true)
+                    name("Cut")
+                    icon(MDI_CONTENT_CUT, 14)
+                }
+                item {
+                    shortcut(KeyCode.C, control = true)
+                    name("Copy")
+                    icon(MDI_CONTENT_COPY, 14)
+                }
+                item {
+                    shortcut(KeyCode.C, control = true, shift = true)
+                    name("Copy Special")
+                }
+                item {
+                    shortcut(KeyCode.V, control = true)
+                    name("Paste")
+                    icon(MDI_CONTENT_PASTE, 14)
+                }
+                item {
+                    shortcut(KeyCode.V, control = true, shift = true)
+                    name("Paste Special")
+                }
+                item {
+                    name("Delete")
+                }
+                separator()
+                item {
+                    shortcut(KeyCode.F, control = true)
+                    name("Find and Replace")
+                }
+                separator()
+                item {
+                    shortcut(KeyCode.PLUS, control = true)
+                    name("Zoom In")
+                    icon(MDI_MAGNIFY_PLUS, 14)
+                }
+                item {
+                    shortcut(KeyCode.MINUS, control = true)
+                    name("Zoom Out")
+                    icon(MDI_MAGNIFY_MINUS, 14)
+                }
+                item {
+                    shortcut(KeyCode.DIGIT0, control = true)
+                    name("Reset Zoom")
+                }
+            }
+        }
+        val a = grid as GridBase
+        a.setRowHeightCallback { 20.0 }
+        a.setResizableRows(BitSet())
+        columns.forEach {
+            it.setPrefWidth(84.0)
+            it.minWidth = 42.0
+        }
+        grid.rows.first().forEach {
+            it.style = "-fx-font-weight:bold; -fx-alignment: CENTER"
+        }
+        fixedRows.add(0)
     }
 }

@@ -4,10 +4,6 @@ module kb.tool.path.planner {
 
     requires kotlin.stdlib;
 
-    requires javafx.base;
-    requires javafx.graphics;
-    requires javafx.controls;
-
     requires ca.warp_seven.frc;
 
     requires kb.core.icon;
