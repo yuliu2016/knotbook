@@ -6,7 +6,7 @@ import kb.service.api.ServiceMetadata;
 import kb.service.api.TextEditorService;
 import kb.service.api.application.ApplicationService;
 import kb.service.api.application.JVMInstance;
-import kb.service.api.application.PrivilagedContext;
+import kb.service.api.application.PrivilegedContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.ServiceLoader;
 
 @SuppressWarnings("unused")
-public class KnotBook {
+class KnotBook {
 
     private static <T extends MetaService> List<T> loadServices(Class<T> service) {
         List<T> providers = new ArrayList<>();
@@ -51,9 +51,9 @@ public class KnotBook {
     }
 
     // App Context
-    private static final PrivilagedContext context = new AppContextImpl(
+    private static final PrivilegedContext context = new AppContextImpl(
             extensions,
-            textEditors.get(0),
+            textEditors,
             registry
     );
 

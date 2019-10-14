@@ -4,7 +4,9 @@ import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.control.ListCell
 import javafx.scene.paint.Color
-import kb.core.fx.*
+import kb.core.fx.add
+import kb.core.fx.hbox
+import kb.core.fx.label
 import kb.core.icon.centered
 
 @Suppress("DuplicatedCode")
@@ -41,9 +43,7 @@ class EntityListCell : ListCell<Entity>() {
                 }
                 if (item.name != null) {
                     add(label {
-//                        isUnderline = true
                         text = item.name
-//                        style = "-fx-font-style:italic"
                     })
                 }
             }

@@ -26,7 +26,6 @@ javafx {
 
 dependencies {
     implementation(project(":kb.service.api"))
-    implementation(project(":kb.core.bowline"))
     implementation(project(":kb.core.splash"))
     implementation(project(":kb.core.fx"))
     implementation(project(":kb.core.icon"))

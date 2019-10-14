@@ -18,6 +18,8 @@ public interface TextEditor {
 
     boolean isTextChanged();
 
+    String getTitle();
+
     void setTitle(String title);
 
     void addAction(@NotNull String name, @NotNull Runnable action);

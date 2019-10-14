@@ -28,6 +28,7 @@ class AppComponents {
 
     val heapLabel = Label("24M").apply {
         padding = Insets.EMPTY
+        textProperty().bind(Singleton.memoryUsed)
         this.graphic = fontIcon(MaterialDesign.MDI_MEMORY, 14)
     }
 }

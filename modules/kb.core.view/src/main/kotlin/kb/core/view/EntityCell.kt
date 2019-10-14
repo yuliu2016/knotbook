@@ -7,7 +7,7 @@ import javafx.scene.input.TransferMode
 import kb.core.fx.*
 import kb.core.icon.centered
 
-class EntityCell : TreeCell<Entity>() {
+class EntityCell : TreeCell<FolderOrTable>() {
 
     init {
         setOnDragDetected { event ->
@@ -60,7 +60,7 @@ class EntityCell : TreeCell<Entity>() {
         setOnDragDone { it.consume() }
     }
 
-    override fun updateItem(item: Entity?, empty: Boolean) {
+    override fun updateItem(item: FolderOrTable?, empty: Boolean) {
         super.updateItem(item, empty)
 
         if (item == null || empty) {
@@ -71,19 +71,10 @@ class EntityCell : TreeCell<Entity>() {
             alignment = Pos.CENTER_LEFT
             graphic = hbox {
                 alignment = Pos.CENTER_LEFT
-                if (item.icon != null) {
-                    add(item.icon.centered(20))
-                }
+                add(item.icon.centered(20))
                 add(label {
-                    text = item.cat
-                    alignment = Pos.CENTER_LEFT
-                    style = "-fx-font-weight:bold"
+                    text = item.name
                 })
-                if (item.name != null) {
-                    add(label {
-                        text = item.name
-                    })
-                }
             }
         }
 

@@ -3,7 +3,8 @@ package kb.core.view
 import javafx.application.Platform
 import kb.service.api.ServiceMetadata
 import kb.service.api.application.ApplicationService
-import kb.service.api.application.PrivilagedContext
+import kb.service.api.application.PrivilegedContext
+import kotlin.concurrent.thread
 
 class Application : ApplicationService {
 
@@ -18,13 +19,27 @@ class Application : ApplicationService {
         return metadata
     }
 
-    override fun launch(context: PrivilagedContext) {
-    }
-
-    override fun launchFast() {
+    override fun launch(context: PrivilegedContext) {
+        Singleton.zzNullableContext = context
         Platform.startup {
             AppView().show()
+
+            thread(isDaemon = true, name = "MemoryObserver") {
+                while (true) {
+                    val m = ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1E6).toInt() + 1
+                    Platform.runLater {
+                        Singleton.memoryUsed.value = "${m}M"
+                    }
+                    try {
+                        Thread.sleep(5000)
+                    } catch (e: InterruptedException) {
+                        break
+                    }
+                }
+            }
         }
     }
 
+    override fun launchFast() {
+    }
 }

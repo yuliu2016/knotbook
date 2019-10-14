@@ -26,10 +26,11 @@ tasks.register("run", ModularJavaExec::class.java) {
 
 tasks.register("collectJars", Copy::class.java){
     group = "abc"
+    dependsOn("jar")
     from(configurations.runtimeClasspath) {
         exclude("javafx-*")
         exclude("kotlin-*")
-        exclude("kb.service.abc.jar")
     }
+    from(File(buildDir, "libs"))
     into(File(buildDir, "collected"))
 }

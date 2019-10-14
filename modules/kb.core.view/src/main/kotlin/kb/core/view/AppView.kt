@@ -1,6 +1,5 @@
 package kb.core.view
 
-import javafx.application.Platform
 import javafx.geometry.Insets
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
@@ -14,14 +13,15 @@ import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
 import javafx.scene.paint.Color
+import javafx.stage.FileChooser
 import javafx.stage.Popup
 import javafx.stage.Stage
 import kb.core.fx.*
+import kb.core.icon.fontIcon
 import kb.core.icon.icon
 import kb.core.splash.AboutSplash
 import kb.core.splash.GCSplash
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
-import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
 
@@ -37,15 +37,23 @@ class AppView {
                     shortcut(KeyCode.O, control = true)
                 }
                 item {
+                    name("Open Recent")
+                }
+                item {
                     name("Close Folder")
                 }
                 separator()
                 item {
                     name("Open Table from File")
+                    action {
+                        val fc = FileChooser()
+                        fc.title = "Open Table from File"
+                        fc.showOpenDialog(stage)
+                    }
                 }
                 item {
                     name("Create Empty Table")
-                    shortcut(KeyCode.N, control = true)
+                    shortcut(KeyCode.T, control = true)
                     icon(MDI_PLUS, 14)
                 }
                 item {
@@ -54,28 +62,10 @@ class AppView {
                     shortcut(KeyCode.F6, shift = true)
                 }
                 item {
-                    name("Mark Table Read-Only")
-                    shortcut(KeyCode.L, control = true)
-                    icon(MDI_LOCK, 14)
-                }
-                item {
                     name("Delete Table")
                     shortcut(KeyCode.DELETE, alt = true)
                     icon(MDI_DELETE_FOREVER, 14)
                 }
-/*                separator()
-                item {
-                    name("Application Properties")
-                    icon(MDI_TUNE, 14)
-                    shortcut(KeyCode.P, control = true)
-//                    action {
-//                        CodeEditor("Application Properties", true,
-//                                "Save", "Discard", Registry.join(), { s ->
-//                            Registry.parse(s.split("\n"))
-//                            Registry.save()
-//                        }, Syntax.Properties)
-//                    }
-                }*/
                 separator()
                 item {
                     name("Restart")
@@ -111,15 +101,12 @@ class AppView {
                 }
 
                 item {
-                    name("Copy Tab-Delimited")
+                    name("Copy")
                     icon(MDI_CONTENT_COPY, 14)
                     shortcut(KeyCode.C, control = true)
                 }
                 item {
-                    name("Copy Comma-Delimited")
-                }
-                item {
-                    name("Copy Dictionary")
+                    name("Copy Special")
                     shortcut(KeyCode.C, control = true, shift = true)
                 }
                 item {
@@ -128,11 +115,16 @@ class AppView {
                     icon(MDI_CONTENT_PASTE, 14)
                 }
                 item {
-                    name("Paste From History")
+                    name("Paste Special")
                     shortcut(KeyCode.V, control = true, shift = true)
                 }
                 item {
                     name("Delete")
+                }
+                separator()
+                item {
+                    name("Find and Replace")
+                    shortcut(KeyCode.F, control = true)
                 }
                 separator()
                 item {
@@ -148,6 +140,32 @@ class AppView {
         menu {
             name("View")
             modify {
+
+                item {
+                    name("Application Properties")
+//                    icon(MDI_TUNE, 14)
+                    shortcut(KeyCode.COMMA, control = true)
+                    action {
+                        Singleton.context.createTextEditor().apply {
+                            title = "Application Properties"
+                            setEditable(true)
+                            addAction("Save Changes") {
+                                if (isTextChanged) {
+                                    Singleton.context.props.setInputText(finalText)
+                                }
+                            }
+                            syntax = "text/properties"
+                            setInitialText(Singleton.context.props.joinedText)
+                            show()
+                        }
+                    }
+                }
+                item {
+                    name("Command Palette")
+                    icon(MDI_CONSOLE, 14)
+                    shortcut(KeyCode.P, control = true, shift = true)
+                }
+                separator()
                 item {
                     name("Toggle Colour Scheme")
                     shortcut(KeyCode.F3)
@@ -155,7 +173,11 @@ class AppView {
                     action { toggleTheme() }
                 }
                 item {
-                    name("Enter Full Screen")
+                    name("Toggle Tree View")
+                    shortcut(KeyCode.F4)
+                }
+                item {
+                    name("Toggle Full Screen")
                     shortcut(KeyCode.F11)
                     action { toggleFullScreen() }
                 }
@@ -171,11 +193,14 @@ class AppView {
                 separator()
                 item {
                     name("Open in New Window")
-                    shortcut(KeyCode.N, control = true, shift = true)
+                    shortcut(KeyCode.N, control = true)
+                    action {
+                        AppView().show()
+                    }
                 }
                 item {
                     name("Close Current Table")
-                    shortcut(KeyCode.W, control = true)
+                    shortcut(KeyCode.W, control = true, shift = true)
                 }
                 separator()
                 item {
@@ -185,7 +210,7 @@ class AppView {
                 }
                 item {
                     name("Zoom Out")
-                    icon(MDI_MAGNIFY_PLUS, 14)
+                    icon(MDI_MAGNIFY_MINUS, 14)
                     shortcut(KeyCode.MINUS, control = true)
                 }
                 item {
@@ -210,42 +235,39 @@ class AppView {
 //                        stage.show()
 //                    }
 //                }
-//                item {
-//                    name("Debug with Scenic View")
-//                    action { alertDialog("Notice", "Scenic View is not supported in this build") }
-//                    icon(MDI_CLOUD_OUTLINE, 14)
-//                }
-//                separator()
                 item {
                     name("Mark for Garbage Collection")
                     action { GCSplash.splash() }
                     icon(MDI_DELETE_SWEEP, 14)
                     shortcut(KeyCode.B, control = true)
                 }
-                /*item {
-                    name("Revert App Properties to Default")
-                }
+//                item {
+//                    name("Revert App Properties to Default")
+//                }
                 item {
                     name("JVM Properties")
-//                    action {
-//                        val properties = System
-//                                .getProperties()
-//                                .entries
-//                                .sortedBy { it.key.toString() }
-//                                .joinToString("\n") {
-//                                    val strVal = it.value.toString()
-//                                    val value = when {
-//                                        strVal.endsWith("\\") -> "'$strVal'"
-//                                        strVal == System.lineSeparator() -> "LINE_SEPARATOR"
-//                                        else -> strVal
-//                                    }
-//                                    "${it.key}=$value"
-//                                }
-//                        CodeEditor("JVM Properties (Read-Only)",
-//                                false, "Ok", "Close",
-//                                properties, {}, Syntax.Properties)
-//                    }
-                }*/
+                    action {
+                        val properties = System
+                                .getProperties()
+                                .entries
+                                .sortedBy { it.key.toString() }
+                                .joinToString("\n") {
+                                    val strVal = it.value.toString()
+                                    val value = when {
+                                        strVal.endsWith("\\") -> "'$strVal'"
+                                        strVal == System.lineSeparator() -> "LINE_SEPARATOR"
+                                        else -> strVal
+                                    }
+                                    "${it.key}=$value"
+                                }
+                        Singleton.context.createTextEditor().apply {
+                            title = "JVM Properties (Read-Only)"
+                            syntax = "text/properties"
+                            setInitialText(properties)
+                            show()
+                        }
+                    }
+                }
                 separator()
                 item {
                     name("About")
@@ -295,7 +317,7 @@ class AppView {
         add(splitPane {
             orientation = Orientation.HORIZONTAL
             vgrow()
-            addFixed(indexTree.tree, table1.view)
+            addFixed(indexTree.tree, table1.spreadsheet)
             setDividerPositions(0.2, 0.6)
         })
         add(hbox {
@@ -304,7 +326,11 @@ class AppView {
             prefHeight = 20.0
             styleClass("status-bar")
             spacing = 8.0
-            add(Label("Ready"))
+            add(fontIcon(MDI_FOLDER_MULTIPLE_OUTLINE, 14))
+            add(Separator(Orientation.VERTICAL))
+            add(Label("Ready").apply {
+                graphic = fontIcon(MDI_INFORMATION, 14)
+            })
             hspace()
 
             add(Separator(Orientation.VERTICAL))
@@ -324,8 +350,6 @@ class AppView {
 
     private val scene = Scene(box)
 
-    private var lastShift = 0L
-
     private fun shift() {
         val popup = Popup()
         popup.content.add(vbox {
@@ -341,7 +365,7 @@ class AppView {
             prefHeight = 480.0
             add(vbox {
                 align(Pos.TOP_CENTER)
-                add(Label("Enter a Command or Formula "))
+//                add(Label("Enter a Command or Formula "))
                 padding = Insets(8.0)
                 spacing = 4.0
                 add(textField {
@@ -366,20 +390,6 @@ class AppView {
     fun show() {
         scene.accelerators[KeyCodeCombination(KeyCode.BACK_QUOTE, KeyCombination.CONTROL_DOWN)] = Runnable {
             shift()
-        }
-
-        thread(isDaemon = true, name = "MemoryObserver") {
-            while (true) {
-                val m  = ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1E6).toInt() + 1
-                Platform.runLater {
-                    components.heapLabel.text = "${m}M"
-                }
-                try {
-                    Thread.sleep(5000)
-                } catch (e: InterruptedException) {
-                    break
-                }
-            }
         }
 
         stage.fullScreenExitHint = "Press F11 to Exit Full Screen"

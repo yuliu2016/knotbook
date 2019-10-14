@@ -10,7 +10,6 @@ module kb.core.view {
 
     requires kb.service.api;
     requires kb.core.splash;
-    requires kb.core.bowline;
     requires kb.core.fx;
     requires kb.core.icon;
 

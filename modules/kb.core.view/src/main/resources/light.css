@@ -188,6 +188,10 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
     -fx-padding: 3 6 3 6;
 }
 
+.menu-item .label {
+    -fx-text-fill: #444;
+}
+
 .context-menu {
     -fx-padding: 0;
     -fx-min-width: 200;
@@ -215,52 +219,6 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
     -fx-background-color: #ddd;
     -fx-text-fill: black;
     -fx-font-weight: bold;
-}
-
-.button:hover {
-    -fx-background-color: #bbb;
-}
-
-.master-tab-icon-container {
-    -fx-background-color: #fff;
-}
-
-.master-tab-icon-container .ikonli-font-icon {
-    -fx-icon-color: #888;
-}
-
-.master-tab-icon-container HBox:hover .ikonli-font-icon {
-    -fx-icon-color: black;
-}
-
-.master-tab-view {
-    -fx-background-color: #eee;
-}
-
-.master-tab-icon-selected{
-    -fx-background-color: #ddd;
-    -fx-background-insets: 6;
-    -fx-background-radius: 12;
-}
-
-.master-tab-icon-selected .ikonli-font-icon {
-    -fx-icon-color: black;
-}
-
-.master-cancel:hover {
-    -fx-background-color: #ddd;
-}
-
-.master-cancel .ikonli-font-icon{
-    -fx-icon-color: #f00;
-}
-
-.master-ok:hover {
-    -fx-background-color: #ddd;
-}
-
-.master-ok .ikonli-font-icon{
-    -fx-icon-color: #0b0;
 }
 
 .tab-title {

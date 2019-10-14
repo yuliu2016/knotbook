@@ -1,20 +1,20 @@
 package kb.service.api.application;
 
-import kb.service.api.ServiceContext;
+import kb.service.api.Service;
 import kb.service.api.TextEditor;
 import org.jetbrains.annotations.NotNull;
 
-public interface PrivilagedContext {
-    @NotNull
-    ApplicationService getService();
+import java.util.List;
+
+public interface PrivilegedContext {
 
     @NotNull
     TextEditor createTextEditor();
 
     @NotNull
-    ServiceContext[] getContexts();
+    ApplicationProps getProps();
 
     @NotNull
-    ApplicationProps getProps();
+    List<Service> getServices();
 
 }

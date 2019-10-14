@@ -4,11 +4,11 @@ import kb.service.api.Service
 import kb.service.api.ServiceContext
 import kb.service.api.ServiceProps
 import kb.service.api.TextEditor
-import kb.service.api.application.PrivilagedContext
+import kb.service.api.application.PrivilegedContext
 
 class ServiceContextImpl(
         private val service: Service,
-        private val context: PrivilagedContext
+        private val context: PrivilegedContext
 ) : ServiceContext {
     override fun getService(): Service {
         return service
