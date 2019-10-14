@@ -10,6 +10,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import javafx.stage.Window;
+import kb.core.view.Singleton;
 import kotlin.KotlinVersion;
 
 
@@ -30,9 +31,9 @@ public class AboutSplash {
         root.setPrefHeight(320.0);
 
         HBox top = new HBox();
-        top.setPadding(new Insets(16.0, 32.0, 16.0, 32.0));
+        top.setPadding(new Insets(16.0, 32.0, 0.0, 32.0));
         top.setAlignment(Pos.BASELINE_LEFT);
-        top.setMaxHeight(32.0);
+        top.setPrefHeight(72.0);
         top.setStyle("-fx-background-color:rgba(96,96,96,0.9)");
 
         Image iconImage = new Image(AboutSplash.class.getResourceAsStream("/icon.png"));
@@ -50,7 +51,7 @@ public class AboutSplash {
         bottom.setPadding(new Insets(8.0, 32.0, 8.0, 32.0));
 
         bottom.getChildren().addAll(
-                labelOf("Version 3.10.0-ea"),
+                labelOf("Version: " + Singleton.INSTANCE.getContext().getVersion()),
                 labelOf("Licensed under MIT and powered by open-source software"),
                 labelOf("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.arch")),
                 labelOf("Java Runtime: " + System.getProperty("java.vm.name") +

@@ -17,4 +17,7 @@ public interface PrivilegedContext {
     @NotNull
     List<Service> getServices();
 
+    @NotNull
+    String getVersion();
+
 }

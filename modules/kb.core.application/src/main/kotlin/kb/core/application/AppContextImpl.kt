@@ -26,4 +26,8 @@ class AppContextImpl(
     override fun getServices(): List<Service> {
         return ext
     }
+
+    override fun getVersion(): String {
+        return "3.1.0 - Alpha"
+    }
 }
