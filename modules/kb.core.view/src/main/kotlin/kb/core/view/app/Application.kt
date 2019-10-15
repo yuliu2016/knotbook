@@ -1,6 +1,7 @@
-package kb.core.view
+package kb.core.view.app
 
 import javafx.application.Platform
+import kb.core.view.DataView
 import kb.service.api.ServiceMetadata
 import kb.service.api.application.ApplicationService
 import kb.service.api.application.PrivilegedContext
@@ -22,7 +23,7 @@ class Application : ApplicationService {
     override fun launch(context: PrivilegedContext) {
         Singleton.zzNullableContext = context
         Platform.startup {
-            AppView().show()
+            DataView().show()
 
             thread(isDaemon = true, name = "MemoryObserver") {
                 while (true) {

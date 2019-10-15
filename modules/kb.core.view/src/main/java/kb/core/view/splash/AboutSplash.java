@@ -10,7 +10,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import javafx.stage.Window;
-import kb.core.view.Singleton;
+import kb.core.view.app.Singleton;
 import kotlin.KotlinVersion;
 
 

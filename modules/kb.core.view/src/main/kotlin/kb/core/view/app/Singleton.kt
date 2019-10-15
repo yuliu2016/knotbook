@@ -1,4 +1,4 @@
-package kb.core.view
+package kb.core.view.app
 
 import javafx.beans.property.SimpleStringProperty
 import kb.service.api.application.PrivilegedContext

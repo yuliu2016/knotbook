@@ -1,5 +1,6 @@
 package kb.core.view
 
+import javafx.beans.InvalidationListener
 import javafx.geometry.Insets
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
@@ -19,13 +20,18 @@ import javafx.stage.Stage
 import kb.core.fx.*
 import kb.core.icon.fontIcon
 import kb.core.icon.icon
+import kb.core.view.app.Singleton
 import kb.core.view.splash.AboutSplash
 import kb.core.view.splash.GCSplash
+import kb.service.api.util.TableHeaders
+import org.controlsfx.control.spreadsheet.GridBase
+import org.controlsfx.control.spreadsheet.SpreadsheetView
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
+import java.util.*
 import kotlin.system.exitProcess
 
 
-class AppView {
+class DataView {
 
     private val barCreator: Modifier<Menu>.() -> Unit = {
         menu {
@@ -143,7 +149,6 @@ class AppView {
 
                 item {
                     name("Application Properties")
-//                    icon(MDI_TUNE, 14)
                     shortcut(KeyCode.COMMA, control = true)
                     action {
                         Singleton.context.createTextEditor().apply {
@@ -195,7 +200,7 @@ class AppView {
                     name("Open in New Window")
                     shortcut(KeyCode.N, control = true)
                     action {
-                        AppView().show()
+                        DataView().show()
                     }
                 }
                 item {
@@ -316,9 +321,79 @@ class AppView {
 
     private val stage = Stage()
     private val indexTree = IndexTree()
-    private val table1 = TableContainer()
 
     private val components = AppComponents()
+
+    private val spreadsheet = SpreadsheetView().apply {
+        selectionModel.selectedCells.addListener(InvalidationListener {
+            components.selectionLabel.text = getRange()
+        })
+        zoomFactorProperty().addListener { _, _, nv ->
+            components.zoomLabel.text = "${(nv.toDouble() * 100).toInt()}%"
+        }
+        hgrow()
+        contextMenu = contextMenu {
+            modify {
+                item {
+                    shortcut(KeyCode.X, control = true)
+                    name("Cut")
+                    icon(MDI_CONTENT_CUT, 14)
+                }
+                item {
+                    shortcut(KeyCode.C, control = true)
+                    name("Copy")
+                    icon(MDI_CONTENT_COPY, 14)
+                }
+                item {
+                    shortcut(KeyCode.C, control = true, shift = true)
+                    name("Copy Special")
+                }
+                item {
+                    shortcut(KeyCode.V, control = true)
+                    name("Paste")
+                    icon(MDI_CONTENT_PASTE, 14)
+                }
+                item {
+                    shortcut(KeyCode.V, control = true, shift = true)
+                    name("Paste Special")
+                }
+                item {
+                    name("Delete")
+                }
+                separator()
+                item {
+                    shortcut(KeyCode.F, control = true)
+                    name("Find and Replace")
+                }
+                separator()
+                item {
+                    shortcut(KeyCode.PLUS, control = true)
+                    name("Zoom In")
+                    icon(MDI_MAGNIFY_PLUS, 14)
+                }
+                item {
+                    shortcut(KeyCode.MINUS, control = true)
+                    name("Zoom Out")
+                    icon(MDI_MAGNIFY_MINUS, 14)
+                }
+                item {
+                    shortcut(KeyCode.DIGIT0, control = true)
+                    name("Reset Zoom")
+                }
+            }
+        }
+        val a = grid as GridBase
+        a.setRowHeightCallback { 20.0 }
+        a.setResizableRows(BitSet())
+        columns.forEach {
+            it.setPrefWidth(84.0)
+            it.minWidth = 42.0
+        }
+        grid.rows.first().forEach {
+            it.style = "-fx-font-weight:bold; -fx-alignment: CENTER"
+        }
+        fixedRows.add(0)
+    }
 
     private val box = vbox {
         stylesheets.addAll("/knotbook.css", Theme.Light.fileName)
@@ -330,7 +405,7 @@ class AppView {
         add(splitPane {
             orientation = Orientation.HORIZONTAL
             vgrow()
-            addFixed(indexTree.tree, table1.spreadsheet)
+            addFixed(indexTree.tree, spreadsheet)
             setDividerPositions(0.2, 0.6)
         })
         add(hbox {
@@ -407,8 +482,28 @@ class AppView {
 
         stage.fullScreenExitHint = "Press F11 to Exit Full Screen"
         stage.title = "KnotBook"
-        stage.icons.add(Image(AppView::class.java.getResourceAsStream("/icon.png")))
+        stage.icons.add(Image(DataView::class.java.getResourceAsStream("/icon.png")))
         stage.scene = scene
         stage.show()
+    }
+
+    private fun getRange(): String {
+        val a = spreadsheet.selectionModel.selectedCells
+        if (a.isEmpty()) {
+            return "None"
+        }
+        val rows = a.map { it.row }
+        val cols = a.map { it.column }
+
+        val w = rows.min()!! + 1
+        val x = rows.max()!! + 1
+        val y = TableHeaders.columnIndexToString(cols.min()!!)
+        val z = TableHeaders.columnIndexToString(cols.max()!!)
+
+        return if (a.size == 1) {
+            "$y$w"
+        } else {
+            "$y$w:$z$x [${a.size}]"
+        }
     }
 }

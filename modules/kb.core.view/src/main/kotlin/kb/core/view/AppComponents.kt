@@ -3,6 +3,7 @@ package kb.core.view
 import javafx.geometry.Insets
 import javafx.scene.control.Label
 import kb.core.icon.fontIcon
+import kb.core.view.app.Singleton
 import org.kordamp.ikonli.materialdesign.MaterialDesign
 
 class AppComponents {
