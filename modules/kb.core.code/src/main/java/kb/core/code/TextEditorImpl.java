@@ -105,7 +105,7 @@ class TextEditorImpl implements TextEditor {
 
         cp.setLayout(new BoxLayout(cp, BoxLayout.Y_AXIS));
 
-        area.setSyntaxEditingStyle(syntax);
+        area.setSyntaxEditingStyle(getSyntax());
         area.setCurrentLineHighlightColor(Color.white);
         area.setCodeFoldingEnabled(true);
         area.setAutoIndentEnabled(true);
@@ -171,7 +171,7 @@ class TextEditorImpl implements TextEditor {
         });
 
         frame.setContentPane(cp);
-        frame.setTitle(title);
+        frame.setTitle(getTitle());
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.pack();
         frame.setLocationRelativeTo(null);
