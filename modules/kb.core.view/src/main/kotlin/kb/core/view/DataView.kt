@@ -146,27 +146,8 @@ class DataView {
         menu {
             name("View")
             modify {
-
                 item {
-                    name("Application Properties")
-                    shortcut(KeyCode.COMMA, control = true)
-                    action {
-                        Singleton.context.createTextEditor().apply {
-                            title = "Application Properties"
-                            setEditable(true)
-                            addAction("Save Changes") {
-                                if (isTextChanged) {
-                                    Singleton.context.props.setInputText(finalText)
-                                }
-                            }
-                            syntax = "text/properties"
-                            setInitialText(Singleton.context.props.joinedText)
-                            show()
-                        }
-                    }
-                }
-                item {
-                    name("Option Palette")
+                    name("Option Bar")
                     icon(MDI_CONSOLE, 14)
                     shortcut(KeyCode.P, control = true, shift = true)
                 }
@@ -227,28 +208,12 @@ class DataView {
         menu {
             name("Help")
             modify {
-                //                item {
-//                    name("Try BowlineTableView")
-//                    icon(MDI_BOWL, 14)
-//                    action {
-//                        val stage = Stage()
-//                        stage.title = "BowlineTableView"
-//                        stage.scene = Scene(BowlineTable())
-//                        stage.scene.stylesheets.addAll("/bowline.css")
-//                        stage.width = 900.0
-//                        stage.height = 600.0
-//                        stage.show()
-//                    }
-//                }
                 item {
                     name("Mark for Garbage Collection")
                     action { GCSplash.splash() }
                     icon(MDI_DELETE_SWEEP, 14)
                     shortcut(KeyCode.B, control = true)
                 }
-//                item {
-//                    name("Revert App Properties to Default")
-//                }
                 item {
                     name("JVM Properties")
                     action {
@@ -478,6 +443,20 @@ class DataView {
     fun show() {
         scene.accelerators[KeyCodeCombination(KeyCode.BACK_QUOTE, KeyCombination.CONTROL_DOWN)] = Runnable {
             shift()
+        }
+        scene.accelerators[KeyCodeCombination(KeyCode.COMMA, KeyCombination.CONTROL_DOWN)] = Runnable {
+            Singleton.context.createTextEditor().apply {
+                title = "Application Properties"
+                setEditable(true)
+                addAction("Save Changes") {
+                    if (isTextChanged) {
+                        Singleton.context.props.setInputText(finalText)
+                    }
+                }
+                syntax = "text/properties"
+                setInitialText(Singleton.context.props.joinedText)
+                show()
+            }
         }
 
         stage.fullScreenExitHint = "Press F11 to Exit Full Screen"
