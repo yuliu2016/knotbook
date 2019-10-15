@@ -166,7 +166,7 @@ class DataView {
                     }
                 }
                 item {
-                    name("Command Palette")
+                    name("Option Palette")
                     icon(MDI_CONSOLE, 14)
                     shortcut(KeyCode.P, control = true, shift = true)
                 }
