@@ -1,4 +1,4 @@
-package kb.core.bowline;
+package kb.service.api.util;
 
 @SuppressWarnings("unused")
 public class TableHeaders {

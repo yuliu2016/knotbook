@@ -42,6 +42,7 @@ subprojects {
         }
     }
     buildDir = File(rootProject.projectDir, "build/$name")
+    version = "3.1.0"
 }
 
 buildScan {

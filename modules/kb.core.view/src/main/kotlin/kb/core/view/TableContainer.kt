@@ -1,5 +1,6 @@
 package kb.core.view
 
+import javafx.scene.Node
 import javafx.scene.input.KeyCode
 import kb.core.fx.*
 import kb.core.icon.icon
@@ -12,6 +13,7 @@ class TableContainer {
 
     val spreadsheet = SpreadsheetView().apply {
         hgrow()
+        Node
         contextMenu = contextMenu {
             modify {
                 item {

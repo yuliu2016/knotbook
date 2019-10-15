@@ -1,4 +1,4 @@
-package kb.core.bowline;
+package kb.service.api.util;
 
 /*
  NaturalOrderComparator.java -- Perform 'natural order' comparisons of strings in Java.
@@ -26,9 +26,15 @@ package kb.core.bowline;
 
 import java.util.Comparator;
 
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class NaturalOrderComparator implements Comparator {
-    int compareRight(String a, String b) {
+
+    @Override
+    public int compare(Object o1, Object o2) {
+        return compareNaturally(o1, o2);
+    }
+
+    static int compareRight(String a, String b) {
         int bias = 0, ia = 0, ib = 0;
 
         // The longest run of digits wins. That aside, the greatest
@@ -62,7 +68,7 @@ public class NaturalOrderComparator implements Comparator {
         }
     }
 
-    public int compare(Object o1, Object o2) {
+    public static int compareNaturally(Object o1, Object o2) {
         String a = o1.toString();
         String b = o2.toString();
 
