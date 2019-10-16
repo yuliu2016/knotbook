@@ -3,10 +3,10 @@ package kb.core.application;
 import kb.service.api.MetaService;
 import kb.service.api.Service;
 import kb.service.api.ServiceMetadata;
-import kb.service.api.TextEditorService;
 import kb.service.api.application.ApplicationService;
 import kb.service.api.application.JVMInstance;
 import kb.service.api.application.PrivilegedContext;
+import kb.service.api.textedit.TextEditorService;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,7 +1,7 @@
 package kb.service.api.application;
 
 import kb.service.api.Service;
-import kb.service.api.TextEditor;
+import kb.service.api.textedit.TextEditor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

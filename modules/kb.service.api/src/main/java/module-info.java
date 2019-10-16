@@ -10,5 +10,6 @@ module kb.service.api {
     exports kb.service.api.df;
     exports kb.service.api.application;
     exports kb.service.api.table;
+    exports kb.service.api.textedit;
     exports kb.service.api.util;
 }

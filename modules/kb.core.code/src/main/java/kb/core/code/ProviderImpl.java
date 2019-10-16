@@ -1,8 +1,8 @@
 package kb.core.code;
 
 import kb.service.api.ServiceMetadata;
-import kb.service.api.TextEditor;
-import kb.service.api.TextEditorService;
+import kb.service.api.textedit.TextEditor;
+import kb.service.api.textedit.TextEditorService;
 import org.jetbrains.annotations.NotNull;
 
 public class ProviderImpl implements TextEditorService {

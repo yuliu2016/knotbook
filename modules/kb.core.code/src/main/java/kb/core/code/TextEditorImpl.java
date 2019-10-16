@@ -1,6 +1,7 @@
 package kb.core.code;
 
-import kb.service.api.TextEditor;
+import kb.service.api.textedit.TextEditor;
+import kb.service.api.textedit.TextEditorCallback;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -31,9 +32,9 @@ class TextEditorImpl implements TextEditor {
 
     static class Action {
         String name;
-        Runnable doRun;
+        TextEditorCallback doRun;
 
-        Action(String name, Runnable doRun) {
+        Action(String name, TextEditorCallback doRun) {
             this.name = name;
             this.doRun = doRun;
         }
@@ -87,8 +88,9 @@ class TextEditorImpl implements TextEditor {
     }
 
     @Override
-    public void addAction(@NotNull String name, @NotNull Runnable action) {
+    public TextEditor addAction(@NotNull String name, @NotNull TextEditorCallback action) {
         actions.add(new Action(name, action));
+        return this;
     }
 
     private void showImpl() {
@@ -139,7 +141,7 @@ class TextEditorImpl implements TextEditor {
                         textChanged = true;
                     }
                     frame.dispose();
-                    action.doRun.run();
+                    action.doRun.onAction(textChanged, finalText);
                 });
 
                 bottomPanel.add(button);

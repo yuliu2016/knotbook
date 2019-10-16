@@ -73,3 +73,6 @@ inline fun contextMenu(builder: ContextMenu.() -> Unit): ContextMenu = ContextMe
 
 @FXKtDSL
 inline fun button(builder: Button.() -> Unit): Button = Button().apply(builder)
+
+@FXKtDSL
+inline fun borderPane(builder: BorderPane.() -> Unit): BorderPane = BorderPane().apply(builder)

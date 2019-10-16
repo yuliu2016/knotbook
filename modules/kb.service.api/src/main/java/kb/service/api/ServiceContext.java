@@ -1,5 +1,6 @@
 package kb.service.api;
 
+import kb.service.api.textedit.TextEditor;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")

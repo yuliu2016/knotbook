@@ -4,25 +4,17 @@ import javafx.beans.InvalidationListener
 import javafx.geometry.Insets
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
-import javafx.scene.Scene
 import javafx.scene.control.Label
 import javafx.scene.control.Menu
 import javafx.scene.control.Separator
-import javafx.scene.effect.DropShadow
-import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
-import javafx.scene.paint.Color
 import javafx.stage.FileChooser
-import javafx.stage.Popup
-import javafx.stage.Stage
 import kb.core.fx.*
 import kb.core.icon.fontIcon
 import kb.core.icon.icon
 import kb.core.view.app.Singleton
-import kb.core.view.splash.AboutSplash
-import kb.core.view.splash.GCSplash
 import kb.service.api.util.TableHeaders
 import org.controlsfx.control.spreadsheet.GridBase
 import org.controlsfx.control.spreadsheet.SpreadsheetView
@@ -33,7 +25,9 @@ import kotlin.system.exitProcess
 
 class DataView {
 
-    private val barCreator: Modifier<Menu>.() -> Unit = {
+    private val base = WindowBase()
+
+    private val mainMenus = fun Modifier<Menu>.() {
         menu {
             name("File")
             modify {
@@ -41,6 +35,11 @@ class DataView {
                     name("Open Folder")
                     icon(MDI_FOLDER_OUTLINE, 14)
                     shortcut(KeyCode.O, control = true)
+                    action {
+                        val fc = FileChooser()
+                        fc.title = "Open Folder"
+                        fc.showOpenDialog(base.stage)
+                    }
                 }
                 item {
                     name("Open Recent")
@@ -54,7 +53,7 @@ class DataView {
                     action {
                         val fc = FileChooser()
                         fc.title = "Open Table from File"
-                        fc.showOpenDialog(stage)
+                        fc.showOpenDialog(base.stage)
                     }
                 }
                 item {
@@ -73,9 +72,6 @@ class DataView {
                     icon(MDI_DELETE_FOREVER, 14)
                 }
                 separator()
-                item {
-                    name("Restart")
-                }
                 item {
                     name("Exit")
                     action { exitProcess(0) }
@@ -150,38 +146,57 @@ class DataView {
                     name("Option Bar")
                     icon(MDI_CONSOLE, 14)
                     shortcut(KeyCode.P, control = true, shift = true)
+                    action { base.showOptionBarPrototype() }
                 }
                 separator()
                 item {
                     name("Toggle Colour Scheme")
                     shortcut(KeyCode.F3)
                     icon(MDI_COMPARE, 14)
-                    action { toggleTheme() }
+                    action { base.toggleTheme() }
                 }
                 item {
                     name("Toggle Tree View")
                     shortcut(KeyCode.F4)
+                    action {
+                        if (sp.items.size == 1) {
+                            sp.items.add(0, indexTree.tree)
+                            sp.setDividerPositions(splitDivider)
+                        } else {
+                            splitDivider = sp.dividerPositions[0]
+                            sp.items.remove(indexTree.tree)
+                        }
+                    }
                 }
                 item {
                     name("Toggle Full Screen")
                     shortcut(KeyCode.F11)
-                    action { toggleFullScreen() }
+                    action { base.toggleFullScreen() }
                 }
                 separator()
                 item {
                     name("Expand Tree")
                     icon(MDI_UNFOLD_MORE, 14)
+                    action { indexTree.tree.root.children.forEach { it.isExpanded = true } }
+
                 }
                 item {
                     name("Collapse Tree")
                     icon(MDI_UNFOLD_LESS, 14)
+                    action { indexTree.tree.root.children.forEach { it.isExpanded = false } }
                 }
                 separator()
                 item {
                     name("Open in New Window")
                     shortcut(KeyCode.N, control = true)
                     action {
-                        DataView().show()
+                        DataView().also { dv ->
+                            dv.base.stage.x = base.stage.x + 48.0
+                            dv.base.stage.y = base.stage.y + 36.0
+                            dv.splitDivider = dv.sp.dividerPositions[0]
+                            dv.sp.items.remove(dv.indexTree.tree)
+                            dv.show()
+                        }
                     }
                 }
                 item {
@@ -205,88 +220,11 @@ class DataView {
                 }
             }
         }
-        menu {
-            name("Help")
-            modify {
-                item {
-                    name("Mark for Garbage Collection")
-                    action { GCSplash.splash() }
-                    icon(MDI_DELETE_SWEEP, 14)
-                    shortcut(KeyCode.B, control = true)
-                }
-                item {
-                    name("JVM Properties")
-                    action {
-                        val properties = System
-                                .getProperties()
-                                .entries
-                                .sortedBy { it.key.toString() }
-                                .joinToString("\n") {
-                                    val strVal = it.value.toString()
-                                    val value = when {
-                                        strVal.endsWith("\\") -> "'$strVal'"
-                                        strVal == System.lineSeparator() -> "LINE_SEPARATOR"
-                                        else -> strVal
-                                    }
-                                    "${it.key}=$value"
-                                }
-                        Singleton.context.createTextEditor().apply {
-                            title = "JVM Properties (Read-Only)"
-                            syntax = "text/properties"
-                            setInitialText(properties)
-                            show()
-                        }
-                    }
-                }
-                item {
-                    name("Plugins and Services")
-                    action {
-                        val t = Singleton.context.services.joinToString("\n") {
-                            it.metadata.run { "$packageName => $packageVersion" }
-                        }
-                        Singleton.context.createTextEditor().apply {
-                            title = "Plugins and Services"
-                            setInitialText(t)
-                            show()
-                        }
-                    }
-                }
-                separator()
-                item {
-                    name("About")
-                    action { AboutSplash.splash(stage) }
-                    icon(MDI_INFORMATION_OUTLINE, 14)
-                    shortcut(KeyCode.F1)
-                }
-                item {
-                    name("Open Source Licenses")
-                }
-
-            }
-        }
     }
 
-    private var isFullScreen = false
+    private var splitDivider = 0.2
 
-    private fun toggleFullScreen() {
-        isFullScreen = !isFullScreen
-        stage.isFullScreen = isFullScreen
-    }
-
-    private var theme = Theme.Light
-
-    private fun toggleTheme() {
-        theme = when (theme) {
-            Theme.Light -> Theme.Dark
-            Theme.Dark -> Theme.Light
-        }
-        box.stylesheets.setAll("/knotbook.css", theme.fileName)
-        components.themeLabel.text = theme.name
-    }
-
-    private val stage = Stage()
-    private val indexTree = IndexTree()
-
+    private val indexTree = FolderTree()
     private val components = AppComponents()
 
     private val spreadsheet = SpreadsheetView().apply {
@@ -360,19 +298,15 @@ class DataView {
         fixedRows.add(0)
     }
 
+    private val sp = splitPane {
+        orientation = Orientation.HORIZONTAL
+        vgrow()
+        addFixed(indexTree.tree, spreadsheet)
+        setDividerPositions(0.2, 0.6)
+    }
+
     private val box = vbox {
-        stylesheets.addAll("/knotbook.css", Theme.Light.fileName)
-        prefWidth = 1120.0
-        prefHeight = 630.0
-        val bar = menuBar { modify(barCreator) }
-        add(bar)
-        bar.isUseSystemMenuBar = true
-        add(splitPane {
-            orientation = Orientation.HORIZONTAL
-            vgrow()
-            addFixed(indexTree.tree, spreadsheet)
-            setDividerPositions(0.2, 0.6)
-        })
+        add(sp)
         add(hbox {
             align(Pos.CENTER_LEFT)
             padding = Insets(0.0, 8.0, 0.0, 8.0)
@@ -401,69 +335,18 @@ class DataView {
         isSnapToPixel = false
     }
 
-    private val scene = Scene(box)
-
-    private fun shift() {
-        val popup = Popup()
-        popup.content.add(vbox {
-            stylesheets.addAll("/knotbook.css", Theme.Light.fileName)
-            style = "-fx-background-color: white"
-            effect = DropShadow().apply {
-                color = Color.GRAY
-                height = 10.0
-                width = 10.0
-                radius = 10.0
-            }
-            prefWidth = 600.0
-            prefHeight = 480.0
-            add(vbox {
-                align(Pos.TOP_CENTER)
-//                add(Label("Enter a Command or Formula "))
-                padding = Insets(8.0)
-                spacing = 4.0
-                add(textField {
-                    styleClass("formula-field")
-                })
-            })
-
-            add(listView<Entity> {
-                vgrow()
-                items = getList().observable()
-                setCellFactory {
-                    EntityListCell()
-                }
-            })
-
-        })
-        popup.isAutoHide = true
-        popup.show(stage)
-        popup.centerOnScreen()
-    }
 
     fun show() {
-        scene.accelerators[KeyCodeCombination(KeyCode.BACK_QUOTE, KeyCombination.CONTROL_DOWN)] = Runnable {
-            shift()
+        base.scene.accelerators[KeyCodeCombination(KeyCode.BACK_QUOTE, KeyCombination.CONTROL_DOWN)] = Runnable {
+            base.showOptionBarPrototype()
         }
-        scene.accelerators[KeyCodeCombination(KeyCode.COMMA, KeyCombination.CONTROL_DOWN)] = Runnable {
-            Singleton.context.createTextEditor().apply {
-                title = "Application Properties"
-                setEditable(true)
-                addAction("Save Changes") {
-                    if (isTextChanged) {
-                        Singleton.context.props.setInputText(finalText)
-                    }
-                }
-                syntax = "text/properties"
-                setInitialText(Singleton.context.props.joinedText)
-                show()
-            }
+        base.scene.accelerators[KeyCodeCombination(KeyCode.COMMA, KeyCombination.CONTROL_DOWN)] = Runnable {
+            Singleton.editAppProperties()
         }
-
-        stage.fullScreenExitHint = "Press F11 to Exit Full Screen"
-        stage.title = "KnotBook"
-        stage.icons.add(Image(DataView::class.java.getResourceAsStream("/icon.png")))
-        stage.scene = scene
-        stage.show()
+        base.menuBar.modify(mainMenus)
+        base.menuBar.modify(base.helpMenu)
+        base.layout.center = box
+        base.show()
     }
 
     private fun getRange(): String {

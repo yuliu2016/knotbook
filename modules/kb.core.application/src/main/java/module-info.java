@@ -1,3 +1,5 @@
+import kb.service.api.textedit.TextEditorService;
+
 module kb.core.application {
 
     requires kb.service.abc;
@@ -9,7 +11,7 @@ module kb.core.application {
 
     uses kb.service.api.application.ApplicationService;
     uses kb.service.api.Service;
-    uses kb.service.api.TextEditorService;
+    uses TextEditorService;
 
     exports kb.core.application;
 }

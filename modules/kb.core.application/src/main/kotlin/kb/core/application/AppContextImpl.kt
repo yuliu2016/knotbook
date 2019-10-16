@@ -1,10 +1,10 @@
 package kb.core.application
 
 import kb.service.api.Service
-import kb.service.api.TextEditor
-import kb.service.api.TextEditorService
 import kb.service.api.application.ApplicationProps
 import kb.service.api.application.PrivilegedContext
+import kb.service.api.textedit.TextEditor
+import kb.service.api.textedit.TextEditorService
 
 class AppContextImpl(
         private val ext: List<Service>,

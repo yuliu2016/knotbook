@@ -2,25 +2,24 @@ package kb.core.view
 
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
-import kb.core.icon.FontIcon
-import kb.core.icon.fontIcon
-import org.kordamp.ikonli.materialdesign.MaterialDesign.MDI_APPLICATION
-import org.kordamp.ikonli.materialdesign.MaterialDesign.MDI_MEMORY
+import kb.core.view.folder.FolderOrTable
+import kb.core.view.folder.FolderOrTableCell
 
 @Suppress("unused")
-class IndexTree {
+class FolderTree {
     val tree = TreeView<FolderOrTable>()
 
-    private val entityRoot = FolderOrTable("Application", FontIcon.of(MDI_APPLICATION), mutableListOf())
+    private val entityRoot = FolderOrTable("Application", mutableListOf())
     private val root = TreeItem<FolderOrTable>(null)
 
     init {
         entityRoot.children!!.addAll(listOf(
-                FolderOrTable("In-Memory Data", fontIcon(MDI_MEMORY, 14))
+                FolderOrTable("In-Memory Data", (0..20).map { FolderOrTable("abc.csv") }.toMutableList())
         ))
-        tree.setCellFactory { EntityCell() }
+        tree.setCellFactory { FolderOrTableCell() }
         tree.root = root
         tree.isShowRoot = false
+        tree.minWidth = 200.0
         regenerate()
     }
 

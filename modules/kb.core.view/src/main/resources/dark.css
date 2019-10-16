@@ -116,7 +116,7 @@
 .spreadsheet-cell {/*todo*/
     -fx-padding: 0 0.2em 0 0.2em;
     -fx-border-color: white;
-    -fx-border-width: 0.2;
+    -fx-border-width: 0.3;
     -fx-text-fill: white;
     -fx-font-weight: normal;
     /*-fx-background-color: -fx-table-cell-border-color, white;*/
