@@ -2,6 +2,7 @@ package kb.service.api.textedit;
 
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("unused")
 public interface TextEditor {
 
     String getSyntax();

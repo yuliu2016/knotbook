@@ -2,9 +2,10 @@ package kb.core.view.app
 
 import javafx.application.Platform
 import kb.core.view.DataView
+import kb.service.api.ServiceContext
 import kb.service.api.ServiceMetadata
 import kb.service.api.application.ApplicationService
-import kb.service.api.application.PrivilegedContext
+import kb.service.api.application.ServiceManager
 import kotlin.concurrent.thread
 
 class Application : ApplicationService {
@@ -20,8 +21,9 @@ class Application : ApplicationService {
         return metadata
     }
 
-    override fun launch(context: PrivilegedContext) {
+    override fun launch(manager: ServiceManager, context: ServiceContext) {
         Singleton.zzNullableContext = context
+        Singleton.zzNullableManager = manager
         Platform.startup {
             DataView().show()
 

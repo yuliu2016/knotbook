@@ -1,14 +1,17 @@
 package kb.core.view.app
 
 import javafx.beans.property.SimpleStringProperty
-import kb.service.api.application.PrivilegedContext
+import kb.service.api.ServiceContext
+import kb.service.api.application.ServiceManager
 
 @Suppress("unused")
 internal object Singleton {
     val memoryUsed = SimpleStringProperty()
 
-    var zzNullableContext: PrivilegedContext? = null
+    var zzNullableManager: ServiceManager? = null
+    var zzNullableContext: ServiceContext? = null
 
+    val manager by lazy { zzNullableManager!! }
     val context by lazy { zzNullableContext!! }
 
     fun editAppProperties() {
@@ -16,10 +19,10 @@ internal object Singleton {
                 .editable()
                 .withSyntax("text/properties")
                 .withTitle("Application Properties")
-                .withInitialText(context.props.joinedText)
+                .withInitialText(manager.props.joinedText)
                 .addAction("Save Changes") { changed, finalText ->
                     if (changed) {
-                        context.props.setInputText(finalText)
+                        manager.props.setInputText(finalText)
                     }
                 }
                 .show()
@@ -29,7 +32,7 @@ internal object Singleton {
         context.createTextEditor()
                 .withSyntax("text/properties")
                 .withTitle("Application Properties (Read Only)")
-                .withInitialText(context.props.joinedText)
+                .withInitialText(manager.props.joinedText)
                 .show()
     }
 
@@ -56,7 +59,7 @@ internal object Singleton {
     }
 
     fun viewPlugins() {
-        val t = context.services.joinToString("\n") {
+        val t = manager.services.joinToString("\n") {
             it.metadata.run { "$packageName => $packageVersion" }
         }
         context.createTextEditor().apply {

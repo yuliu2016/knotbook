@@ -69,12 +69,12 @@ public class TableArray {
     }
 
     public void reshape(int rows, int cols) {
-        this.rows = rows;
-        this.cols = cols;
-
         if (!(rows * cols == len)) {
             throw new IllegalStateException();
         }
+
+        this.rows = rows;
+        this.cols = cols;
     }
 
     public boolean isNA(int row, int col) {

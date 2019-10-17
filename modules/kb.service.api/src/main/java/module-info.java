@@ -12,4 +12,5 @@ module kb.service.api {
     exports kb.service.api.table;
     exports kb.service.api.textedit;
     exports kb.service.api.util;
+    exports kb.service.api.optionbar;
 }
