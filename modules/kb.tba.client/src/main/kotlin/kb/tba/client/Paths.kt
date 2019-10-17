@@ -1,9 +1,8 @@
-@file:Suppress("unused", "SpellCheckingInspection", "KDocUnresolvedReference", "UNUSED_VARIABLE")
+@file:Suppress("unused", "SpellCheckingInspection", "KDocUnresolvedReference", "UNUSED_VARIABLE", "DuplicatedCode")
 
 package kb.tba.client
 
 import com.beust.klaxon.JsonObject
-import kb.tba.client.*
 
 
 /**

@@ -8,16 +8,17 @@ import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import java.net.HttpURLConnection
 import java.net.URL
-import kotlin.concurrent.thread
+import java.util.concurrent.Executors
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
+private val singleThreadExecutor = Executors.newSingleThreadExecutor()
 
 private suspend fun TBA.getTBAString(
         requestURL: String
 ): String = suspendCoroutine { cont ->
-    thread {
+    singleThreadExecutor.submit {
         try {
             val url = URL("https://www.thebluealliance.com/api/v3$requestURL")
             val conn = url.openConnection() as HttpURLConnection
