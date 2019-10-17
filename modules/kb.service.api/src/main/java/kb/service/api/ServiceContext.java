@@ -1,5 +1,6 @@
 package kb.service.api;
 
+import kb.service.api.optionbar.CommandManager;
 import kb.service.api.optionbar.OptionBar;
 import kb.service.api.textedit.TextEditor;
 import org.jetbrains.annotations.NotNull;
@@ -23,11 +24,18 @@ public interface ServiceContext {
      * Create a text editor instance for text/code editing
      */
     @NotNull
-    TextEditor createTextEditor();
+    TextEditor textEditor();
 
 
     /**
      * Create an option bar for user inputs
      */
-    OptionBar createOptionBar();
+    @NotNull
+    OptionBar getOptionBar();
+
+    /**
+     *
+     */
+    @NotNull
+    CommandManager getCommandManager();
 }

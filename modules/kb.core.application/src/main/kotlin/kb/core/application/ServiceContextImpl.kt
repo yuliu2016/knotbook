@@ -3,6 +3,7 @@ package kb.core.application
 import kb.service.api.Service
 import kb.service.api.ServiceContext
 import kb.service.api.ServiceProps
+import kb.service.api.optionbar.CommandManager
 import kb.service.api.optionbar.OptionBar
 import kb.service.api.textedit.TextEditor
 
@@ -18,11 +19,15 @@ class ServiceContextImpl(
         return manager.props.getProps(service.metadata.packageName)
     }
 
-    override fun createTextEditor(): TextEditor {
+    override fun textEditor(): TextEditor {
         return manager.createTextEditor()
     }
 
-    override fun createOptionBar(): OptionBar {
+    override fun getOptionBar(): OptionBar {
+        TODO("not implemented")
+    }
+
+    override fun getCommandManager(): CommandManager {
         TODO("not implemented")
     }
 }

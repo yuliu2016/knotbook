@@ -15,7 +15,7 @@ internal object Singleton {
     val context by lazy { zzNullableContext!! }
 
     fun editAppProperties() {
-        context.createTextEditor()
+        context.textEditor()
                 .editable()
                 .withSyntax("text/properties")
                 .withTitle("Application Properties")
@@ -29,7 +29,7 @@ internal object Singleton {
     }
 
     fun viewAppProperties() {
-        context.createTextEditor()
+        context.textEditor()
                 .withSyntax("text/properties")
                 .withTitle("Application Properties (Read Only)")
                 .withInitialText(manager.props.joinedText)
@@ -50,7 +50,7 @@ internal object Singleton {
                     }
                     "${it.key}=$value"
                 }
-        context.createTextEditor().apply {
+        context.textEditor().apply {
             title = "JVM Properties (Read-Only)"
             syntax = "text/properties"
             setInitialText(properties)
@@ -62,7 +62,7 @@ internal object Singleton {
         val t = manager.services.joinToString("\n") {
             it.metadata.run { "$packageName => $packageVersion" }
         }
-        context.createTextEditor().apply {
+        context.textEditor().apply {
             title = "Plugins and Services"
             setInitialText(t)
             show()
@@ -71,7 +71,7 @@ internal object Singleton {
 
     fun viewOpenSource() {
         val t = Singleton::class.java.getResourceAsStream("/open_source.txt").reader().readText()
-        context.createTextEditor()
+        context.textEditor()
                 .withTitle("Open Source Licences")
                 .withInitialText(t)
                 .show()
