@@ -1,4 +1,4 @@
-import kb.service.api.textedit.TextEditorService;
+import kb.service.api.ui.TextEditorService;
 
 module kb.core.application {
 

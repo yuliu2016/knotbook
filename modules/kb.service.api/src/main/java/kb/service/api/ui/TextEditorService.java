@@ -1,4 +1,4 @@
-package kb.service.api.textedit;
+package kb.service.api.ui;
 
 import kb.service.api.MetaService;
 import org.jetbrains.annotations.NotNull;

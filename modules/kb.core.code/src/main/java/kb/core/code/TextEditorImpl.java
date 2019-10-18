@@ -1,7 +1,7 @@
 package kb.core.code;
 
-import kb.service.api.textedit.TextEditor;
-import kb.service.api.textedit.TextEditorCallback;
+import kb.service.api.ui.TextEditor;
+import kb.service.api.ui.TextEditorCallback;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;

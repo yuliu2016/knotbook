@@ -1,4 +1,4 @@
-package kb.service.api.textedit;
+package kb.service.api.ui;
 
 import org.jetbrains.annotations.NotNull;
 

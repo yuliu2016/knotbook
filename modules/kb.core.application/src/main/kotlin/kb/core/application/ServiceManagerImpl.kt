@@ -3,8 +3,8 @@ package kb.core.application
 import kb.service.api.Service
 import kb.service.api.application.ApplicationProps
 import kb.service.api.application.ServiceManager
-import kb.service.api.textedit.TextEditor
-import kb.service.api.textedit.TextEditorService
+import kb.service.api.ui.TextEditor
+import kb.service.api.ui.TextEditorService
 
 class ServiceManagerImpl(
         private val ext: List<Service>,

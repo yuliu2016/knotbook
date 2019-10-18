@@ -1,8 +1,8 @@
 package kb.service.api;
 
-import kb.service.api.optionbar.CommandManager;
-import kb.service.api.optionbar.OptionBar;
-import kb.service.api.textedit.TextEditor;
+import kb.service.api.ui.CommandManager;
+import kb.service.api.ui.NotificationManager;
+import kb.service.api.ui.TextEditor;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
@@ -19,23 +19,22 @@ public interface ServiceContext {
     @NotNull
     ServiceProps getProps();
 
-
     /**
      * Create a text editor instance for text/code editing
      */
     @NotNull
-    TextEditor textEditor();
-
-
-    /**
-     * Create an option bar for user inputs
-     */
-    @NotNull
-    OptionBar getOptionBar();
+    TextEditor createTextEditor();
 
     /**
-     *
+     * Retrieve an instance of the command manager for this context,
+     * used to add options to the user interface
      */
     @NotNull
     CommandManager getCommandManager();
+
+    /**
+     * Retrieve an instance of the notification manager
+     */
+    @NotNull
+    NotificationManager getNotificationManager();
 }

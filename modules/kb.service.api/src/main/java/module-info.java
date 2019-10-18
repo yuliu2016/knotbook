@@ -5,12 +5,12 @@ module kb.service.api {
     requires static org.kordamp.iconli.core;
     requires static javafx.controls;
     requires static java.desktop;
+    requires java.logging;
 
     exports kb.service.api;
     exports kb.service.api.df;
     exports kb.service.api.application;
     exports kb.service.api.table;
-    exports kb.service.api.textedit;
     exports kb.service.api.util;
-    exports kb.service.api.optionbar;
+    exports kb.service.api.ui;
 }

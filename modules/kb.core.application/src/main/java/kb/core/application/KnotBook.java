@@ -6,7 +6,7 @@ import kb.service.api.ServiceContext;
 import kb.service.api.ServiceMetadata;
 import kb.service.api.application.ApplicationService;
 import kb.service.api.application.JVMInstance;
-import kb.service.api.textedit.TextEditorService;
+import kb.service.api.ui.TextEditorService;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;

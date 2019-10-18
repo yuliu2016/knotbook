@@ -1,4 +1,4 @@
-package kb.service.api.textedit;
+package kb.service.api.ui;
 
 @FunctionalInterface
 public interface TextEditorCallback {

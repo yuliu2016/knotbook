@@ -3,9 +3,9 @@ package kb.core.application
 import kb.service.api.Service
 import kb.service.api.ServiceContext
 import kb.service.api.ServiceProps
-import kb.service.api.optionbar.CommandManager
-import kb.service.api.optionbar.OptionBar
-import kb.service.api.textedit.TextEditor
+import kb.service.api.ui.CommandManager
+import kb.service.api.ui.OptionBar
+import kb.service.api.ui.TextEditor
 
 class ServiceContextImpl(
         private val service: Service,
@@ -19,7 +19,7 @@ class ServiceContextImpl(
         return manager.props.getProps(service.metadata.packageName)
     }
 
-    override fun textEditor(): TextEditor {
+    override fun createTextEditor(): TextEditor {
         return manager.createTextEditor()
     }
 
