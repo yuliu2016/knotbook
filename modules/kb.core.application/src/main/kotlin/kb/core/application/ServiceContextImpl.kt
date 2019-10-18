@@ -4,7 +4,7 @@ import kb.service.api.Service
 import kb.service.api.ServiceContext
 import kb.service.api.ServiceProps
 import kb.service.api.ui.CommandManager
-import kb.service.api.ui.OptionBar
+import kb.service.api.ui.NamedAction
 import kb.service.api.ui.TextEditor
 
 class ServiceContextImpl(
@@ -23,7 +23,19 @@ class ServiceContextImpl(
         return manager.createTextEditor()
     }
 
-    override fun getOptionBar(): OptionBar {
+    override fun pushInfo(message: String) {
+        TODO("not implemented")
+    }
+
+    override fun pushWarning(message: String) {
+        TODO("not implemented")
+    }
+
+    override fun pushError(message: String) {
+        TODO("not implemented")
+    }
+
+    override fun pushActionablePopup(message: String, vararg commands: NamedAction?) {
         TODO("not implemented")
     }
 

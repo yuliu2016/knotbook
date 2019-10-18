@@ -4,7 +4,7 @@ import javafx.beans.property.SimpleStringProperty
 import kb.service.api.ServiceContext
 import kb.service.api.application.ServiceManager
 
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 internal object Singleton {
     val memoryUsed = SimpleStringProperty()
 

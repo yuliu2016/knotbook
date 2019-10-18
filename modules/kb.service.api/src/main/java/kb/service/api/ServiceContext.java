@@ -1,7 +1,7 @@
 package kb.service.api;
 
 import kb.service.api.ui.CommandManager;
-import kb.service.api.ui.NotificationManager;
+import kb.service.api.ui.NamedAction;
 import kb.service.api.ui.TextEditor;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,9 +32,14 @@ public interface ServiceContext {
     @NotNull
     CommandManager getCommandManager();
 
-    /**
-     * Retrieve an instance of the notification manager
-     */
-    @NotNull
-    NotificationManager getNotificationManager();
+    void pushInfo(@NotNull String message);
+
+    void pushWarning(@NotNull String message);
+
+    void pushError(@NotNull String message);
+
+    void pushActionablePopup(
+            @NotNull String message,
+            @NotNull NamedAction... commands
+    );
 }
