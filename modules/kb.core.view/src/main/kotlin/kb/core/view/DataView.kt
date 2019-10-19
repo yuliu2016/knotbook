@@ -1,10 +1,10 @@
 package kb.core.view
 
+import javafx.application.Platform
 import javafx.beans.InvalidationListener
 import javafx.geometry.Insets
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
-import javafx.scene.control.Label
 import javafx.scene.control.Menu
 import javafx.scene.control.Separator
 import javafx.scene.input.KeyCode
@@ -12,7 +12,6 @@ import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
 import javafx.stage.FileChooser
 import kb.core.fx.*
-import kb.core.icon.fontIcon
 import kb.core.icon.icon
 import kb.core.view.app.Singleton
 import kb.service.api.util.TableHeaders
@@ -159,12 +158,12 @@ class DataView {
                     name("Toggle Tree View")
                     shortcut(KeyCode.F4)
                     action {
-                        if (sp.items.size == 1) {
-                            sp.items.add(0, indexTree.tree)
-                            sp.setDividerPositions(splitDivider)
+                        if (mainView.items.size == 1) {
+                            mainView.items.add(0, indexTree.tree)
+                            mainView.setDividerPositions(splitDivider)
                         } else {
-                            splitDivider = sp.dividerPositions[0]
-                            sp.items.remove(indexTree.tree)
+                            splitDivider = mainView.dividerPositions[0]
+                            mainView.items.remove(indexTree.tree)
                         }
                     }
                 }
@@ -193,8 +192,8 @@ class DataView {
                         DataView().also { dv ->
                             dv.base.stage.x = base.stage.x + 48.0
                             dv.base.stage.y = base.stage.y + 36.0
-                            dv.splitDivider = dv.sp.dividerPositions[0]
-                            dv.sp.items.remove(dv.indexTree.tree)
+                            dv.splitDivider = dv.mainView.dividerPositions[0]
+                            dv.mainView.items.remove(dv.indexTree.tree)
                             dv.show()
                         }
                     }
@@ -226,6 +225,11 @@ class DataView {
 
     private val indexTree = FolderTree()
     private val components = AppComponents()
+
+
+    private val colList = listOf(
+            "Team", "Match", "Scout", "Red Alliance", "Blue Alliance", "Starting Level", "Hatches", "Cargo", "Climb"
+    )
 
     private val spreadsheet = SpreadsheetView().apply {
         selectionModel.selectedCells.addListener(InvalidationListener {
@@ -286,38 +290,48 @@ class DataView {
             }
         }
         val a = grid as GridBase
-        a.setRowHeightCallback { 20.0 }
-        a.setResizableRows(BitSet())
-        columns.forEach {
-            it.setPrefWidth(84.0)
-            it.minWidth = 42.0
+        a.setRowHeightCallback {
+            if (it == 0) 24.0 else 20.0
         }
-        grid.rows.first().forEach {
-            it.style = "-fx-font-weight:bold; -fx-alignment: CENTER"
+        a.setResizableRows(BitSet())
+        grid.rows.first().forEachIndexed { i, c ->
+            c.item = if (i < colList.size) colList[i] else "Toto"
+            c.style = "-fx-alignment: CENTER; -fx-background-color: rgba(240,240,240)"
         }
         fixedRows.add(0)
+        Platform.runLater {
+            columns.forEach {
+                it.fitColumn()
+                it.minWidth = 42.0
+            }
+        }
+
     }
 
-    private val sp = splitPane {
+
+    private val mainView = splitPane {
         orientation = Orientation.HORIZONTAL
         vgrow()
         addFixed(indexTree.tree, spreadsheet)
         setDividerPositions(0.2, 0.6)
     }
 
-    private val box = vbox {
-        add(sp)
-        add(hbox {
+    fun show() {
+        base.scene.accelerators[KeyCodeCombination(KeyCode.K, KeyCombination.CONTROL_DOWN)] = Runnable {
+            base.showOptionBarPrototype()
+        }
+        base.scene.accelerators[KeyCodeCombination(KeyCode.COMMA, KeyCombination.CONTROL_DOWN)] = Runnable {
+            Singleton.editAppProperties()
+        }
+        base.menuBar.modify(mainMenus)
+        base.menuBar.modify(base.helpMenu)
+        base.layout.center = mainView
+        base.layout.bottom = hbox {
             align(Pos.CENTER_LEFT)
             padding = Insets(0.0, 8.0, 0.0, 8.0)
             prefHeight = 20.0
             styleClass("status-bar")
             spacing = 8.0
-            add(fontIcon(MDI_FOLDER_MULTIPLE_OUTLINE, 14))
-            add(Separator(Orientation.VERTICAL))
-            add(Label("Ready").apply {
-                graphic = fontIcon(MDI_INFORMATION, 14)
-            })
             hspace()
 
             add(Separator(Orientation.VERTICAL))
@@ -330,22 +344,7 @@ class DataView {
             add(components.themeLabel)
             add(Separator(Orientation.VERTICAL))
             add(components.heapLabel)
-
-        })
-        isSnapToPixel = false
-    }
-
-
-    fun show() {
-        base.scene.accelerators[KeyCodeCombination(KeyCode.BACK_QUOTE, KeyCombination.CONTROL_DOWN)] = Runnable {
-            base.showOptionBarPrototype()
         }
-        base.scene.accelerators[KeyCodeCombination(KeyCode.COMMA, KeyCombination.CONTROL_DOWN)] = Runnable {
-            Singleton.editAppProperties()
-        }
-        base.menuBar.modify(mainMenus)
-        base.menuBar.modify(base.helpMenu)
-        base.layout.center = box
         base.show()
     }
 

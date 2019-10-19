@@ -4,6 +4,7 @@ import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Scene
 import javafx.scene.control.Menu
+import javafx.scene.effect.BlurType
 import javafx.scene.effect.DropShadow
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
@@ -18,6 +19,11 @@ import kb.core.view.splash.GCSplash
 import org.kordamp.ikonli.materialdesign.MaterialDesign
 
 class WindowBase {
+
+    companion object {
+        const val kOBWidth = 600.0
+        const val kOBHeight = 480.0
+    }
 
 
     val stage = Stage()
@@ -37,19 +43,20 @@ class WindowBase {
             styleClass("option-bar")
             effect = DropShadow().apply {
                 color = Color.GRAY
+                blurType = BlurType.GAUSSIAN
                 height = 10.0
                 width = 10.0
                 radius = 10.0
+                offsetY = 5.0
             }
-            prefWidth = 600.0
-            prefHeight = 480.0
+            prefWidth = kOBWidth
+            prefHeight = kOBHeight
             add(vbox {
                 align(Pos.TOP_CENTER)
                 padding = Insets(8.0)
                 spacing = 4.0
                 add(textField {
                     styleClass("formula-field")
-                    promptText = "Enter a Command or Formula"
                 })
             })
 
@@ -63,8 +70,9 @@ class WindowBase {
 
         })
         popup.isAutoHide = true
+        popup.x = stage.x + stage.width / 2.0 - kOBWidth / 2.0
+        popup.y = stage.y + scene.y + menuBar.height - 5.0
         popup.show(stage)
-        popup.centerOnScreen()
     }
 
     private var theme = Theme.Light
@@ -129,7 +137,6 @@ class WindowBase {
                     name("Open Source Licenses")
                     action { Singleton.viewOpenSource() }
                 }
-
             }
         }
     }
