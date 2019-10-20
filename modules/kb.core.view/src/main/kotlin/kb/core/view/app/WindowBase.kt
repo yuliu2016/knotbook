@@ -1,4 +1,4 @@
-package kb.core.view
+package kb.core.view.app
 
 import javafx.geometry.Insets
 import javafx.geometry.Pos
@@ -13,7 +13,7 @@ import javafx.stage.Popup
 import javafx.stage.Stage
 import kb.core.fx.*
 import kb.core.icon.icon
-import kb.core.view.app.Singleton
+import kb.core.view.DataView
 import kb.core.view.splash.AboutSplash
 import kb.core.view.splash.GCSplash
 import org.kordamp.ikonli.materialdesign.MaterialDesign
@@ -105,6 +105,13 @@ class WindowBase {
         stage.title = "KnotBook"
         stage.icons.add(Image(DataView::class.java.getResourceAsStream("/icon.png")))
         stage.scene = scene
+        stage.focusedProperty().addListener { _, _, focused ->
+            if (focused) {
+                Singleton.focusedWindow = this
+            } else if (Singleton.focusedWindow === this) {
+                Singleton.focusedWindow = null
+            }
+        }
         stage.show()
     }
 

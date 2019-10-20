@@ -1,18 +1,23 @@
 package kb.core.view.app
 
+import javafx.application.Platform
 import javafx.beans.property.SimpleStringProperty
+import kb.core.view.DataView
 import kb.service.api.ServiceContext
 import kb.service.api.application.ServiceManager
+import kotlin.concurrent.thread
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 internal object Singleton {
     val memoryUsed = SimpleStringProperty()
 
-    var zzNullableManager: ServiceManager? = null
-    var zzNullableContext: ServiceContext? = null
+    private var nullableManager: ServiceManager? = null
+    private var nullableContext: ServiceContext? = null
 
-    val manager by lazy { zzNullableManager!! }
-    val context by lazy { zzNullableContext!! }
+    val manager get() = nullableManager!!
+    val context get() = nullableContext!!
+
+    var focusedWindow: WindowBase? = null
 
     fun editAppProperties() {
         context.createTextEditor()
@@ -50,30 +55,62 @@ internal object Singleton {
                     }
                     "${it.key}=$value"
                 }
-        context.createTextEditor().apply {
-            title = "JVM Properties (Read-Only)"
-            syntax = "text/properties"
-            setInitialText(properties)
-            show()
-        }
+        context.createTextEditor()
+                .withTitle("JVM Properties (Read-Only)")
+                .withSyntax("text/properties")
+                .withInitialText(properties)
+                .show()
     }
 
     fun viewPlugins() {
         val t = manager.services.joinToString("\n") {
             it.metadata.run { "$packageName => $packageVersion" }
         }
-        context.createTextEditor().apply {
-            title = "Plugins and Services"
-            setInitialText(t)
-            show()
-        }
+        context.createTextEditor()
+                .withTitle("Plugins and Services")
+                .withInitialText(t)
+                .show()
     }
 
     fun viewOpenSource() {
-        val t = Singleton::class.java.getResourceAsStream("/open_source.txt").reader().readText()
+        val t = Singleton::class.java
+                .getResourceAsStream("/open_source.txt")
+                .use { it.bufferedReader().readText() }
         context.createTextEditor()
                 .withTitle("Open Source Licences")
                 .withInitialText(t)
                 .show()
+    }
+
+    fun startMemoryObserver() {
+        thread(isDaemon = true, name = "MemoryObserver") {
+            var lastMemoryUsed = -1
+            while (true) {
+                val memoryUsed = ((Runtime.getRuntime().totalMemory() -
+                        Runtime.getRuntime().freeMemory()) / 1024.0 / 1024.0).toInt() + 1
+                if (memoryUsed != lastMemoryUsed) {
+                    Platform.runLater {
+                        Singleton.memoryUsed.value = "${memoryUsed}M"
+                    }
+                    lastMemoryUsed = memoryUsed
+                }
+                try {
+                    Thread.sleep(5000)
+                } catch (e: InterruptedException) {
+                    break
+                }
+            }
+        }
+    }
+
+    fun launch(manager: ServiceManager, context: ServiceContext) {
+        if (nullableContext == null && nullableManager == null) {
+            nullableContext = context
+            nullableManager = manager
+            Platform.startup {
+                startMemoryObserver()
+                DataView().show()
+            }
+        }
     }
 }

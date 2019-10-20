@@ -3,13 +3,15 @@ package kb.core.application
 import kb.service.api.Service
 import kb.service.api.ServiceContext
 import kb.service.api.ServiceProps
+import kb.service.api.application.ApplicationService
 import kb.service.api.ui.CommandManager
-import kb.service.api.ui.NamedAction
+import kb.service.api.ui.Notification
 import kb.service.api.ui.TextEditor
 
 class ServiceContextImpl(
         private val service: Service,
-        private val manager: ServiceManagerImpl
+        private val manager: ServiceManagerImpl,
+        private val application: ApplicationService
 ) : ServiceContext {
     override fun getService(): Service {
         return service
@@ -23,23 +25,11 @@ class ServiceContextImpl(
         return manager.createTextEditor()
     }
 
-    override fun pushInfo(message: String) {
-        TODO("not implemented")
-    }
-
-    override fun pushWarning(message: String) {
-        TODO("not implemented")
-    }
-
-    override fun pushError(message: String) {
-        TODO("not implemented")
-    }
-
-    override fun pushActionablePopup(message: String, vararg commands: NamedAction?) {
-        TODO("not implemented")
+    override fun createNotification(): Notification {
+        return application.createNotification()
     }
 
     override fun getCommandManager(): CommandManager {
-        TODO("not implemented")
+        return application.commandManager
     }
 }

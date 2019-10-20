@@ -12,8 +12,10 @@ import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
 import javafx.stage.FileChooser
 import kb.core.fx.*
+import kb.core.icon.fontIcon
 import kb.core.icon.icon
 import kb.core.view.app.Singleton
+import kb.core.view.app.WindowBase
 import kb.service.api.util.TableHeaders
 import org.controlsfx.control.spreadsheet.GridBase
 import org.controlsfx.control.spreadsheet.SpreadsheetView
@@ -147,6 +149,10 @@ class DataView {
                     shortcut(KeyCode.P, control = true, shift = true)
                     action { base.showOptionBarPrototype() }
                 }
+                item {
+                    name("Switch To")
+                    shortcut(KeyCode.TAB, control = true)
+                }
                 separator()
                 item {
                     name("Toggle Colour Scheme")
@@ -155,34 +161,9 @@ class DataView {
                     action { base.toggleTheme() }
                 }
                 item {
-                    name("Toggle Tree View")
-                    shortcut(KeyCode.F4)
-                    action {
-                        if (mainView.items.size == 1) {
-                            mainView.items.add(0, indexTree.tree)
-                            mainView.setDividerPositions(splitDivider)
-                        } else {
-                            splitDivider = mainView.dividerPositions[0]
-                            mainView.items.remove(indexTree.tree)
-                        }
-                    }
-                }
-                item {
                     name("Toggle Full Screen")
                     shortcut(KeyCode.F11)
                     action { base.toggleFullScreen() }
-                }
-                separator()
-                item {
-                    name("Expand Tree")
-                    icon(MDI_UNFOLD_MORE, 14)
-                    action { indexTree.tree.root.children.forEach { it.isExpanded = true } }
-
-                }
-                item {
-                    name("Collapse Tree")
-                    icon(MDI_UNFOLD_LESS, 14)
-                    action { indexTree.tree.root.children.forEach { it.isExpanded = false } }
                 }
                 separator()
                 item {
@@ -192,8 +173,6 @@ class DataView {
                         DataView().also { dv ->
                             dv.base.stage.x = base.stage.x + 48.0
                             dv.base.stage.y = base.stage.y + 36.0
-                            dv.splitDivider = dv.mainView.dividerPositions[0]
-                            dv.mainView.items.remove(dv.indexTree.tree)
                             dv.show()
                         }
                     }
@@ -221,9 +200,6 @@ class DataView {
         }
     }
 
-    private var splitDivider = 0.2
-
-    private val indexTree = FolderTree()
     private val components = AppComponents()
 
 
@@ -301,7 +277,6 @@ class DataView {
         fixedRows.add(0)
         Platform.runLater {
             columns.forEach {
-                it.fitColumn()
                 it.minWidth = 42.0
             }
         }
@@ -312,7 +287,7 @@ class DataView {
     private val mainView = splitPane {
         orientation = Orientation.HORIZONTAL
         vgrow()
-        addFixed(indexTree.tree, spreadsheet)
+        addFixed(spreadsheet)
         setDividerPositions(0.2, 0.6)
     }
 
@@ -329,9 +304,13 @@ class DataView {
         base.layout.bottom = hbox {
             align(Pos.CENTER_LEFT)
             padding = Insets(0.0, 8.0, 0.0, 8.0)
-            prefHeight = 20.0
+            prefHeight = 22.0
             styleClass("status-bar")
             spacing = 8.0
+            add(label {
+                text = "~/Documents/Data/knotbook.csv"
+                graphic = fontIcon(MDI_FOLDER_MULTIPLE_OUTLINE, 14)
+            })
             hspace()
 
             add(Separator(Orientation.VERTICAL))

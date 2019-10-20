@@ -135,7 +135,11 @@
     -fx-background-color: #5a8ade;
 }
 
-.status-bar .label{
+.status-bar .text {
+    -fx-font-family: "Segoe UI Semibold", "Segoe UI", sans-serif;
+}
+
+.status-bar .label {
     -fx-text-fill: white;
     -fx-font-weight: bold;
 }

@@ -10,7 +10,7 @@ module kb.service.api {
     exports kb.service.api;
     exports kb.service.api.df;
     exports kb.service.api.application;
-    exports kb.service.api.table;
+    exports kb.service.api.array;
     exports kb.service.api.util;
     exports kb.service.api.ui;
 }

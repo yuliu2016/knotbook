@@ -84,8 +84,8 @@ class KnotBook {
         };
     }
 
-    private static ServiceContext contextForService(Service service) {
-        return new ServiceContextImpl(service, manager);
+    private static ServiceContext contextForService(Service service, ApplicationService app) {
+        return new ServiceContextImpl(service, manager, app);
     }
 
     static void launch() {
@@ -95,13 +95,13 @@ class KnotBook {
         services.print();
         textEditors.print();
 
-        for (ApplicationService app : applicationServices) {
-            app.launchFast();
-            app.launch(manager, contextForService(serviceForApplication(app)));
-        }
+        if (!applicationServices.theServices.isEmpty()) {
+            ApplicationService app = applicationServices.theServices.get(0);
+            app.launch(manager, contextForService(serviceForApplication(app), app));
 
-        for (Service service : services) {
-            service.launch(contextForService(service));
+            for (Service service : services) {
+                service.launch(contextForService(service, app));
+            }
         }
     }
 }

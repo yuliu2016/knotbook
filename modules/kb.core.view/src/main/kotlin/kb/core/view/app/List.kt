@@ -1,6 +1,5 @@
-package kb.core.view
+package kb.core.view.app
 
-import javafx.scene.paint.Color
 import kb.core.icon.fontIcon
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 
@@ -15,7 +14,7 @@ fun getList(): List<Entity> = listOf(
         Entity("Application:", "Properties", fontIcon(MDI_TUNE, 14)),
         Entity("Data:", "Calculate Summary for Selection", fontIcon(MDI_CALCULATOR, 14)),
         Entity("Graph:", "Create Histogram", fontIcon(MDI_CHART_HISTOGRAM, 14)),
-        Entity("Tool:","Connect Four Game", fontIcon(MDI_RECORD, 14)),
+        Entity("Tool:", "Connect Four Game", fontIcon(MDI_RECORD, 14)),
         Entity("Tool:", "Robot Path Planner", fontIcon(MDI_NAVIGATION, 14)),
         Entity("Tool:", "WebCam QR Scanner", fontIcon(MDI_CAMERA, 14)),
         Entity("Tool:", "Test Python Editor", fontIcon(MDI_LANGUAGE_PYTHON, 14)),
@@ -35,10 +34,10 @@ fun getList(): List<Entity> = listOf(
         Entity("Spreadsheet View:", "Reset Zoom"),
         Entity("UI:", "Expand Tree", fontIcon(MDI_UNFOLD_MORE, 14)),
         Entity("UI:", "Collapse Tree", fontIcon(MDI_UNFOLD_LESS, 14)),
-        Entity("UI:","Enter Full Screen"),
-        Entity("UI:","Open in New Window"),
-        Entity("UI:","Toggle Colour Theme", fontIcon(MDI_COMPARE, 14)),
-        Entity("Table:","Edit as CSV Text", fontIcon(MDI_FILE_DELIMITED, 14)),
+        Entity("UI:", "Enter Full Screen"),
+        Entity("UI:", "Open in New Window"),
+        Entity("UI:", "Toggle Colour Theme", fontIcon(MDI_COMPARE, 14)),
+        Entity("Table:", "Edit as CSV Text", fontIcon(MDI_FILE_DELIMITED, 14)),
         Entity("Data:", "Reveal in Local Cache"),
         Entity("Data:", "Reveal in Data Source"),
         Entity("JVM:", "Mark for Garbage Collection", fontIcon(MDI_DELETE_SWEEP, 14)),

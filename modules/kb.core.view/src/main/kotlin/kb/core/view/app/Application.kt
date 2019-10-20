@@ -1,12 +1,11 @@
 package kb.core.view.app
 
-import javafx.application.Platform
-import kb.core.view.DataView
 import kb.service.api.ServiceContext
 import kb.service.api.ServiceMetadata
 import kb.service.api.application.ApplicationService
 import kb.service.api.application.ServiceManager
-import kotlin.concurrent.thread
+import kb.service.api.ui.CommandManager
+import kb.service.api.ui.Notification
 
 class Application : ApplicationService {
 
@@ -22,27 +21,14 @@ class Application : ApplicationService {
     }
 
     override fun launch(manager: ServiceManager, context: ServiceContext) {
-        Singleton.zzNullableContext = context
-        Singleton.zzNullableManager = manager
-        Platform.startup {
-            DataView().show()
-
-            thread(isDaemon = true, name = "MemoryObserver") {
-                while (true) {
-                    val m = ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024.0 / 1024.0).toInt() + 1
-                    Platform.runLater {
-                        Singleton.memoryUsed.value = "${m}M"
-                    }
-                    try {
-                        Thread.sleep(5000)
-                    } catch (e: InterruptedException) {
-                        break
-                    }
-                }
-            }
-        }
+        Singleton.launch(manager, context)
     }
 
-    override fun launchFast() {
+    override fun getCommandManager(): CommandManager {
+        TODO("not implemented")
+    }
+
+    override fun createNotification(): Notification {
+        return ScreenEvent()
     }
 }
