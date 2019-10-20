@@ -11,7 +11,7 @@ module kb.core.view {
     requires krangl;
 
     provides kb.service.api.application.ApplicationService
-            with kb.core.view.Application;
+            with kb.core.view.app.Application;
 
     exports kb.core.view;
 }

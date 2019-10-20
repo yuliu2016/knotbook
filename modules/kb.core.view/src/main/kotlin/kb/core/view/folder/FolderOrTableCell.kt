@@ -1,13 +1,12 @@
-package kb.core.view
+package kb.core.view.folder
 
 import javafx.geometry.Pos
 import javafx.scene.control.TreeCell
 import javafx.scene.input.ClipboardContent
 import javafx.scene.input.TransferMode
 import kb.core.fx.*
-import kb.core.icon.centered
 
-class EntityCell : TreeCell<FolderOrTable>() {
+class FolderOrTableCell : TreeCell<FolderOrTable>() {
 
     init {
         setOnDragDetected { event ->
@@ -71,7 +70,6 @@ class EntityCell : TreeCell<FolderOrTable>() {
             alignment = Pos.CENTER_LEFT
             graphic = hbox {
                 alignment = Pos.CENTER_LEFT
-                add(item.icon.centered(20))
                 add(label {
                     text = item.name
                 })

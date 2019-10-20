@@ -1,4 +1,4 @@
-import kb.service.api.TextEditorService;
+import kb.service.api.ui.TextEditorService;
 
 module kb.core.code {
     requires java.desktop;

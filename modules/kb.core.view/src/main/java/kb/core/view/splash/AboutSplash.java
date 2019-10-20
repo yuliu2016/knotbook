@@ -10,7 +10,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import javafx.stage.Window;
-import kb.core.view.Singleton;
+import kb.core.view.app.Singleton;
 import kotlin.KotlinVersion;
 
 
@@ -51,7 +51,7 @@ public class AboutSplash {
         bottom.setPadding(new Insets(8.0, 32.0, 8.0, 32.0));
 
         bottom.getChildren().addAll(
-                labelOf("Version: " + Singleton.INSTANCE.getContext().getVersion()),
+                labelOf("Version: " + Singleton.INSTANCE.getManager().getVersion()),
                 labelOf("Licensed under MIT and powered by open-source software"),
                 labelOf("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.arch")),
                 labelOf("Java Runtime: " + System.getProperty("java.vm.name") +

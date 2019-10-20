@@ -3,7 +3,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    `build-scan`
     java
     id("org.jetbrains.kotlin.jvm") version "1.3.50"
     id("org.javamodularity.moduleplugin") version "1.6.0"
@@ -42,9 +41,5 @@ subprojects {
         }
     }
     buildDir = File(rootProject.projectDir, "build/$name")
-}
-
-buildScan {
-    termsOfServiceUrl = "https://gradle.com/terms-of-service"
-    termsOfServiceAgree = "yes"
+    version = "3.1.0"
 }

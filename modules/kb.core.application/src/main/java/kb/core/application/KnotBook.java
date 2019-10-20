@@ -2,71 +2,106 @@ package kb.core.application;
 
 import kb.service.api.MetaService;
 import kb.service.api.Service;
+import kb.service.api.ServiceContext;
 import kb.service.api.ServiceMetadata;
-import kb.service.api.TextEditorService;
 import kb.service.api.application.ApplicationService;
 import kb.service.api.application.JVMInstance;
-import kb.service.api.application.PrivilegedContext;
+import kb.service.api.ui.TextEditorService;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ServiceLoader;
+import java.util.*;
 
 @SuppressWarnings("unused")
 class KnotBook {
 
-    private static <T extends MetaService> List<T> loadServices(Class<T> service) {
+    private static class ResolvedServices<T extends MetaService> implements Iterable<T> {
+        Class<T> theClass;
+        List<T> theServices;
+
+        ResolvedServices(Class<T> theClass, List<T> theServices) {
+            this.theClass = theClass;
+            this.theServices = theServices;
+        }
+
+        @NotNull
+        @Override
+        public Iterator<T> iterator() {
+            return theServices.iterator();
+        }
+
+        void print() {
+            System.out.println("\nListing " + theServices.size() +
+                    " package(s) for " + theClass.getSimpleName() + ":");
+            for (T s : theServices) {
+                ServiceMetadata metadata = s.getMetadata();
+                System.out.println(metadata.getPackageName() + " => " + metadata.getPackageVersion());
+            }
+        }
+    }
+
+    private static <T extends MetaService> ResolvedServices<T> loadServices(Class<T> service) {
         List<T> providers = new ArrayList<>();
         for (T provider : ServiceLoader.load(service)) {
             providers.add(provider);
         }
-        return providers;
+        return new ResolvedServices<>(service, providers);
     }
 
-    private static <T extends MetaService> void print(List<T> services) {
-        System.out.println("\nListing " + services.size() + " package(s):");
-        for (T s : services) {
-            ServiceMetadata metadata = s.getMetadata();
-            System.out.println(metadata.getPackageName() + " => " + metadata.getPackageVersion());
-        }
-    }
 
     // application
-    private static final List<ApplicationService> apps = loadServices(ApplicationService.class);
+    private static final ResolvedServices<ApplicationService> applicationServices =
+            loadServices(ApplicationService.class);
 
     // All extensions
-    private static final List<Service> extensions = loadServices(Service.class);
+    private static final ResolvedServices<Service> services =
+            loadServices(Service.class);
 
     // Text Editor implementation
-    private static final List<TextEditorService> textEditors = loadServices(TextEditorService.class);
+    private static final ResolvedServices<TextEditorService> textEditors =
+            loadServices(TextEditorService.class);
 
     // App Registry
     private static final Registry registry = new Registry(new UserFile());
 
-    static {
-        print(apps);
-        print(extensions);
-        print(textEditors);
-    }
-
     // App Context
-    private static final PrivilegedContext context = new AppContextImpl(
-            extensions,
-            textEditors,
+    private static final ServiceManagerImpl manager = new ServiceManagerImpl(
+            services.theServices,
+            textEditors.theServices,
             registry
     );
+
+    private static Service serviceForApplication(ApplicationService app) {
+        return new Service() {
+            @Override
+            public void launch(@NotNull ServiceContext context) {
+            }
+
+            @NotNull
+            @Override
+            public ServiceMetadata getMetadata() {
+                return app.getMetadata();
+            }
+        };
+    }
+
+    private static ServiceContext contextForService(Service service, ApplicationService app) {
+        return new ServiceContextImpl(service, manager, app);
+    }
 
     static void launch() {
         System.out.println(Arrays.toString(JVMInstance.getArgs()));
 
-        for (ApplicationService app : apps) {
-            app.launchFast();
-            app.launch(context);
-        }
+        applicationServices.print();
+        services.print();
+        textEditors.print();
 
-        for (Service service : extensions) {
-            service.launch(new ServiceContextImpl(service, context));
+        if (!applicationServices.theServices.isEmpty()) {
+            ApplicationService app = applicationServices.theServices.get(0);
+            app.launch(manager, contextForService(serviceForApplication(app), app));
+
+            for (Service service : services) {
+                service.launch(contextForService(service, app));
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-package kb.tba.client
+package kb.tba.extension
 
 import kb.service.api.Service
 import kb.service.api.ServiceContext

@@ -1,6 +1,7 @@
-package kb.service.api.table;
+package kb.service.api.array;
 
 import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  * Efficient table array implementation, where operations can
@@ -34,9 +35,6 @@ public class TableArray {
     // Floating Point
     private static final byte TYPE_FLOAT = (byte) 0b00000010;
 
-    // Type Mask
-    private static final byte TYPE_MASK = (byte) 0b00001111;
-
     private TableArray(int rows, int cols, byte[] types, float[] values, String[] str) {
 
         this.rows = rows;
@@ -69,24 +67,24 @@ public class TableArray {
     }
 
     public void reshape(int rows, int cols) {
+        if (!(rows * cols == len)) {
+            throw new IllegalArgumentException();
+        }
+
         this.rows = rows;
         this.cols = cols;
-
-        if (!(rows * cols == len)) {
-            throw new IllegalStateException();
-        }
     }
 
     public boolean isNA(int row, int col) {
-        return (types[ix(row, col)] & TYPE_MASK) == TYPE_NA;
+        return types[ix(row, col)] == TYPE_NA;
     }
 
     public boolean isString(int row, int col) {
-        return (types[ix(row, col)] & TYPE_MASK) == TYPE_CHAR_SEQUENCE;
+        return types[ix(row, col)] == TYPE_CHAR_SEQUENCE;
     }
 
     public boolean isNumber(int row, int col) {
-        return (types[ix(row, col)] & TYPE_MASK) == TYPE_FLOAT;
+        return types[ix(row, col)] == TYPE_FLOAT;
     }
 
     public float[] getValuesCopy() {
@@ -95,5 +93,21 @@ public class TableArray {
 
     public String[] getStringsCopy() {
         return Arrays.copyOf(str, len);
+    }
+
+    public Iterator<String> stringIterator() {
+        return Arrays.stream(str).iterator();
+    }
+
+    public double getAverage() {
+        double sum = 0.0;
+        double count = 0.0;
+        for (int i = 0; i < len; i++) {
+            if (types[i] == TYPE_FLOAT) {
+                sum += values[i];
+                count++;
+            }
+        }
+        return sum / count;
     }
 }

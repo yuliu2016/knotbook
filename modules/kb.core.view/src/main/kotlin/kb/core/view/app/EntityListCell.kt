@@ -1,4 +1,4 @@
-package kb.core.view
+package kb.core.view.app
 
 import javafx.geometry.Insets
 import javafx.geometry.Pos

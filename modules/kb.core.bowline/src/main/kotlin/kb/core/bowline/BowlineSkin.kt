@@ -8,16 +8,13 @@ import javafx.scene.control.SkinBase
 import javafx.scene.paint.Color
 import javafx.scene.shape.Line
 import javafx.scene.shape.Rectangle
-import javafx.scene.shape.Shape
 import javafx.scene.text.Text
 import javafx.stage.Screen
-import kotlin.math.roundToInt
-import kotlin.system.exitProcess
 
 
 @Suppress("MemberVisibilityCanBePrivate")
 internal class BowlineSkin(bowlineTable: BowlineTable) :
-    SkinBase<BowlineTable>(bowlineTable) {
+        SkinBase<BowlineTable>(bowlineTable) {
 
     private companion object {
         const val kLineStroke = 0.5
@@ -102,17 +99,17 @@ internal class BowlineSkin(bowlineTable: BowlineTable) :
     }
 
     override fun computeMinWidth(
-        height: Double,
-        topInset: Double, rightInset: Double,
-        bottomInset: Double, leftInset: Double
+            height: Double,
+            topInset: Double, rightInset: Double,
+            bottomInset: Double, leftInset: Double
     ): Double {
         return 300.0
     }
 
     override fun computeMinHeight(
-        width: Double,
-        topInset: Double, rightInset: Double,
-        bottomInset: Double, leftInset: Double
+            width: Double,
+            topInset: Double, rightInset: Double,
+            bottomInset: Double, leftInset: Double
     ): Double {
         return 300.0
     }
@@ -129,7 +126,7 @@ internal class BowlineSkin(bowlineTable: BowlineTable) :
         gc.fill = Color.rgb(240, 240, 240)
         gc.fillRect(0.0, 0.0, contentWidth, kMinCellHeight)
         gc.fill = Color.rgb(0, 144, 0)
-        gc.fillRect(kMinCellWidth *4, kMinCellHeight * 3, kMinCellWidth, kMinCellHeight)
+        gc.fillRect(kMinCellWidth * 4, kMinCellHeight * 3, kMinCellWidth, kMinCellHeight)
 
         flow.x.doIfStateChanged {
             for (i in vln.indices) {
@@ -193,22 +190,22 @@ internal class BowlineSkin(bowlineTable: BowlineTable) :
                 val lineX = contentX + i * kMinCellWidth + kTextMargin
                 val lineY = contentY + j * kMinCellHeight
                 layoutInArea(
-                    cell, lineX, lineY, kMinCellWidth - 2 * kTextMargin,
-                    kMinCellHeight, 0.0, HPos.RIGHT, VPos.CENTER
+                        cell, lineX, lineY, kMinCellWidth - 2 * kTextMargin,
+                        kMinCellHeight, 0.0, HPos.RIGHT, VPos.CENTER
                 )
             }
         }
 
         layoutInArea(
-            hsb, 0.0, 0.0, contentWidth - vsb.width,
-            contentHeight, 0.0,
-            Insets.EMPTY, true, true, HPos.LEFT, VPos.BOTTOM
+                hsb, 0.0, 0.0, contentWidth - vsb.width,
+                contentHeight, 0.0,
+                Insets.EMPTY, true, true, HPos.LEFT, VPos.BOTTOM
         )
 
         layoutInArea(
-            vsb, 0.0, 0.0, contentWidth,
-            contentHeight - kMinCellHeight, 0.0,
-            Insets.EMPTY, true, true, HPos.RIGHT, VPos.TOP
+                vsb, 0.0, 0.0, contentWidth,
+                contentHeight - kMinCellHeight, 0.0,
+                Insets.EMPTY, true, true, HPos.RIGHT, VPos.TOP
         )
     }
 }

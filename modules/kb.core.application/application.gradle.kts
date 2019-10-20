@@ -16,5 +16,5 @@ dependencies {
     runtimeOnly(project(":kb.core.bowline"))
     runtimeOnly(project(":kb.tool.cng"))
     runtimeOnly(project(":kb.tool.path.planner"))
-    runtimeOnly(project(":kb.tba.client"))
+    runtimeOnly(project(":kb.tba.extension"))
 }

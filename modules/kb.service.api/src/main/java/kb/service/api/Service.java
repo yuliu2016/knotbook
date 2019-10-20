@@ -11,7 +11,7 @@ public interface Service extends MetaService {
     void launch(@NotNull ServiceContext context);
 
     /**
-     * @return Whether this service is availabe
+     * @return Whether this service is available
      * (e.g. check all modules are loaded, check for external libs)
      */
     default boolean isAvailable() {

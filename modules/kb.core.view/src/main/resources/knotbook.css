@@ -1,5 +1,5 @@
 .text {
-    -fx-font-family: "Roboto", "Arial", sans-serif;
+    -fx-font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
     -fx-font-smoothing-type: gray;
 }
 
@@ -135,7 +135,11 @@
     -fx-background-color: #5a8ade;
 }
 
-.status-bar .label{
+.status-bar .text {
+    -fx-font-family: "Segoe UI Semibold", "Segoe UI", sans-serif;
+}
+
+.status-bar .label {
     -fx-text-fill: white;
     -fx-font-weight: bold;
 }

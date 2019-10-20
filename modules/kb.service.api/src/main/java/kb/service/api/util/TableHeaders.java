@@ -1,8 +1,8 @@
-package kb.core.bowline;
+package kb.service.api.util;
 
 @SuppressWarnings("unused")
 public class TableHeaders {
-    public String columnIndexToString(int col) {
+    public static String columnIndexToString(int col) {
         if (col < 0) {
             return String.valueOf(col);
         }
