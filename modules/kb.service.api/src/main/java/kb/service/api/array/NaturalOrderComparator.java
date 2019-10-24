@@ -1,4 +1,4 @@
-package kb.service.api.util;
+package kb.service.api.array;
 
 /*
  NaturalOrderComparator.java -- Perform 'natural order' comparisons of strings in Java.
@@ -31,7 +31,7 @@ public class NaturalOrderComparator implements Comparator {
 
     @Override
     public int compare(Object o1, Object o2) {
-        return compareNaturally(o1, o2);
+        return compareNaturally(o1.toString(), o2.toString());
     }
 
     static int compareRight(String a, String b) {
@@ -68,9 +68,7 @@ public class NaturalOrderComparator implements Comparator {
         }
     }
 
-    public static int compareNaturally(Object o1, Object o2) {
-        String a = o1.toString();
-        String b = o2.toString();
+    public static int compareNaturally(String a, String b) {
 
         int ia = 0, ib = 0;
         int nza, nzb;
