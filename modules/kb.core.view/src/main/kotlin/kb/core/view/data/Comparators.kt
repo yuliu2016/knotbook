@@ -2,7 +2,7 @@
 
 package kb.core.view.data
 
-import kb.service.api.util.NaturalOrderComparator
+import kb.service.api.array.NaturalOrderComparator
 import krangl.*
 
 fun DataCol.ascendingComparator(): Comparator<Int> = when (this) {

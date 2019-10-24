@@ -107,9 +107,14 @@ internal object Singleton {
         if (nullableContext == null && nullableManager == null) {
             nullableContext = context
             nullableManager = manager
-            Platform.startup {
+            val func = Runnable {
                 startMemoryObserver()
                 DataView().show()
+            }
+            try {
+                Platform.startup(func)
+            } catch (e: IllegalStateException) {
+                Platform.runLater(func)
             }
         }
     }

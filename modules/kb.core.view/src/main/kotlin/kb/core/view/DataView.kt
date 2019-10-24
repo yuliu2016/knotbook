@@ -2,21 +2,18 @@ package kb.core.view
 
 import javafx.application.Platform
 import javafx.beans.InvalidationListener
-import javafx.geometry.Insets
+import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Orientation
-import javafx.geometry.Pos
 import javafx.scene.control.Menu
-import javafx.scene.control.Separator
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
 import javafx.stage.FileChooser
 import kb.core.fx.*
-import kb.core.icon.fontIcon
 import kb.core.icon.icon
 import kb.core.view.app.Singleton
 import kb.core.view.app.WindowBase
-import kb.service.api.util.TableHeaders
+import kb.service.api.array.TableUtil
 import org.controlsfx.control.spreadsheet.GridBase
 import org.controlsfx.control.spreadsheet.SpreadsheetView
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
@@ -24,6 +21,7 @@ import java.util.*
 import kotlin.system.exitProcess
 
 
+@Suppress("MemberVisibilityCanBePrivate")
 class DataView {
 
     private val base = WindowBase()
@@ -180,39 +178,44 @@ class DataView {
                 item {
                     name("Close Current Table")
                     shortcut(KeyCode.W, control = true, shift = true)
+                    action { base.layout.center = null }
                 }
                 separator()
                 item {
                     name("Zoom In")
                     icon(MDI_MAGNIFY_PLUS, 14)
+                    action { spreadsheet.incrementZoom() }
                     shortcut(KeyCode.PLUS, control = true)
                 }
                 item {
                     name("Zoom Out")
                     icon(MDI_MAGNIFY_MINUS, 14)
+                    action { spreadsheet.decrementZoom() }
                     shortcut(KeyCode.MINUS, control = true)
                 }
                 item {
                     name("Reset Zoom")
+                    action { spreadsheet.zoomFactor = 1.0 }
                     shortcut(KeyCode.DIGIT0, control = true)
                 }
             }
         }
     }
 
-    private val components = AppComponents()
-
-
     private val colList = listOf(
             "Team", "Match", "Scout", "Red Alliance", "Blue Alliance", "Starting Level", "Hatches", "Cargo", "Climb"
     )
 
+    val zoomText = SimpleStringProperty("100%")
+    val themeText = SimpleStringProperty("Light")
+    val selectionText = SimpleStringProperty("None")
+
     private val spreadsheet = SpreadsheetView().apply {
         selectionModel.selectedCells.addListener(InvalidationListener {
-            components.selectionLabel.text = getRange()
+            selectionText.value = getRange()
         })
         zoomFactorProperty().addListener { _, _, nv ->
-            components.zoomLabel.text = "${(nv.toDouble() * 100).toInt()}%"
+            zoomText.value = "${(nv.toDouble() * 100).toInt()}%"
         }
         hgrow()
         contextMenu = contextMenu {
@@ -301,29 +304,11 @@ class DataView {
         base.menuBar.modify(mainMenus)
         base.menuBar.modify(base.helpMenu)
         base.layout.center = mainView
-        base.layout.bottom = hbox {
-            align(Pos.CENTER_LEFT)
-            padding = Insets(0.0, 8.0, 0.0, 8.0)
-            prefHeight = 22.0
-            styleClass("status-bar")
-            spacing = 8.0
-            add(label {
-                text = "~/Documents/Data/knotbook.csv"
-                graphic = fontIcon(MDI_FOLDER_MULTIPLE_OUTLINE, 14)
-            })
-            hspace()
-
-            add(Separator(Orientation.VERTICAL))
-            add(components.calcLabel)
-            add(Separator(Orientation.VERTICAL))
-            add(components.selectionLabel)
-            add(Separator(Orientation.VERTICAL))
-            add(components.zoomLabel)
-            add(Separator(Orientation.VERTICAL))
-            add(components.themeLabel)
-            add(Separator(Orientation.VERTICAL))
-            add(components.heapLabel)
-        }
+        themeText.bind(base.themeProperty.asString())
+        base.addStatus(selectionText, MDI_MOUSE)
+        base.addStatus(zoomText, MDI_MAGNIFY_PLUS)
+        base.addStatus(themeText, MDI_COMPARE)
+        base.addStatus(Singleton.memoryUsed, MDI_MEMORY)
         base.show()
     }
 
@@ -337,8 +322,8 @@ class DataView {
 
         val w = rows.min()!! + 1
         val x = rows.max()!! + 1
-        val y = TableHeaders.columnIndexToString(cols.min()!!)
-        val z = TableHeaders.columnIndexToString(cols.max()!!)
+        val y = TableUtil.columnIndexToString(cols.min()!!)
+        val z = TableUtil.columnIndexToString(cols.max()!!)
 
         return if (a.size == 1) {
             "$y$w"

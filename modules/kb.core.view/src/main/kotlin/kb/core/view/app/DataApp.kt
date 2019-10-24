@@ -7,7 +7,7 @@ import kb.service.api.application.ServiceManager
 import kb.service.api.ui.CommandManager
 import kb.service.api.ui.Notification
 
-class Application : ApplicationService {
+class DataApp : ApplicationService {
 
     private val metadata = ServiceMetadata()
 
