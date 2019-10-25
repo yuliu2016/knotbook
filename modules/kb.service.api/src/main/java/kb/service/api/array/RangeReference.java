@@ -1,6 +1,6 @@
 package kb.service.api.array;
 
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class RangeReference implements Reference {
 
     int totalCols;

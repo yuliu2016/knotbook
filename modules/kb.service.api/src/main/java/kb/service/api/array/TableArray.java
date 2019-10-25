@@ -2,6 +2,9 @@ package kb.service.api.array;
 
 import java.io.*;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 /**
  * Table implementation. Row major. Expandable.
@@ -13,32 +16,6 @@ public class TableArray {
     private int cols;
     private int rows;
     private int len;
-
-
-    // bit 0 - 1: exists   0: NA !!
-    private static final byte MODE_EXISTS_NA = 1;
-
-    // bit 1 - 1: str      0: number !!
-    private static final byte MODE_STR_NUM = 2;
-
-    // bit 2 - 1: int      0: float !!
-    private static final byte MODE_INT_FLOAT = 4;
-
-    // bit 3 - 1: formula  0: none ::
-    private static final byte MODE_FORMULA = 8;
-
-    // bit 4 - 1: editable 0: locked !!
-    private static final byte MODE_UNLOCKED = 16;
-
-    // bit 5 - 1: resolved 0: unknown ::
-    private static final byte MODE_RESOLVED = 32;
-
-    // bit 6 - 1: bold     0: normal !!
-    private static final byte MODE_BOLD = 64;
-
-    // bit 7 - 1: valid    0: invalid ::
-    private static final byte MODE_VALID = -128;
-
 
     // Cell-wise modes
     private ByteArrayList mode = new ByteArrayList();
@@ -58,48 +35,34 @@ public class TableArray {
 
     // Used for caching references returned by the formula
     // provider
-    private Map<Integer, Reference[]> ref = new HashMap<>();
-
-    // The number of invalid cells
-    private int invalidity;
+    private List<Reference[]> ref = new ArrayList<>();
 
     // The last formula provider
-    private FormulaProvider lastProvider;
+    private FormulaProvider last_provider = null;
 
-    // The character-width of each column
-    private IntArrayList columnWidths = new IntArrayList();
+    // The character-width of each column (for pretty-printing)
+    private IntArrayList pretty_col_size = new IntArrayList();
 
+    // Whether the table has headers (for pretty-printing)
+    private boolean pretty_headers = false;
+
+    private static final byte MODE_NULL = 0;
+    private static final byte MODE_INT = 1;
+    private static final byte MODE_FLOAT = 2;
+    private static final byte MODE_STR = 3;
 
     public static TableArray emptyTableArray() {
         return new TableArray();
     }
 
-    public static TableArray load(InputStream in) {
-        return emptyTableArray();
-    }
-
-
-    public static TableArray zeros(int r, int c) {
-        return new TableArray();
-    }
-
-    public static TableArray ones(int r, int c) {
-        return new TableArray();
-    }
-
-    public static TableArray full(int r, int c, float v) {
-        return new TableArray();
-    }
-
-    public static TableArray full(int r, int c, String v) {
-        return new TableArray();
-    }
-
-    public static TableArray full(int r, int c, int v) {
-        return new TableArray();
-    }
-
-    public static TableArray fromCSV(InputStream stream, String delimiter) {
+    /**
+     * Reads CSV data from an InputStream
+     *
+     * @param stream  data source
+     * @param headers read headers
+     * @return the data
+     */
+    public static TableArray fromCSV(InputStream stream, boolean headers) {
         try (BufferedReader r = new BufferedReader(new InputStreamReader(stream))) {
             List<String[]> data = new ArrayList<>();
             int cols = -1;
@@ -108,39 +71,41 @@ public class TableArray {
                 if (line == null) {
                     break;
                 }
-                String[] sp = line.split(delimiter);
+                String[] sp = TableUtil.split(line);
                 if (cols == -1) {
                     cols = sp.length;
                 } else if (sp.length > cols) {
-                    throw new IllegalStateException("More value headers than ");
+                    throw new IllegalStateException("More value than headers");
                 }
                 data.add(sp);
             }
-            // no data
+            TableArray array = emptyTableArray();
             if (data.isEmpty()) {
-                return emptyTableArray();
-            }
-            TableArray array = new TableArray();
-            array.cols = cols;
-            array.rows = data.size();
-            array.ensureSizeFromDimension();
-            // title row
-            array.str.addAll(Arrays.asList(data.get(0)));
-            for (int i = 0; i < cols; i++) {
-                array.mode.value[i] = MODE_EXISTS_NA | MODE_STR_NUM | MODE_BOLD;
-            }
-            // only headers; no data
-            if (data.size() == 1) {
-//                array.validate();
                 return array;
             }
-            for (int i = 1; i < data.size(); i++) {
+            array.cols = cols;
+            array.ensureSizeFromDimension(data.size());
+
+            int startIndex = 0;
+            if (headers) {
+                // title row
+                String[] titles = data.get(0);
+                for (int i = 0; i < cols; i++) {
+                    array.mode.value[i] = MODE_STR;
+                    array.pretty_col_size.value[i] = TableUtil.headerWidth(titles[i]);
+                    array.str.add(titles[i]);
+                }
+                array.pretty_headers = true;
+                startIndex = 1;
+            }
+            for (int i = startIndex; i < data.size(); i++) {
                 String[] row = data.get(i);
                 for (int j = 0; j < array.cols; j++) {
                     int ai = i * array.cols + j;
-                    if (j > row.length) {
+                    if (j >= row.length) {
                         array.mode.value[ai] = 0;
                         array.str.add(null);
+                        continue;
                     }
                     String v = row[j].strip();
                     if (v.isEmpty()) {
@@ -150,21 +115,64 @@ public class TableArray {
                         try {
                             float fv = Float.parseFloat(v);
                             array.num.value[ai] = fv;
-                            if (fv % 1 == 0) { // check for integer
-                                array.mode.value[ai] = MODE_EXISTS_NA | MODE_INT_FLOAT;
-                                array.str.add(Integer.toString((int) fv));
+                            // check for integer state
+                            String f;
+                            if (fv % 1 == 0 && fv >= 0 && fv < 65536) {
+                                array.mode.value[ai] = MODE_INT;
+                                f = Integer.toString((int) fv);
                             } else {
-                                array.mode.value[ai] = MODE_EXISTS_NA;
-                                array.str.add(Float.toString(fv));
+                                array.mode.value[ai] = MODE_FLOAT;
+                                f = Float.toString(fv);
                             }
+                            array.pretty_col_size.value[j] = Math
+                                    .max(array.pretty_col_size.value[j], f.length());
+                            array.str.add(f);
                         } catch (NumberFormatException e) {
-                            array.mode.value[ai] = MODE_EXISTS_NA | MODE_STR_NUM;
+                            array.mode.value[ai] = MODE_STR;
+                            array.pretty_col_size.value[j] = Math
+                                    .max(array.pretty_col_size.value[j], v.length());
                             array.str.add(v);
                         }
                     }
                 }
             }
-//            array.validate();
+            return array;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return emptyTableArray();
+        }
+    }
+
+    /**
+     * Extracts data from a file
+     *
+     * @param file The file path. Must be a real file. If an InputStream is used
+     *             it must be saved to a temporary file before using this
+     * @return the data
+     */
+    public static TableArray fromKBT(File file) {
+        try (ZipFile zip = new ZipFile(file)) {
+            TableArray array = emptyTableArray();
+            ZipEntry modeEntry = zip.getEntry("array/mode");
+            InputStream modeIn = zip.getInputStream(modeEntry);
+            array.mode.value = modeIn.readAllBytes();
+            array.mode.length = array.mode.value.length;
+            array.len = array.mode.length;
+            ZipEntry numEntry = zip.getEntry("array/num");
+            DataInputStream numIn = new DataInputStream(zip.getInputStream(numEntry));
+            array.num.resize(array.len);
+            for (int i = 0; i < array.len; i++) {
+                int m = array.mode.value[i];
+                if (m == MODE_INT || m == MODE_FLOAT) {
+                    array.num.value[i] = numIn.readFloat();
+                }
+            }
+            ZipEntry strEntry = zip.getEntry("array/str");
+            BufferedReader strIn = new BufferedReader(new InputStreamReader(zip.getInputStream(numEntry)));
+            for (int i = 0; i < array.len; i++) {
+                int m = array.mode.value[i];
+                array.str.add(m == MODE_STR ? strIn.readLine() : null);
+            }
             return array;
         } catch (IOException e) {
             e.printStackTrace();
@@ -175,10 +183,11 @@ public class TableArray {
     private TableArray() {
     }
 
-    private void ensureSizeFromDimension() {
+    private void ensureSizeFromDimension(int rows) {
         len = rows * cols;
         mode.resize(len);
         num.resize(len);
+        pretty_col_size.resize(len);
     }
 
     private int ix(int row, int col) {
@@ -192,36 +201,11 @@ public class TableArray {
         return len;
     }
 
-    public void reshape(int rows, int cols) {
-        if (!(rows * cols == len)) {
-            throw new IllegalArgumentException();
-        }
-
-        this.rows = rows;
-        this.cols = cols;
-    }
-
-    public boolean isNA(int row, int col) {
-        return (mode.value[ix(row, col)] & MODE_EXISTS_NA) == 0;
-    }
-
-    public boolean isString(int row, int col) {
-        return (mode.value[ix(row, col)] & MODE_STR_NUM) != 0;
-    }
-
-    public boolean isNumber(int row, int col) {
-        return (mode.value[ix(row, col)] & MODE_STR_NUM) == 0;
-    }
-
-    public Iterator<String> stringIterator() {
-        return str.iterator();
-    }
-
     public double getAverage() {
         double sum = 0.0;
         double count = 0.0;
         for (int i = 0; i < len; i++) {
-            if ((mode.value[i] & MODE_STR_NUM) == 0 && (mode.value[i] & MODE_EXISTS_NA) == 1) {
+            if (mode.value[i] == MODE_INT || mode.value[i] == MODE_FLOAT) {
                 sum += num.value[i];
                 count++;
             }
@@ -229,29 +213,60 @@ public class TableArray {
         return sum / count;
     }
 
-    public void put(int row, int col, double number) {
-        int i = ix(row, col);
-        mode.value[i] = MODE_EXISTS_NA;
-        invalidity++;
-        num.value[i] = (float) number;
-    }
-
-    public void delimitToStream(OutputStream stream, String delimiter, boolean prettyPrint) {
+    public void delimitToStream(OutputStream stream,
+                                String delimiter,
+                                boolean prettyPrint) {
+        boolean isNum = false;
+        int startRow;
+        if (pretty_headers) {
+            startRow = 1;
+        } else {
+            startRow = 0;
+        }
         try (BufferedWriter w = new BufferedWriter(new OutputStreamWriter(stream))) {
-            for (int i = 0; i < rows; i++) {
+            for (int i = startRow; i < (len / cols); i++) {
+                if (prettyPrint) {
+                    if (pretty_headers && (i - startRow) % 100 == 0) {
+                        w.write(getPrettyHeaders());
+                    }
+                    w.write("\033[37m" + TableUtil.formatInt(i, 4) + "\033[0m\t");
+                }
                 for (int j = 0; j < cols; j++) {
                     int ai = i * cols + j;
                     int m = mode.value[ai];
-                    if ((m & MODE_EXISTS_NA) != 0) {
-                        if ((m & MODE_STR_NUM) == 0) {
-                            if ((m & MODE_INT_FLOAT) == 0) {
-                                w.write(Float.toString(num.value[ai]));
+                    int padding = pretty_col_size.value[j];
+                    if (m != MODE_NULL) {
+                        if (m == MODE_INT || m == MODE_FLOAT) {
+                            float f = num.value[ai];
+                            if (prettyPrint) {
+                                isNum = true;
+                                w.write("\033[34m");
+                            }
+                            if (m == MODE_FLOAT) {
+                                w.write(prettyPrint ? TableUtil
+                                        .formatFloat(f, padding) : Float.toString(f));
                             } else {
-                                w.write(Integer.toString((int) num.value[ai]));
+                                w.write(prettyPrint ? TableUtil
+                                        .formatInt(f, padding) : Integer.toString((int) f));
                             }
                         } else {
-                            w.write(str.get(i * cols + j));
+                            String s = str.get(ai);
+                            if (prettyPrint) {
+                                if (isNum) {
+                                    isNum = false;
+                                    w.write("\033[0m");
+                                }
+                                w.write(TableUtil.formatString(s, padding));
+                            } else {
+                                w.write(s);
+                            }
                         }
+                    } else if (prettyPrint) {
+                        if (isNum) {
+                            isNum = false;
+                            w.write("\033[0m");
+                        }
+                        w.write(" ".repeat(padding));
                     }
                     w.write(delimiter);
                 }
@@ -263,9 +278,106 @@ public class TableArray {
         }
     }
 
+    public String getPrettyHeaders() {
+        StringBuilder b = new StringBuilder();
+        b.append("\033[0m");
+        b.append("    \t");
+        for (int i = 0; i < cols; i++) {
+            int colSize = pretty_col_size.value[i];
+            b.append("=".repeat(colSize));
+            b.append("\t");
+        }
+        b.append("\n");
+        b.append("\033[35m");
+        int maxHeight = 1;
+        List<String[]> headers = new ArrayList<>();
+        for (int i = 0; i < cols; i++) {
+            String[] sp = str.get(i).split(" ");
+            maxHeight = Math.max(maxHeight, sp.length);
+            headers.add(sp);
+        }
+        for (int i = 0; i < maxHeight; i++) {
+            b.append("    \t");
+            for (int j = 0; j < headers.size(); j++) {
+                int w = pretty_col_size.value[j];
+                String[] sp = headers.get(j);
+                int e = i - (maxHeight - sp.length);
+                if (e < 0) {
+                    b.append(" ".repeat(w));
+                } else {
+                    b.append(TableUtil.formatString(sp[e], w));
+                }
+                b.append("\t");
+            }
+            b.append("\n");
+        }
+        b.append("\033[0m");
+        b.append("    \t");
+        for (int i = 0; i < cols; i++) {
+            int colSize = pretty_col_size.value[i];
+            b.append("=".repeat(colSize));
+            b.append("\t");
+        }
+        b.append("\n");
+        return b.toString();
+    }
+
+    public void toKBT(OutputStream stream) {
+        try (ZipOutputStream out = new ZipOutputStream(stream)) {
+            out.setMethod(ZipEntry.DEFLATED);
+            out.setLevel(9);
+            ZipEntry modeEntry = new ZipEntry("array/mode");
+            out.putNextEntry(modeEntry);
+            out.write(mode.value, 0, len);
+            out.closeEntry();
+            ZipEntry numEntry = new ZipEntry("array/num");
+            out.putNextEntry(numEntry);
+            DataOutputStream numStream = new DataOutputStream(out);
+            for (int i = 0; i < len; i++) {
+                int m = mode.value[i];
+                float v = num.value[i];
+                if (m == MODE_INT || m == MODE_FLOAT) {
+                    if (m == MODE_FLOAT) {
+                        numStream.writeFloat(v);
+                    } else {
+                        numStream.writeShort((int) v);
+                    }
+                }
+            }
+            numStream.flush();
+            out.closeEntry();
+            ZipEntry strEntry = new ZipEntry("array/str.txt");
+            out.putNextEntry(strEntry);
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out), 64);
+            for (int i = 0; i < len; i++) {
+                int m = mode.value[i];
+                if (m == MODE_STR) {
+                    String s = str.get(i);
+                    writer.write(s);
+                    writer.newLine();
+                }
+            }
+            writer.flush();
+            out.closeEntry();
+            header.put("columns", String.valueOf(cols));
+            ZipEntry headerEntry = new ZipEntry("array/header.txt");
+            out.putNextEntry(headerEntry);
+            BufferedWriter headerWriter = new BufferedWriter(new OutputStreamWriter(out), 64);
+            for (Map.Entry<String, String> entry : header.entrySet()) {
+                headerWriter.write(entry.getKey());
+                headerWriter.write('=');
+                headerWriter.write(entry.getValue());
+            }
+            headerWriter.flush();
+            out.closeEntry();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void applyFormulas(FormulaProvider provider) {
-        if (ref == null) {
-            ref = new HashMap<>();
+        if (provider != last_provider) {
+            last_provider = provider;
         }
     }
 
@@ -278,16 +390,17 @@ public class TableArray {
             int bi = b * cols + col;
             int av = mode.value[ai];
             int bv = mode.value[bi];
-            if ((av & MODE_EXISTS_NA) == 0) {
-                return (bv & MODE_EXISTS_NA) == 0 ? 0 : 1;
+            if (av == MODE_NULL) {
+                return bv == MODE_NULL ? 0 : 1;
             } else {
-                if ((bv & MODE_EXISTS_NA) == 0) {
+                if (bv == MODE_NULL) {
                     return -1;
                 } else {
-                    if ((av & MODE_STR_NUM) == 0) {
-                        return (bv & MODE_STR_NUM) == 0 ? Float.compare(num.value[ai], num.value[bi]) : 1;
+                    if (av == MODE_INT || av == MODE_FLOAT) {
+                        return bv == MODE_INT || bv == MODE_FLOAT ? Float
+                                .compare(num.value[ai], num.value[bi]) : 1;
                     } else {
-                        return (bv & MODE_STR_NUM) == 0 ? -1 : NaturalOrderComparator
+                        return bv == MODE_INT || bv == MODE_FLOAT ? -1 : NaturalOrderComparator
                                 .compareNaturally(str.get(ai), str.get(bi));
                     }
                 }
@@ -304,17 +417,18 @@ public class TableArray {
             int bi = b * cols + col;
             int av = mode.value[ai];
             int bv = mode.value[bi];
-            if ((av & MODE_EXISTS_NA) == 0) {
-                return (bv & MODE_EXISTS_NA) == 0 ? 0 : 1;
+            if (av == MODE_NULL) {
+                return bv == MODE_NULL ? 0 : 1;
             } else {
-                if ((bv & MODE_EXISTS_NA) == 0) {
+                if (bv == MODE_NULL) {
                     return -1;
                 } else {
-                    if ((av & MODE_STR_NUM) == 0) {
-                        return (bv & MODE_STR_NUM) == 0 ? Float.compare(num.value[ai], num.value[bi]) : 1;
+                    if (av == MODE_INT || av == MODE_FLOAT) {
+                        return bv == MODE_INT || bv == MODE_FLOAT ? Float
+                                .compare(num.value[bi], num.value[ai]) : 1;
                     } else {
-                        return (bv & MODE_STR_NUM) == 0 ? -1 : NaturalOrderComparator
-                                .compareNaturally(str.get(ai), str.get(bi));
+                        return bv == MODE_INT || bv == MODE_FLOAT ? -1 : NaturalOrderComparator
+                                .compareNaturally(str.get(bi), str.get(ai));
                     }
                 }
             }
@@ -327,6 +441,7 @@ public class TableArray {
         delimitToStream(o, "\t", true);
         return o.toString();
     }
+
 
     public void debug() {
         System.out.println(str);

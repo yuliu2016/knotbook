@@ -27,11 +27,11 @@ package kb.service.api.array;
 import java.util.Comparator;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class NaturalOrderComparator implements Comparator {
+public class NaturalOrderComparator implements Comparator<String> {
 
     @Override
-    public int compare(Object o1, Object o2) {
-        return compareNaturally(o1.toString(), o2.toString());
+    public int compare(String o1, String o2) {
+        return compareNaturally(o1, o2);
     }
 
     static int compareRight(String a, String b) {

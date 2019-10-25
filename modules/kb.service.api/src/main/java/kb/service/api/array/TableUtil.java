@@ -1,6 +1,9 @@
 package kb.service.api.array;
 
-@SuppressWarnings("unused")
+import java.util.ArrayList;
+import java.util.List;
+
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class TableUtil {
     public static String columnIndexToString(int col) {
         if (col < 0) {
@@ -31,6 +34,61 @@ public class TableUtil {
                 arr.appendUnique(reference.getIndex(i));
             }
         }
-        return new MultiCellReference(arr.value);
+        return new MultiCellReference(arr.value); // todo check size
+    }
+
+    public static String formatString(String s, int p) {
+        return s + " ".repeat(Math.max(0, p - s.length()));
+    }
+
+    public static String formatFloat(float f, int p) {
+        String n = Float.toString(f);
+        return " ".repeat(Math.max(0, p - n.length())) + n;
+    }
+
+    public static String formatInt(float f, int p) {
+        String n = Integer.toString((int) f);
+        return " ".repeat(Math.max(0, p - n.length())) + n;
+    }
+
+    public static int headerWidth(String s) {
+        String[] words = s.split(" ");
+        int max = 0;
+        for (String word : words) {
+            if (word.length() > max) {
+                max = word.length();
+            }
+        }
+        return max;
+    }
+
+    public static String[] split(String s) {
+        List<String> sp = new ArrayList<>();
+        int i = 0;
+        boolean quotes = false;
+        while (i < s.length()) {
+            int j = i;
+            while (j < s.length()) {
+                char ch = s.charAt(j);
+                if (ch == '\"') {
+                    quotes = !quotes;
+                }
+                if (ch == ',' && !quotes) {
+                    break;
+                }
+                j++;
+            }
+
+            String sub = s.substring(i, j);
+            if (sub.startsWith("\"")) {
+                sub = sub.substring(1);
+            }
+            if (sub.endsWith("\"")) {
+                sub = sub.substring(0, sub.length() - 1);
+            }
+            sp.add(sub);
+            i = j + 1;
+        }
+        return sp.toArray(new String[0]);
     }
 }

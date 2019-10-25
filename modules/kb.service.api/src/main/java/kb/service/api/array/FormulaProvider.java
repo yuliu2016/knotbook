@@ -1,5 +1,6 @@
 package kb.service.api.array;
 
+@SuppressWarnings("unused")
 public interface FormulaProvider {
 
     Reference[] getReferences(String formula);
