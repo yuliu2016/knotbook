@@ -97,7 +97,7 @@ class WindowBase {
 
 
     val docLabel = label {
-        text = "~/Documents/Data/knotbook.csv"
+        text = "No Document or Workspace"
         graphic = fontIcon(MaterialDesign.MDI_FOLDER_MULTIPLE_OUTLINE, 14)
     }
 

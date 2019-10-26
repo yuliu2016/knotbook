@@ -7,6 +7,6 @@ public class KnotBookABC implements ABC {
     @Override
     public void launch(String[] args) {
         JVMInstance.setArgs(args);
-        KnotBook.launch();
+        KnotBook.getKnotBook().launch();
     }
 }

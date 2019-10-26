@@ -1,8 +1,8 @@
+@file:Suppress("DEPRECATION")
+
 package kb.tool.path.planner
 
 import ca.warp7.frc.drive.DifferentialDriveModel
-import ca.warp7.frc.trajectory.TrajectoryState
-import ca.warp7.frc.trajectory.generateTrajectory
 import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.feet
 import ca.warp7.frc.geometry.*
@@ -11,6 +11,8 @@ import ca.warp7.frc.path.QuinticSegment2D
 import ca.warp7.frc.path.parameterized
 import ca.warp7.frc.path.quinticSplinesOf
 import ca.warp7.frc.path.sumDCurvature2
+import ca.warp7.frc.trajectory.TrajectoryState
+import ca.warp7.frc.trajectory.generateTrajectory
 import javafx.event.EventHandler
 import javafx.scene.canvas.Canvas
 import javafx.scene.image.Image

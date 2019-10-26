@@ -4,15 +4,19 @@ import kb.service.api.MetaService;
 import kb.service.api.Service;
 import kb.service.api.ServiceContext;
 import kb.service.api.ServiceMetadata;
+import kb.service.api.application.ApplicationProps;
 import kb.service.api.application.ApplicationService;
 import kb.service.api.application.JVMInstance;
+import kb.service.api.application.ServiceManager;
+import kb.service.api.ui.TextEditor;
 import kb.service.api.ui.TextEditorService;
+import kotlin.NotImplementedError;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 @SuppressWarnings("unused")
-class KnotBook {
+class KnotBook implements ServiceManager {
 
     private static class ResolvedServices<T extends MetaService> implements Iterable<T> {
         Class<T> theClass;
@@ -39,6 +43,25 @@ class KnotBook {
         }
     }
 
+    private static class MetadataServiceWrapper implements Service {
+
+        private ServiceMetadata metadata;
+
+        MetadataServiceWrapper(ServiceMetadata metadata) {
+            this.metadata = metadata;
+        }
+
+        @Override
+        public void launch(@NotNull ServiceContext context) {
+        }
+
+        @NotNull
+        @Override
+        public ServiceMetadata getMetadata() {
+            return metadata;
+        }
+    }
+
     private static <T extends MetaService> ResolvedServices<T> loadServices(Class<T> service) {
         List<T> providers = new ArrayList<>();
         for (T provider : ServiceLoader.load(service)) {
@@ -48,47 +71,41 @@ class KnotBook {
     }
 
 
+    private static Service serviceForApplication(ApplicationService app) {
+        return new MetadataServiceWrapper(app.getMetadata());
+    }
+
+
+    private KnotBook() {
+    }
+
+    // KnotBook instance
+    private static final KnotBook theKnotBook = new KnotBook();
+
+    static KnotBook getKnotBook() {
+        return theKnotBook;
+    }
+
     // application
-    private static final ResolvedServices<ApplicationService> applicationServices =
+    private final ResolvedServices<ApplicationService> applicationServices =
             loadServices(ApplicationService.class);
 
     // All extensions
-    private static final ResolvedServices<Service> services =
+    private final ResolvedServices<Service> services =
             loadServices(Service.class);
 
     // Text Editor implementation
-    private static final ResolvedServices<TextEditorService> textEditors =
+    private final ResolvedServices<TextEditorService> textEditors =
             loadServices(TextEditorService.class);
 
     // App Registry
-    private static final Registry registry = new Registry(new UserFile());
+    private final Registry registry = new Registry(new UserFile());
 
-    // App Context
-    private static final ServiceManagerImpl manager = new ServiceManagerImpl(
-            services.theServices,
-            textEditors.theServices,
-            registry
-    );
-
-    private static Service serviceForApplication(ApplicationService app) {
-        return new Service() {
-            @Override
-            public void launch(@NotNull ServiceContext context) {
-            }
-
-            @NotNull
-            @Override
-            public ServiceMetadata getMetadata() {
-                return app.getMetadata();
-            }
-        };
+    private ServiceContext contextForService(Service service, ApplicationService app) {
+        return new ServiceContextImpl(service, theKnotBook, app);
     }
 
-    private static ServiceContext contextForService(Service service, ApplicationService app) {
-        return new ServiceContextImpl(service, manager, app);
-    }
-
-    static void launch() {
+    void launch() {
         System.out.println(Arrays.toString(JVMInstance.getArgs()));
 
         applicationServices.print();
@@ -97,11 +114,36 @@ class KnotBook {
 
         if (!applicationServices.theServices.isEmpty()) {
             ApplicationService app = applicationServices.theServices.get(0);
-            app.launch(manager, contextForService(serviceForApplication(app), app));
+            app.launch(theKnotBook, contextForService(serviceForApplication(app), app));
 
             for (Service service : services) {
                 service.launch(contextForService(service, app));
             }
         }
+    }
+
+    @NotNull
+    @Override
+    public ApplicationProps getProps() {
+        return registry;
+    }
+
+    @NotNull
+    @Override
+    public List<Service> getServices() {
+        return services.theServices;
+    }
+
+    @NotNull
+    @Override
+    public String getVersion() {
+        return "3.1.0-alpha";
+    }
+
+    TextEditor createTextEditor() {
+        if (!textEditors.theServices.isEmpty()) {
+            return textEditors.theServices.get(0).create();
+        }
+        throw new NotImplementedError();
     }
 }

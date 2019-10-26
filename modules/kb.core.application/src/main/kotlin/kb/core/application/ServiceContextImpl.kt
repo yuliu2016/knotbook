@@ -8,9 +8,9 @@ import kb.service.api.ui.CommandManager
 import kb.service.api.ui.Notification
 import kb.service.api.ui.TextEditor
 
-class ServiceContextImpl(
+internal class ServiceContextImpl(
         private val service: Service,
-        private val manager: ServiceManagerImpl,
+        private val knot_book: KnotBook,
         private val application: ApplicationService
 ) : ServiceContext {
     override fun getService(): Service {
@@ -18,11 +18,11 @@ class ServiceContextImpl(
     }
 
     override fun getProps(): ServiceProps {
-        return manager.props.getProps(service.metadata.packageName)
+        return knot_book.props.getProps(service.metadata.packageName)
     }
 
     override fun createTextEditor(): TextEditor {
-        return manager.createTextEditor()
+        return knot_book.createTextEditor()
     }
 
     override fun createNotification(): Notification {

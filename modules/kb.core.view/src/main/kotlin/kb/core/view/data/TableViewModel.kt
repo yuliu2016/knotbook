@@ -1,6 +1,5 @@
 package kb.core.view.data
 
-import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.control.ContextMenu
 import javafx.scene.input.KeyCode
@@ -32,7 +31,7 @@ class TableViewModel(private val df: DataFrame) {
     private fun toGrid(): Grid {
         val grid = GridBase(df.nrow, df.ncol)
         grid.rows.addAll(df.rows.mapIndexed { i, row ->
-            FXCollections.observableList(row.values.mapIndexed { j, value ->
+            row.values.mapIndexed { j, value ->
                 if (value is Double) {
                     SpreadsheetCellType.STRING.createCell(i, j,
                             1, 1, decimalFormat.format(value))
@@ -40,7 +39,7 @@ class TableViewModel(private val df: DataFrame) {
                     SpreadsheetCellType.STRING.createCell(i, j,
                             1, 1, value?.toString() ?: "")
                 }
-            })
+            }.observable()
         })
         grid.columnHeaders.addAll(df.cols.map { it.name })
         return grid

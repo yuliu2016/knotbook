@@ -3,25 +3,33 @@ package kb.core.view
 import javafx.application.Platform
 import javafx.beans.InvalidationListener
 import javafx.beans.property.SimpleStringProperty
+import javafx.geometry.Insets
 import javafx.geometry.Orientation
+import javafx.geometry.Pos
 import javafx.scene.control.Menu
+import javafx.scene.effect.DropShadow
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
+import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
+import javafx.stage.Popup
 import kb.core.fx.*
+import kb.core.icon.fontIcon
 import kb.core.icon.icon
 import kb.core.view.app.Singleton
 import kb.core.view.app.WindowBase
+import kb.service.api.array.TableArray
 import kb.service.api.array.TableUtil
 import org.controlsfx.control.spreadsheet.GridBase
 import org.controlsfx.control.spreadsheet.SpreadsheetView
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
-import java.util.*
+import java.io.FileInputStream
+import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
 
-@Suppress("MemberVisibilityCanBePrivate")
+@Suppress("MemberVisibilityCanBePrivate", "DuplicatedCode")
 class DataView {
 
     private val base = WindowBase()
@@ -30,13 +38,14 @@ class DataView {
         menu {
             name("File")
             modify {
+
                 item {
-                    name("Open Folder")
+                    name("Set Workspace")
                     icon(MDI_FOLDER_OUTLINE, 14)
-                    shortcut(KeyCode.O, control = true)
+                    shortcut(KeyCode.O, control = true, shift = true)
                     action {
                         val fc = FileChooser()
-                        fc.title = "Open Folder"
+                        fc.title = "Open Workspace"
                         fc.showOpenDialog(base.stage)
                     }
                 }
@@ -44,21 +53,53 @@ class DataView {
                     name("Open Recent")
                 }
                 item {
-                    name("Close Folder")
-                }
-                separator()
-                item {
-                    name("Open Table from File")
+                    name("New Window")
+                    shortcut(KeyCode.N, control = true)
                     action {
-                        val fc = FileChooser()
-                        fc.title = "Open Table from File"
-                        fc.showOpenDialog(base.stage)
+                        DataView().also { dv ->
+                            dv.base.stage.x = base.stage.x + 48.0
+                            dv.base.stage.y = base.stage.y + 36.0
+                            dv.show()
+                        }
                     }
                 }
                 item {
-                    name("Create Empty Table")
+                    name("Close Window")
+                    shortcut(KeyCode.W, control = true)
+                    action {
+                        base.stage.close()
+                    }
+                }
+                separator()
+                item {
+                    name("New Empty Table")
                     shortcut(KeyCode.T, control = true)
                     icon(MDI_PLUS, 14)
+                }
+                item {
+                    name("Import Table")
+                    icon(MDI_FILE_IMPORT, 14)
+                    shortcut(KeyCode.O, control = true)
+                    action {
+                        val fc = FileChooser()
+                        fc.title = "Open Table from File"
+                        val f = fc.showOpenDialog(base.stage)
+                        if (f != null && f.extension == "csv") {
+                            base.docLabel.text = "Loading"
+                            thread {
+                                try {
+                                    val a = TableArray.fromCSV(FileInputStream(f), true)
+                                    runOnFxThread {
+                                        spreadsheet.grid = a.toGrid()
+                                        spreadsheet.fixedRows.setAll(0)
+                                        base.docLabel.text = f.absolutePath
+                                    }
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            }
+                        }
+                    }
                 }
                 item {
                     name("Rename Table")
@@ -80,21 +121,17 @@ class DataView {
         menu {
             name("Edit")
             modify {
-
                 item {
                     name("Undo")
                     shortcut(KeyCode.Z, control = true)
                     icon(MDI_UNDO, 14)
                 }
-
                 item {
                     name("Redo")
                     shortcut(KeyCode.Z, control = true, shift = true)
                     icon(MDI_REDO, 14)
                 }
-
                 separator()
-
                 item {
                     name("Cut")
                     shortcut(KeyCode.X, control = true)
@@ -121,8 +158,14 @@ class DataView {
                 }
                 item {
                     name("Delete")
+                    shortcut(KeyCode.DELETE)
                 }
                 separator()
+                item {
+                    name("Edit Cell")
+                    icon(MDI_TABLE_EDIT, 14)
+                    shortcut(KeyCode.BACK_QUOTE, control = true)
+                }
                 item {
                     name("Find and Replace")
                     shortcut(KeyCode.F, control = true)
@@ -131,10 +174,12 @@ class DataView {
                 item {
                     name("Select All")
                     shortcut(KeyCode.A, control = true)
+                    action { spreadsheet.selectionModel.selectAll() }
                 }
                 item {
                     name("Deselect All")
                     shortcut(KeyCode.A, control = true, shift = true)
+                    action { spreadsheet.selectionModel.clearSelection() }
                 }
             }
         }
@@ -148,8 +193,9 @@ class DataView {
                     action { base.showOptionBarPrototype() }
                 }
                 item {
-                    name("Switch To")
-                    shortcut(KeyCode.TAB, control = true)
+                    name("Navigate Workspace")
+                    shortcut(KeyCode.TAB, control = true, shift = true)
+                    action { hi() }
                 }
                 separator()
                 item {
@@ -162,23 +208,6 @@ class DataView {
                     name("Toggle Full Screen")
                     shortcut(KeyCode.F11)
                     action { base.toggleFullScreen() }
-                }
-                separator()
-                item {
-                    name("Open in New Window")
-                    shortcut(KeyCode.N, control = true)
-                    action {
-                        DataView().also { dv ->
-                            dv.base.stage.x = base.stage.x + 48.0
-                            dv.base.stage.y = base.stage.y + 36.0
-                            dv.show()
-                        }
-                    }
-                }
-                item {
-                    name("Close Current Table")
-                    shortcut(KeyCode.W, control = true, shift = true)
-                    action { base.layout.center = null }
                 }
                 separator()
                 item {
@@ -202,15 +231,42 @@ class DataView {
         }
     }
 
-    private val colList = listOf(
-            "Team", "Match", "Scout", "Red Alliance", "Blue Alliance", "Starting Level", "Hatches", "Cargo", "Climb"
-    )
+    private fun hi() {
+        val a = Popup()
+        a.content.add(vbox {
+
+            padding = Insets(8.0)
+            effect = DropShadow()
+            style = "-fx-background-color: rgba(255,255,255, 0.95)"
+            lb("Multi-Team Interface")
+            lb("Match Schedule")
+            lb("Raw Data")
+            lb("Team Rankings")
+            lb("Merged Data")
+        })
+        a.isAutoHide = true
+        a.x = base.stage.x + 20
+        a.y = base.stage.y + 40
+        a.show(base.stage)
+    }
+
+    private fun VBox.lb(s: String) {
+        add(hbox {
+            align(Pos.CENTER_LEFT)
+            add(fontIcon(MDI_CHEVRON_RIGHT, 18))
+            spacing = 4.0
+            add(label {
+                text = s
+//                style = "-fx-font-size: 18"
+            })
+        })
+    }
 
     val zoomText = SimpleStringProperty("100%")
     val themeText = SimpleStringProperty("Light")
     val selectionText = SimpleStringProperty("None")
 
-    private val spreadsheet = SpreadsheetView().apply {
+    private val spreadsheet = SpreadsheetView(GridBase(0, 0)).apply {
         selectionModel.selectedCells.addListener(InvalidationListener {
             selectionText.value = getRange()
         })
@@ -220,6 +276,17 @@ class DataView {
         hgrow()
         contextMenu = contextMenu {
             modify {
+                item {
+                    name("Undo")
+                    shortcut(KeyCode.Z, control = true)
+                    icon(MDI_UNDO, 14)
+                }
+                item {
+                    name("Redo")
+                    shortcut(KeyCode.Z, control = true, shift = true)
+                    icon(MDI_REDO, 14)
+                }
+                separator()
                 item {
                     shortcut(KeyCode.X, control = true)
                     name("Cut")
@@ -244,46 +311,27 @@ class DataView {
                     name("Paste Special")
                 }
                 item {
+                    shortcut(KeyCode.DELETE)
                     name("Delete")
                 }
                 separator()
                 item {
+                    name("Edit Cell")
+                    icon(MDI_TABLE_EDIT, 14)
+                    shortcut(KeyCode.BACK_QUOTE, control = true)
+                }
+                item {
                     shortcut(KeyCode.F, control = true)
                     name("Find and Replace")
                 }
-                separator()
-                item {
-                    shortcut(KeyCode.PLUS, control = true)
-                    name("Zoom In")
-                    icon(MDI_MAGNIFY_PLUS, 14)
-                }
-                item {
-                    shortcut(KeyCode.MINUS, control = true)
-                    name("Zoom Out")
-                    icon(MDI_MAGNIFY_MINUS, 14)
-                }
-                item {
-                    shortcut(KeyCode.DIGIT0, control = true)
-                    name("Reset Zoom")
-                }
             }
         }
-        val a = grid as GridBase
-        a.setRowHeightCallback {
-            if (it == 0) 24.0 else 20.0
-        }
-        a.setResizableRows(BitSet())
-        grid.rows.first().forEachIndexed { i, c ->
-            c.item = if (i < colList.size) colList[i] else "Toto"
-            c.style = "-fx-alignment: CENTER; -fx-background-color: rgba(240,240,240)"
-        }
-        fixedRows.add(0)
+
         Platform.runLater {
             columns.forEach {
                 it.minWidth = 42.0
             }
         }
-
     }
 
 

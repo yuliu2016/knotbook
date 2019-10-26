@@ -14,7 +14,6 @@ import java.util.zip.ZipOutputStream;
 public class TableArray {
 
     private int cols;
-    private int rows;
     private int len;
 
     // Cell-wise modes
@@ -190,15 +189,37 @@ public class TableArray {
         pretty_col_size.resize(len);
     }
 
-    private int ix(int row, int col) {
-        if (row < 0 || row > rows || col < 0 || col > cols) {
-            throw new IndexOutOfBoundsException();
-        }
-        return row * cols + col;
+
+    public int getCols() {
+        return cols;
     }
 
     public int getSize() {
         return len;
+    }
+
+    public int getRows() {
+        return (len % cols) == 0 ? len / cols : len / cols + 1;
+    }
+
+    public String get(int row, int col) {
+        int i = row * cols + col;
+        int m = mode.value[i];
+        if (m == MODE_NULL) {
+            return null;
+        } else if (m == MODE_FLOAT) {
+            return Float.toString(num.value[i]);
+        } else if (m == MODE_INT) {
+            return Integer.toString((int) num.value[i]);
+        } else {
+            return str.get(i);
+        }
+    }
+
+    public boolean isNumber(int row, int col) {
+        int i = row * cols + col;
+        int m = mode.value[i];
+        return m == MODE_INT || m == MODE_FLOAT;
     }
 
     public double getAverage() {

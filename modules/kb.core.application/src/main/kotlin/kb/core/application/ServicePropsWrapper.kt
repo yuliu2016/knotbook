@@ -3,7 +3,7 @@ package kb.core.application
 import kb.service.api.ServicePropListener
 import kb.service.api.ServiceProps
 
-class ServicePropsWrapper(private val registry: Registry, private val name: String) : ServiceProps {
+internal class ServicePropsWrapper(private val registry: Registry, private val name: String) : ServiceProps {
 
     private fun String.wrap(): String {
         return "$name/$this"
