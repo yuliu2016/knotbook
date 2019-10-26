@@ -28,6 +28,6 @@ dependencies {
     implementation(project(":kb.core.icon"))
     implementation(project(":kb.core.fx"))
     implementation(kotlin("stdlib"))
-    implementation ("com.github.Team865:FRC-Commons-Kotlin:2019.4.0")
+    implementation("com.github.Team865:FRC-Commons-Kotlin:2019.5.0")
     implementation(group = "org.kordamp.ikonli", name = "ikonli-materialdesign-pack", version = "11.3.4")
 }

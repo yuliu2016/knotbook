@@ -1,4 +1,4 @@
-package kb.core.view.data
+package kb.core.view
 
 enum class SortType {
     Ascending, Descending

@@ -446,9 +446,9 @@ public class TableArray {
                 } else {
                     if (av == MODE_INT || av == MODE_FLOAT) {
                         return bv == MODE_INT || bv == MODE_FLOAT ? Float
-                                .compare(num.value[bi], num.value[ai]) : 1;
+                                .compare(num.value[bi], num.value[ai]) : -1;
                     } else {
-                        return bv == MODE_INT || bv == MODE_FLOAT ? -1 : NaturalOrderComparator
+                        return bv == MODE_INT || bv == MODE_FLOAT ? 1 : NaturalOrderComparator
                                 .compareNaturally(str.get(bi), str.get(ai));
                     }
                 }

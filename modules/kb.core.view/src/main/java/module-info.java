@@ -8,7 +8,6 @@ module kb.core.view {
     requires org.controlsfx.controls;
 
     requires org.kordamp.ikonli.materialdesign;
-    requires krangl;
 
     provides kb.service.api.application.ApplicationService
             with kb.core.view.app.DataApp;

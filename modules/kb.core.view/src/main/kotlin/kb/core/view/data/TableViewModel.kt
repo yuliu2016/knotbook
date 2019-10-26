@@ -1,10 +1,14 @@
 package kb.core.view.data
 
+/*
 import javafx.collections.ObservableList
 import javafx.scene.control.ContextMenu
 import javafx.scene.input.KeyCode
 import kb.core.fx.*
 import kb.core.icon.icon
+import kb.core.view.ColorScale
+import kb.core.view.SortColumn
+import kb.core.view.SortType
 import krangl.*
 import org.controlsfx.control.spreadsheet.Grid
 import org.controlsfx.control.spreadsheet.GridBase
@@ -377,4 +381,4 @@ class TableViewModel(private val df: DataFrame) {
             builder.toString()
         }
     }
-}
+}*/

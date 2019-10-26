@@ -1,4 +1,4 @@
-package kb.core.view.data
+package kb.core.view
 
 data class SortColumn(val sortType: SortType, val index: Int) {
     override fun equals(other: Any?): Boolean {
