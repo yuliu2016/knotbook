@@ -28,6 +28,10 @@ class Server {
             ex.responseBody.use { it.write(response) }
         }
 
-        executor = Executors.newSingleThreadExecutor()
+        executor = Executors.newSingleThreadExecutor {
+            val thread = Executors.defaultThreadFactory().newThread(it)
+            thread.isDaemon = true
+            thread
+        }
     }
 }

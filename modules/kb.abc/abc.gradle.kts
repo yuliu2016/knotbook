@@ -24,9 +24,14 @@ tasks.register("run", ModularJavaExec::class.java) {
     )
 }
 
+tasks.register("cleanJars", Delete::class.java) {
+    dependsOn("jar")
+    delete(File(buildDir, "collected"))
+}
+
 tasks.register("collectJars", Copy::class.java){
     group = "abc"
-    dependsOn("jar")
+    dependsOn("jar", "cleanJars")
     from(configurations.runtimeClasspath) {
         exclude("javafx-*", "kotlin-*", "controlsfx-*", "rsyntaxtextarea-*")
     }

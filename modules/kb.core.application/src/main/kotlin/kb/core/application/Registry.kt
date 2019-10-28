@@ -41,7 +41,7 @@ internal class Registry(private val handle: RegistryHandle) : ApplicationProps {
         return key in map
     }
 
-    private fun save() {
+    fun save() {
         handle.save(joinedText)
     }
 

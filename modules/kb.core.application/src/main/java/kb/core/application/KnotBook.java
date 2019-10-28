@@ -139,6 +139,15 @@ class KnotBook implements ServiceManager {
         return "3.1.0-alpha";
     }
 
+    @Override
+    public void exit() {
+        for (Service service : getServices()) {
+            service.terminate();
+        }
+        registry.save();
+        System.exit(0);
+    }
+
     TextEditor createTextEditor() {
         if (!textEditors.theServices.isEmpty()) {
             return textEditors.theServices.get(0).create();

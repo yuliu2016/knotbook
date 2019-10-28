@@ -10,7 +10,6 @@ import kb.service.api.ServiceContext
 import kb.service.api.application.ServiceManager
 import java.net.InetSocketAddress
 import kotlin.concurrent.thread
-import kotlin.system.exitProcess
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 internal object Singleton {
@@ -129,15 +128,14 @@ internal object Singleton {
         DataView().show()
         Platform.setImplicitExit(false)
         val windows = Window.getWindows()
-        windows.addListener(InvalidationListener {
-            if (windows.isEmpty()) {
-                Platform.runLater {
-                    manager.services.forEach { it.terminate() }
-                    server.server.stop(0)
-                    Platform.exit()
-                    exitProcess(0)
-                }
-            }
-        })
+        windows.addListener(InvalidationListener { if (windows.isEmpty()) exit() })
+    }
+
+    fun exit() {
+        Platform.runLater {
+            server.server.stop(0)
+            Platform.exit()
+            manager.exit()
+        }
     }
 }

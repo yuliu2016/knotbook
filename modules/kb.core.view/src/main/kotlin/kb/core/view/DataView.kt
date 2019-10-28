@@ -27,8 +27,6 @@ import org.controlsfx.control.spreadsheet.GridBase
 import org.controlsfx.control.spreadsheet.SpreadsheetView
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 import java.io.FileInputStream
-import kotlin.concurrent.thread
-import kotlin.system.exitProcess
 
 
 @Suppress("MemberVisibilityCanBePrivate", "DuplicatedCode")
@@ -88,7 +86,7 @@ class DataView {
                         val f = fc.showOpenDialog(base.stage)
                         if (f != null && f.extension == "csv") {
                             base.docLabel.text = "Loading"
-                            thread {
+                            Thread {
                                 try {
                                     val a = TableArray.fromCSV(FileInputStream(f), true)
                                     runOnFxThread {
@@ -99,7 +97,7 @@ class DataView {
                                 } catch (e: Exception) {
                                     e.printStackTrace()
                                 }
-                            }
+                            }.start()
                         }
                     }
                 }
@@ -121,7 +119,7 @@ class DataView {
                 separator()
                 item {
                     name("Exit")
-                    action { exitProcess(0) }
+                    action { Singleton.exit() }
                 }
             }
         }

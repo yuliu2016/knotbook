@@ -7,5 +7,5 @@ dependencies {
     implementation(kotlin("stdlib"))
 
     // JSON Library
-    implementation(group = "com.beust", name = "klaxon", version = "5.0.13")
+    implementation(group = "com.beust", name = "klaxon", version = "5.2")
 }

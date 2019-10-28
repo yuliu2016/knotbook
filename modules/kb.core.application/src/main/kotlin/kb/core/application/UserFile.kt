@@ -10,23 +10,26 @@ internal class UserFile : RegistryHandle {
 
     private val registryFile = File(home, "knotbook.properties")
 
+    private var loaded = ""
 
     override fun load(): String {
         return try {
             registryFile.createNewFile()
-            registryFile.readText()
+            loaded = registryFile.readText()
+            loaded
         } catch (e: IOException) {
             ""
         }
     }
 
-    override fun save(content: String?) {
+    override fun save(content: String) {
         try {
-            registryFile.writeText(content!!)
+            if (content != loaded) {
+                loaded = content
+                registryFile.writeText(content)
+            }
         } catch (e: IOException) {
-
         } catch (e: NullPointerException) {
-
         }
     }
 }
