@@ -14,7 +14,11 @@ fun TableArray.toGrid(): GridBase {
     grid.setResizableRows(BitSet())
     grid.rows.addAll((0 until rows).map { row ->
         (0 until cols).map { col ->
-            SpreadsheetCellType.STRING.createCell(row, col, 1, 1, this.get(row, col))
+            val cell = SpreadsheetCellType.STRING.createCell(row, col, 1, 1, this[row, col])
+            if (this.isNumber(row, col)) {
+                cell.style = "-fx-alignment: CENTER-RIGHT"
+            }
+            cell
         }.observable()
     })
     grid.rows.first().forEachIndexed { _, c ->

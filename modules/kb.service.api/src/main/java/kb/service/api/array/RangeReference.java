@@ -32,6 +32,6 @@ public class RangeReference implements Reference {
 
     @Override
     public int getIndex(int i) {
-        return row * totalCols + col + (1 / width) * totalCols + (i % width);
+        return row * totalCols + col + (i / width) * totalCols + (i % width);
     }
 }

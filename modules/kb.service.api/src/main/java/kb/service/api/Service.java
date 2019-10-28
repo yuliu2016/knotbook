@@ -1,6 +1,5 @@
 package kb.service.api;
 
-import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 public interface Service extends MetaService {
@@ -8,7 +7,7 @@ public interface Service extends MetaService {
     /**
      * Launch the service with a context
      */
-    void launch(@NotNull ServiceContext context);
+    void launch(ServiceContext context);
 
     /**
      * @return Whether this service is available
@@ -32,12 +31,5 @@ public interface Service extends MetaService {
      */
     default boolean terminate() {
         return true;
-    }
-
-    /**
-     * Stops the service forcefully
-     */
-    default void forceTerminate() {
-
     }
 }

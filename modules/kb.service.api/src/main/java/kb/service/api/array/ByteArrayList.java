@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class ByteArrayList {
-    byte[] value = new byte[16];
+    byte[] value = new byte[0];
 
     int length;
 
@@ -39,5 +39,9 @@ public class ByteArrayList {
         }
         System.arraycopy(value, index, value, index + 1, length - index);
         value[index] = f;
+    }
+
+    byte[] copy() {
+        return Arrays.copyOf(value, length);
     }
 }

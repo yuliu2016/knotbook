@@ -5,7 +5,6 @@ import kb.service.api.ui.TextEditorCallback;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -88,7 +87,7 @@ class TextEditorImpl implements TextEditor {
     }
 
     @Override
-    public TextEditor addAction(@NotNull String name, @NotNull TextEditorCallback action) {
+    public TextEditor addAction(String name, TextEditorCallback action) {
         actions.add(new Action(name, action));
         return this;
     }

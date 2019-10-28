@@ -4,6 +4,7 @@ package kb.core.fx
 
 import javafx.scene.canvas.Canvas
 import javafx.scene.control.*
+import javafx.scene.image.ImageView
 import javafx.scene.layout.*
 import javafx.scene.text.TextFlow
 
@@ -76,3 +77,6 @@ inline fun button(builder: Button.() -> Unit): Button = Button().apply(builder)
 
 @FXKtDSL
 inline fun borderPane(builder: BorderPane.() -> Unit): BorderPane = BorderPane().apply(builder)
+
+@FXKtDSL
+inline fun imageView(builder: ImageView.() -> Unit): ImageView = ImageView().apply(builder)

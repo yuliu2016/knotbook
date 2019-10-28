@@ -23,7 +23,7 @@ import java.nio.IntBuffer;
 import java.util.concurrent.atomic.AtomicReference;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class KnotCamera {
+public class FXCamera {
 
     private ReadOnlyObjectWrapper<Image> imageProperty = new ReadOnlyObjectWrapper<>(null);
 
@@ -189,7 +189,6 @@ public class KnotCamera {
                 source = converted;
                 break;
         }
-        // assert(bimg.getType == TYPE_INT_ARGB[_PRE]);
         if (dest != null) {
             int iw = (int) dest.getWidth();
             int ih = (int) dest.getHeight();

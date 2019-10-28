@@ -1,13 +1,14 @@
 package kb.service.api.array;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class TableUtil {
     public static String columnIndexToString(int col) {
         if (col < 0) {
-            return String.valueOf(col);
+            throw new IllegalArgumentException();
         }
         if (col < 26) {
             return String.valueOf((char) (65 + col));
@@ -27,14 +28,30 @@ public class TableUtil {
         return !s.isEmpty() && s.charAt(0) == '=';
     }
 
-    public static Reference arrayReference(Reference[] references) {
+    public static Reference arrayReference(Reference... references) {
         IntArrayList arr = new IntArrayList();
         for (Reference reference : references) {
             for (int i = 0; i < reference.getSize(); i++) {
                 arr.appendUnique(reference.getIndex(i));
             }
         }
-        return new MultiCellReference(arr.value); // todo check size
+        return new MultiCellReference(Arrays.copyOf(arr.value, arr.length));
+    }
+
+    public static boolean referenceEquals(Reference a, Reference b) {
+        IntArrayList ar = new IntArrayList();
+        IntArrayList br = new IntArrayList();
+        for (int i = 0; i < a.getSize(); i++) {
+            ar.append(a.getIndex(i));
+        }
+        for (int i = 0; i < b.getSize(); i++) {
+            br.append(b.getIndex(i));
+        }
+        int[] aa = ar.copy();
+        int[] ba = br.copy();
+        Arrays.sort(aa);
+        Arrays.sort(ba);
+        return Arrays.equals(aa, ba);
     }
 
     public static String formatString(String s, int p) {
@@ -51,7 +68,7 @@ public class TableUtil {
         return " ".repeat(Math.max(0, p - n.length())) + n;
     }
 
-    public static int headerWidth(String s) {
+    public static int widthForSplitHeader(String s) {
         String[] words = s.split(" ");
         int max = 0;
         for (String word : words) {
@@ -90,5 +107,26 @@ public class TableUtil {
             i = j + 1;
         }
         return sp.toArray(new String[0]);
+    }
+
+    public static String toHTML(TableArray array) {
+        StringBuilder html = new StringBuilder("<table style='width:100%'><tr>");
+        int start = 0;
+        if (array.isPrettyHeaders()) {
+            start = 1;
+            for (int i = 0; i < array.getCols(); i++) {
+                html.append("<th>").append(array.get(0, i)).append("</th>");
+            }
+        }
+        html.append("</tr>");
+        for (int i = start; i < array.getRows(); i++) {
+            html.append("<tr>");
+            for (int j = 0; j < array.getCols(); j++) {
+                html.append("<td>").append(array.get(i, j)).append("</td>");
+            }
+            html.append("</tr>");
+        }
+        html.append("</table>");
+        return html.toString();
     }
 }

@@ -233,7 +233,6 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 .button {
     -fx-background-color: #666;
     -fx-text-fill: white;
-    -fx-font-weight: bold;
 }
 
 .button:hover {
@@ -286,42 +285,6 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 
 .split-pane-section .ikonli-font-icon {
     -fx-icon-color: white
-}
-
-.action-item .ikonli-font-icon {
-    -fx-icon-color: white
-}
-
-.action-item .label {
-    -fx-text-fill: white;
-}
-
-.action-item:hover {
-    -fx-background-color: #555;
-}
-
-.action-item:pressed {
-    -fx-background-color: #666;
-}
-
-.section-icon-button:hover {
-    -fx-background-color: #555;
-    -fx-background-insets: 2 0 2 0;
-    -fx-background-radius: 8;
-}
-
-.titled-pane {
-    -fx-text-fill: white;
-}
-
-.titled-pane > .title > .arrow-button > .arrow {
-    -fx-background-color: white;
-}
-
-.titled-pane:focused > .title > .arrow-button > .arrow {
-    -fx-background-color: white;
-    -fx-background-insets: 0;
-    -fx-effect: null;
 }
 
 .titled-pane > .title:hover {

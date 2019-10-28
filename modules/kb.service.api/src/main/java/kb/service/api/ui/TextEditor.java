@@ -1,6 +1,5 @@
 package kb.service.api.ui;
 
-import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 public interface TextEditor {
@@ -23,7 +22,7 @@ public interface TextEditor {
 
     void setTitle(String title);
 
-    TextEditor addAction(@NotNull String name, @NotNull TextEditorCallback action);
+    TextEditor addAction(String name, TextEditorCallback action);
 
     default TextEditor withSyntax(String syntax) {
         setSyntax(syntax);

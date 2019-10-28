@@ -3,9 +3,8 @@ package kb.core.camera.fx;
 import kb.service.api.Service;
 import kb.service.api.ServiceContext;
 import kb.service.api.ServiceMetadata;
-import org.jetbrains.annotations.NotNull;
 
-public class KBCameraService implements Service {
+public class FXCameraService implements Service {
 
     private static ServiceMetadata metadata = new ServiceMetadata();
 
@@ -15,11 +14,10 @@ public class KBCameraService implements Service {
     }
 
     @Override
-    public void launch(@NotNull ServiceContext context) {
+    public void launch(ServiceContext context) {
 
     }
 
-    @NotNull
     @Override
     public ServiceMetadata getMetadata() {
         return metadata;

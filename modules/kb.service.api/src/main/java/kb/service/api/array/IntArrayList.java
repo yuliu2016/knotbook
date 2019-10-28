@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class IntArrayList {
-    int[] value = new int[16];
+    int[] value = new int[0];
 
     int length;
 
@@ -39,5 +39,9 @@ public class IntArrayList {
         }
         System.arraycopy(value, index, value, index + 1, length - index);
         value[index] = f;
+    }
+
+    int[] copy() {
+        return Arrays.copyOf(value, length);
     }
 }

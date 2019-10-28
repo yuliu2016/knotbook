@@ -3,7 +3,6 @@ package kb.tool.cng;
 import kb.service.api.Service;
 import kb.service.api.ServiceContext;
 import kb.service.api.ServiceMetadata;
-import org.jetbrains.annotations.NotNull;
 
 public class CNGService implements Service {
 
@@ -15,11 +14,11 @@ public class CNGService implements Service {
     }
 
     @Override
-    public void launch(@NotNull ServiceContext context) {
+    public void launch(ServiceContext context) {
 
     }
 
-    @NotNull
+
     @Override
     public ServiceMetadata getMetadata() {
         return metadata;

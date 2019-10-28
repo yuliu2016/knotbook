@@ -13,13 +13,13 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-public class KnotCameraTest {
+public class FXCameraTest {
 
     public static void test() {
         Webcam.setDriver(new WebcamDefaultDriver());
-        KnotCamera camera;
+        FXCamera camera;
         try {
-            camera = new KnotCamera();
+            camera = new FXCamera();
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR, e.getMessage());
             alert.show();
@@ -53,9 +53,7 @@ public class KnotCameraTest {
         box.setAlignment(Pos.TOP_CENTER);
 
         stage.setScene(new Scene(box));
-        stage.setOnCloseRequest(event -> {
-            camera.setStreaming(false);
-        });
+        stage.setOnCloseRequest(event -> camera.setStreaming(false));
         stage.setResizable(false);
         camera.setStreaming(true);
         stage.show();

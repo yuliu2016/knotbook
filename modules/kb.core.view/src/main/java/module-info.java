@@ -1,5 +1,6 @@
 module kb.core.view {
     requires kotlin.stdlib;
+    requires jdk.httpserver;
 
     requires kb.service.api;
     requires kb.core.fx;
@@ -11,6 +12,4 @@ module kb.core.view {
 
     provides kb.service.api.application.ApplicationService
             with kb.core.view.app.DataApp;
-
-    exports kb.core.view;
 }

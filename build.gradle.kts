@@ -20,9 +20,6 @@ allprojects {
 subprojects {
     apply(plugin = "java")
     apply(plugin = "org.javamodularity.moduleplugin")
-    dependencies {
-        compileOnly("org.jetbrains", "annotations", "13.0")
-    }
     pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
         tasks.withType<KotlinCompile> {
             kotlinOptions {

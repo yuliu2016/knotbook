@@ -11,7 +11,6 @@ import kb.service.api.application.ServiceManager;
 import kb.service.api.ui.TextEditor;
 import kb.service.api.ui.TextEditorService;
 import kotlin.NotImplementedError;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -27,7 +26,8 @@ class KnotBook implements ServiceManager {
             this.theServices = theServices;
         }
 
-        @NotNull
+
+        @SuppressWarnings("NullableProblems")
         @Override
         public Iterator<T> iterator() {
             return theServices.iterator();
@@ -52,10 +52,10 @@ class KnotBook implements ServiceManager {
         }
 
         @Override
-        public void launch(@NotNull ServiceContext context) {
+        public void launch(ServiceContext context) {
         }
 
-        @NotNull
+
         @Override
         public ServiceMetadata getMetadata() {
             return metadata;
@@ -101,7 +101,7 @@ class KnotBook implements ServiceManager {
     // App Registry
     private final Registry registry = new Registry(new UserFile());
 
-    private ServiceContext contextForService(Service service, ApplicationService app) {
+    private static ServiceContext contextForService(Service service, ApplicationService app) {
         return new ServiceContextImpl(service, theKnotBook, app);
     }
 
@@ -115,26 +115,25 @@ class KnotBook implements ServiceManager {
         if (!applicationServices.theServices.isEmpty()) {
             ApplicationService app = applicationServices.theServices.get(0);
             app.launch(theKnotBook, contextForService(serviceForApplication(app), app));
-
-            for (Service service : services) {
+            for (Service service : services.theServices) {
                 service.launch(contextForService(service, app));
             }
         }
     }
 
-    @NotNull
+
     @Override
     public ApplicationProps getProps() {
         return registry;
     }
 
-    @NotNull
+
     @Override
     public List<Service> getServices() {
         return services.theServices;
     }
 
-    @NotNull
+
     @Override
     public String getVersion() {
         return "3.1.0-alpha";

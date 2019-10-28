@@ -97,7 +97,7 @@ class WindowBase {
 
 
     val docLabel = label {
-        text = "No Document or Workspace"
+        text = "No Table or Workspace Selected"
         graphic = fontIcon(MaterialDesign.MDI_FOLDER_MULTIPLE_OUTLINE, 14)
     }
 
@@ -121,11 +121,12 @@ class WindowBase {
     }
 
     val scene = Scene(layout)
+    val appIcon = Image(DataView::class.java.getResourceAsStream("/icon.png"))
 
     fun show() {
         stage.fullScreenExitHint = "Press F11 to Exit Full Screen"
         stage.title = "KnotBook"
-        stage.icons.add(Image(DataView::class.java.getResourceAsStream("/icon.png")))
+        stage.icons.add(appIcon)
         stage.scene = scene
         stage.focusedProperty().addListener { _, _, focused ->
             if (focused) {

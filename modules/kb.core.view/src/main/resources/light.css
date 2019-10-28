@@ -150,7 +150,10 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 }
 
 .filler {
-    -fx-background-color: transparent;
+    -fx-background-color: white;
+    -fx-border-width: 0;
+    -fx-border-insets: 0;
+    -fx-background-insets: 0;
 }
 
 /*MENUS*/
@@ -216,9 +219,12 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 /*OTHERS---*/
 
 .button {
-    -fx-background-color: #ddd;
+    -fx-background-color: #eee;
     -fx-text-fill: black;
-    -fx-font-weight: bold;
+}
+
+.button:hover {
+    -fx-background-color: #ddd;
 }
 
 .tab-title {
@@ -259,38 +265,6 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
     -fx-background-insets: 0 2 0 2;
     -fx-padding: 0;
     -fx-pref-width: 5;
-}
-
-.action-item .ikonli-font-icon {
-    -fx-icon-color: black
-}
-
-.action-item .label {
-    -fx-text-fill: black;
-}
-
-.action-item:hover {
-    -fx-background-color: #ddd;
-}
-
-.action-item:pressed {
-    -fx-background-color: #ccc;
-}
-
-.section-icon-button:hover {
-    -fx-background-color: #ccc;
-    -fx-background-insets: 2 0 2 0;
-    -fx-background-radius: 8;
-}
-
-.titled-pane > .title > .arrow-button > .arrow {
-    -fx-background-color: black;
-}
-
-.titled-pane:focused > .title > .arrow-button > .arrow {
-    -fx-background-color: black;
-    -fx-background-insets: 0;
-    -fx-effect: null;
 }
 
 .titled-pane > .title:hover {

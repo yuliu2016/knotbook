@@ -5,7 +5,7 @@ public class MultiCellReference implements Reference {
 
     int[] indices;
 
-    public MultiCellReference(int[] indices) {
+    public MultiCellReference(int... indices) {
         this.indices = indices;
     }
 

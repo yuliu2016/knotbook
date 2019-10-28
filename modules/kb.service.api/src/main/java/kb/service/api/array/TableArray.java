@@ -8,7 +8,7 @@ import java.util.zip.ZipOutputStream;
 
 /**
  * Table implementation. Row major. Expandable.
- * UI central. Basic processing. Formulas
+ * Designed for table UI. Basic processing.
  */
 @SuppressWarnings({"unused", "WeakerAccess", "DuplicatedCode"})
 public class TableArray {
@@ -91,7 +91,7 @@ public class TableArray {
                 String[] titles = data.get(0);
                 for (int i = 0; i < cols; i++) {
                     array.mode.value[i] = MODE_STR;
-                    array.pretty_col_size.value[i] = TableUtil.headerWidth(titles[i]);
+                    array.pretty_col_size.value[i] = TableUtil.widthForSplitHeader(titles[i]);
                     array.str.add(titles[i]);
                 }
                 array.pretty_headers = true;
@@ -189,6 +189,9 @@ public class TableArray {
         pretty_col_size.resize(len);
     }
 
+    public boolean isPrettyHeaders() {
+        return pretty_headers;
+    }
 
     public int getCols() {
         return cols;
@@ -299,7 +302,7 @@ public class TableArray {
         }
     }
 
-    public String getPrettyHeaders() {
+    private String getPrettyHeaders() {
         StringBuilder b = new StringBuilder();
         b.append("\033[0m");
         b.append("    \t");

@@ -6,7 +6,9 @@ import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Insets
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
+import javafx.scene.control.Button
 import javafx.scene.control.Menu
+import javafx.scene.effect.ColorAdjust
 import javafx.scene.effect.DropShadow
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
@@ -54,7 +56,7 @@ class DataView {
                 }
                 item {
                     name("New Window")
-                    shortcut(KeyCode.N, control = true)
+                    shortcut(KeyCode.N, control = true, shift = true)
                     action {
                         DataView().also { dv ->
                             dv.base.stage.x = base.stage.x + 48.0
@@ -65,19 +67,19 @@ class DataView {
                 }
                 item {
                     name("Close Window")
-                    shortcut(KeyCode.W, control = true)
+                    shortcut(KeyCode.W, control = true, shift = true)
                     action {
                         base.stage.close()
                     }
                 }
                 separator()
                 item {
-                    name("New Empty Table")
-                    shortcut(KeyCode.T, control = true)
+                    name("Create Empty Table")
+                    shortcut(KeyCode.N, control = true)
                     icon(MDI_PLUS, 14)
                 }
                 item {
-                    name("Import Table")
+                    name("Import Table from File")
                     icon(MDI_FILE_IMPORT, 14)
                     shortcut(KeyCode.O, control = true)
                     action {
@@ -105,6 +107,11 @@ class DataView {
                     name("Rename Table")
                     icon(MDI_TEXTBOX, 14)
                     shortcut(KeyCode.F6, shift = true)
+                }
+                item {
+                    name("Close Table")
+                    shortcut(KeyCode.W, control = true)
+                    action { spreadsheet.grid = GridBase(0, 0) }
                 }
                 item {
                     name("Delete Table")
@@ -272,6 +279,34 @@ class DataView {
         })
         zoomFactorProperty().addListener { _, _, nv ->
             zoomText.value = "${(nv.toDouble() * 100).toInt()}%"
+        }
+        placeholder = vbox {
+            align(Pos.CENTER)
+            spacing = 8.0
+            add(imageView {
+                fitWidth = 180.0
+                isPreserveRatio = true
+                image = base.appIcon
+                effect = ColorAdjust(0.0, -1.0, -0.15, -0.1)
+            })
+            add(vbox { prefHeight = 22.0 }) // (256 - 360 / 2) / 2 - (2 * 8)
+            add(Button("Open Recent [Ctrl+Alt+O]", fontIcon(MDI_HISTORY, 14)).apply {
+                prefWidth = 200.0
+                this.alignment = Pos.CENTER_LEFT
+            })
+            add(Button("Set Workspace [Ctrl+Shift+O]", fontIcon(MDI_FOLDER_OUTLINE, 14)).apply {
+                prefWidth = 200.0
+                this.alignment = Pos.CENTER_LEFT
+            })
+            add(Button("Import Table from File [Ctrl+O]", fontIcon(MDI_FILE_IMPORT, 14)).apply {
+                prefWidth = 200.0
+                this.alignment = Pos.CENTER_LEFT
+            })
+            add(Button("Create Empty Table [Ctrl+N]", fontIcon(MDI_PLUS, 14)).apply {
+                this.prefWidth = 200.0
+                this.alignment = Pos.CENTER_LEFT
+            })
+            translateY = -64.0
         }
         hgrow()
         contextMenu = contextMenu {
