@@ -1,5 +1,7 @@
 package kb.tool.path.planner
 
+import javafx.scene.paint.Color
+
 // Unit conversion constants
 
 const val kFeetToMeters: Double = 0.3048
@@ -29,3 +31,11 @@ const val kAngularDrag = 20.0 // (N * m) / (rad/s)
 const val kSpeedPerVolt = (kMaxFreeSpeed / kWheelRadius) / (kMaxVolts - kFrictionVoltage) // (rad/s) / V
 const val kA = 80.0 // // (rad/s^2) / V
 const val kTorquePerVolt = 0.5 * kWheelRadius * kWheelRadius * kLinearInertia * kA  // (N * m) / V
+
+
+val kBlue: Color = Color.BLUE
+val kBlack: Color = Color.BLACK
+val kGreen: Color = Color.rgb(0, 255, 0)
+
+val kSelectedControlPointColor: Color = Color.rgb(90, 138, 222)
+val kControlPointColor: Color = Color.rgb(255, 255, 0)

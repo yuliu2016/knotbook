@@ -1,3 +1,5 @@
+import org.javamodularity.moduleplugin.extensions.TestModuleOptions
+
 plugins {
     kotlin("jvm")
     id("org.openjfx.javafxplugin")
@@ -10,6 +12,14 @@ tasks.withType<Test> {
 
 javafx {
     modules = listOf("javafx.controls")
+}
+
+tasks {
+    test {
+        extensions.configure(TestModuleOptions::class.java) {
+            runOnClasspath = true
+        }
+    }
 }
 
 dependencies {

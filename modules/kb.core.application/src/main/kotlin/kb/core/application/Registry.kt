@@ -4,7 +4,7 @@ import kb.service.api.ServicePropListener
 import kb.service.api.ServiceProps
 import kb.service.api.application.ApplicationProps
 
-class Registry(private val handle: RegistryHandle) : ApplicationProps {
+internal class Registry(private val handle: RegistryHandle) : ApplicationProps {
 
     private val map: MutableMap<String, String> = mutableMapOf()
     private val listeners: MutableMap<String, ServicePropListener> = mutableMapOf()

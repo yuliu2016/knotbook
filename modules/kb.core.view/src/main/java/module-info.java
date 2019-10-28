@@ -1,5 +1,6 @@
 module kb.core.view {
     requires kotlin.stdlib;
+    requires jdk.httpserver;
 
     requires kb.service.api;
     requires kb.core.fx;
@@ -8,10 +9,7 @@ module kb.core.view {
     requires org.controlsfx.controls;
 
     requires org.kordamp.ikonli.materialdesign;
-    requires krangl;
 
     provides kb.service.api.application.ApplicationService
-            with kb.core.view.app.Application;
-
-    exports kb.core.view;
+            with kb.core.view.app.DataApp;
 }

@@ -1,3 +1,5 @@
+import kb.core.camera.fx.FXCameraService;
+
 module kb.core.camera.fx {
     requires com.google.zxing;
     requires webcam.capture;
@@ -7,7 +9,7 @@ module kb.core.camera.fx {
     requires kb.service.api;
 
     provides kb.service.api.Service
-            with kb.core.camera.fx.KBCameraService;
+            with FXCameraService;
 
     exports kb.core.camera.fx;
 }

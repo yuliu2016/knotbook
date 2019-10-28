@@ -1,4 +1,8 @@
-modules/kb.tba.client/src/main/kotlin/kb/tba/client/Models.kt linguist-generated=true
-modules/kb.tba.client/src/main/kotlin/kb/tba/client/Paths.kt linguist-generated=true
+modules/kb.tba.client/src/main/kotlin/kb/tba/client/ linguist-generated=true
 modules/kb.core.camera.fx/src/main/java/kb/core/camera/fx/BufferedImageLuminanceSource.java linguist-vendor=true
 modules/kb.core.icon/src/main/java/kb/core/icon/ linguist-vendor=true
+modules/kb.core.bowline/ linguist-vendor=true
+modules/kb.core.fx/ linguist-vendor=true
+modules/kb.service.api/src/main/java/kb/service/api/array linguist-vendor=true
+modules/kb.service.api/src/main/java/kb/service/api/util linguist-vendor=true
+modules/kb.service.api/src/test/ linguist-vendor=true

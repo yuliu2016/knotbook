@@ -1,6 +1,5 @@
 package kb.service.api.ui;
 
-import org.jetbrains.annotations.NotNull;
 
 public interface Notification {
     Notification setInfo();
@@ -9,9 +8,9 @@ public interface Notification {
 
     Notification setError();
 
-    Notification setMessage(@NotNull String message);
+    Notification setMessage(String message);
 
-    Notification addAction(@NotNull String name, @NotNull CommandCallback callback);
+    Notification addAction(String name, CommandCallback callback);
 
     Notification show();
 }

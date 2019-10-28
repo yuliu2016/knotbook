@@ -2,9 +2,8 @@ package kb.core.application
 
 import java.io.File
 import java.io.IOException
-import java.lang.NullPointerException
 
-class UserFile : RegistryHandle {
+internal class UserFile : RegistryHandle {
 
 
     private val home = System.getProperty("user.home").replace(File.separatorChar, '/')

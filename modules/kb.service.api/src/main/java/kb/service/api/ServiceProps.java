@@ -1,31 +1,28 @@
 package kb.service.api;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("unused")
 public interface ServiceProps {
 
-    void put(@NotNull String key, @NotNull String value);
+    void put(String key, String value);
 
-    default void put(@NotNull String key, boolean value) {
+    default void put(String key, boolean value) {
         put(key, String.valueOf(value));
     }
 
-    default void put(@NotNull String key, int value) {
+    default void put(String key, int value) {
         put(key, String.valueOf(value));
     }
 
-    @Nullable
-    String get(@NotNull String key);
+    String get(String key);
 
-    @NotNull
-    default String get(@NotNull String key, @NotNull String defVal) {
+
+    default String get(String key, String defVal) {
         String v = get(key);
         return v == null ? defVal : v;
     }
 
-    default boolean getBoolean(@NotNull String key, boolean defVal) {
+    default boolean getBoolean(String key, boolean defVal) {
         String v = get(key);
         if (v == null) {
             return defVal;
@@ -34,7 +31,7 @@ public interface ServiceProps {
         return s.equalsIgnoreCase("true") || (!s.equalsIgnoreCase("false") && defVal);
     }
 
-    default int getInt(@NotNull String key, int defVal) {
+    default int getInt(String key, int defVal) {
         String v = get(key);
         if (v == null) {
             return defVal;
@@ -46,11 +43,11 @@ public interface ServiceProps {
         }
     }
 
-    void remove(@NotNull String key);
+    void remove(String key);
 
-    boolean contains(@NotNull String key);
+    boolean contains(String key);
 
-    void addListener(@NotNull String key, @NotNull ServicePropListener listener);
+    void addListener(String key, ServicePropListener listener);
 
-    void removeListener(@NotNull String key);
+    void removeListener(String key);
 }

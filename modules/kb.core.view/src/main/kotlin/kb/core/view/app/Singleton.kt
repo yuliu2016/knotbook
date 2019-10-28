@@ -1,11 +1,16 @@
 package kb.core.view.app
 
 import javafx.application.Platform
+import javafx.beans.InvalidationListener
 import javafx.beans.property.SimpleStringProperty
+import javafx.stage.Window
 import kb.core.view.DataView
+import kb.core.view.server.Server
 import kb.service.api.ServiceContext
 import kb.service.api.application.ServiceManager
+import java.net.InetSocketAddress
 import kotlin.concurrent.thread
+import kotlin.system.exitProcess
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 internal object Singleton {
@@ -18,6 +23,8 @@ internal object Singleton {
     val context get() = nullableContext!!
 
     var focusedWindow: WindowBase? = null
+
+    val server = Server()
 
     fun editAppProperties() {
         context.createTextEditor()
@@ -107,10 +114,30 @@ internal object Singleton {
         if (nullableContext == null && nullableManager == null) {
             nullableContext = context
             nullableManager = manager
-            Platform.startup {
-                startMemoryObserver()
-                DataView().show()
+            server.server.bind(InetSocketAddress(865), 0)
+            server.server.start()
+            try {
+                Platform.startup(this::launchImpl)
+            } catch (e: IllegalStateException) {
+                Platform.runLater(this::launchImpl)
             }
         }
+    }
+
+    private fun launchImpl() {
+        startMemoryObserver()
+        DataView().show()
+        Platform.setImplicitExit(false)
+        val windows = Window.getWindows()
+        windows.addListener(InvalidationListener {
+            if (windows.isEmpty()) {
+                Platform.runLater {
+                    manager.services.forEach { it.terminate() }
+                    server.server.stop(0)
+                    Platform.exit()
+                    exitProcess(0)
+                }
+            }
+        })
     }
 }

@@ -1,9 +1,13 @@
 package kb.core.view.app
 
+import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.property.StringProperty
 import javafx.geometry.Insets
+import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import javafx.scene.Scene
 import javafx.scene.control.Menu
+import javafx.scene.control.Separator
 import javafx.scene.effect.BlurType
 import javafx.scene.effect.DropShadow
 import javafx.scene.image.Image
@@ -12,19 +16,21 @@ import javafx.scene.paint.Color
 import javafx.stage.Popup
 import javafx.stage.Stage
 import kb.core.fx.*
+import kb.core.icon.fontIcon
 import kb.core.icon.icon
 import kb.core.view.DataView
 import kb.core.view.splash.AboutSplash
 import kb.core.view.splash.GCSplash
+import org.kordamp.ikonli.Ikon
 import org.kordamp.ikonli.materialdesign.MaterialDesign
 
+@Suppress("MemberVisibilityCanBePrivate")
 class WindowBase {
 
     companion object {
         const val kOBWidth = 600.0
         const val kOBHeight = 480.0
     }
-
 
     val stage = Stage()
 
@@ -75,19 +81,34 @@ class WindowBase {
         popup.show(stage)
     }
 
-    private var theme = Theme.Light
+    val themeProperty = SimpleObjectProperty(Theme.Light)
 
     fun toggleTheme() {
-        theme = when (theme) {
+        themeProperty.set(when (themeProperty.get()!!) {
             Theme.Light -> Theme.Dark
             Theme.Dark -> Theme.Light
-        }
-        layout.stylesheets.setAll("/knotbook.css", theme.fileName)
-//        components.themeLabel.text = theme.name
+        })
+        layout.stylesheets.setAll("/knotbook.css", themeProperty.get().fileName)
     }
 
     val menuBar = menuBar {
         isUseSystemMenuBar = true
+    }
+
+
+    val docLabel = label {
+        text = "No Table or Workspace Selected"
+        graphic = fontIcon(MaterialDesign.MDI_FOLDER_MULTIPLE_OUTLINE, 14)
+    }
+
+    private val statusBar = hbox {
+        align(Pos.CENTER_LEFT)
+        padding = Insets(0.0, 8.0, 0.0, 8.0)
+        prefHeight = 22.0
+        styleClass("status-bar")
+        spacing = 8.0
+        add(docLabel)
+        hspace()
     }
 
     val layout = borderPane {
@@ -95,15 +116,17 @@ class WindowBase {
         prefWidth = 1120.0
         prefHeight = 630.0
         top = menuBar
+        bottom = statusBar
         isSnapToPixel = false
     }
 
     val scene = Scene(layout)
+    val appIcon = Image(DataView::class.java.getResourceAsStream("/icon.png"))
 
     fun show() {
         stage.fullScreenExitHint = "Press F11 to Exit Full Screen"
         stage.title = "KnotBook"
-        stage.icons.add(Image(DataView::class.java.getResourceAsStream("/icon.png")))
+        stage.icons.add(appIcon)
         stage.scene = scene
         stage.focusedProperty().addListener { _, _, focused ->
             if (focused) {
@@ -146,5 +169,13 @@ class WindowBase {
                 }
             }
         }
+    }
+
+    fun addStatus(prop: StringProperty, icon: Ikon) {
+        statusBar.add(Separator(Orientation.VERTICAL))
+        statusBar.add(label {
+            textProperty().bind(prop)
+            this.graphic = fontIcon(icon, 14)
+        })
     }
 }
