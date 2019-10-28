@@ -1,8 +1,5 @@
-@file:Suppress("DEPRECATION")
-
 package kb.tool.path.planner
 
-import ca.warp7.frc.drive.DifferentialDriveModel
 import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.feet
 import ca.warp7.frc.geometry.*
@@ -85,22 +82,6 @@ class PathCanvas : CanvasScope {
     var lastTime = 0.0
     var dt = 0.0
 
-
-    val model = DifferentialDriveModel(
-            wheelRadius = kWheelRadius,
-            wheelbaseRadius = kEffectiveWheelBaseRadius,
-            maxVelocity = kMaxVelocity,
-            maxAcceleration = kMaxAcceleration,
-            maxFreeSpeed = kMaxFreeSpeed,
-            speedPerVolt = kSpeedPerVolt,
-            torquePerVolt = kTorquePerVolt,
-            frictionVoltage = kFrictionVoltage,
-            linearInertia = kLinearInertia,
-            angularInertia = kAngularInertia,
-            maxVoltage = kMaxVolts,
-            angularDrag = kAngularDrag
-    )
-
     init {
         initCanvas()
         waypoints = arrayOf(
@@ -129,10 +110,10 @@ class PathCanvas : CanvasScope {
             if (a.curvature.epsilonEquals(0.0)) chordLength else
                 kotlin.math.abs(kotlin.math.asin(chordLength * a.curvature / 2) / a.curvature * 2)
         }.sum()
-        trajectory = generateTrajectory(splines, model.wheelbaseRadius,
-                model.maxVelocity * maxVRatio,
-                model.maxAcceleration * maxARatio,
-                model.maxAcceleration * maxAcRatio,
+        trajectory = generateTrajectory(splines, kEffectiveWheelBaseRadius,
+                kMaxVelocity * maxVRatio,
+                kMaxAcceleration * maxARatio,
+                kMaxAcceleration * maxAcRatio,
                 if (jerkLimiting) 45.0 else Double.POSITIVE_INFINITY)
         trajectoryTime = trajectory.last().t
         maxK = splines.maxBy { it.curvature.absoluteValue }?.curvature?.absoluteValue ?: 1.0
@@ -223,11 +204,11 @@ class PathCanvas : CanvasScope {
                 }
                 lineWidth = 2.0
                 stroke = Color.rgb(0, 128, 192)
-                map { v2T(it.dv, it.t, model.maxAcceleration, 634) }.connect()
+                map { v2T(it.dv, it.t, kMaxAcceleration, 634) }.connect()
                 stroke = Color.rgb(255, 255, 128)
                 map { v2T(it.w, it.t, maxAngular, 490) }.connect()
                 stroke = Color.rgb(128, 128, 255)
-                map { v2T2(it.v, it.t, model.maxVelocity, 640) }.connect()
+                map { v2T2(it.v, it.t, kMaxVelocity, 640) }.connect()
             }
         }
     }
