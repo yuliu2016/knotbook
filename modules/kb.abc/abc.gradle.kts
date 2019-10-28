@@ -28,8 +28,7 @@ tasks.register("collectJars", Copy::class.java){
     group = "abc"
     dependsOn("jar")
     from(configurations.runtimeClasspath) {
-        exclude("javafx-*")
-        exclude("kotlin-*")
+        exclude("javafx-*", "kotlin-*", "controlsfx-*", "rsyntaxtextarea-*")
     }
     from(File(buildDir, "libs"))
     into(File(buildDir, "collected"))
