@@ -10,7 +10,6 @@ import kb.service.api.application.JVMInstance;
 import kb.service.api.application.ServiceManager;
 import kb.service.api.ui.TextEditor;
 import kb.service.api.ui.TextEditorService;
-import kotlin.NotImplementedError;
 
 import java.util.*;
 
@@ -152,6 +151,6 @@ class KnotBook implements ServiceManager {
         if (!textEditors.theServices.isEmpty()) {
             return textEditors.theServices.get(0).create();
         }
-        throw new NotImplementedError();
+        throw new NoSuchElementException();
     }
 }
