@@ -32,20 +32,20 @@ public class FXCameraTest {
         VBox box = new VBox();
 
         ImageView view = new ImageView();
-        view.imageProperty().bind(camera.imageProperty());
+        view.imageProperty().bind(camera.getImageProperty());
         view.setPreserveRatio(true);
         view.setFitHeight(720.0);
 
         Label label = new Label();
         label.setStyle("-fx-text-fill: white; -fx-font-size: 13");
-        camera.resultProperty().addListener((observable, oldValue, newValue) -> {
+        camera.getResultProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
                 box.setBackground(null);
             } else {
                 box.setBackground(new Background(new BackgroundFill(Color.rgb(0, 169, 0), null, null)));
             }
         });
-        label.textProperty().bind(camera.resultProperty());
+        label.textProperty().bind(camera.getResultProperty());
 
         box.getChildren().addAll(view, label);
         box.setPrefHeight(760.0);

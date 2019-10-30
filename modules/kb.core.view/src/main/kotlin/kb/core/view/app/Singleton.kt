@@ -113,7 +113,7 @@ internal object Singleton {
         if (nullableContext == null && nullableManager == null) {
             nullableContext = context
             nullableManager = manager
-            server.server.bind(InetSocketAddress(865), 0)
+            server.server.bind(InetSocketAddress(8650), 0)
             server.server.start()
             try {
                 Platform.startup(this::launchImpl)
