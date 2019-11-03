@@ -35,11 +35,11 @@
 }
 
 .list-cell:hover:filled {
-    -fx-background-color: #ddd;
+    -fx-background-color: #eee;
 }
 
 .list-cell:selected:filled {
-    -fx-background-color: #ccc;
+    -fx-background-color: #ddd;
     -fx-text-fill: black;
 }
 
@@ -95,4 +95,12 @@
 
 .formula-field:focused {
     -fx-border-color: #5a8ade;
+}
+
+.list-highlight {
+    -fx-text-fill: #3c5c94;
+}
+
+.list-view:focused .list-cell:filled:selected .list-highlight {
+    -fx-text-fill: white;
 }

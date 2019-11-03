@@ -43,6 +43,10 @@
     -fx-padding: 0;
 }
 
+.list-cell .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
 .list-cell:hover:filled {
     -fx-background-color: #333;
 }
@@ -60,28 +64,6 @@
 .list-view:focused .list-cell:filled:selected .ikonli-font-icon {
     -fx-icon-color: white;
 }
-
-/*
-.properties-list {
-    -fx-background-color: white;
-}
-
-.properties-list .list-cell {
-    -fx-padding: 3 8 3 8;
-    -fx-background-color: white;
-    -fx-background-insets: 0;
-    -fx-text-fill: black;
-}
-
-.properties-list .list-cell:filled:hover {
-    -fx-background-color: -rt-item-hover-shade;
-}
-
-.properties-list .list-cell.drag-over {
-    -fx-background-color: red, white;
-    -fx-background-insets: 0, 2;
-}*/
-
 
 .text-field {
     -fx-focus-color: transparent;
@@ -105,4 +87,12 @@
 
 .formula-field:focused {
     -fx-border-color: #5a8ade;
+}
+
+.list-highlight {
+    -fx-text-fill: #cc0;
+}
+
+.list-view:focused .list-cell:filled:selected .list-highlight {
+    -fx-text-fill: white;
 }

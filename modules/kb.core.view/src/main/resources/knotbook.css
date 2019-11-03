@@ -9,6 +9,7 @@
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
     -fx-padding: 0;
+    -fx-background-insets: 1;
 }
 
 .tree-view {
@@ -154,4 +155,13 @@
     -fx-border-color: white;
     -fx-border-width: 0 1 0 0;
     -fx-border-insets: 2 0 2 0;
+}
+
+.pretty-list-view > .virtual-flow > .scroll-bar,
+.pretty-list-view > .virtual-flow > .scroll-bar .decrement-arrow,
+.pretty-list-view > .virtual-flow > .scroll-bar .increment-arrow,
+.pretty-list-view > .virtual-flow > .scroll-bar .decrement-button,
+.pretty-list-view > .virtual-flow > .scroll-bar .increment-button {
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
 }

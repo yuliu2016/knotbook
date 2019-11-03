@@ -62,84 +62,67 @@ public class TableArray {
      * @return the data
      */
     public static TableArray fromCSV(InputStream stream, boolean headers) {
-        try (BufferedReader r = new BufferedReader(new InputStreamReader(stream))) {
-            List<String[]> data = new ArrayList<>();
-            int cols = -1;
-            while (true) {
-                String line = r.readLine();
-                if (line == null) {
-                    break;
-                }
-                String[] sp = TableUtil.split(line);
-                if (cols == -1) {
-                    cols = sp.length;
-                } else if (sp.length > cols) {
-                    throw new IllegalStateException("More value than headers");
-                }
-                data.add(sp);
-            }
-            TableArray array = emptyTableArray();
-            if (data.isEmpty()) {
-                return array;
-            }
-            array.cols = cols;
-            array.ensureSizeFromDimension(data.size());
-
-            int startIndex = 0;
-            if (headers) {
-                // title row
-                String[] titles = data.get(0);
-                for (int i = 0; i < cols; i++) {
-                    array.mode.value[i] = MODE_STR;
-                    array.pretty_col_size.value[i] = TableUtil.widthForSplitHeader(titles[i]);
-                    array.str.add(titles[i]);
-                }
-                array.pretty_headers = true;
-                startIndex = 1;
-            }
-            for (int i = startIndex; i < data.size(); i++) {
-                String[] row = data.get(i);
-                for (int j = 0; j < array.cols; j++) {
-                    int ai = i * array.cols + j;
-                    if (j >= row.length) {
-                        array.mode.value[ai] = 0;
-                        array.str.add(null);
-                        continue;
-                    }
-                    String v = row[j].strip();
-                    if (v.isEmpty()) {
-                        array.mode.value[ai] = 0;
-                        array.str.add(null);
-                    } else {
-                        try {
-                            float fv = Float.parseFloat(v);
-                            array.num.value[ai] = fv;
-                            // check for integer state
-                            String f;
-                            if (fv % 1 == 0 && fv >= 0 && fv < 65536) {
-                                array.mode.value[ai] = MODE_INT;
-                                f = Integer.toString((int) fv);
-                            } else {
-                                array.mode.value[ai] = MODE_FLOAT;
-                                f = Float.toString(fv);
-                            }
-                            array.pretty_col_size.value[j] = Math
-                                    .max(array.pretty_col_size.value[j], f.length());
-                            array.str.add(f);
-                        } catch (NumberFormatException e) {
-                            array.mode.value[ai] = MODE_STR;
-                            array.pretty_col_size.value[j] = Math
-                                    .max(array.pretty_col_size.value[j], v.length());
-                            array.str.add(v);
-                        }
-                    }
-                }
-            }
+        List<String[]> data = TableUtil.fromCSV(stream);
+        TableArray array = emptyTableArray();
+        if (data.isEmpty()) {
             return array;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return emptyTableArray();
         }
+        int cols = data.get(0).length;
+        array.cols = cols;
+        array.ensureSizeFromRowSize(data.size());
+
+        int startIndex = 0;
+        if (headers) {
+            // title row
+            String[] titles = data.get(0);
+            for (int i = 0; i < cols; i++) {
+                array.mode.value[i] = MODE_STR;
+                array.pretty_col_size.value[i] = TableUtil.widthForSplitHeader(titles[i]);
+                array.str.add(titles[i]);
+            }
+            array.pretty_headers = true;
+            startIndex = 1;
+        }
+
+        for (int i = startIndex; i < data.size(); i++) {
+            String[] row = data.get(i);
+            for (int j = 0; j < array.cols; j++) {
+                int ai = i * array.cols + j;
+                if (j >= row.length) {
+                    array.mode.value[ai] = 0;
+                    array.str.add(null);
+                    continue;
+                }
+                String v = row[j].strip();
+                if (v.isEmpty()) {
+                    array.mode.value[ai] = 0;
+                    array.str.add(null);
+                } else {
+                    try {
+                        float fv = Float.parseFloat(v);
+                        array.num.value[ai] = fv;
+                        // check for integer state
+                        String f;
+                        if (fv % 1 == 0 && fv >= 0 && fv < 65536) {
+                            array.mode.value[ai] = MODE_INT;
+                            f = Integer.toString((int) fv);
+                        } else {
+                            array.mode.value[ai] = MODE_FLOAT;
+                            f = Float.toString(fv);
+                        }
+                        array.pretty_col_size.value[j] = Math
+                                .max(array.pretty_col_size.value[j], f.length());
+                        array.str.add(f);
+                    } catch (NumberFormatException e) {
+                        array.mode.value[ai] = MODE_STR;
+                        array.pretty_col_size.value[j] = Math
+                                .max(array.pretty_col_size.value[j], v.length());
+                        array.str.add(v);
+                    }
+                }
+            }
+        }
+        return array;
     }
 
     /**
@@ -182,7 +165,7 @@ public class TableArray {
     private TableArray() {
     }
 
-    private void ensureSizeFromDimension(int rows) {
+    private void ensureSizeFromRowSize(int rows) {
         len = rows * cols;
         mode.resize(len);
         num.resize(len);

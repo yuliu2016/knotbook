@@ -16,26 +16,19 @@ import java.util.*;
 @SuppressWarnings("unused")
 class KnotBook implements ServiceManager {
 
-    private static class ResolvedServices<T extends MetaService> implements Iterable<T> {
+    private static class ResolvedServices<T extends MetaService> {
         Class<T> theClass;
-        List<T> theServices;
+        List<T> services;
 
-        ResolvedServices(Class<T> theClass, List<T> theServices) {
+        ResolvedServices(Class<T> theClass, List<T> services) {
             this.theClass = theClass;
-            this.theServices = theServices;
-        }
-
-
-        @SuppressWarnings("NullableProblems")
-        @Override
-        public Iterator<T> iterator() {
-            return theServices.iterator();
+            this.services = services;
         }
 
         void print() {
-            System.out.println("\nListing " + theServices.size() +
+            System.out.println("\nListing " + services.size() +
                     " package(s) for " + theClass.getSimpleName() + ":");
-            for (T s : theServices) {
+            for (T s : services) {
                 ServiceMetadata metadata = s.getMetadata();
                 System.out.println(metadata.getPackageName() + " => " + metadata.getPackageVersion());
             }
@@ -43,7 +36,6 @@ class KnotBook implements ServiceManager {
     }
 
     private static class MetadataServiceWrapper implements Service {
-
         private ServiceMetadata metadata;
 
         MetadataServiceWrapper(ServiceMetadata metadata) {
@@ -53,7 +45,6 @@ class KnotBook implements ServiceManager {
         @Override
         public void launch(ServiceContext context) {
         }
-
 
         @Override
         public ServiceMetadata getMetadata() {
@@ -69,35 +60,25 @@ class KnotBook implements ServiceManager {
         return new ResolvedServices<>(service, providers);
     }
 
-
     private static Service serviceForApplication(ApplicationService app) {
         return new MetadataServiceWrapper(app.getMetadata());
     }
 
-
     private KnotBook() {
     }
 
-    // KnotBook instance
     private static final KnotBook theKnotBook = new KnotBook();
 
     static KnotBook getKnotBook() {
         return theKnotBook;
     }
 
-    // application
-    private final ResolvedServices<ApplicationService> applicationServices =
+    private final ResolvedServices<ApplicationService> applications =
             loadServices(ApplicationService.class);
-
-    // All extensions
-    private final ResolvedServices<Service> services =
+    private final ResolvedServices<Service> extensions =
             loadServices(Service.class);
-
-    // Text Editor implementation
     private final ResolvedServices<TextEditorService> textEditors =
             loadServices(TextEditorService.class);
-
-    // App Registry
     private final Registry registry = new Registry(new UserFile());
 
     private static ServiceContext contextForService(Service service, ApplicationService app) {
@@ -107,31 +88,28 @@ class KnotBook implements ServiceManager {
     void launch() {
         System.out.println(Arrays.toString(JVMInstance.getArgs()));
 
-        applicationServices.print();
-        services.print();
+        applications.print();
+        extensions.print();
         textEditors.print();
 
-        if (!applicationServices.theServices.isEmpty()) {
-            ApplicationService app = applicationServices.theServices.get(0);
+        if (!applications.services.isEmpty()) {
+            ApplicationService app = applications.services.get(0);
             app.launch(theKnotBook, contextForService(serviceForApplication(app), app));
-            for (Service service : services.theServices) {
+            for (Service service : extensions.services) {
                 service.launch(contextForService(service, app));
             }
         }
     }
-
 
     @Override
     public ApplicationProps getProps() {
         return registry;
     }
 
-
     @Override
     public List<Service> getServices() {
-        return services.theServices;
+        return extensions.services;
     }
-
 
     @Override
     public String getVersion() {
@@ -148,8 +126,8 @@ class KnotBook implements ServiceManager {
     }
 
     TextEditor createTextEditor() {
-        if (!textEditors.theServices.isEmpty()) {
-            return textEditors.theServices.get(0).create();
+        if (!textEditors.services.isEmpty()) {
+            return textEditors.services.get(0).create();
         }
         throw new NoSuchElementException();
     }

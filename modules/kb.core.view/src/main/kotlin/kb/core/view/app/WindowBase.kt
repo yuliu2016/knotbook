@@ -21,6 +21,7 @@ import kb.core.icon.icon
 import kb.core.view.DataView
 import kb.core.view.splash.AboutSplash
 import kb.core.view.splash.GCSplash
+import kb.core.view.util.PrettyListView
 import org.kordamp.ikonli.Ikon
 import org.kordamp.ikonli.materialdesign.MaterialDesign
 
@@ -28,8 +29,8 @@ import org.kordamp.ikonli.materialdesign.MaterialDesign
 class WindowBase {
 
     companion object {
-        const val kOBWidth = 600.0
-        const val kOBHeight = 480.0
+        const val kOBWidth = 560.0
+        const val kOBHeight = 400.0
     }
 
     val stage = Stage()
@@ -65,7 +66,7 @@ class WindowBase {
                 })
             })
 
-            add(listView<Entity> {
+            add(PrettyListView<Entity>().apply {
                 vgrow()
                 items = getList().observable()
                 setCellFactory {
@@ -75,7 +76,7 @@ class WindowBase {
 
         })
         popup.isAutoHide = true
-        popup.x = stage.x + stage.width / 2.0 - kOBWidth / 2.0
+        popup.x = stage.x + stage.width / 2.0 - kOBWidth / 2.0 - 10.0 // fix centering
         popup.y = stage.y + scene.y + menuBar.height - 5.0
         popup.show(stage)
     }

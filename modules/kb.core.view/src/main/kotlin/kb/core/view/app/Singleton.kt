@@ -113,8 +113,6 @@ internal object Singleton {
         if (nullableContext == null && nullableManager == null) {
             nullableContext = context
             nullableManager = manager
-            apiServer.stateCallback = { Platform.runLater { serverState.set(it) } }
-            apiServer.bindAndStart()
             try {
                 Platform.startup(this::launchImpl)
             } catch (e: IllegalStateException) {
@@ -128,6 +126,8 @@ internal object Singleton {
         Platform.setImplicitExit(false)
         val windows = Window.getWindows()
         windows.addListener(InvalidationListener { if (windows.isEmpty()) exit() })
+        apiServer.stateCallback = { Platform.runLater { serverState.set(it) } }
+        apiServer.bindAndStart()
         DataView().show()
     }
 

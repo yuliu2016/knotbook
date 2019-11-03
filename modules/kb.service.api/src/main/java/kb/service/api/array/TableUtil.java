@@ -1,5 +1,9 @@
 package kb.service.api.array;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -107,6 +111,29 @@ public class TableUtil {
             i = j + 1;
         }
         return sp.toArray(new String[0]);
+    }
+
+    public static List<String[]> fromCSV(InputStream stream) {
+        List<String[]> data = new ArrayList<>();
+        try (BufferedReader r = new BufferedReader(new InputStreamReader(stream))) {
+            int cols = -1;
+            while (true) {
+                String line = r.readLine();
+                if (line == null) {
+                    break;
+                }
+                String[] sp = split(line);
+                if (cols == -1) {
+                    cols = sp.length;
+                } else if (sp.length > cols) {
+                    throw new IllegalStateException("More value than headers");
+                }
+                data.add(sp);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return data;
     }
 
     public static String toHTML(TableArray array) {
