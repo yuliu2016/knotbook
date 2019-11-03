@@ -26,3 +26,16 @@ fun TableArray.toGrid(): GridBase {
     }
     return grid
 }
+
+fun emptyGrid(): GridBase {
+    val grid = GridBase(24, 12)
+    grid.setRowHeightCallback { 20.0 }
+    grid.setResizableRows(BitSet())
+    grid.rows.addAll((0 until 24).map { row ->
+        (0 until 12).map { col ->
+            val cell = SpreadsheetCellType.STRING.createCell(row, col, 1, 1, "")
+            cell
+        }.observable()
+    })
+    return grid
+}

@@ -1,6 +1,8 @@
+/*Base stylesheet -- To clear unnecessary styles*/
+
 .text {
     -fx-font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
-    -fx-font-smoothing-type: gray;
+    /*-fx-font-smoothing-type: gray;*/
 }
 
 .list-view {

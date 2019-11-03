@@ -1,0 +1,108 @@
+.root {
+    -fx-background-color: black;
+    -fx-text-fill: white;
+}
+
+.option-bar {
+    -fx-background-color: black;
+}
+
+.label {
+    -fx-text-fill: white;
+}
+
+.text {
+    -fx-text-fill: white;
+}
+
+/*==========TREE VIEW==========*/
+
+.tree-view:focused .tree-cell:filled:selected {
+    -fx-background-color: #5a8ade;
+    -fx-text-fill: white;
+}
+
+.tree-view:focused .tree-cell:filled:selected .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+.tree-cell:hover:filled {
+    -fx-background-color: #ddd;
+}
+
+.tree-cell:selected:filled {
+    -fx-background-color: #bbb; /*todo*/
+    -fx-text-fill: white;
+}
+
+
+/*==========LIST VIEW==========*/
+
+.list-cell {
+    -fx-background-color: black;
+    -fx-padding: 0;
+}
+
+.list-cell:hover:filled {
+    -fx-background-color: #333;
+}
+
+.list-cell:selected:filled {
+    -fx-background-color: #666;
+    -fx-text-fill: white;
+}
+
+.list-view:focused .list-cell:filled:selected {
+    -fx-background-color: #5a8ade;
+    -fx-text-fill: white;
+}
+
+.list-view:focused .list-cell:filled:selected .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+/*
+.properties-list {
+    -fx-background-color: white;
+}
+
+.properties-list .list-cell {
+    -fx-padding: 3 8 3 8;
+    -fx-background-color: white;
+    -fx-background-insets: 0;
+    -fx-text-fill: black;
+}
+
+.properties-list .list-cell:filled:hover {
+    -fx-background-color: -rt-item-hover-shade;
+}
+
+.properties-list .list-cell.drag-over {
+    -fx-background-color: red, white;
+    -fx-background-insets: 0, 2;
+}*/
+
+
+.text-field {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-highlight-fill: #5a8ade;
+}
+
+
+.formula-field {
+    -fx-padding: 3 6 3 6;
+    -fx-background-color: #333;
+    -fx-border-color: #888;
+    -fx-border-radius: 0;
+    -fx-border-width: 1;
+    -fx-prompt-text-fill: #888;
+    -fx-text-fill: white;
+    -fx-border-insets: 0;
+    -fx-background-insets: 0;
+    -fx-font-family: "Fira Code", "Roboto Mono", monospace;
+}
+
+.formula-field:focused {
+    -fx-border-color: #5a8ade;
+}

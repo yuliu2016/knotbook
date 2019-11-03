@@ -165,10 +165,9 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 
 .menu-bar {
     -fx-padding: 0 12 0 12;
-    -fx-border-width: 0 0 0.3 0;
+    -fx-border-width: 0;
     -fx-border-insets: 0;
     -fx-background-insets: 0;
-    -fx-border-color: #888;
     -fx-background-color: #333;
 }
 
@@ -231,75 +230,14 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 }
 
 .button {
-    -fx-background-color: #666;
+    -fx-background-color: none;
     -fx-text-fill: white;
 }
 
 .button:hover {
-    -fx-background-color: #888;
+    -fx-background-color: #444;
 }
 
 .button .ikonli-font-icon {
     -fx-icon-color: white
-}
-
-.tab-title {
-    -fx-text-fill: white;
-    -fx-font-size: 20;
-}
-
-.text-field {
-    -fx-focus-color: transparent;
-    -fx-faint-focus-color: transparent;
-    -fx-highlight-fill: #5a8ade;
-}
-
-.formula-field {
-    -fx-padding: 2 6 2 6;
-    -fx-background-color: #222;
-    -fx-border-color: #aaa;
-    -fx-border-radius: 0;
-    -fx-border-width: 0.7;
-    -fx-prompt-text-fill: #888;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-border-insets: 0;
-    -fx-background-insets: 0;
-    -fx-font-family: "Roboto Mono", monospace;
-}
-
-.formula-field:focused {
-    -fx-border-color: #5a8ade;
-}
-
-.split-pane {
-    -fx-background-color: transparent;
-}
-
-.split-pane:horizontal .split-pane-divider {
-    -fx-background-color: #888;
-    -fx-background-insets: 0 2 0 2;
-    -fx-padding: 0;
-    -fx-pref-width: 5;
-}
-
-.split-pane-section .ikonli-font-icon {
-    -fx-icon-color: white
-}
-
-.titled-pane > .title:hover {
-    -fx-background-color: #555;
-}
-
-.choice-box {
-    -fx-background-color: #555;
-}
-
-.choice-box:hover {
-    -fx-background-color: #666;
-}
-
-.tree-cell.drag-over {
-    -fx-background-color: red, #444;
-    -fx-background-insets: 0, 1;
 }

@@ -8,12 +8,12 @@ import kb.core.view.DataView
 import kb.core.view.server.Server
 import kb.service.api.ServiceContext
 import kb.service.api.application.ServiceManager
-import java.net.InetSocketAddress
 import kotlin.concurrent.thread
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 internal object Singleton {
     val memoryUsed = SimpleStringProperty()
+    val serverState = SimpleStringProperty()
 
     private var nullableManager: ServiceManager? = null
     private var nullableContext: ServiceContext? = null
@@ -23,7 +23,7 @@ internal object Singleton {
 
     var focusedWindow: WindowBase? = null
 
-    val server = Server()
+    val apiServer = Server()
 
     fun editAppProperties() {
         context.createTextEditor()
@@ -113,8 +113,8 @@ internal object Singleton {
         if (nullableContext == null && nullableManager == null) {
             nullableContext = context
             nullableManager = manager
-            server.server.bind(InetSocketAddress(8650), 0)
-            server.server.start()
+            apiServer.stateCallback = { Platform.runLater { serverState.set(it) } }
+            apiServer.bindAndStart()
             try {
                 Platform.startup(this::launchImpl)
             } catch (e: IllegalStateException) {
@@ -125,15 +125,15 @@ internal object Singleton {
 
     private fun launchImpl() {
         startMemoryObserver()
-        DataView().show()
         Platform.setImplicitExit(false)
         val windows = Window.getWindows()
         windows.addListener(InvalidationListener { if (windows.isEmpty()) exit() })
+        DataView().show()
     }
 
     fun exit() {
         Platform.runLater {
-            server.server.stop(0)
+            apiServer.exit()
             Platform.exit()
             manager.exit()
         }

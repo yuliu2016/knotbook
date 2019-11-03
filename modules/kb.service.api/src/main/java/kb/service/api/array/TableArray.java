@@ -143,13 +143,13 @@ public class TableArray {
     }
 
     /**
-     * Extracts data from a file
+     * Extracts data from a zip file
      *
      * @param file The file path. Must be a real file. If an InputStream is used
      *             it must be saved to a temporary file before using this
      * @return the data
      */
-    public static TableArray fromKBT(File file) {
+    public static TableArray fromZipFormat(File file) {
         try (ZipFile zip = new ZipFile(file)) {
             TableArray array = emptyTableArray();
             ZipEntry modeEntry = zip.getEntry("array/mode");
@@ -346,7 +346,7 @@ public class TableArray {
         return b.toString();
     }
 
-    public void toKBT(OutputStream stream) {
+    public void toZipFormat(OutputStream stream) {
         try (ZipOutputStream out = new ZipOutputStream(stream)) {
             out.setMethod(ZipEntry.DEFLATED);
             out.setLevel(9);

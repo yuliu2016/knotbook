@@ -135,7 +135,7 @@ class KnotBook implements ServiceManager {
 
     @Override
     public String getVersion() {
-        return "3.1.0-alpha";
+        return "3.1.0";
     }
 
     @Override

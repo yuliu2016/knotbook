@@ -44,8 +44,7 @@ class WindowBase {
     fun showOptionBarPrototype() {
         val popup = Popup()
         popup.content.add(vbox {
-            stylesheets.addAll("/knotbook.css", Theme.Light.fileName)
-            style = "-fx-background-color: white"
+            stylesheets.addAll("/knotbook.css", themeProperty.get().optionStyle)
             styleClass("option-bar")
             effect = DropShadow().apply {
                 color = Color.GRAY
@@ -88,7 +87,7 @@ class WindowBase {
             Theme.Light -> Theme.Dark
             Theme.Dark -> Theme.Light
         })
-        layout.stylesheets.setAll("/knotbook.css", themeProperty.get().fileName)
+        layout.stylesheets.setAll("/knotbook.css", themeProperty.get().viewStyle)
     }
 
     val menuBar = menuBar {
@@ -97,7 +96,7 @@ class WindowBase {
 
 
     val docLabel = label {
-        text = "No Table or Workspace Selected"
+        text = "No Table or Workspace"
         graphic = fontIcon(MaterialDesign.MDI_FOLDER_MULTIPLE_OUTLINE, 14)
     }
 
@@ -112,9 +111,9 @@ class WindowBase {
     }
 
     val layout = borderPane {
-        stylesheets.addAll("/knotbook.css", Theme.Light.fileName)
-        prefWidth = 1120.0
-        prefHeight = 630.0
+        stylesheets.addAll("/knotbook.css", Theme.Light.viewStyle)
+        prefWidth = 510.0
+        prefHeight = 340.0
         top = menuBar
         bottom = statusBar
         isSnapToPixel = false
