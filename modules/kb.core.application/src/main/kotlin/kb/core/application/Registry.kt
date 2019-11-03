@@ -3,59 +3,63 @@ package kb.core.application
 import kb.service.api.ServicePropListener
 import kb.service.api.ServiceProps
 import kb.service.api.application.ApplicationProps
+import java.io.ByteArrayOutputStream
+import java.util.*
 
 internal class Registry(private val handle: RegistryHandle) : ApplicationProps {
 
-    private val map: MutableMap<String, String> = mutableMapOf()
     private val listeners: MutableMap<String, ServicePropListener> = mutableMapOf()
 
-    init {
-        parse(handle.load().split("\n"))
-    }
+    private val props = Properties()
 
-    private fun parse(lines: List<String>) {
-        map.clear()
-        lines.map { it.trim() }
-                .filter { it.isNotEmpty() && !it.startsWith("#") && it.contains("=") }
-                .map { it.split("=") }
-                .associateTo(map) { it[0].trim() to it[1].trim() }
+    private var changed = false
+
+    init {
+        handle.input().use { props.load(it) }
     }
 
     operator fun get(key: String): String? {
-        return map[key]
+        return props.getProperty(key)
     }
 
     operator fun set(key: String, newValue: String) {
-        val oldValue = map[key]
-        map[key] = newValue
+        val oldValue = props[key]
+        props[key] = newValue
+        changed = true
         if (oldValue == null || oldValue != newValue) {
-            listeners[key]?.propertyChanged(oldValue, newValue)
+            listeners[key]?.propertyChanged(oldValue.toString(), newValue)
         }
     }
 
     fun remove(key: String) {
-        map.remove(key)
+        changed = true
+        props.remove(key)
     }
 
     operator fun contains(key: String): Boolean {
-        return key in map
+        return key in props
     }
 
     fun save() {
-        handle.save(joinedText)
+        if (changed) {
+            handle.output().use { props.store(it, null) }
+        }
     }
 
     override fun getJoinedText(): String {
-        return map.entries.joinToString("\n") { "${it.key}=${it.value}" }
+        val bout = ByteArrayOutputStream()
+        props.store(bout, null)
+        return bout.toString(Charsets.UTF_8)
     }
 
     override fun setInputText(inputText: String) {
-        parse(inputText.split("\n"))
+        props.load(inputText.byteInputStream())
+        changed = true
         save()
     }
 
     override fun hasProps(name: String): Boolean {
-        return map.any { it.key.startsWith(name) }
+        return props.keys.any { it.toString().startsWith(name) }
     }
 
     override fun getProps(name: String): ServiceProps {

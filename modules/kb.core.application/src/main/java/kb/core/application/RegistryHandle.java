@@ -1,7 +1,10 @@
 package kb.core.application;
 
-public interface RegistryHandle {
-    String load();
+import java.io.InputStream;
+import java.io.OutputStream;
 
-    void save(String content);
+public interface RegistryHandle {
+    InputStream input();
+
+    OutputStream output();
 }
