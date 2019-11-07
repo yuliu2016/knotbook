@@ -39,6 +39,14 @@ class TextEditorImpl implements TextEditor {
         }
     }
 
+    private static void runOnEDT(Runnable doRun) {
+        if (SwingUtilities.isEventDispatchThread()) {
+            doRun.run();
+        } else {
+            SwingUtilities.invokeLater(doRun);
+        }
+    }
+
     private List<Action> actions = new ArrayList<>();
 
     @Override
@@ -83,7 +91,7 @@ class TextEditorImpl implements TextEditor {
 
     @Override
     public void show() {
-        Helper.runOnEDT(this::showImpl);
+        runOnEDT(this::showImpl);
     }
 
     @Override

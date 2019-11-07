@@ -15,26 +15,6 @@
     -fx-text-fill: white;
 }
 
-/*==========TREE VIEW==========*/
-
-.tree-view:focused .tree-cell:filled:selected {
-    -fx-background-color: #5a8ade;
-    -fx-text-fill: white;
-}
-
-.tree-view:focused .tree-cell:filled:selected .ikonli-font-icon {
-    -fx-icon-color: white;
-}
-
-.tree-cell:hover:filled {
-    -fx-background-color: #ddd;
-}
-
-.tree-cell:selected:filled {
-    -fx-background-color: #bbb; /*todo*/
-    -fx-text-fill: white;
-}
-
 
 /*==========LIST VIEW==========*/
 
@@ -51,18 +31,35 @@
     -fx-background-color: #333;
 }
 
-.list-cell:selected:filled {
-    -fx-background-color: #666;
-    -fx-text-fill: white;
-}
-
-.list-view:focused .list-cell:filled:selected {
+.list-cell:filled:selected {
     -fx-background-color: #5a8ade;
     -fx-text-fill: white;
 }
 
 .list-view:focused .list-cell:filled:selected .ikonli-font-icon {
     -fx-icon-color: white;
+}
+
+.list-highlight {
+    -fx-text-fill: #cc0;
+}
+
+.list-cell:filled:selected .list-highlight {
+    -fx-text-fill: white;
+}
+
+
+.ok-button {
+    -fx-background-color: #444;
+    -fx-text-fill: white;
+}
+
+.ok-button .ikonli-font-icon {
+    -fx-icon-color: white
+}
+
+.ok-button:hover {
+    -fx-background-color: #666;
 }
 
 .text-field {
@@ -87,12 +84,4 @@
 
 .formula-field:focused {
     -fx-border-color: #5a8ade;
-}
-
-.list-highlight {
-    -fx-text-fill: #cc0;
-}
-
-.list-view:focused .list-cell:filled:selected .list-highlight {
-    -fx-text-fill: white;
 }

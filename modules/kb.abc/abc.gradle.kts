@@ -22,6 +22,7 @@ tasks.register("run", ModularJavaExec::class.java) {
             // For accessing getChildren in ImplUtils
             "--add-opens=javafx.graphics/javafx.scene=org.controlsfx.controls"
     )
+    args = listOf("debug")
 }
 
 tasks.register("cleanJars", Delete::class.java) {

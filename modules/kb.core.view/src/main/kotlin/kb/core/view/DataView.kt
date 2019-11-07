@@ -3,17 +3,13 @@ package kb.core.view
 import javafx.application.Platform
 import javafx.beans.InvalidationListener
 import javafx.beans.property.SimpleStringProperty
-import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.control.Button
 import javafx.scene.control.Menu
-import javafx.scene.effect.DropShadow
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
-import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
-import javafx.stage.Popup
 import kb.core.fx.*
 import kb.core.icon.fontIcon
 import kb.core.icon.icon
@@ -205,7 +201,7 @@ class DataView {
                     name("Workspace Navigator")
                     shortcut(KeyCode.TAB, control = true)
                     icon(MDI_NAVIGATION, 14)
-                    action { hi() }
+                    action { base.showOptionBarPrototype() }
                 }
                 separator()
                 item {
@@ -239,36 +235,6 @@ class DataView {
                 }
             }
         }
-    }
-
-    private fun hi() {
-        val a = Popup()
-        a.content.add(vbox {
-
-            padding = Insets(8.0)
-            effect = DropShadow()
-            style = "-fx-background-color: rgba(255,255,255, 0.95)"
-            lb("Multi-Team Interface")
-            lb("Match Schedule")
-            lb("Raw Data")
-            lb("Team Rankings")
-            lb("Merged Data")
-        })
-        a.isAutoHide = true
-        a.x = base.stage.x + 20
-        a.y = base.stage.y + 40
-        a.show(base.stage)
-    }
-
-    private fun VBox.lb(s: String) {
-        add(hbox {
-            align(Pos.CENTER_LEFT)
-            add(fontIcon(MDI_CHEVRON_RIGHT, 18))
-            spacing = 4.0
-            add(label {
-                text = s
-            })
-        })
     }
 
     val zoomText = SimpleStringProperty("100%")

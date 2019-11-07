@@ -113,12 +113,8 @@ internal object Singleton {
         if (nullableContext == null && nullableManager == null) {
             nullableContext = context
             nullableManager = manager
-            try {
-                Platform.startup(this::launchImpl)
-            } catch (e: IllegalStateException) {
-                Platform.runLater(this::launchImpl)
-            }
-        }
+            Platform.startup(this::launchImpl)
+        } else throw IllegalStateException()
     }
 
     private fun launchImpl() {

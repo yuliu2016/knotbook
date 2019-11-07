@@ -8,12 +8,8 @@ import javafx.geometry.Pos
 import javafx.scene.Scene
 import javafx.scene.control.Menu
 import javafx.scene.control.Separator
-import javafx.scene.effect.BlurType
-import javafx.scene.effect.DropShadow
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
-import javafx.scene.paint.Color
-import javafx.stage.Popup
 import javafx.stage.Stage
 import kb.core.fx.*
 import kb.core.icon.fontIcon
@@ -21,19 +17,14 @@ import kb.core.icon.icon
 import kb.core.view.DataView
 import kb.core.view.splash.AboutSplash
 import kb.core.view.splash.GCSplash
-import kb.core.view.util.PrettyListView
 import org.kordamp.ikonli.Ikon
 import org.kordamp.ikonli.materialdesign.MaterialDesign
 
 @Suppress("MemberVisibilityCanBePrivate")
 class WindowBase {
 
-    companion object {
-        const val kOBWidth = 560.0
-        const val kOBHeight = 400.0
-    }
-
     val stage = Stage()
+    val optionBar = StagedOptionBar()
 
     private var isFullScreen = false
 
@@ -43,42 +34,8 @@ class WindowBase {
     }
 
     fun showOptionBarPrototype() {
-        val popup = Popup()
-        popup.content.add(vbox {
-            stylesheets.addAll("/knotbook.css", themeProperty.get().optionStyle)
-            styleClass("option-bar")
-            effect = DropShadow().apply {
-                color = Color.GRAY
-                blurType = BlurType.GAUSSIAN
-                height = 10.0
-                width = 10.0
-                radius = 10.0
-                offsetY = 5.0
-            }
-            prefWidth = kOBWidth
-            prefHeight = kOBHeight
-            add(vbox {
-                align(Pos.TOP_CENTER)
-                padding = Insets(8.0)
-                spacing = 4.0
-                add(textField {
-                    styleClass("formula-field")
-                })
-            })
-
-            add(PrettyListView<Entity>().apply {
-                vgrow()
-                items = getList().observable()
-                setCellFactory {
-                    EntityListCell()
-                }
-            })
-
-        })
-        popup.isAutoHide = true
-        popup.x = stage.x + stage.width / 2.0 - kOBWidth / 2.0 - 10.0 // fix centering
-        popup.y = stage.y + scene.y + menuBar.height - 5.0
-        popup.show(stage)
+        optionBar.setTheme(listOf("/knotbook.css", themeProperty.get().optionStyle))
+        optionBar.show(stage, menuBar.height)
     }
 
     val themeProperty = SimpleObjectProperty(Theme.Light)
