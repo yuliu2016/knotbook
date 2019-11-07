@@ -1,0 +1,87 @@
+.root {
+    -fx-background-color: black;
+    -fx-text-fill: white;
+}
+
+.option-bar {
+    -fx-background-color: black;
+}
+
+.label {
+    -fx-text-fill: white;
+}
+
+.text {
+    -fx-text-fill: white;
+}
+
+
+/*==========LIST VIEW==========*/
+
+.list-cell {
+    -fx-background-color: black;
+    -fx-padding: 0;
+}
+
+.list-cell .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+.list-cell:hover:filled {
+    -fx-background-color: #333;
+}
+
+.list-cell:filled:selected {
+    -fx-background-color: #5a8ade;
+    -fx-text-fill: white;
+}
+
+.list-view:focused .list-cell:filled:selected .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+.list-highlight {
+    -fx-text-fill: #cc0;
+}
+
+.list-cell:filled:selected .list-highlight {
+    -fx-text-fill: white;
+}
+
+
+.ok-button {
+    -fx-background-color: #444;
+    -fx-text-fill: white;
+}
+
+.ok-button .ikonli-font-icon {
+    -fx-icon-color: white
+}
+
+.ok-button:hover {
+    -fx-background-color: #666;
+}
+
+.text-field {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-highlight-fill: #5a8ade;
+}
+
+
+.formula-field {
+    -fx-padding: 3 6 3 6;
+    -fx-background-color: #333;
+    -fx-border-color: #888;
+    -fx-border-radius: 0;
+    -fx-border-width: 1;
+    -fx-prompt-text-fill: #888;
+    -fx-text-fill: white;
+    -fx-border-insets: 0;
+    -fx-background-insets: 0;
+    -fx-font-family: "Fira Code", "Roboto Mono", monospace;
+}
+
+.formula-field:focused {
+    -fx-border-color: #5a8ade;
+}

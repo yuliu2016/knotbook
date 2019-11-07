@@ -8,12 +8,8 @@ import javafx.geometry.Pos
 import javafx.scene.Scene
 import javafx.scene.control.Menu
 import javafx.scene.control.Separator
-import javafx.scene.effect.BlurType
-import javafx.scene.effect.DropShadow
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
-import javafx.scene.paint.Color
-import javafx.stage.Popup
 import javafx.stage.Stage
 import kb.core.fx.*
 import kb.core.icon.fontIcon
@@ -27,12 +23,8 @@ import org.kordamp.ikonli.materialdesign.MaterialDesign
 @Suppress("MemberVisibilityCanBePrivate")
 class WindowBase {
 
-    companion object {
-        const val kOBWidth = 600.0
-        const val kOBHeight = 480.0
-    }
-
     val stage = Stage()
+    val optionBar = StagedOptionBar()
 
     private var isFullScreen = false
 
@@ -42,43 +34,8 @@ class WindowBase {
     }
 
     fun showOptionBarPrototype() {
-        val popup = Popup()
-        popup.content.add(vbox {
-            stylesheets.addAll("/knotbook.css", Theme.Light.fileName)
-            style = "-fx-background-color: white"
-            styleClass("option-bar")
-            effect = DropShadow().apply {
-                color = Color.GRAY
-                blurType = BlurType.GAUSSIAN
-                height = 10.0
-                width = 10.0
-                radius = 10.0
-                offsetY = 5.0
-            }
-            prefWidth = kOBWidth
-            prefHeight = kOBHeight
-            add(vbox {
-                align(Pos.TOP_CENTER)
-                padding = Insets(8.0)
-                spacing = 4.0
-                add(textField {
-                    styleClass("formula-field")
-                })
-            })
-
-            add(listView<Entity> {
-                vgrow()
-                items = getList().observable()
-                setCellFactory {
-                    EntityListCell()
-                }
-            })
-
-        })
-        popup.isAutoHide = true
-        popup.x = stage.x + stage.width / 2.0 - kOBWidth / 2.0
-        popup.y = stage.y + scene.y + menuBar.height - 5.0
-        popup.show(stage)
+        optionBar.setTheme(listOf("/knotbook.css", themeProperty.get().optionStyle))
+        optionBar.show(stage, menuBar.height)
     }
 
     val themeProperty = SimpleObjectProperty(Theme.Light)
@@ -88,7 +45,7 @@ class WindowBase {
             Theme.Light -> Theme.Dark
             Theme.Dark -> Theme.Light
         })
-        layout.stylesheets.setAll("/knotbook.css", themeProperty.get().fileName)
+        layout.stylesheets.setAll("/knotbook.css", themeProperty.get().viewStyle)
     }
 
     val menuBar = menuBar {
@@ -97,7 +54,7 @@ class WindowBase {
 
 
     val docLabel = label {
-        text = "No Table or Workspace Selected"
+        text = "No Table or Workspace"
         graphic = fontIcon(MaterialDesign.MDI_FOLDER_MULTIPLE_OUTLINE, 14)
     }
 
@@ -112,9 +69,9 @@ class WindowBase {
     }
 
     val layout = borderPane {
-        stylesheets.addAll("/knotbook.css", Theme.Light.fileName)
-        prefWidth = 1120.0
-        prefHeight = 630.0
+        stylesheets.addAll("/knotbook.css", Theme.Light.viewStyle)
+        prefWidth = 510.0
+        prefHeight = 340.0
         top = menuBar
         bottom = statusBar
         isSnapToPixel = false

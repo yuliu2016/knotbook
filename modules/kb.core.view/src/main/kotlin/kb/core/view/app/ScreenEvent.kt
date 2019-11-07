@@ -57,8 +57,6 @@ class ScreenEvent : Notification {
             })
             hspace()
             align(Pos.CENTER_LEFT)
-
-            add(fontIcon(MaterialDesign.MDI_CONTENT_COPY, 14))
             add(fontIcon(MaterialDesign.MDI_CLOSE, 14).apply {
                 this.setOnMouseClicked {
                     popup.hide()
@@ -71,6 +69,7 @@ class ScreenEvent : Notification {
         }
         popup.content.add(cont)
         popup.show(base.stage)
+        popup.isAutoHide = true
         popup.x = base.stage.x + base.stage.width - popup.width - 16.0
         popup.y = base.stage.y + base.stage.height - popup.height - 22 - 16.0
     }

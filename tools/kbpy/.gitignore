@@ -1,5 +1,6 @@
 venv/
 scripts/api_v3.json
+kbs/__pycache__
 
 *.iml
 

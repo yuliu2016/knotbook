@@ -20,6 +20,8 @@ import java.awt.image.DataBufferInt;
 import java.awt.image.SampleModel;
 import java.awt.image.SinglePixelPackedSampleModel;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
@@ -27,57 +29,97 @@ public class FXCamera {
 
     private ReadOnlyObjectWrapper<Image> imageProperty = new ReadOnlyObjectWrapper<>(null);
 
-    public ReadOnlyObjectProperty<Image> imageProperty() {
+    public ReadOnlyObjectProperty<Image> getImageProperty() {
         return imageProperty.getReadOnlyProperty();
     }
 
     public Image getImage() {
-        return imageProperty().get();
+        return getImageProperty().get();
     }
 
     private ReadOnlyStringWrapper resultProperty = new ReadOnlyStringWrapper(null);
 
-    public ReadOnlyStringProperty resultProperty() {
+    public ReadOnlyStringProperty getResultProperty() {
         return resultProperty.getReadOnlyProperty();
+    }
+
+    public String getResult() {
+        return getResultProperty().get();
     }
 
     private BooleanProperty streamingProperty;
 
-    public BooleanProperty streamingProperty() {
+    public BooleanProperty getStreamingProperty() {
         if (streamingProperty == null) {
             streamingProperty = new SimpleBooleanProperty(false);
-            streamingProperty.addListener((observable, oldValue, newValue) -> updateStreamingState(newValue));
+            streamingProperty.addListener((ob, ov, nv) -> updateStreamingState(nv));
         }
         return streamingProperty;
     }
 
     public boolean getStreaming() {
-        return streamingProperty().get();
+        return getStreamingProperty().get();
     }
 
     public void setStreaming(boolean streaming) {
-        streamingProperty().set(streaming);
+        getStreamingProperty().set(streaming);
+    }
+
+    private BooleanProperty decodingProperty;
+
+    public BooleanProperty getDecodingProperty() {
+        if (decodingProperty == null) {
+            decodingProperty = new SimpleBooleanProperty(false);
+            decodingProperty.addListener((ob, ov, nv) -> decoding = nv);
+        }
+        return decodingProperty;
+    }
+
+    public boolean isDecoding() {
+        return getDecodingProperty().get();
+    }
+
+    public void setDecoding(boolean decoding) {
+        getDecodingProperty().set(decoding);
+    }
+
+    private IntegerProperty webcamIDProperty = new SimpleIntegerProperty(0);
+
+    public IntegerProperty getWebcamIDProperty() {
+        return webcamIDProperty;
+    }
+
+    public int getWebcamID() {
+        return getWebcamIDProperty().get();
+    }
+
+    public void setWebcamID(int webcamID) {
+        getWebcamIDProperty().set(webcamID);
+    }
+
+    public List<String> getWebcamNames() {
+        List<String> names = new ArrayList<>();
+        for (Webcam wc : webcams) {
+            names.add(wc.getName());
+        }
+        return names;
     }
 
     private Image image = null;
     private String result = null;
     private Thread thread = null;
+
     private boolean threadRunning = false;
+    private boolean decoding = false;
     private int skippedPulseCounter = 0;
 
-    private final Webcam webcam = Webcam.getDefault();
-    private final Object pulseControl = new Object();
-    private final MultiFormatReader reader = new MultiFormatReader();
+    private Webcam webcam = null;
 
     private final AnimationTimer timer = new AnimationTimer() {
         @Override
         public void handle(long now) {
-            Image capture;
-            String res;
-            synchronized (pulseControl) {
-                capture = image;
-                res = result;
-            }
+            Image capture = image;
+            String res = result;
             if (capture != null) {
                 imageProperty.set(capture);
                 image = null;
@@ -94,14 +136,15 @@ public class FXCamera {
         }
     };
 
-    private void updateStreamingState(boolean state) {
-        if (state) {
-            if (!webcam.isOpen()) {
+    private void updateStreamingState(boolean isStreaming) {
+        if (isStreaming) {
+            webcam = webcams.get(getWebcamID());
+            if (webcam != null && !webcam.isOpen()) {
                 webcam.setCustomViewSizes(WebcamResolution.VGA.getSize());
                 webcam.setViewSize(WebcamResolution.VGA.getSize());
                 webcam.open();
             }
-            thread = new Thread(this::readStream);
+            thread = new Thread(this::readCameraStream);
             thread.setDaemon(true);
             thread.start();
             timer.start();
@@ -110,38 +153,42 @@ public class FXCamera {
                 threadRunning = false;
                 thread.interrupt();
             }
-            webcam.close();
+            if (webcam != null) {
+                webcam.close();
+                webcam = null;
+            }
             timer.stop();
-            new Thread(() -> Runtime.getRuntime().gc()).start();
         }
     }
 
     private String decode(BufferedImage capture) {
         try {
-            BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(capture)));
-            Result result = reader.decode(bitmap);
+            BufferedImageLuminanceSource source = new BufferedImageLuminanceSource(capture);
+            BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+            Result result = getReader().decode(bitmap);
             return result.getText();
         } catch (NotFoundException e) {
             return null;
         }
     }
 
-    private void readStream() {
+    private void readCameraStream() {
         final AtomicReference<WritableImage> imgRef = new AtomicReference<>(null);
         threadRunning = true;
         while (threadRunning) {
-            BufferedImage capture = webcam.getImage();
-            if (capture != null) {
-                imgRef.set(toFXImageFlipped(capture, imgRef.get()));
-                capture.flush();
-                String decoded = decode(capture);
-                synchronized (pulseControl) {
+            Webcam webcam = this.webcam;
+            if (webcam != null) {
+                BufferedImage capture = webcam.getImage();
+                if (capture != null) {
+                    imgRef.set(toFXImageFlipped(capture, imgRef.get()));
+                    capture.flush();
+                    String decoded = decoding ? decode(capture) : null;
                     image = imgRef.get();
                     result = decoded;
                 }
             }
             try {
-                Thread.sleep(10);
+                Thread.sleep(20);
             } catch (InterruptedException e) {
                 break;
             }
@@ -149,13 +196,37 @@ public class FXCamera {
         thread = null;
     }
 
+    private static List<Webcam> webcams = null;
+
+    private static List<Webcam> getWebcams() {
+        if (webcams == null) {
+            webcams = Webcam.getWebcams();
+        }
+        return webcams;
+    }
+
+    private static MultiFormatReader reader = null;
+
+    private static MultiFormatReader getReader() {
+        if (reader == null) {
+            reader = new MultiFormatReader();
+        }
+        return reader;
+    }
+
     private static final int bw = 640;
     private static final int bh = 480;
 
-    private static final BufferedImage converted = new BufferedImage(bw, bh, BufferedImage.TYPE_INT_ARGB_PRE);
-    private static final Graphics2D g2d = converted.createGraphics();
+    private static BufferedImage converted = null;
+    private static Graphics2D g2d = null;
 
-    private static final int[] fb = new int[bw * bh];
+    private static int[] fb = null;
+
+    private static void initConverter() {
+        converted = new BufferedImage(bw, bh, BufferedImage.TYPE_INT_ARGB_PRE);
+        g2d = converted.createGraphics();
+        fb = new int[bw * bh];
+    }
 
     /**
      * Snapshots the specified {@link BufferedImage} and stores a copy of
@@ -185,6 +256,9 @@ public class FXCamera {
             case BufferedImage.TYPE_INT_ARGB_PRE:
                 break;
             default:
+                if (converted == null) {
+                    initConverter();
+                }
                 g2d.drawImage(source, 0, 0, null);
                 source = converted;
                 break;

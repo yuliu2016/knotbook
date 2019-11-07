@@ -5,10 +5,11 @@ import kb.service.api.array.TableArray
 import kb.service.api.array.TableUtil
 import java.io.FileInputStream
 import java.io.PrintWriter
+import java.net.InetSocketAddress
 import java.util.concurrent.Executors
 
 class Server {
-    val server: HttpServer = HttpServer.create().apply {
+    private val server: HttpServer = HttpServer.create().apply {
 
         createContext("/hello") { ex ->
             ex.responseHeaders.add("Content-type", "text/plain")
@@ -28,6 +29,22 @@ class Server {
             ex.responseBody.use { it.write(response) }
         }
 
-        executor = Executors.newSingleThreadExecutor()
+        executor = Executors.newSingleThreadExecutor {
+            val thread = Executors.defaultThreadFactory().newThread(it)
+            thread.isDaemon = true
+            thread
+        }
+    }
+
+    fun bindAndStart() {
+        server.bind(InetSocketAddress(8650), 0)
+        server.start()
+        stateCallback?.invoke("Idle")
+    }
+
+    var stateCallback: ((String) -> Unit)? = null
+
+    fun exit() {
+        server.stop(0)
     }
 }

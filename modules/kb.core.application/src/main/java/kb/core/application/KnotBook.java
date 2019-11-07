@@ -1,42 +1,60 @@
 package kb.core.application;
 
-import kb.service.api.MetaService;
-import kb.service.api.Service;
-import kb.service.api.ServiceContext;
-import kb.service.api.ServiceMetadata;
+import kb.service.api.*;
 import kb.service.api.application.ApplicationProps;
 import kb.service.api.application.ApplicationService;
-import kb.service.api.application.JVMInstance;
 import kb.service.api.application.ServiceManager;
+import kb.service.api.ui.CommandManager;
+import kb.service.api.ui.Notification;
 import kb.service.api.ui.TextEditor;
 import kb.service.api.ui.TextEditorService;
-import kotlin.NotImplementedError;
 
-import java.util.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.ServiceLoader;
 
 @SuppressWarnings("unused")
 class KnotBook implements ServiceManager {
 
-    private static class ResolvedServices<T extends MetaService> implements Iterable<T> {
-        Class<T> theClass;
-        List<T> theServices;
+    public interface RegistryHandle {
+        InputStream input() throws IOException;
 
-        ResolvedServices(Class<T> theClass, List<T> theServices) {
-            this.theClass = theClass;
-            this.theServices = theServices;
+        OutputStream output() throws IOException;
+    }
+
+    private static class FileRegistryHandle implements RegistryHandle {
+        File file;
+
+        FileRegistryHandle(File file) {
+            this.file = file;
         }
 
-
-        @SuppressWarnings("NullableProblems")
         @Override
-        public Iterator<T> iterator() {
-            return theServices.iterator();
+        public InputStream input() throws IOException {
+            return new FileInputStream(file);
+        }
+
+        @Override
+        public OutputStream output() throws IOException {
+            return new FileOutputStream(file);
+        }
+    }
+
+    private static class ResolvedServices<T extends MetaService> {
+        Class<T> theClass;
+        List<T> services;
+
+        ResolvedServices(Class<T> theClass, List<T> services) {
+            this.theClass = theClass;
+            this.services = services;
         }
 
         void print() {
-            System.out.println("\nListing " + theServices.size() +
+            System.out.println("\nListing " + services.size() +
                     " package(s) for " + theClass.getSimpleName() + ":");
-            for (T s : theServices) {
+            for (T s : services) {
                 ServiceMetadata metadata = s.getMetadata();
                 System.out.println(metadata.getPackageName() + " => " + metadata.getPackageVersion());
             }
@@ -44,7 +62,6 @@ class KnotBook implements ServiceManager {
     }
 
     private static class MetadataServiceWrapper implements Service {
-
         private ServiceMetadata metadata;
 
         MetadataServiceWrapper(ServiceMetadata metadata) {
@@ -55,10 +72,45 @@ class KnotBook implements ServiceManager {
         public void launch(ServiceContext context) {
         }
 
-
         @Override
         public ServiceMetadata getMetadata() {
             return metadata;
+        }
+    }
+
+    private static class ContextImpl implements ServiceContext {
+
+        Service service;
+        ApplicationService app;
+
+        ContextImpl(Service service, ApplicationService app) {
+            this.service = service;
+            this.app = app;
+        }
+
+        @Override
+        public Service getService() {
+            return service;
+        }
+
+        @Override
+        public ServiceProps getProps() {
+            return getKnotBook().getProps().getProps(service.getMetadata().getPackageName());
+        }
+
+        @Override
+        public TextEditor createTextEditor() {
+            return getKnotBook().createTextEditor();
+        }
+
+        @Override
+        public Notification createNotification() {
+            return app.createNotification();
+        }
+
+        @Override
+        public CommandManager getCommandManager() {
+            return app.getCommandManager();
         }
     }
 
@@ -70,79 +122,92 @@ class KnotBook implements ServiceManager {
         return new ResolvedServices<>(service, providers);
     }
 
-
-    private static Service serviceForApplication(ApplicationService app) {
-        return new MetadataServiceWrapper(app.getMetadata());
+    private static Service serviceForApplication(ServiceMetadata metadata) {
+        return new MetadataServiceWrapper(metadata);
     }
 
+    private static ServiceContext contextForService(Service service, ApplicationService app) {
+        return new ContextImpl(service, app);
+    }
 
     private KnotBook() {
     }
 
-    // KnotBook instance
     private static final KnotBook theKnotBook = new KnotBook();
 
     static KnotBook getKnotBook() {
         return theKnotBook;
     }
 
-    // application
-    private final ResolvedServices<ApplicationService> applicationServices =
-            loadServices(ApplicationService.class);
+    private String home = System.getProperty("user.home").replace(File.separatorChar, '/');
+    private List<String> args;
 
-    // All extensions
-    private final ResolvedServices<Service> services =
-            loadServices(Service.class);
-
-    // Text Editor implementation
-    private final ResolvedServices<TextEditorService> textEditors =
-            loadServices(TextEditorService.class);
-
-    // App Registry
-    private final Registry registry = new Registry(new UserFile());
-
-    private static ServiceContext contextForService(Service service, ApplicationService app) {
-        return new ServiceContextImpl(service, theKnotBook, app);
+    private boolean isDebug() {
+        return args == null || args.contains("debug");
     }
 
-    void launch() {
-        System.out.println(Arrays.toString(JVMInstance.getArgs()));
+    private RegistryHandle getHandle() {
+        if (isDebug()) {
+            return new FileRegistryHandle(new File(home, "knotbook.properties"));
+        }
+        return new FileRegistryHandle(new File(home, "knotbook-release.properties"));
+    }
 
-        applicationServices.print();
-        services.print();
-        textEditors.print();
+    private final ResolvedServices<ApplicationService> applications =
+            loadServices(ApplicationService.class);
+    private final ResolvedServices<Service> extensions =
+            loadServices(Service.class);
+    private final ResolvedServices<TextEditorService> textEditors =
+            loadServices(TextEditorService.class);
+    private final Registry2 registry = new Registry2(getHandle());
 
-        if (!applicationServices.theServices.isEmpty()) {
-            ApplicationService app = applicationServices.theServices.get(0);
-            app.launch(theKnotBook, contextForService(serviceForApplication(app), app));
-            for (Service service : services.theServices) {
-                service.launch(contextForService(service, app));
-            }
+    void launch(List<String> args) {
+        this.args = args;
+        if (!applications.services.isEmpty()) {
+            ApplicationService app = applications.services.get(0);
+            launch(app);
         }
     }
 
+    private void launch(ApplicationService app) {
+        System.out.println(args);
+        applications.print();
+        extensions.print();
+        textEditors.print();
+        app.launch(getKnotBook(), contextForService(serviceForApplication(app.getMetadata()), app));
+        for (Service service : extensions.services) {
+            service.launch(contextForService(service, app));
+        }
+    }
 
     @Override
     public ApplicationProps getProps() {
         return registry;
     }
 
-
     @Override
     public List<Service> getServices() {
-        return services.theServices;
+        return extensions.services;
     }
-
 
     @Override
     public String getVersion() {
-        return "3.1.0-alpha";
+        return "3.1.0";
     }
 
-    TextEditor createTextEditor() {
-        if (!textEditors.theServices.isEmpty()) {
-            return textEditors.theServices.get(0).create();
+    @Override
+    public void exit() {
+        for (Service service : getServices()) {
+            service.terminate();
         }
-        throw new NotImplementedError();
+        registry.save();
+        System.exit(0);
+    }
+
+    private TextEditor createTextEditor() {
+        if (!textEditors.services.isEmpty()) {
+            return textEditors.services.get(0).create();
+        }
+        throw new NoSuchElementException();
     }
 }

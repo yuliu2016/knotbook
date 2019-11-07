@@ -6,13 +6,16 @@ import kb.service.api.ui.CommandManager;
 import kb.service.api.ui.Notification;
 
 public interface ApplicationService extends MetaService {
+
+    /**
+     * Launch the application service
+     */
     void launch(ServiceManager manager, ServiceContext context);
 
     /**
      * Retrieve an instance of the command manager for this context,
      * used to add options to the user interface
      */
-
     CommandManager getCommandManager();
 
 

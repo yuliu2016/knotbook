@@ -22,11 +22,17 @@ tasks.register("run", ModularJavaExec::class.java) {
             // For accessing getChildren in ImplUtils
             "--add-opens=javafx.graphics/javafx.scene=org.controlsfx.controls"
     )
+    args = listOf("debug")
+}
+
+tasks.register("cleanJars", Delete::class.java) {
+    dependsOn("jar")
+    delete(File(buildDir, "collected"))
 }
 
 tasks.register("collectJars", Copy::class.java){
     group = "abc"
-    dependsOn("jar")
+    dependsOn("jar", "cleanJars")
     from(configurations.runtimeClasspath) {
         exclude("javafx-*", "kotlin-*", "controlsfx-*", "rsyntaxtextarea-*")
     }

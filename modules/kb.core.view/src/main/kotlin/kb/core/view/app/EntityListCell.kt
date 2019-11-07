@@ -3,10 +3,10 @@ package kb.core.view.app
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.control.ListCell
-import javafx.scene.paint.Color
 import kb.core.fx.add
 import kb.core.fx.hbox
 import kb.core.fx.label
+import kb.core.fx.styleClass
 import kb.core.icon.centered
 
 @Suppress("DuplicatedCode")
@@ -27,25 +27,20 @@ class EntityListCell : ListCell<Entity>() {
                 alignment = Pos.CENTER_LEFT
                 spacing = 4.0
                 if (item.icon != null) {
-                    add(item.icon.centered(20))
+                    add(item.icon.centered(24))
                 } else {
                     add(hbox {
-                        prefWidth = 20.0
+                        prefWidth = 24.0
                     })
                 }
-                if (item.cat != null) {
-                    add(label {
-                        text = item.cat
-                        alignment = Pos.CENTER_LEFT
-                        textFill = Color.valueOf("#3c5c94")
-//                    style = "-fx-font-weight:700"
-                    })
-                }
-                if (item.name != null) {
-                    add(label {
-                        text = item.name
-                    })
-                }
+                add(label {
+                    text = item.cat
+                    alignment = Pos.CENTER_LEFT
+                    styleClass("list-highlight")
+                })
+                add(label {
+                    text = item.name
+                })
             }
         }
     }

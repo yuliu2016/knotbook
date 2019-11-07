@@ -3,19 +3,13 @@ package kb.core.view
 import javafx.application.Platform
 import javafx.beans.InvalidationListener
 import javafx.beans.property.SimpleStringProperty
-import javafx.geometry.Insets
-import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import javafx.scene.control.Button
 import javafx.scene.control.Menu
-import javafx.scene.effect.ColorAdjust
-import javafx.scene.effect.DropShadow
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
-import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
-import javafx.stage.Popup
 import kb.core.fx.*
 import kb.core.icon.fontIcon
 import kb.core.icon.icon
@@ -27,8 +21,6 @@ import org.controlsfx.control.spreadsheet.GridBase
 import org.controlsfx.control.spreadsheet.SpreadsheetView
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 import java.io.FileInputStream
-import kotlin.concurrent.thread
-import kotlin.system.exitProcess
 
 
 @Suppress("MemberVisibilityCanBePrivate", "DuplicatedCode")
@@ -77,6 +69,11 @@ class DataView {
                     name("Create Empty Table")
                     shortcut(KeyCode.N, control = true)
                     icon(MDI_PLUS, 14)
+                    action {
+                        spreadsheet.grid = emptyGrid()
+                        spreadsheet.columns.forEach { it.setPrefWidth(84.0) }
+                        base.stage.isMaximized = true
+                    }
                 }
                 item {
                     name("Import Table from File")
@@ -88,10 +85,11 @@ class DataView {
                         val f = fc.showOpenDialog(base.stage)
                         if (f != null && f.extension == "csv") {
                             base.docLabel.text = "Loading"
-                            thread {
+                            Thread {
                                 try {
                                     val a = TableArray.fromCSV(FileInputStream(f), true)
                                     runOnFxThread {
+                                        base.stage.isMaximized = true
                                         spreadsheet.grid = a.toGrid()
                                         spreadsheet.fixedRows.setAll(0)
                                         base.docLabel.text = f.absolutePath
@@ -99,7 +97,7 @@ class DataView {
                                 } catch (e: Exception) {
                                     e.printStackTrace()
                                 }
-                            }
+                            }.start()
                         }
                     }
                 }
@@ -121,7 +119,7 @@ class DataView {
                 separator()
                 item {
                     name("Exit")
-                    action { exitProcess(0) }
+                    action { Singleton.exit() }
                 }
             }
         }
@@ -194,15 +192,16 @@ class DataView {
             name("View")
             modify {
                 item {
-                    name("Option Bar")
+                    name("Command Palette")
                     icon(MDI_CONSOLE, 14)
-                    shortcut(KeyCode.P, control = true, shift = true)
+                    shortcut(KeyCode.K, control = true)
                     action { base.showOptionBarPrototype() }
                 }
                 item {
-                    name("Navigate Workspace")
-                    shortcut(KeyCode.TAB, control = true, shift = true)
-                    action { hi() }
+                    name("Workspace Navigator")
+                    shortcut(KeyCode.TAB, control = true)
+                    icon(MDI_NAVIGATION, 14)
+                    action { base.showOptionBarPrototype() }
                 }
                 separator()
                 item {
@@ -238,37 +237,6 @@ class DataView {
         }
     }
 
-    private fun hi() {
-        val a = Popup()
-        a.content.add(vbox {
-
-            padding = Insets(8.0)
-            effect = DropShadow()
-            style = "-fx-background-color: rgba(255,255,255, 0.95)"
-            lb("Multi-Team Interface")
-            lb("Match Schedule")
-            lb("Raw Data")
-            lb("Team Rankings")
-            lb("Merged Data")
-        })
-        a.isAutoHide = true
-        a.x = base.stage.x + 20
-        a.y = base.stage.y + 40
-        a.show(base.stage)
-    }
-
-    private fun VBox.lb(s: String) {
-        add(hbox {
-            align(Pos.CENTER_LEFT)
-            add(fontIcon(MDI_CHEVRON_RIGHT, 18))
-            spacing = 4.0
-            add(label {
-                text = s
-//                style = "-fx-font-size: 18"
-            })
-        })
-    }
-
     val zoomText = SimpleStringProperty("100%")
     val themeText = SimpleStringProperty("Light")
     val selectionText = SimpleStringProperty("None")
@@ -282,32 +250,38 @@ class DataView {
         }
         placeholder = vbox {
             align(Pos.CENTER)
-            spacing = 8.0
-            add(imageView {
-                fitWidth = 180.0
-                isPreserveRatio = true
-                image = base.appIcon
-                effect = ColorAdjust(0.0, -1.0, -0.15, -0.1)
+            spacing = 4.0
+            add(label {
+                translateY = -16.0
+                text = "KnotBook DataView " + Singleton.manager.version
+                style = "-fx-font-size: 24"
             })
-            add(vbox { prefHeight = 22.0 }) // (256 - 360 / 2) / 2 - (2 * 8)
-            add(Button("Open Recent [Ctrl+Alt+O]", fontIcon(MDI_HISTORY, 14)).apply {
-                prefWidth = 200.0
+            add(Button("Open Recent", fontIcon(MDI_HISTORY, 14)).apply {
+                prefWidth = 160.0
                 this.alignment = Pos.CENTER_LEFT
             })
-            add(Button("Set Workspace [Ctrl+Shift+O]", fontIcon(MDI_FOLDER_OUTLINE, 14)).apply {
-                prefWidth = 200.0
+            add(Button("Set Workspace", fontIcon(MDI_FOLDER_OUTLINE, 14)).apply {
+                prefWidth = 160.0
                 this.alignment = Pos.CENTER_LEFT
             })
-            add(Button("Import Table from File [Ctrl+O]", fontIcon(MDI_FILE_IMPORT, 14)).apply {
-                prefWidth = 200.0
+            add(Button("Import Table from File", fontIcon(MDI_FILE_IMPORT, 14)).apply {
+                prefWidth = 160.0
                 this.alignment = Pos.CENTER_LEFT
             })
-            add(Button("Create Empty Table [Ctrl+N]", fontIcon(MDI_PLUS, 14)).apply {
-                this.prefWidth = 200.0
+            add(Button("Create Empty Table", fontIcon(MDI_PLUS, 14)).apply {
+                this.prefWidth = 160.0
                 this.alignment = Pos.CENTER_LEFT
             })
-            translateY = -64.0
+            add(Button("Command Palette", fontIcon(MDI_CONSOLE, 14)).apply {
+                this.prefWidth = 160.0
+                this.alignment = Pos.CENTER_LEFT
+            })
+            add(Button("Workspace Navigator", fontIcon(MDI_NAVIGATION, 14)).apply {
+                this.prefWidth = 160.0
+                this.alignment = Pos.CENTER_LEFT
+            })
         }
+
         hgrow()
         contextMenu = contextMenu {
             modify {
@@ -369,26 +343,16 @@ class DataView {
         }
     }
 
-
-    private val mainView = splitPane {
-        orientation = Orientation.HORIZONTAL
-        vgrow()
-        addFixed(spreadsheet)
-        setDividerPositions(0.2, 0.6)
-    }
-
     fun show() {
-        base.scene.accelerators[KeyCodeCombination(KeyCode.K, KeyCombination.CONTROL_DOWN)] = Runnable {
-            base.showOptionBarPrototype()
-        }
         base.scene.accelerators[KeyCodeCombination(KeyCode.COMMA, KeyCombination.CONTROL_DOWN)] = Runnable {
             Singleton.editAppProperties()
         }
         base.menuBar.modify(mainMenus)
         base.menuBar.modify(base.helpMenu)
-        base.layout.center = mainView
+        base.layout.center = spreadsheet
         themeText.bind(base.themeProperty.asString())
         base.addStatus(selectionText, MDI_MOUSE)
+        base.addStatus(Singleton.serverState, MDI_ACCESS_POINT)
         base.addStatus(zoomText, MDI_MAGNIFY_PLUS)
         base.addStatus(themeText, MDI_COMPARE)
         base.addStatus(Singleton.memoryUsed, MDI_MEMORY)
