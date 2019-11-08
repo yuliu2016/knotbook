@@ -2,8 +2,8 @@ package kb.service.api.application;
 
 import kb.service.api.MetaService;
 import kb.service.api.ServiceContext;
-import kb.service.api.ui.CommandManager;
 import kb.service.api.ui.Notification;
+import kb.service.api.ui.UIManager;
 
 public interface ApplicationService extends MetaService {
 
@@ -16,7 +16,7 @@ public interface ApplicationService extends MetaService {
      * Retrieve an instance of the command manager for this context,
      * used to add options to the user interface
      */
-    CommandManager getCommandManager();
+    UIManager getUIManager();
 
 
     Notification createNotification();

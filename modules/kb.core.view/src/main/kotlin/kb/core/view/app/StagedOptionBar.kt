@@ -12,11 +12,10 @@ import javafx.stage.Stage
 import kb.core.fx.*
 import kb.core.icon.fontIcon
 import kb.core.view.util.PrettyListView
-import kb.service.api.ui.OptionBar
 import org.kordamp.ikonli.materialdesign.MaterialDesign
 
 @Suppress("MemberVisibilityCanBePrivate")
-class StagedOptionBar : OptionBar {
+class StagedOptionBar {
 
     companion object {
         const val kOBWidth = 560.0
@@ -25,11 +24,11 @@ class StagedOptionBar : OptionBar {
 
     private val hintProperty = SimpleStringProperty("Search a Command")
 
-    override fun getHint(): String {
+    fun getHint(): String {
         return hintProperty.get()
     }
 
-    override fun setHint(hint: String?) {
+    fun setHint(hint: String?) {
         hintProperty.set(hint)
     }
 

@@ -4,8 +4,8 @@ import kb.service.api.ServiceContext
 import kb.service.api.ServiceMetadata
 import kb.service.api.application.ApplicationService
 import kb.service.api.application.ServiceManager
-import kb.service.api.ui.CommandManager
 import kb.service.api.ui.Notification
+import kb.service.api.ui.UIManager
 
 class DataApp : ApplicationService {
 
@@ -24,11 +24,11 @@ class DataApp : ApplicationService {
         Singleton.launch(manager, context)
     }
 
-    override fun getCommandManager(): CommandManager {
+    override fun getUIManager(): UIManager {
         TODO("not implemented")
     }
 
     override fun createNotification(): Notification {
-        return ScreenEvent()
+        return EventNotification()
     }
 }

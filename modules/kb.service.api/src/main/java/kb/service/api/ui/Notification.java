@@ -10,7 +10,7 @@ public interface Notification {
 
     Notification setMessage(String message);
 
-    Notification addAction(String name, CommandCallback callback);
+    Notification addAction(String name, Runnable callback);
 
     Notification show();
 }

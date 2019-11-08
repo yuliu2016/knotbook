@@ -26,10 +26,7 @@ public interface Service extends MetaService {
 
     /**
      * Stops the service
-     *
-     * @return true if service stopped successfully
      */
-    default boolean terminate() {
-        return true;
+    default void terminate() {
     }
 }

@@ -4,10 +4,10 @@ import kb.service.api.*;
 import kb.service.api.application.ApplicationProps;
 import kb.service.api.application.ApplicationService;
 import kb.service.api.application.ServiceManager;
-import kb.service.api.ui.CommandManager;
 import kb.service.api.ui.Notification;
 import kb.service.api.ui.TextEditor;
 import kb.service.api.ui.TextEditorService;
+import kb.service.api.ui.UIManager;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -109,8 +109,8 @@ class KnotBook implements ServiceManager {
         }
 
         @Override
-        public CommandManager getCommandManager() {
-            return app.getCommandManager();
+        public UIManager getUIManager() {
+            return app.getUIManager();
         }
     }
 
