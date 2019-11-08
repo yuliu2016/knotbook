@@ -34,7 +34,6 @@ class WindowBase {
     }
 
     fun showOptionBarPrototype() {
-        optionBar.setTheme(listOf("/knotbook.css", themeProperty.get().optionStyle))
         optionBar.show(stage, menuBar.height)
     }
 
@@ -45,7 +44,12 @@ class WindowBase {
             Theme.Light -> Theme.Dark
             Theme.Dark -> Theme.Light
         })
+        updateTheme()
+    }
+
+    fun updateTheme() {
         layout.stylesheets.setAll("/knotbook.css", themeProperty.get().viewStyle)
+        optionBar.setTheme(listOf("/knotbook.css", themeProperty.get().optionStyle))
     }
 
     val menuBar = menuBar {
@@ -69,7 +73,6 @@ class WindowBase {
     }
 
     val layout = borderPane {
-        stylesheets.addAll("/knotbook.css", Theme.Light.viewStyle)
         prefWidth = 510.0
         prefHeight = 340.0
         top = menuBar
@@ -81,6 +84,7 @@ class WindowBase {
     val appIcon = Image(DataView::class.java.getResourceAsStream("/icon.png"))
 
     fun show() {
+        updateTheme()
         stage.fullScreenExitHint = "Press F11 to Exit Full Screen"
         stage.title = "KnotBook"
         stage.icons.add(appIcon)

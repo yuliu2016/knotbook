@@ -84,7 +84,7 @@ class StagedOptionBar : OptionBar {
         }
         styleClass("option-bar")
         prefWidth = kOBWidth
-        prefHeight = kOBHeight
+        maxHeight = kOBHeight
 
         add(hbox {
             align(Pos.CENTER)
@@ -94,6 +94,10 @@ class StagedOptionBar : OptionBar {
             add(button {
                 styleClass("ok-button")
                 graphic = fontIcon(MaterialDesign.MDI_CHECK, 14)
+                isFocusTraversable = false
+                setOnAction {
+                    popup.hide()
+                }
             })
         })
         add(lv)
