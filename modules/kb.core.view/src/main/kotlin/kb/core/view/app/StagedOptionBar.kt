@@ -1,6 +1,5 @@
 package kb.core.view.app
 
-import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.effect.BlurType
@@ -22,16 +21,6 @@ class StagedOptionBar {
         const val kOBHeight = 400.0
     }
 
-    private val hintProperty = SimpleStringProperty("Search a Command")
-
-    fun getHint(): String {
-        return hintProperty.get()
-    }
-
-    fun setHint(hint: String?) {
-        hintProperty.set(hint)
-    }
-
     val popup = Popup()
 
     val lv = PrettyListView<Entity>().apply {
@@ -45,7 +34,7 @@ class StagedOptionBar {
     }
 
     val tf = textField {
-        promptTextProperty().bind(hintProperty)
+        promptTextProperty().unbind()
         this.setOnKeyPressed {
             when {
                 it.code == KeyCode.UP -> {

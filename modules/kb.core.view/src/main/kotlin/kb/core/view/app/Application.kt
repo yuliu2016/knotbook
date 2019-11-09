@@ -4,10 +4,9 @@ import kb.service.api.ServiceContext
 import kb.service.api.ServiceMetadata
 import kb.service.api.application.ApplicationService
 import kb.service.api.application.ServiceManager
-import kb.service.api.ui.Notification
 import kb.service.api.ui.UIManager
 
-class DataApp : ApplicationService {
+class Application : ApplicationService {
 
     private val metadata = ServiceMetadata()
 
@@ -25,10 +24,6 @@ class DataApp : ApplicationService {
     }
 
     override fun getUIManager(): UIManager {
-        TODO("not implemented")
-    }
-
-    override fun createNotification(): Notification {
-        return EventNotification()
+        return Singleton.uiManager
     }
 }

@@ -1,3 +1,4 @@
+*.gradle.kts linguist-generated=true
 modules/kb.tba.client/src/main/kotlin/kb/tba/client/* linguist-generated=true
 modules/kb.core.camera.fx/src/main/java/kb/core/camera/fx/BufferedImageLuminanceSource.java linguist-vendored=true
 modules/kb.core.icon/* linguist-vendored=true

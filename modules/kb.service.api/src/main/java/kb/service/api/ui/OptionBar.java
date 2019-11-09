@@ -7,112 +7,128 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 
+/**
+ * Set options for the option bar.
+ * Properties are observable`
+ */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class OptionBar {
 
-    public static class Item {
-        private String type;
-        private String name;
-        private String info;
-        private Node graphic;
-
-        public Item(String type, String name, String info, Node graphic) {
-            this.type = type;
-            this.name = name;
-            this.info = info;
-            this.graphic = graphic;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getInfo() {
-            return info;
-        }
-
-        public Node getGraphic() {
-            return graphic;
-        }
-    }
-
     private StringProperty hintProperty = new SimpleStringProperty(null);
 
-    public StringProperty getHintProperty() {
+    public StringProperty hintProperty() {
         return hintProperty;
     }
 
     public String getHint() {
-        return getHintProperty().get();
+        return hintProperty().get();
     }
 
     public void setHint(String hint) {
-        getHintProperty().set(hint);
+        hintProperty().set(hint);
     }
 
     private ObjectProperty<Node> arbitraryViewProperty = new SimpleObjectProperty<>(null);
 
-    public ObjectProperty<Node> getArbitraryViewProperty() {
+    public ObjectProperty<Node> arbitraryViewProperty() {
         return arbitraryViewProperty;
     }
 
     public Node getArbitraryView() {
-        return getArbitraryViewProperty().get();
+        return arbitraryViewProperty().get();
     }
 
     public void setArbitraryView(Node arbitraryView) {
-        getArbitraryViewProperty().set(arbitraryView);
+        arbitraryViewProperty().set(arbitraryView);
     }
 
-    private ObservableList<Item> itemsProperty = FXCollections.observableArrayList();
+    private ObservableList<OptionBarItem> itemsProperty = FXCollections.observableArrayList();
 
-    public ObservableList<Item> getItems() {
+    public ObservableList<OptionBarItem> getItems() {
         return itemsProperty;
     }
 
     private ObjectProperty<EventHandler<ActionEvent>> onDismissedProperty = new SimpleObjectProperty<>();
 
-    public ObjectProperty<EventHandler<ActionEvent>> getOnDismissedProperty() {
+    public ObjectProperty<EventHandler<ActionEvent>> onDismissedProperty() {
         return onDismissedProperty;
     }
 
     public EventHandler<ActionEvent> getOnDismissed() {
-        return getOnDismissedProperty().get();
+        return onDismissedProperty().get();
     }
 
     public void setOnDismissed(EventHandler<ActionEvent> onDismissed) {
-        getOnDismissedProperty().set(onDismissed);
+        onDismissedProperty().set(onDismissed);
+    }
+
+    private ObjectProperty<EventHandler<ActionEvent>> onContinueProperty = new SimpleObjectProperty<>();
+
+    public ObjectProperty<EventHandler<ActionEvent>> onContinueProperty() {
+        return onContinueProperty;
+    }
+
+    public EventHandler<ActionEvent> getOnContinue() {
+        return onContinueProperty().get();
+    }
+
+    public void setOnContinue(EventHandler<ActionEvent> onContinue) {
+        onContinueProperty().set(onContinue);
+    }
+
+    private ObjectProperty<EventHandler<ActionEvent>> onEnterPressedProperty = new SimpleObjectProperty<>();
+
+    public ObjectProperty<EventHandler<ActionEvent>> onEnterPressedProperty() {
+        return onEnterPressedProperty;
+    }
+
+    public EventHandler<ActionEvent> getOnEnterPressed() {
+        return onEnterPressedProperty().get();
+    }
+
+    public void setOnEnterPressed(EventHandler<ActionEvent> onEnterPressed) {
+        onEnterPressedProperty().set(onEnterPressed);
     }
 
     private StringProperty textProperty = new SimpleStringProperty();
 
-    public StringProperty getTextProperty() {
+    public StringProperty textProperty() {
         return textProperty;
     }
 
     public String getText() {
-        return getTextProperty().get();
+        return textProperty().get();
     }
 
     public void setText(String text) {
-        getTextProperty().set(text);
+        textProperty().set(text);
     }
 
     private IntegerProperty selectedItemProperty = new SimpleIntegerProperty();
 
-    public IntegerProperty getSelectedItemProperty() {
+    public IntegerProperty selectedItemProperty() {
         return selectedItemProperty;
     }
 
     public int getSelectedItem() {
-        return getSelectedItemProperty().get();
+        return selectedItemProperty().get();
     }
 
     public void setSelectedItem(int selectedItem) {
-        getSelectedItemProperty().set(selectedItem);
+        selectedItemProperty().set(selectedItem);
+    }
+
+    private StringProperty highlightedProperty = new SimpleStringProperty();
+
+    public StringProperty highlightedProperty() {
+        return highlightedProperty;
+    }
+
+    public String getHighlighted() {
+        return highlightedProperty.get();
+    }
+
+    public void setHighlighted(String highlighted) {
+        highlightedProperty.set(highlighted);
     }
 }

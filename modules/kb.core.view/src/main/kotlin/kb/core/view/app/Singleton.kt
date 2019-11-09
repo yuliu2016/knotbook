@@ -23,7 +23,9 @@ internal object Singleton {
 
     var focusedWindow: WindowBase? = null
 
-    val apiServer = Server()
+    val dataServer = Server()
+
+    val uiManager = WindowUIManager()
 
     fun editAppProperties() {
         context.createTextEditor()
@@ -122,14 +124,14 @@ internal object Singleton {
         Platform.setImplicitExit(false)
         val windows = Window.getWindows()
         windows.addListener(InvalidationListener { if (windows.isEmpty()) exit() })
-        apiServer.stateCallback = { Platform.runLater { serverState.set(it) } }
-        apiServer.bindAndStart()
+        dataServer.stateCallback = { Platform.runLater { serverState.set(it) } }
+        dataServer.bindAndStart()
         DataView().show()
     }
 
     fun exit() {
         Platform.runLater {
-            apiServer.exit()
+            dataServer.exit()
             Platform.exit()
             manager.exit()
         }

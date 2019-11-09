@@ -1,24 +1,21 @@
 package kb.service.api.ui;
 
-import javafx.scene.input.KeyCombination;
-import org.kordamp.ikonli.Ikon;
-
 public interface UIManager {
 
     boolean isOptionBarShown();
 
-    boolean showOptionBar(OptionBar optionBar);
+    void showOptionBar(OptionBar optionBar);
 
-    void registerCommand(
-            String commandID,
-            String commandType,
-            String commandName,
-            Ikon icon,
-            KeyCombination shortcut,
-            Runnable callback
-    );
+    void hideOptionBar();
 
-    boolean hasCommand(String commandID);
+    void registerCommand(String id, Command command);
 
-    void invokeCommand(String commandID);
+    boolean hasCommand(String id);
+
+    void invokeCommand(String id);
+
+    /**
+     * Create a notification handler
+     */
+    Notification createNotification();
 }

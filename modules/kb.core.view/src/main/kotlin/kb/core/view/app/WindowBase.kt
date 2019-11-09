@@ -15,8 +15,7 @@ import kb.core.fx.*
 import kb.core.icon.fontIcon
 import kb.core.icon.icon
 import kb.core.view.DataView
-import kb.core.view.splash.AboutSplash
-import kb.core.view.splash.GCSplash
+import kb.core.view.splash.Splash
 import org.kordamp.ikonli.Ikon
 import org.kordamp.ikonli.materialdesign.MaterialDesign
 
@@ -73,11 +72,10 @@ class WindowBase {
     }
 
     val layout = borderPane {
-        prefWidth = 510.0
-        prefHeight = 340.0
+        prefWidth = 720.0
+        prefHeight = 480.0
         top = menuBar
         bottom = statusBar
-        isSnapToPixel = false
     }
 
     val scene = Scene(layout)
@@ -105,7 +103,7 @@ class WindowBase {
             modify {
                 item {
                     name("Mark for Garbage Collection")
-                    action { GCSplash.splash() }
+                    action { Splash.gc() }
                     icon(MaterialDesign.MDI_DELETE_SWEEP, 14)
                     shortcut(KeyCode.B, control = true)
                 }
@@ -120,7 +118,7 @@ class WindowBase {
                 separator()
                 item {
                     name("About")
-                    action { AboutSplash.splash(stage) }
+                    action { Splash.info(stage) }
                     icon(MaterialDesign.MDI_INFORMATION_OUTLINE, 14)
                     shortcut(KeyCode.F1)
                 }
