@@ -4,33 +4,40 @@ import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.control.ListCell
 import kb.core.fx.*
+import kb.service.api.ui.OptionItem
 
-@Suppress("DuplicatedCode")
-class EntityListCell : ListCell<Entity>() {
+class OptionItemCell : ListCell<OptionItem>() {
 
-    override fun updateItem(item: Entity?, empty: Boolean) {
+    override fun updateItem(item: OptionItem?, empty: Boolean) {
         super.updateItem(item, empty)
 
         prefHeight = 24.0
         if (item == null || empty) {
             graphic = null
-            setOnMouseClicked {
-            }
         } else {
-            alignment = Pos.CENTER_LEFT
+            val ix = item.highlight
             graphic = hbox {
-                padding = Insets(0.0, 8.0, 0.0, 8.0)
                 alignment = Pos.CENTER_LEFT
-                spacing = 4.0
-                if (item.icon != null) {
-                    add(item.icon.centered(24))
+                padding = Insets(0.0, 8.0, 0.0, 8.0)
+                spacing = 45.0
+                if (item.graphic != null) {
+                    add(item.graphic.centered(24))
                 } else {
                     add(hbox {
                         prefWidth = 24.0
                     })
                 }
+                add(textFlow {
+                    var j = 0
+                    var hl = false
+                    for (i in item.name.indices) {
+                        if (j < ix.size) {
+
+                        }
+                    }
+                })
                 add(label {
-                    text = item.cat
+                    text = item.name
                     alignment = Pos.CENTER_LEFT
                     styleClass("list-highlight")
                 })
@@ -38,6 +45,7 @@ class EntityListCell : ListCell<Entity>() {
                     text = item.name
                 })
             }
+            alignment = Pos.CENTER_LEFT
         }
     }
 }

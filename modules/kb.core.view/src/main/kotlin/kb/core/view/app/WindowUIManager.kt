@@ -26,10 +26,11 @@ class WindowUIManager : UIManager {
     }
 
     override fun registerCommand(id: String, command: Command) {
-        commandsBar.items.add(OptionBarItem(
+        commandsBar.items.add(OptionItem(
                 command.name,
                 command.shortcut?.toString(),
-                command.icon?.let { fontIcon(it, 14) }
+                command.icon?.let { fontIcon(it, 14) },
+                null
         ))
         commands[id] = command
     }

@@ -4,24 +4,24 @@ import java.util.Arrays;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class FloatArrayList {
-    float[] value = new float[0];
+    public float[] value = new float[0];
 
-    int length;
+    public int length;
 
-    void resize(int size) {
+    public void resize(int size) {
         if (size != value.length) {
             value = Arrays.copyOf(value, size);
         }
     }
 
-    void append(float f) {
+    public void append(float f) {
         if (length == value.length) {
             resize(value.length + 16);
         }
         value[length++] = f;
     }
 
-    void appendUnique(float f) {
+    public void appendUnique(float f) {
         if (length == value.length) {
             resize(value.length + 16);
         }
@@ -33,7 +33,7 @@ public class FloatArrayList {
         value[length++] = f;
     }
 
-    void insert(int index, float f) {
+    public void insert(int index, float f) {
         if (length == value.length) {
             resize(value.length + 16);
         }
@@ -41,7 +41,7 @@ public class FloatArrayList {
         value[index] = f;
     }
 
-    float[] copy() {
+    public float[] copy() {
         return Arrays.copyOf(value, length);
     }
 }

@@ -42,9 +42,9 @@ public class OptionBar {
         arbitraryViewProperty().set(arbitraryView);
     }
 
-    private ObservableList<OptionBarItem> itemsProperty = FXCollections.observableArrayList();
+    private ObservableList<OptionItem> itemsProperty = FXCollections.observableArrayList();
 
-    public ObservableList<OptionBarItem> getItems() {
+    public ObservableList<OptionItem> getItems() {
         return itemsProperty;
     }
 
