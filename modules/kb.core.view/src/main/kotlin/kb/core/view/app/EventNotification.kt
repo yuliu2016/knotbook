@@ -39,7 +39,7 @@ class EventNotification : Notification {
 
     override fun show() = apply {
         runOnFxThread {
-            Singleton.focusedWindow?.let {
+            Singleton.uiManager.focusedWindow?.let {
                 showImpl(it)
             }
         }

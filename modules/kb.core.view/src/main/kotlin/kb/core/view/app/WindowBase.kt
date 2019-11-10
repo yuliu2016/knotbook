@@ -1,6 +1,6 @@
 package kb.core.view.app
 
-import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.InvalidationListener
 import javafx.beans.property.StringProperty
 import javafx.geometry.Insets
 import javafx.geometry.Orientation
@@ -23,7 +23,10 @@ import org.kordamp.ikonli.materialdesign.MaterialDesign
 class WindowBase {
 
     val stage = Stage()
-    val optionBar = StagedOptionBar()
+
+    val themeListener = InvalidationListener {
+        updateTheme()
+    }
 
     private var isFullScreen = false
 
@@ -32,23 +35,13 @@ class WindowBase {
         stage.isFullScreen = isFullScreen
     }
 
-    fun showOptionBarPrototype() {
-        optionBar.show(stage, menuBar.height)
-    }
-
-    val themeProperty = SimpleObjectProperty(Theme.Light)
-
-    fun toggleTheme() {
-        themeProperty.set(when (themeProperty.get()!!) {
-            Theme.Light -> Theme.Dark
-            Theme.Dark -> Theme.Light
-        })
-        updateTheme()
+    fun contentYOffset(): Double {
+        return menuBar.height
     }
 
     fun updateTheme() {
-        layout.stylesheets.setAll("/knotbook.css", themeProperty.get().viewStyle)
-        optionBar.setTheme(listOf("/knotbook.css", themeProperty.get().optionStyle))
+        val theme = Singleton.uiManager.themeProperty.get()
+        layout.stylesheets.setAll("/knotbook.css", theme.viewStyle)
     }
 
     val menuBar = menuBar {
@@ -83,16 +76,20 @@ class WindowBase {
 
     fun show() {
         updateTheme()
+        Singleton.uiManager.themeProperty.addListener(themeListener)
         stage.fullScreenExitHint = "Press F11 to Exit Full Screen"
         stage.title = "KnotBook"
         stage.icons.add(appIcon)
         stage.scene = scene
         stage.focusedProperty().addListener { _, _, focused ->
             if (focused) {
-                Singleton.focusedWindow = this
-            } else if (Singleton.focusedWindow === this) {
-                Singleton.focusedWindow = null
+                Singleton.uiManager.focusedWindow = this
+            } else if (Singleton.uiManager.focusedWindow === this) {
+                Singleton.uiManager.focusedWindow = null
             }
+        }
+        stage.setOnCloseRequest {
+            Singleton.uiManager.themeProperty.removeListener(themeListener)
         }
         stage.show()
     }

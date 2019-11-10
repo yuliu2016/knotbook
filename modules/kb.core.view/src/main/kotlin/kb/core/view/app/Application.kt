@@ -1,5 +1,6 @@
 package kb.core.view.app
 
+import javafx.application.Platform
 import kb.service.api.ServiceContext
 import kb.service.api.ServiceMetadata
 import kb.service.api.application.ApplicationService
@@ -20,7 +21,9 @@ class Application : ApplicationService {
     }
 
     override fun launch(manager: ServiceManager, context: ServiceContext) {
-        Singleton.launch(manager, context)
+        Platform.startup {
+            Singleton.launch(manager, context)
+        }
     }
 
     override fun getUIManager(): UIManager {

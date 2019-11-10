@@ -174,14 +174,14 @@ class DataView {
                     name("Command Palette")
                     icon(MDI_CONSOLE, 14)
                     shortcut(KeyCode.K, control = true)
-                    action { base.showOptionBarPrototype() }
+                    action { Singleton.uiManager.showCommandsBar() }
                 }
                 separator()
                 item {
                     name("Toggle Colour Scheme")
                     shortcut(KeyCode.F3)
                     icon(MDI_COMPARE, 14)
-                    action { base.toggleTheme() }
+                    action { Singleton.uiManager.toggleTheme() }
                 }
                 item {
                     name("Toggle Full Screen")
@@ -292,12 +292,12 @@ class DataView {
         base.menuBar.modify(mainMenus)
         base.menuBar.modify(base.helpMenu)
         base.layout.center = spreadsheet
-        themeText.bind(base.themeProperty.asString())
+        themeText.bind(Singleton.uiManager.themeProperty.asString())
         base.addStatus(selectionText, MDI_MOUSE)
-        base.addStatus(Singleton.serverState, MDI_ACCESS_POINT)
+        base.addStatus(Singleton.uiManager.serverState, MDI_ACCESS_POINT)
         base.addStatus(zoomText, MDI_MAGNIFY_PLUS)
         base.addStatus(themeText, MDI_COMPARE)
-        base.addStatus(Singleton.memoryUsed, MDI_MEMORY)
+        base.addStatus(Singleton.uiManager.memoryUsed, MDI_MEMORY)
         base.show()
     }
 

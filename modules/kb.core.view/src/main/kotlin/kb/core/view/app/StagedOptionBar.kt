@@ -90,18 +90,18 @@ class StagedOptionBar {
         add(lv)
     }
 
-    fun setTheme(styles: List<String>) {
-        container.stylesheets.setAll(styles)
+    fun setTheme(vararg styles: String) {
+        container.stylesheets.setAll(styles.toList())
     }
 
-    fun show(stage: Stage, menuBarHeight: Double) {
+    fun show(stage: Stage, contentYOffset: Double) {
         if (popup.isShowing) {
             popup.hide()
         }
         popup.content.setAll(container)
         popup.isAutoHide = true
         popup.x = stage.x + stage.width / 2.0 - kOBWidth / 2.0 - 10.0 // fix centering
-        popup.y = stage.y + stage.scene.y + menuBarHeight - 5.0
+        popup.y = stage.y + stage.scene.y + contentYOffset - 5.0
         popup.show(stage)
     }
 }
