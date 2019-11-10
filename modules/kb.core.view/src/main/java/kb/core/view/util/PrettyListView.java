@@ -3,11 +3,8 @@ package kb.core.view.util;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollBar;
-import javafx.scene.control.skin.ListViewSkin;
-import javafx.scene.control.skin.VirtualFlow;
 
 import java.util.Set;
 
@@ -19,13 +16,8 @@ public class PrettyListView<T> extends ListView<T> {
     private ScrollBar vBar = new ScrollBar();
     private ScrollBar hBar = new ScrollBar();
 
-    private FreshListViewSkin<T> skin;
-
     public PrettyListView() {
         super();
-
-        skin = new FreshListViewSkin<>(this);
-        setSkin(skin);
 
         skinProperty().addListener(it -> {
             // first bind, then add new scrollbars, otherwise the new bars will be found
@@ -81,52 +73,5 @@ public class PrettyListView<T> extends ListView<T> {
 
         final double prefHeight = hBar.prefHeight(-1);
         hBar.resizeRelocate(insets.getLeft(), h - prefHeight - insets.getBottom(), w - insets.getLeft() - insets.getRight(), prefHeight);
-    }
-
-
-    private static class Flow<T> extends VirtualFlow<ListCell<T>> {
-        @Override
-        public void recreateCells() {
-            super.recreateCells();
-        }
-
-        @Override
-        public void rebuildCells() {
-            super.rebuildCells();
-        }
-    }
-
-    static class FreshListViewSkin<T> extends ListViewSkin<T> {
-
-        private Flow<T> flow;
-
-        @Override
-        protected VirtualFlow<ListCell<T>> createVirtualFlow() {
-            if (flow == null) {
-                flow = new Flow<>();
-            }
-            return flow;
-        }
-
-        FreshListViewSkin(ListView<T> control) {
-            super(control);
-        }
-
-
-        void rebuildCells() {
-            flow.rebuildCells();
-        }
-
-        void recreateCells() {
-            flow.recreateCells();
-        }
-    }
-
-    public void recreateCells() {
-        skin.recreateCells();
-    }
-
-    public void rebuildCells() {
-        skin.rebuildCells();
     }
 }

@@ -52,7 +52,7 @@ public class Splash {
         bottom.setPadding(new Insets(8.0, 32.0, 8.0, 32.0));
 
         bottom.getChildren().addAll(
-                labelOf("Version: " + Singleton.INSTANCE.getManager().getVersion()),
+                labelOf("KnotBook DataView " + Singleton.INSTANCE.getManager().getVersion()),
                 labelOf("Licensed under MIT and powered by open-source software"),
                 labelOf("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.arch")),
                 labelOf("Java Runtime: " + System.getProperty("java.vm.name") +

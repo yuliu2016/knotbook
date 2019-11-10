@@ -32,8 +32,10 @@ fun <T> MutableList<T>.addAll(vararg elements: T) {
 }
 
 @FXKtDSL
-fun Node.centered(width: Int): HBox = HBox().apply {
-    children.add(this@centered)
-    prefWidth = width.toDouble()
-    alignment = Pos.CENTER
+fun Node?.centered(width: Int): HBox = HBox().also {
+    it.prefWidth = width.toDouble()
+    if (this != null) {
+        it.children.add(this)
+        it.alignment = Pos.CENTER
+    }
 }

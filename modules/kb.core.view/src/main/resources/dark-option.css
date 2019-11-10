@@ -41,7 +41,8 @@
 }
 
 .list-highlight {
-    -fx-text-fill: #cc0;
+    -fx-text-fill: #ffd344;
+    -fx-font-weight: bold;
 }
 
 .list-cell:filled:selected .list-highlight {

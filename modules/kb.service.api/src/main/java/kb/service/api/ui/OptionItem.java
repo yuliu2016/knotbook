@@ -57,11 +57,6 @@ public class OptionItem {
      * <p>
      * Ex.
      * parse("ABC", "a c") returns [0,2]
-     * <p>
-     * Algorithm:
-     * 1. Find the next query char in q
-     * 2. Go through the remaining chars of n
-     * 3. Set the cursor index to the result
      *
      * @param name  the name to search
      * @param query the query to search for

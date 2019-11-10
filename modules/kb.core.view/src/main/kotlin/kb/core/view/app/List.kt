@@ -1,14 +1,22 @@
+@file:Suppress("FunctionName")
+
 package kb.core.view.app
 
+import kb.core.icon.FontIcon
 import kb.core.icon.fontIcon
+import kb.service.api.ui.OptionItem
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 
-fun getList(): List<Entity> = listOf(
-        Entity("Git:", "Push", fontIcon(MDI_CLOUD_UPLOAD, 14)),
-        Entity("Git:", "Commit", fontIcon(MDI_CHECK, 14)),
-        Entity("Git:", "History", fontIcon(MDI_HISTORY, 14)),
-        Entity("Git:", "Pull", fontIcon(MDI_SOURCE_PULL, 14)),
-        Entity("Table:", "Print", fontIcon(MDI_PRINTER, 14)),
+
+fun Entity(
+        cat: String,
+        name: String,
+        icon: FontIcon? = null,
+        info: String? = null
+) = OptionItem("$cat $name", info, icon, IntArray(cat.length) { it })
+
+fun getList(): List<OptionItem> = listOf(
+        Entity("Table:", "Print", fontIcon(MDI_PRINTER, 14), "Ctrl+P"),
         Entity("Folder:", "Export As Zip Archive", fontIcon(MDI_CLOUD_UPLOAD, 14)),
         Entity("Folder:", "Export As Excel Workbook", fontIcon(MDI_FILE_EXCEL, 14)),
         Entity("Application:", "Properties", fontIcon(MDI_TUNE, 14)),
@@ -36,7 +44,7 @@ fun getList(): List<Entity> = listOf(
         Entity("UI:", "Collapse Tree", fontIcon(MDI_UNFOLD_LESS, 14)),
         Entity("UI:", "Enter Full Screen"),
         Entity("UI:", "Open in New Window"),
-        Entity("UI:", "Toggle Colour Theme", fontIcon(MDI_COMPARE, 14)),
+        Entity("UI:", "Toggle Colour Theme", fontIcon(MDI_COMPARE, 14), "F3"),
         Entity("Table:", "Edit as CSV Text", fontIcon(MDI_FILE_DELIMITED, 14)),
         Entity("Data:", "Reveal in Local Cache"),
         Entity("Data:", "Reveal in Data Source"),
@@ -54,5 +62,9 @@ fun getList(): List<Entity> = listOf(
         Entity("Colour Scale:", "Clear for Selection"),
         Entity("Folder:", "Open in Command Prompt", fontIcon(MDI_CONSOLE, 14)),
         Entity("Table:", "Duplicate Data"),
-        Entity("Table:", "Find in Cells", fontIcon(MDI_FILE_FIND, 14))
+        Entity("Table:", "Find in Cells", fontIcon(MDI_FILE_FIND, 14)),
+        Entity("Git:", "Push", fontIcon(MDI_CLOUD_UPLOAD, 14)),
+        Entity("Git:", "Commit", fontIcon(MDI_CHECK, 14)),
+        Entity("Git:", "History", fontIcon(MDI_HISTORY, 14)),
+        Entity("Git:", "Pull", fontIcon(MDI_SOURCE_PULL, 14))
 )

@@ -11,6 +11,7 @@ import javafx.stage.Stage
 import kb.core.fx.*
 import kb.core.icon.fontIcon
 import kb.core.view.util.PrettyListView
+import kb.service.api.ui.OptionItem
 import org.kordamp.ikonli.materialdesign.MaterialDesign
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -23,14 +24,12 @@ class StagedOptionBar {
 
     val popup = Popup()
 
-    val lv = PrettyListView<Entity>().apply {
+    val lv = PrettyListView<OptionItem>().apply {
         vgrow()
         isFocusTraversable = false
         items = getList().observable()
         selectionModel.select(0)
-        setCellFactory {
-            EntityListCell()
-        }
+        setCellFactory { OptionItemCell() }
     }
 
     val tf = textField {
@@ -63,7 +62,7 @@ class StagedOptionBar {
 
     val container = vbox {
         effect = DropShadow().apply {
-            color = Color.GRAY
+            color = Color.DARKGRAY
             blurType = BlurType.GAUSSIAN
             height = 10.0
             width = 10.0

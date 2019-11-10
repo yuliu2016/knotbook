@@ -3,21 +3,20 @@ package kb.core.view
 import javafx.application.Platform
 import javafx.beans.InvalidationListener
 import javafx.beans.property.SimpleStringProperty
-import javafx.geometry.Pos
-import javafx.scene.control.Button
+import javafx.scene.control.Alert
+import javafx.scene.control.Alert.AlertType
+import javafx.scene.control.ButtonType
 import javafx.scene.control.Menu
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
 import javafx.stage.FileChooser
 import kb.core.fx.*
-import kb.core.icon.fontIcon
 import kb.core.icon.icon
 import kb.core.view.app.Singleton
 import kb.core.view.app.WindowBase
 import kb.service.api.array.TableArray
 import kb.service.api.array.TableUtil
-import org.controlsfx.control.spreadsheet.GridBase
 import org.controlsfx.control.spreadsheet.SpreadsheetView
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 import java.io.FileInputStream
@@ -32,37 +31,9 @@ class DataView {
         menu {
             name("File")
             modify {
-
-                item {
-                    name("Set Workspace")
-                    icon(MDI_FOLDER_OUTLINE, 14)
-                    shortcut(KeyCode.O, control = true, shift = true)
-                    action {
-                        val fc = FileChooser()
-                        fc.title = "Open Workspace"
-                        fc.showOpenDialog(base.stage)
-                    }
-                }
                 item {
                     name("Open Recent")
-                }
-                item {
-                    name("New Window")
-                    shortcut(KeyCode.N, control = true, shift = true)
-                    action {
-                        DataView().also { dv ->
-                            dv.base.stage.x = base.stage.x + 48.0
-                            dv.base.stage.y = base.stage.y + 36.0
-                            dv.show()
-                        }
-                    }
-                }
-                item {
-                    name("Close Window")
-                    shortcut(KeyCode.W, control = true, shift = true)
-                    action {
-                        base.stage.close()
-                    }
+                    shortcut(KeyCode.R, control = true)
                 }
                 separator()
                 item {
@@ -70,9 +41,11 @@ class DataView {
                     shortcut(KeyCode.N, control = true)
                     icon(MDI_PLUS, 14)
                     action {
-                        spreadsheet.grid = emptyGrid()
-                        spreadsheet.columns.forEach { it.setPrefWidth(84.0) }
-                        base.stage.isMaximized = true
+                        DataView().also { dv ->
+                            dv.base.stage.x = base.stage.x + 48.0
+                            dv.base.stage.y = base.stage.y + 36.0
+                            dv.show()
+                        }
                     }
                 }
                 item {
@@ -109,7 +82,13 @@ class DataView {
                 item {
                     name("Close Table")
                     shortcut(KeyCode.W, control = true)
-                    action { spreadsheet.grid = GridBase(0, 0) }
+                    action {
+                        val alert = Alert(AlertType.CONFIRMATION, "Close Window?", ButtonType.YES, ButtonType.NO)
+                        alert.showAndWait()
+                        if (alert.result == ButtonType.YES) {
+                            base.stage.close()
+                        }
+                    }
                 }
                 item {
                     name("Delete Table")
@@ -197,12 +176,6 @@ class DataView {
                     shortcut(KeyCode.K, control = true)
                     action { base.showOptionBarPrototype() }
                 }
-                item {
-                    name("Workspace Navigator")
-                    shortcut(KeyCode.TAB, control = true)
-                    icon(MDI_NAVIGATION, 14)
-                    action { base.showOptionBarPrototype() }
-                }
                 separator()
                 item {
                     name("Toggle Colour Scheme")
@@ -241,47 +214,16 @@ class DataView {
     val themeText = SimpleStringProperty("Light")
     val selectionText = SimpleStringProperty("None")
 
-    private val spreadsheet = SpreadsheetView(GridBase(0, 0)).apply {
+    private val spreadsheet = SpreadsheetView(emptyGrid()).apply {
         selectionModel.selectedCells.addListener(InvalidationListener {
             selectionText.value = getRange()
         })
+        columns.forEach {
+            it.setPrefWidth(75.0)
+        }
         zoomFactorProperty().addListener { _, _, nv ->
             zoomText.value = "${(nv.toDouble() * 100).toInt()}%"
         }
-        placeholder = vbox {
-            align(Pos.CENTER)
-            spacing = 4.0
-            add(label {
-                translateY = -16.0
-                text = "KnotBook DataView " + Singleton.manager.version
-                style = "-fx-font-size: 24"
-            })
-            add(Button("Open Recent", fontIcon(MDI_HISTORY, 14)).apply {
-                prefWidth = 160.0
-                this.alignment = Pos.CENTER_LEFT
-            })
-            add(Button("Set Workspace", fontIcon(MDI_FOLDER_OUTLINE, 14)).apply {
-                prefWidth = 160.0
-                this.alignment = Pos.CENTER_LEFT
-            })
-            add(Button("Import Table from File", fontIcon(MDI_FILE_IMPORT, 14)).apply {
-                prefWidth = 160.0
-                this.alignment = Pos.CENTER_LEFT
-            })
-            add(Button("Create Empty Table", fontIcon(MDI_PLUS, 14)).apply {
-                this.prefWidth = 160.0
-                this.alignment = Pos.CENTER_LEFT
-            })
-            add(Button("Command Palette", fontIcon(MDI_CONSOLE, 14)).apply {
-                this.prefWidth = 160.0
-                this.alignment = Pos.CENTER_LEFT
-            })
-            add(Button("Workspace Navigator", fontIcon(MDI_NAVIGATION, 14)).apply {
-                this.prefWidth = 160.0
-                this.alignment = Pos.CENTER_LEFT
-            })
-        }
-
         hgrow()
         contextMenu = contextMenu {
             modify {
