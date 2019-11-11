@@ -14,10 +14,24 @@ import javafx.scene.Node;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class OptionBar {
 
-    private StringProperty hintProperty = new SimpleStringProperty(null);
+    private BooleanProperty showing = new SimpleBooleanProperty(false);
+
+    public BooleanProperty showingProperty() {
+        return showing;
+    }
+
+    public boolean isShowing() {
+        return showingProperty().get();
+    }
+
+    public void setShowing(boolean showing) {
+        showingProperty().set(showing);
+    }
+
+    private StringProperty hint = new SimpleStringProperty(null);
 
     public StringProperty hintProperty() {
-        return hintProperty;
+        return hint;
     }
 
     public String getHint() {
@@ -28,10 +42,10 @@ public class OptionBar {
         hintProperty().set(hint);
     }
 
-    private ObjectProperty<Node> arbitraryViewProperty = new SimpleObjectProperty<>(null);
+    private ObjectProperty<Node> arbitraryView = new SimpleObjectProperty<>(null);
 
     public ObjectProperty<Node> arbitraryViewProperty() {
-        return arbitraryViewProperty;
+        return arbitraryView;
     }
 
     public Node getArbitraryView() {
@@ -42,16 +56,16 @@ public class OptionBar {
         arbitraryViewProperty().set(arbitraryView);
     }
 
-    private ObservableList<OptionItem> itemsProperty = FXCollections.observableArrayList();
+    private ObservableList<OptionItem> items = FXCollections.observableArrayList();
 
     public ObservableList<OptionItem> getItems() {
-        return itemsProperty;
+        return items;
     }
 
-    private ObjectProperty<EventHandler<ActionEvent>> onDismissedProperty = new SimpleObjectProperty<>();
+    private ObjectProperty<EventHandler<ActionEvent>> onDismissed = new SimpleObjectProperty<>();
 
     public ObjectProperty<EventHandler<ActionEvent>> onDismissedProperty() {
-        return onDismissedProperty;
+        return onDismissed;
     }
 
     public EventHandler<ActionEvent> getOnDismissed() {
@@ -62,24 +76,24 @@ public class OptionBar {
         onDismissedProperty().set(onDismissed);
     }
 
-    private ObjectProperty<EventHandler<ActionEvent>> onContinueProperty = new SimpleObjectProperty<>();
+    private ObjectProperty<EventHandler<ActionEvent>> onHideAndContinue = new SimpleObjectProperty<>();
 
-    public ObjectProperty<EventHandler<ActionEvent>> onContinueProperty() {
-        return onContinueProperty;
+    public ObjectProperty<EventHandler<ActionEvent>> onHideAndContinueProperty() {
+        return onHideAndContinue;
     }
 
-    public EventHandler<ActionEvent> getOnContinue() {
-        return onContinueProperty().get();
+    public EventHandler<ActionEvent> getOnHideAndContinue() {
+        return onHideAndContinueProperty().get();
     }
 
-    public void setOnContinue(EventHandler<ActionEvent> onContinue) {
-        onContinueProperty().set(onContinue);
+    public void setOnHideAndContinue(EventHandler<ActionEvent> onHideAndContinue) {
+        onHideAndContinueProperty().set(onHideAndContinue);
     }
 
-    private ObjectProperty<EventHandler<ActionEvent>> onEnterPressedProperty = new SimpleObjectProperty<>();
+    private ObjectProperty<EventHandler<ActionEvent>> onEnterPressed = new SimpleObjectProperty<>();
 
     public ObjectProperty<EventHandler<ActionEvent>> onEnterPressedProperty() {
-        return onEnterPressedProperty;
+        return onEnterPressed;
     }
 
     public EventHandler<ActionEvent> getOnEnterPressed() {
@@ -90,10 +104,10 @@ public class OptionBar {
         onEnterPressedProperty().set(onEnterPressed);
     }
 
-    private StringProperty textProperty = new SimpleStringProperty();
+    private StringProperty text = new SimpleStringProperty();
 
     public StringProperty textProperty() {
-        return textProperty;
+        return text;
     }
 
     public String getText() {
@@ -104,31 +118,13 @@ public class OptionBar {
         textProperty().set(text);
     }
 
-    private IntegerProperty selectedItemProperty = new SimpleIntegerProperty();
+    private IntegerProperty selectedItem = new SimpleIntegerProperty();
 
     public IntegerProperty selectedItemProperty() {
-        return selectedItemProperty;
+        return selectedItem;
     }
 
     public int getSelectedItem() {
         return selectedItemProperty().get();
-    }
-
-    public void setSelectedItem(int selectedItem) {
-        selectedItemProperty().set(selectedItem);
-    }
-
-    private StringProperty highlightedProperty = new SimpleStringProperty();
-
-    public StringProperty highlightedProperty() {
-        return highlightedProperty;
-    }
-
-    public String getHighlighted() {
-        return highlightedProperty.get();
-    }
-
-    public void setHighlighted(String highlighted) {
-        highlightedProperty.set(highlighted);
     }
 }

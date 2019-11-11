@@ -123,6 +123,7 @@ internal object Singleton {
         windows.addListener(InvalidationListener { if (windows.isEmpty()) exit() })
         dataServer.stateCallback = { Platform.runLater { uiManager.serverState.set(it) } }
         dataServer.bindAndStart()
+        getList().forEach { context.uiManager.registerCommand(it.name, it) }
         DataView().show()
     }
 

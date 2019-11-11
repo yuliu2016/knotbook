@@ -4,19 +4,18 @@ package kb.core.view.app
 
 import kb.core.icon.FontIcon
 import kb.core.icon.fontIcon
-import kb.service.api.ui.OptionItem
+import kb.service.api.ui.Command
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 
 
 fun Entity(
         cat: String,
         name: String,
-        icon: FontIcon? = null,
-        info: String? = null
-) = OptionItem("$cat $name", info, icon, IntArray(cat.length) { it })
+        icon: FontIcon? = null
+) = Command("$cat $name", icon?.iconCode, null, null)
 
-fun getList(): List<OptionItem> = listOf(
-        Entity("Table:", "Print", fontIcon(MDI_PRINTER, 14), "Ctrl+P"),
+fun getList(): List<Command> = listOf(
+        Entity("Table:", "Print", fontIcon(MDI_PRINTER, 14)),
         Entity("Folder:", "Export As Zip Archive", fontIcon(MDI_CLOUD_UPLOAD, 14)),
         Entity("Folder:", "Export As Excel Workbook", fontIcon(MDI_FILE_EXCEL, 14)),
         Entity("Application:", "Properties", fontIcon(MDI_TUNE, 14)),
@@ -27,16 +26,16 @@ fun getList(): List<OptionItem> = listOf(
         Entity("Tool:", "WebCam QR Scanner", fontIcon(MDI_CAMERA, 14)),
         Entity("Tool:", "Test Python Editor", fontIcon(MDI_LANGUAGE_PYTHON, 14)),
         Entity("JVM:", "Properties", fontIcon(MDI_COFFEE, 14)),
-        Entity("The Blue Alliance:", "Set APIv3 Key"),
-        Entity("The Blue Alliance:", "Get Event Match Schedule"),
-        Entity("The Blue Alliance:", "Get Event Rankings"),
-        Entity("The Blue Alliance:", "Get Team Data"),
-        Entity("The Blue Alliance:", "Update Data"),
-        Entity("The Blue Alliance:", "Set Year"),
-        Entity("The Blue Alliance:", "Get Event OPRs"),
-        Entity("The Blue Alliance:", "Get Team List"),
-        Entity("The Blue Alliance:", "Get District Rankings"),
-        Entity("The Blue Alliance:", "Data Caching Options"),
+//        Entity("The Blue Alliance:", "Set APIv3 Key"),
+//        Entity("The Blue Alliance:", "Get Event Match Schedule"),
+//        Entity("The Blue Alliance:", "Get Event Rankings"),
+//        Entity("The Blue Alliance:", "Get Team Data"),
+//        Entity("The Blue Alliance:", "Update Data"),
+//        Entity("The Blue Alliance:", "Set Year"),
+//        Entity("The Blue Alliance:", "Get Event OPRs"),
+//        Entity("The Blue Alliance:", "Get Team List"),
+//        Entity("The Blue Alliance:", "Get District Rankings"),
+//        Entity("The Blue Alliance:", "Data Caching Options"),
         Entity("Spreadsheet View:", "Increment Zoom", fontIcon(MDI_MAGNIFY_PLUS, 14)),
         Entity("Spreadsheet View:", "Decrement Zoom", fontIcon(MDI_MAGNIFY_MINUS, 14)),
         Entity("Spreadsheet View:", "Reset Zoom"),
@@ -44,7 +43,7 @@ fun getList(): List<OptionItem> = listOf(
         Entity("UI:", "Collapse Tree", fontIcon(MDI_UNFOLD_LESS, 14)),
         Entity("UI:", "Enter Full Screen"),
         Entity("UI:", "Open in New Window"),
-        Entity("UI:", "Toggle Colour Theme", fontIcon(MDI_COMPARE, 14), "F3"),
+        Entity("UI:", "Toggle Colour Theme", fontIcon(MDI_COMPARE, 14)),
         Entity("Table:", "Edit as CSV Text", fontIcon(MDI_FILE_DELIMITED, 14)),
         Entity("Data:", "Reveal in Local Cache"),
         Entity("Data:", "Reveal in Data Source"),

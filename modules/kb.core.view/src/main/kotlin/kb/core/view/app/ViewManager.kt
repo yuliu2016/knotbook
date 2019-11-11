@@ -18,15 +18,11 @@ class ViewManager : UIManager {
     val commandManager = CommandManager()
     val stagedOptionBar = StagedOptionBar()
 
-    private var optionBarShown = false
-
     var focusedWindow: WindowBase? = null
 
     init {
-        themeProperty.addListener(InvalidationListener {
-            val theme = themeProperty.get()
-            stagedOptionBar.setTheme("/knotbook.css", theme.optionStyle)
-        })
+        themeProperty.addListener(InvalidationListener { updateTheme() })
+        updateTheme()
     }
 
     fun toggleTheme() {
@@ -37,21 +33,23 @@ class ViewManager : UIManager {
         })
     }
 
+    fun updateTheme() {
+        val theme = themeProperty.get()
+        stagedOptionBar.setTheme("/knotbook.css", theme.optionStyle)
+    }
+
     fun showCommandsBar() {
-        showOptionBar(commandManager.commandsBar)
+        showOptionBar(commandManager.bar)
     }
 
     override fun isOptionBarShown(): Boolean {
-        return optionBarShown
+        return stagedOptionBar.popup.isShowing
     }
 
-    override fun showOptionBar(optionBar: OptionBar?) {
+    override fun showOptionBar(optionBar: OptionBar) {
         focusedWindow?.let { win ->
-            stagedOptionBar.show(win.stage, win.contentYOffset())
+            stagedOptionBar.show(optionBar, win.stage, win.contentYOffset())
         }
-    }
-
-    override fun hideOptionBar() {
     }
 
     override fun registerCommand(id: String, command: Command) {

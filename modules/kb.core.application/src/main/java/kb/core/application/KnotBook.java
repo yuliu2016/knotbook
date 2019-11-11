@@ -196,10 +196,11 @@ class KnotBook {
         applications.print();
         extensions.print();
         textEditors.print();
-        app.launch(manager, contextForService(serviceForApplication(app.getMetadata()), app));
-        for (Service service : extensions.services) {
-            service.launch(contextForService(service, app));
-        }
+        app.launch(manager, contextForService(serviceForApplication(app.getMetadata()), app), () -> {
+            for (Service service : extensions.services) {
+                service.launch(contextForService(service, app));
+            }
+        });
     }
 
     private TextEditor createTextEditor() {

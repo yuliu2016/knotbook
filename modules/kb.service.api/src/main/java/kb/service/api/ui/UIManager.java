@@ -6,8 +6,6 @@ public interface UIManager {
 
     void showOptionBar(OptionBar optionBar);
 
-    void hideOptionBar();
-
     void registerCommand(String id, Command command);
 
     boolean hasCommand(String id);

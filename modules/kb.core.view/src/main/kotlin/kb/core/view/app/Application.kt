@@ -20,9 +20,10 @@ class Application : ApplicationService {
         return metadata
     }
 
-    override fun launch(manager: ServiceManager, context: ServiceContext) {
+    override fun launch(manager: ServiceManager, context: ServiceContext, callback: Runnable) {
         Platform.startup {
             Singleton.launch(manager, context)
+            callback.run()
         }
     }
 
