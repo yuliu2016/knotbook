@@ -152,13 +152,13 @@ class Registry2 implements ApplicationProps {
         @Override
         public void put(String key, String value) {
             if (isValid(key)) {
-                putVal(key, value);
+                putVal(wrap(key), value);
             }
         }
 
         @Override
         public String get(String key) {
-            return getVal(key);
+            return getVal(wrap(key));
         }
 
         @Override

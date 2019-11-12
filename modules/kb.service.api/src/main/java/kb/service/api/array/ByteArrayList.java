@@ -4,24 +4,24 @@ import java.util.Arrays;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class ByteArrayList {
-    byte[] value = new byte[0];
+    public byte[] value = new byte[0];
 
-    int length;
+    public int length;
 
-    void resize(int size) {
+    public void resize(int size) {
         if (size != value.length) {
             value = Arrays.copyOf(value, size);
         }
     }
 
-    void append(byte f) {
+    public void append(byte f) {
         if (length == value.length) {
             resize(value.length + 16);
         }
         value[length++] = f;
     }
 
-    void appendUnique(byte f) {
+    public void appendUnique(byte f) {
         if (length == value.length) {
             resize(value.length + 16);
         }
@@ -33,7 +33,7 @@ public class ByteArrayList {
         value[length++] = f;
     }
 
-    void insert(int index, byte f) {
+    public void insert(int index, byte f) {
         if (length == value.length) {
             resize(value.length + 16);
         }
@@ -41,7 +41,7 @@ public class ByteArrayList {
         value[index] = f;
     }
 
-    byte[] copy() {
+    public byte[] copy() {
         return Arrays.copyOf(value, length);
     }
 }

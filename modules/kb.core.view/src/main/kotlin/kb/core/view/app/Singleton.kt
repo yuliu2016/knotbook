@@ -2,7 +2,6 @@ package kb.core.view.app
 
 import javafx.application.Platform
 import javafx.beans.InvalidationListener
-import javafx.beans.property.SimpleStringProperty
 import javafx.stage.Window
 import kb.core.view.DataView
 import kb.core.view.server.Server
@@ -10,10 +9,13 @@ import kb.service.api.ServiceContext
 import kb.service.api.application.ServiceManager
 import kotlin.concurrent.thread
 
+/**
+ * Singleton object representing the application
+ *
+ * Runs on JavaFX application thread
+ */
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 internal object Singleton {
-    val memoryUsed = SimpleStringProperty()
-    val serverState = SimpleStringProperty()
 
     private var nullableManager: ServiceManager? = null
     private var nullableContext: ServiceContext? = null
@@ -21,9 +23,8 @@ internal object Singleton {
     val manager get() = nullableManager!!
     val context get() = nullableContext!!
 
-    var focusedWindow: WindowBase? = null
-
-    val apiServer = Server()
+    val dataServer = Server()
+    val uiManager = ViewManager()
 
     fun editAppProperties() {
         context.createTextEditor()
@@ -96,7 +97,7 @@ internal object Singleton {
                         Runtime.getRuntime().freeMemory()) / 1024.0 / 1024.0).toInt() + 1
                 if (memoryUsed != lastMemoryUsed) {
                     Platform.runLater {
-                        Singleton.memoryUsed.value = "${memoryUsed}M"
+                        uiManager.memoryUsed.value = "${memoryUsed}M"
                     }
                     lastMemoryUsed = memoryUsed
                 }
@@ -110,11 +111,9 @@ internal object Singleton {
     }
 
     fun launch(manager: ServiceManager, context: ServiceContext) {
-        if (nullableContext == null && nullableManager == null) {
-            nullableContext = context
-            nullableManager = manager
-            Platform.startup(this::launchImpl)
-        } else throw IllegalStateException()
+        nullableContext = context
+        nullableManager = manager
+        launchImpl()
     }
 
     private fun launchImpl() {
@@ -122,14 +121,15 @@ internal object Singleton {
         Platform.setImplicitExit(false)
         val windows = Window.getWindows()
         windows.addListener(InvalidationListener { if (windows.isEmpty()) exit() })
-        apiServer.stateCallback = { Platform.runLater { serverState.set(it) } }
-        apiServer.bindAndStart()
+        dataServer.stateCallback = { Platform.runLater { uiManager.serverState.set(it) } }
+        dataServer.bindAndStart()
+        getList().forEach { context.uiManager.registerCommand(it.name, it) }
         DataView().show()
     }
 
     fun exit() {
         Platform.runLater {
-            apiServer.exit()
+            dataServer.exit()
             Platform.exit()
             manager.exit()
         }

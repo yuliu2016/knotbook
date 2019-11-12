@@ -7,14 +7,13 @@ import javafx.scene.effect.DropShadow
 import javafx.stage.Popup
 import kb.core.fx.*
 import kb.core.icon.fontIcon
-import kb.service.api.ui.CommandCallback
 import kb.service.api.ui.Notification
 import org.kordamp.ikonli.materialdesign.MaterialDesign
 
-class ScreenEvent : Notification {
+class EventNotification : Notification {
 
     private var icon = MaterialDesign.MDI_INFORMATION_OUTLINE
-    private val actions = mutableMapOf<String, CommandCallback>()
+    private val actions = mutableMapOf<String, Runnable>()
 
     private val messageProperty = SimpleStringProperty()
 
@@ -34,13 +33,13 @@ class ScreenEvent : Notification {
         runOnFxThread { messageProperty.set(message) }
     }
 
-    override fun addAction(name: String, callback: CommandCallback) = apply {
+    override fun addAction(name: String, callback: Runnable): Notification? = apply {
         actions[name] = callback
     }
 
     override fun show() = apply {
         runOnFxThread {
-            Singleton.focusedWindow?.let {
+            Singleton.uiManager.focusedWindow?.let {
                 showImpl(it)
             }
         }

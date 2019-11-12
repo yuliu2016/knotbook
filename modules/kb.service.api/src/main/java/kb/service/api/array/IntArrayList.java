@@ -4,24 +4,24 @@ import java.util.Arrays;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class IntArrayList {
-    int[] value = new int[0];
+    public int[] value = new int[0];
 
-    int length;
+    public int length;
 
-    void resize(int size) {
+    public void resize(int size) {
         if (size != value.length) {
             value = Arrays.copyOf(value, size);
         }
     }
 
-    void append(int f) {
+    public void append(int f) {
         if (length == value.length) {
             resize(value.length + 16);
         }
         value[length++] = f;
     }
 
-    void appendUnique(int f) {
+    public void appendUnique(int f) {
         if (length == value.length) {
             resize(value.length + 16);
         }
@@ -33,7 +33,7 @@ public class IntArrayList {
         value[length++] = f;
     }
 
-    void insert(int index, int f) {
+    public void insert(int index, int f) {
         if (length == value.length) {
             resize(value.length + 16);
         }
@@ -41,7 +41,7 @@ public class IntArrayList {
         value[index] = f;
     }
 
-    int[] copy() {
+    public int[] copy() {
         return Arrays.copyOf(value, length);
     }
 }

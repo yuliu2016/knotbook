@@ -1,6 +1,6 @@
 package kb.core.view.app
 
-import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.InvalidationListener
 import javafx.beans.property.StringProperty
 import javafx.geometry.Insets
 import javafx.geometry.Orientation
@@ -15,8 +15,7 @@ import kb.core.fx.*
 import kb.core.icon.fontIcon
 import kb.core.icon.icon
 import kb.core.view.DataView
-import kb.core.view.splash.AboutSplash
-import kb.core.view.splash.GCSplash
+import kb.core.view.splash.Splash
 import org.kordamp.ikonli.Ikon
 import org.kordamp.ikonli.materialdesign.MaterialDesign
 
@@ -24,7 +23,10 @@ import org.kordamp.ikonli.materialdesign.MaterialDesign
 class WindowBase {
 
     val stage = Stage()
-    val optionBar = StagedOptionBar()
+
+    val themeListener = InvalidationListener {
+        updateTheme()
+    }
 
     private var isFullScreen = false
 
@@ -33,19 +35,13 @@ class WindowBase {
         stage.isFullScreen = isFullScreen
     }
 
-    fun showOptionBarPrototype() {
-        optionBar.setTheme(listOf("/knotbook.css", themeProperty.get().optionStyle))
-        optionBar.show(stage, menuBar.height)
+    fun contentYOffset(): Double {
+        return menuBar.height
     }
 
-    val themeProperty = SimpleObjectProperty(Theme.Light)
-
-    fun toggleTheme() {
-        themeProperty.set(when (themeProperty.get()!!) {
-            Theme.Light -> Theme.Dark
-            Theme.Dark -> Theme.Light
-        })
-        layout.stylesheets.setAll("/knotbook.css", themeProperty.get().viewStyle)
+    fun updateTheme() {
+        val theme = Singleton.uiManager.themeProperty.get()
+        layout.stylesheets.setAll("/knotbook.css", theme.viewStyle)
     }
 
     val menuBar = menuBar {
@@ -69,28 +65,31 @@ class WindowBase {
     }
 
     val layout = borderPane {
-        stylesheets.addAll("/knotbook.css", Theme.Light.viewStyle)
-        prefWidth = 510.0
-        prefHeight = 340.0
+        prefWidth = 720.0
+        prefHeight = 480.0
         top = menuBar
         bottom = statusBar
-        isSnapToPixel = false
     }
 
     val scene = Scene(layout)
     val appIcon = Image(DataView::class.java.getResourceAsStream("/icon.png"))
 
     fun show() {
+        updateTheme()
+        Singleton.uiManager.themeProperty.addListener(themeListener)
         stage.fullScreenExitHint = "Press F11 to Exit Full Screen"
         stage.title = "KnotBook"
         stage.icons.add(appIcon)
         stage.scene = scene
         stage.focusedProperty().addListener { _, _, focused ->
             if (focused) {
-                Singleton.focusedWindow = this
-            } else if (Singleton.focusedWindow === this) {
-                Singleton.focusedWindow = null
+                Singleton.uiManager.focusedWindow = this
+            } else if (Singleton.uiManager.focusedWindow === this) {
+                Singleton.uiManager.focusedWindow = null
             }
+        }
+        stage.setOnCloseRequest {
+            Singleton.uiManager.themeProperty.removeListener(themeListener)
         }
         stage.show()
     }
@@ -101,7 +100,7 @@ class WindowBase {
             modify {
                 item {
                     name("Mark for Garbage Collection")
-                    action { GCSplash.splash() }
+                    action { Splash.gc() }
                     icon(MaterialDesign.MDI_DELETE_SWEEP, 14)
                     shortcut(KeyCode.B, control = true)
                 }
@@ -116,7 +115,7 @@ class WindowBase {
                 separator()
                 item {
                     name("About")
-                    action { AboutSplash.splash(stage) }
+                    action { Splash.info(stage) }
                     icon(MaterialDesign.MDI_INFORMATION_OUTLINE, 14)
                     shortcut(KeyCode.F1)
                 }

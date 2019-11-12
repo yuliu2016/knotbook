@@ -1,13 +1,20 @@
+@file:Suppress("FunctionName")
+
 package kb.core.view.app
 
+import kb.core.icon.FontIcon
 import kb.core.icon.fontIcon
+import kb.service.api.ui.Command
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 
-fun getList(): List<Entity> = listOf(
-        Entity("Git:", "Push", fontIcon(MDI_CLOUD_UPLOAD, 14)),
-        Entity("Git:", "Commit", fontIcon(MDI_CHECK, 14)),
-        Entity("Git:", "History", fontIcon(MDI_HISTORY, 14)),
-        Entity("Git:", "Pull", fontIcon(MDI_SOURCE_PULL, 14)),
+
+fun Entity(
+        cat: String,
+        name: String,
+        icon: FontIcon? = null
+) = Command("$cat $name", icon?.iconCode, null, null)
+
+fun getList(): List<Command> = listOf(
         Entity("Table:", "Print", fontIcon(MDI_PRINTER, 14)),
         Entity("Folder:", "Export As Zip Archive", fontIcon(MDI_CLOUD_UPLOAD, 14)),
         Entity("Folder:", "Export As Excel Workbook", fontIcon(MDI_FILE_EXCEL, 14)),
@@ -19,16 +26,16 @@ fun getList(): List<Entity> = listOf(
         Entity("Tool:", "WebCam QR Scanner", fontIcon(MDI_CAMERA, 14)),
         Entity("Tool:", "Test Python Editor", fontIcon(MDI_LANGUAGE_PYTHON, 14)),
         Entity("JVM:", "Properties", fontIcon(MDI_COFFEE, 14)),
-        Entity("The Blue Alliance:", "Set APIv3 Key"),
-        Entity("The Blue Alliance:", "Get Event Match Schedule"),
-        Entity("The Blue Alliance:", "Get Event Rankings"),
-        Entity("The Blue Alliance:", "Get Team Data"),
-        Entity("The Blue Alliance:", "Update Data"),
-        Entity("The Blue Alliance:", "Set Year"),
-        Entity("The Blue Alliance:", "Get Event OPRs"),
-        Entity("The Blue Alliance:", "Get Team List"),
-        Entity("The Blue Alliance:", "Get District Rankings"),
-        Entity("The Blue Alliance:", "Data Caching Options"),
+//        Entity("The Blue Alliance:", "Set APIv3 Key"),
+//        Entity("The Blue Alliance:", "Get Event Match Schedule"),
+//        Entity("The Blue Alliance:", "Get Event Rankings"),
+//        Entity("The Blue Alliance:", "Get Team Data"),
+//        Entity("The Blue Alliance:", "Update Data"),
+//        Entity("The Blue Alliance:", "Set Year"),
+//        Entity("The Blue Alliance:", "Get Event OPRs"),
+//        Entity("The Blue Alliance:", "Get Team List"),
+//        Entity("The Blue Alliance:", "Get District Rankings"),
+//        Entity("The Blue Alliance:", "Data Caching Options"),
         Entity("Spreadsheet View:", "Increment Zoom", fontIcon(MDI_MAGNIFY_PLUS, 14)),
         Entity("Spreadsheet View:", "Decrement Zoom", fontIcon(MDI_MAGNIFY_MINUS, 14)),
         Entity("Spreadsheet View:", "Reset Zoom"),
@@ -54,5 +61,9 @@ fun getList(): List<Entity> = listOf(
         Entity("Colour Scale:", "Clear for Selection"),
         Entity("Folder:", "Open in Command Prompt", fontIcon(MDI_CONSOLE, 14)),
         Entity("Table:", "Duplicate Data"),
-        Entity("Table:", "Find in Cells", fontIcon(MDI_FILE_FIND, 14))
+        Entity("Table:", "Find in Cells", fontIcon(MDI_FILE_FIND, 14)),
+        Entity("Git:", "Push", fontIcon(MDI_CLOUD_UPLOAD, 14)),
+        Entity("Git:", "Commit", fontIcon(MDI_CHECK, 14)),
+        Entity("Git:", "History", fontIcon(MDI_HISTORY, 14)),
+        Entity("Git:", "Pull", fontIcon(MDI_SOURCE_PULL, 14))
 )

@@ -83,6 +83,24 @@ public class FXCamera {
         getDecodingProperty().set(decoding);
     }
 
+    private BooleanProperty flippedProperty;
+
+    public BooleanProperty getFlippedProperty() {
+        if (flippedProperty == null) {
+            flippedProperty = new SimpleBooleanProperty();
+            flippedProperty.addListener((ob, ov, nv) -> flipped = nv);
+        }
+        return flippedProperty;
+    }
+
+    public boolean isFlipped() {
+        return flippedProperty.get();
+    }
+
+    public void setFlipped(boolean flipped) {
+        flippedProperty.set(flipped);
+    }
+
     private IntegerProperty webcamIDProperty = new SimpleIntegerProperty(0);
 
     public IntegerProperty getWebcamIDProperty() {
@@ -111,6 +129,7 @@ public class FXCamera {
 
     private boolean threadRunning = false;
     private boolean decoding = false;
+    private boolean flipped = false;
     private int skippedPulseCounter = 0;
 
     private Webcam webcam = null;
@@ -180,7 +199,7 @@ public class FXCamera {
             if (webcam != null) {
                 BufferedImage capture = webcam.getImage();
                 if (capture != null) {
-                    imgRef.set(toFXImageFlipped(capture, imgRef.get()));
+                    imgRef.set(toFXImageFlipped(capture, imgRef.get(), flipped));
                     capture.flush();
                     String decoded = decoding ? decode(capture) : null;
                     image = imgRef.get();
@@ -250,7 +269,7 @@ public class FXCamera {
      * current pixels in the {@code BufferedImage}.
      * @since JavaFX 2.2
      */
-    public static WritableImage toFXImageFlipped(BufferedImage source, WritableImage dest) {
+    public static WritableImage toFXImageFlipped(BufferedImage source, WritableImage dest, boolean flipped) {
         switch (source.getType()) {
             case BufferedImage.TYPE_INT_ARGB:
             case BufferedImage.TYPE_INT_ARGB_PRE:
@@ -298,13 +317,17 @@ public class FXCamera {
 
         // Flip the array
 
-        for (int i = 0; i < bh; i++) {
-            for (int j = 0; j < bw; j++) {
-                fb[i * bw + j] = data[i * bw + bw - 1 - j];
+        if (flipped) {
+            for (int i = 0; i < bh; i++) {
+                for (int j = 0; j < bw; j++) {
+                    fb[i * bw + j] = data[i * bw + bw - 1 - j];
+                }
             }
+            pw.setPixels(0, 0, bw, bh, pf, fb, offset, scan);
+        } else {
+            pw.setPixels(0, 0, bw, bh, pf, data, offset, scan);
         }
 
-        pw.setPixels(0, 0, bw, bh, pf, fb, offset, scan);
         return dest;
     }
 }

@@ -10,11 +10,11 @@ data = json.loads(json_data)
 
 api_version = data["info"]["version"]
 paths = data["paths"]
-definitions = data["definitions"]
+definitions = data["components"]["schemas"]
 
-header = """@file:Suppress("unused", "SpellCheckingInspection", "KDocUnresolvedReference", "UNUSED_VARIABLE")
+header = """@file:Suppress("unused", "SpellCheckingInspection", "KDocUnresolvedReference", "UNUSED_VARIABLE", "DuplicatedCode")
 
-package ca.warp7.rt.router.tba
+package kb.tba.client
 
 import com.beust.klaxon.JsonObject"""
 
@@ -183,11 +183,15 @@ def kotlin_function_for_api_path(path_name, path_def):
     actual_params = []
 
     for i in range(len(params)):
-        param_name = params[i]["$ref"].split("/")[-1]
-        if param_name != "If-Modified-Since":
-            actual_params.append(param_name)
+        param = params[i]
+        if "$ref" in param:
+            param_name = params[i]["$ref"].split("/")[-1]
+            if param_name != "If-Modified-Since":
+                actual_params.append(param_name)
+        else:
+            actual_params.append(param["name"]) #FIXME
 
-    res = gt["responses"]["200"]["schema"]
+    res = gt["responses"]["200"]["content"]["application/json"]["schema"]
     k2 = path_name
 
     if len(actual_params) == 0:
@@ -240,6 +244,7 @@ def kotlin_function_for_api_path(path_name, path_def):
 
 
 with open("Paths.kt", mode="w") as f:
+    print("// API Version", api_version, "\n", file=f)
     print(header, file=f)
     for k, v in paths.items():
         print(kotlin_function_for_api_path(k, v), file=f)

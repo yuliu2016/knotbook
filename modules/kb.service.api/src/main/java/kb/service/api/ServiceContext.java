@@ -1,8 +1,7 @@
 package kb.service.api;
 
-import kb.service.api.ui.CommandManager;
-import kb.service.api.ui.Notification;
 import kb.service.api.ui.TextEditor;
+import kb.service.api.ui.UIManager;
 
 @SuppressWarnings("unused")
 public interface ServiceContext {
@@ -22,13 +21,8 @@ public interface ServiceContext {
     TextEditor createTextEditor();
 
     /**
-     * Create a notification handler
-     */
-    Notification createNotification();
-
-    /**
-     * Retrieve an instance of the command manager for this context,
+     * Retrieve an instance of the UI manager for this context,
      * used to add options to the user interface
      */
-    CommandManager getCommandManager();
+    UIManager getUIManager();
 }

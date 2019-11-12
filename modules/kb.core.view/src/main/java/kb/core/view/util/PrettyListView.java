@@ -9,6 +9,8 @@ import javafx.scene.control.ScrollBar;
 import java.util.Set;
 
 // https://dlsc.com/2017/09/07/javafx-tip-28-pretty-list-view/
+// https://stackoverflow.com/questions/16880115/javafx-2-2-how-to-force-a-redraw-update-of-a-listview
+@SuppressWarnings("unused")
 public class PrettyListView<T> extends ListView<T> {
 
     private ScrollBar vBar = new ScrollBar();

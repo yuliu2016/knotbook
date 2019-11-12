@@ -4,10 +4,9 @@ import kb.service.api.*;
 import kb.service.api.application.ApplicationProps;
 import kb.service.api.application.ApplicationService;
 import kb.service.api.application.ServiceManager;
-import kb.service.api.ui.CommandManager;
-import kb.service.api.ui.Notification;
 import kb.service.api.ui.TextEditor;
 import kb.service.api.ui.TextEditorService;
+import kb.service.api.ui.UIManager;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -16,7 +15,7 @@ import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 
 @SuppressWarnings("unused")
-class KnotBook implements ServiceManager {
+class KnotBook {
 
     public interface RegistryHandle {
         InputStream input() throws IOException;
@@ -95,7 +94,7 @@ class KnotBook implements ServiceManager {
 
         @Override
         public ServiceProps getProps() {
-            return getKnotBook().getProps().getProps(service.getMetadata().getPackageName());
+            return getKnotBook().registry.getProps(service.getMetadata().getPackageName());
         }
 
         @Override
@@ -104,13 +103,35 @@ class KnotBook implements ServiceManager {
         }
 
         @Override
-        public Notification createNotification() {
-            return app.createNotification();
+        public UIManager getUIManager() {
+            return app.getUIManager();
+        }
+    }
+
+    private static class Manager implements ServiceManager {
+
+        @Override
+        public ApplicationProps getProps() {
+            return getKnotBook().registry;
         }
 
         @Override
-        public CommandManager getCommandManager() {
-            return app.getCommandManager();
+        public List<Service> getServices() {
+            return getKnotBook().extensions.services;
+        }
+
+        @Override
+        public String getVersion() {
+            return "3.3.8";
+        }
+
+        @Override
+        public void exit() {
+            for (Service service : getServices()) {
+                service.terminate();
+            }
+            getKnotBook().registry.save();
+            System.exit(0);
         }
     }
 
@@ -160,6 +181,7 @@ class KnotBook implements ServiceManager {
     private final ResolvedServices<TextEditorService> textEditors =
             loadServices(TextEditorService.class);
     private final Registry2 registry = new Registry2(getHandle());
+    private final Manager manager = new Manager();
 
     void launch(List<String> args) {
         this.args = args;
@@ -174,34 +196,11 @@ class KnotBook implements ServiceManager {
         applications.print();
         extensions.print();
         textEditors.print();
-        app.launch(getKnotBook(), contextForService(serviceForApplication(app.getMetadata()), app));
-        for (Service service : extensions.services) {
-            service.launch(contextForService(service, app));
-        }
-    }
-
-    @Override
-    public ApplicationProps getProps() {
-        return registry;
-    }
-
-    @Override
-    public List<Service> getServices() {
-        return extensions.services;
-    }
-
-    @Override
-    public String getVersion() {
-        return "3.1.0";
-    }
-
-    @Override
-    public void exit() {
-        for (Service service : getServices()) {
-            service.terminate();
-        }
-        registry.save();
-        System.exit(0);
+        app.launch(manager, contextForService(serviceForApplication(app.getMetadata()), app), () -> {
+            for (Service service : extensions.services) {
+                service.launch(contextForService(service, app));
+            }
+        });
     }
 
     private TextEditor createTextEditor() {

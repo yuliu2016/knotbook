@@ -10,11 +10,11 @@ data = json.loads(json_data)
 
 api_version = data["info"]["version"]
 
-definitions = data["definitions"]
+definitions = data["components"]["schemas"]
 
 header = """@file:Suppress("unused", "SpellCheckingInspection", "KDocUnresolvedReference")
 
-package ca.warp7.rt.router.tba
+package kb.tba.client
 
 import com.beust.klaxon.JsonObject
 
@@ -141,6 +141,7 @@ def convert_to_kotlin_case(k):
 
 
 with open("Models.kt", mode="w") as f:
+    print("// API Version", api_version, "\n", file=f) 
     print(header, file=f)
     for def_key, def_content in definitions.items():
         kotlin_name = convert_to_kotlin_case(def_key)

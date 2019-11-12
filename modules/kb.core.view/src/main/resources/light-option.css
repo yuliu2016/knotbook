@@ -27,6 +27,7 @@
 
 .list-highlight {
     -fx-text-fill: #3c5c94;
+    -fx-font-weight: bold;
 }
 
 .list-cell:filled:selected .list-highlight {

@@ -1,13 +1,13 @@
 package kb.core.view.app
 
+import javafx.application.Platform
 import kb.service.api.ServiceContext
 import kb.service.api.ServiceMetadata
 import kb.service.api.application.ApplicationService
 import kb.service.api.application.ServiceManager
-import kb.service.api.ui.CommandManager
-import kb.service.api.ui.Notification
+import kb.service.api.ui.UIManager
 
-class DataApp : ApplicationService {
+class Application : ApplicationService {
 
     private val metadata = ServiceMetadata()
 
@@ -20,15 +20,14 @@ class DataApp : ApplicationService {
         return metadata
     }
 
-    override fun launch(manager: ServiceManager, context: ServiceContext) {
-        Singleton.launch(manager, context)
+    override fun launch(manager: ServiceManager, context: ServiceContext, callback: Runnable) {
+        Platform.startup {
+            Singleton.launch(manager, context)
+            callback.run()
+        }
     }
 
-    override fun getCommandManager(): CommandManager {
-        TODO("not implemented")
-    }
-
-    override fun createNotification(): Notification {
-        return ScreenEvent()
+    override fun getUIManager(): UIManager {
+        return Singleton.uiManager
     }
 }
