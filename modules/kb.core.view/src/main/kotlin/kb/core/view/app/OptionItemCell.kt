@@ -25,25 +25,23 @@ class OptionItemCell : ListCell<OptionItem>() {
         if (item.highlight == null || item.highlight.isEmpty()) {
             t.add(Label(item.name))
         } else {
-            val ix = BooleanArray(item.name.length)
-            for (i in item.highlight) {
-                ix[i] = true
-            }
+//            println("${item.name} ${item.highlight.toList()}")
+            val ix = item.highlight
             var highlighted = ix[0]
             var i = 0 // start index
             for (j in item.name.indices) {
                 if (ix[j]) {
                     if (!highlighted) {
                         highlighted = true
-                        t.add(Label(item.name.substring(i, j + 1)))
-                        i = j + 1
+                        t.add(Label(item.name.substring(i, j)))
+                        i = j
                     }
                 } else if (highlighted) {
                     highlighted = false
-                    t.add(Label(item.name.substring(i, j + 1)).apply {
+                    t.add(Label(item.name.substring(i, j)).apply {
                         styleClass("list-highlight")
                     })
-                    i = j + 1
+                    i = j
                 }
             }
             if (highlighted) {

@@ -39,6 +39,7 @@ class ViewManager : UIManager {
     }
 
     fun showCommandsBar() {
+        commandManager.setAll()
         showOptionBar(commandManager.bar)
     }
 

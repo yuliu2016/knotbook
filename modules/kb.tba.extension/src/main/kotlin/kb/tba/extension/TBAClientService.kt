@@ -36,6 +36,6 @@ class TBAClientService : Service {
     }
 
     private fun UIManager.register(id: String, name: String) {
-        registerCommand("kb.tba.$id", Command("The Blue Alliance: $name", null, null, null))
+        registerCommand("tba.$id", Command("The Blue Alliance: $name", null, null, null))
     }
 }

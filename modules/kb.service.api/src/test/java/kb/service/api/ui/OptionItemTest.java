@@ -7,8 +7,16 @@ class OptionItemTest {
     @Test
     void parserTest() {
         Assertions.assertArrayEquals(
-                OptionItem.parse("a 3b4", "a 34"),
-                new int[]{0, 2, 4}
+                new boolean[]{true, false, true, false, true},
+                OptionItem.parse("a 3b4", "a 34")
+        );
+    }
+
+    @Test
+    void parserTest2() {
+        Assertions.assertArrayEquals(
+                new boolean[]{true, true, true, false, false, false, false, false, false, false, false},
+                OptionItem.parse("application", "app")
         );
     }
 }

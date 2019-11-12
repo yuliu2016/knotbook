@@ -76,7 +76,7 @@ public class OptionBar {
         onDismissedProperty().set(onDismissed);
     }
 
-    private ObjectProperty<EventHandler<ActionEvent>> onHideAndContinue = new SimpleObjectProperty<>();
+    private ObjectProperty<EventHandler<ActionEvent>> onHideAndContinue = new SimpleObjectProperty<>(null);
 
     public ObjectProperty<EventHandler<ActionEvent>> onHideAndContinueProperty() {
         return onHideAndContinue;
@@ -90,7 +90,7 @@ public class OptionBar {
         onHideAndContinueProperty().set(onHideAndContinue);
     }
 
-    private ObjectProperty<EventHandler<ActionEvent>> onEnterPressed = new SimpleObjectProperty<>();
+    private ObjectProperty<EventHandler<ActionEvent>> onEnterPressed = new SimpleObjectProperty<>(null);
 
     public ObjectProperty<EventHandler<ActionEvent>> onEnterPressedProperty() {
         return onEnterPressed;

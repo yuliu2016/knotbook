@@ -37,6 +37,9 @@ class StagedOptionBar {
                     if (i != 0) {
                         lv.selectionModel.select(i - 1)
                         lv.scrollTo(i - 8)
+                    } else {
+                        lv.selectionModel.select(lv.items.size - 1)
+                        lv.scrollTo(lv.items.size - 1)
                     }
                     e.consume()
                 }
@@ -45,6 +48,9 @@ class StagedOptionBar {
                     if (i != lv.items.size - 1) {
                         lv.selectionModel.select(i + 1)
                         lv.scrollTo(i - 6)
+                    } else {
+                        lv.selectionModel.select(0)
+                        lv.scrollTo(0)
                     }
                     e.consume()
                 }
@@ -61,6 +67,23 @@ class StagedOptionBar {
         styleClass("formula-field")
     }
 
+    val okButton = button {
+        styleClass("ok-button")
+        graphic = fontIcon(MaterialDesign.MDI_CHECK, 14)
+        isFocusTraversable = false
+        setOnAction {
+            cancel()
+            optionBar?.onHideAndContinue?.handle(ActionEvent())
+        }
+    }
+
+    val topBox = hbox {
+        align(Pos.CENTER)
+        padding = Insets(6.0)
+        spacing = 6.0
+        add(tf.hgrow())
+    }
+
     val container = borderPane {
         effect = DropShadow().apply {
             color = Color.DARKGRAY
@@ -72,22 +95,7 @@ class StagedOptionBar {
         }
         styleClass("option-bar")
         prefWidth = 540.0
-
-        top = hbox {
-            align(Pos.CENTER)
-            padding = Insets(6.0)
-            spacing = 6.0
-            add(tf.hgrow())
-            add(button {
-                styleClass("ok-button")
-                graphic = fontIcon(MaterialDesign.MDI_CHECK, 14)
-                isFocusTraversable = false
-                setOnAction {
-                    cancel()
-                    optionBar?.onHideAndContinue?.handle(ActionEvent())
-                }
-            })
-        }
+        top = topBox
         bottom = lv
     }
 
@@ -111,6 +119,7 @@ class StagedOptionBar {
         tf.textProperty().unbindBidirectional(ob.textProperty())
         ob.selectedItemProperty().unbind()
         container.centerProperty().unbind()
+        topBox.children.remove(okButton)
     }
 
     private fun bindAll(ob: OptionBar) {
@@ -118,6 +127,9 @@ class StagedOptionBar {
         lv.items = ob.items
         if (lv.items.isNotEmpty()) {
             lv.selectionModel.select(0)
+        }
+        if (ob.onHideAndContinue != null) {
+            topBox.add(okButton)
         }
         tf.promptTextProperty().bind(ob.hintProperty())
         tf.textProperty().bindBidirectional(ob.textProperty())
