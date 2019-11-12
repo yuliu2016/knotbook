@@ -4,6 +4,7 @@ plugins {
 
 
 dependencies {
+    implementation(group = "org.json", name = "json", version = "20190722")
     implementation(project(":kb.service.abc"))
     implementation(project(":kb.service.api"))
 

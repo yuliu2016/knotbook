@@ -16,6 +16,7 @@ tasks {
 }
 
 dependencies {
+    implementation(group = "org.json", name = "json", version = "20190722")
     implementation(group = "org.kordamp.ikonli", name = "ikonli-core", version = "11.3.4")
 
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = "5.5.1")

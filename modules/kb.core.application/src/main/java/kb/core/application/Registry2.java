@@ -1,5 +1,6 @@
 package kb.core.application;
 
+import kb.service.api.Service;
 import kb.service.api.ServicePropListener;
 import kb.service.api.ServiceProps;
 import kb.service.api.application.ApplicationProps;
@@ -102,19 +103,8 @@ class Registry2 implements ApplicationProps {
         }
     }
 
-    @Override
-    public ServiceProps getProps(String name) {
-        return new ServicePropsWrapper2(name);
-    }
-
-    @Override
-    public boolean hasProps(String name) {
-        for (Object o : props.keySet()) {
-            if (o.toString().startsWith(name)) {
-                return true;
-            }
-        }
-        return false;
+    ServiceProps getProps(Service service) {
+        return new ServicePropsWrapper2(service.getMetadata().getPackageName());
     }
 
     private void addListener0(String key, ServicePropListener listener) {

@@ -32,7 +32,7 @@ class StagedOptionBar {
     val tf = textField {
         this.setOnKeyPressed { e ->
             when {
-                e.code == KeyCode.UP || e.code == KeyCode.LEFT -> {
+                e.code == KeyCode.UP || (e.code == KeyCode.TAB && e.isShiftDown) -> {
                     val i = lv.selectionModel.selectedIndex
                     if (i != 0) {
                         lv.selectionModel.select(i - 1)
@@ -43,7 +43,7 @@ class StagedOptionBar {
                     }
                     e.consume()
                 }
-                e.code == KeyCode.DOWN || e.code == KeyCode.RIGHT -> {
+                e.code == KeyCode.DOWN || e.code == KeyCode.TAB -> {
                     val i = lv.selectionModel.selectedIndex
                     if (i != lv.items.size - 1) {
                         lv.selectionModel.select(i + 1)

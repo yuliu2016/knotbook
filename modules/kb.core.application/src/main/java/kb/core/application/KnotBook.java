@@ -4,6 +4,7 @@ import kb.service.api.*;
 import kb.service.api.application.ApplicationProps;
 import kb.service.api.application.ApplicationService;
 import kb.service.api.application.ServiceManager;
+import kb.service.api.json.JSONObjectWrapper;
 import kb.service.api.ui.TextEditor;
 import kb.service.api.ui.TextEditorService;
 import kb.service.api.ui.UIManager;
@@ -94,7 +95,12 @@ class KnotBook {
 
         @Override
         public ServiceProps getProps() {
-            return getKnotBook().registry.getProps(service.getMetadata().getPackageName());
+            return getKnotBook().registry.getProps(service);
+        }
+
+        @Override
+        public JSONObjectWrapper getConfig() {
+            return new JSONObjectWrapper(null); // todo
         }
 
         @Override

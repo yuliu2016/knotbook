@@ -317,7 +317,7 @@ class DataView {
         return if (a.size == 1) {
             "$y$w"
         } else {
-            "$y$w:$z$x [${a.size}]"
+            "$y$w:$z$x"
         }
     }
 }

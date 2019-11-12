@@ -11,6 +11,11 @@ import kb.service.api.ui.UIManager
 @Suppress("MemberVisibilityCanBePrivate")
 class ViewManager : UIManager {
 
+    enum class Theme(val viewStyle: String, val optionStyle: String) {
+        Light("/light.css", "/light-option.css"),
+        Dark("/dark.css", "/dark-option.css");
+    }
+
     val memoryUsed = SimpleStringProperty()
     val serverState = SimpleStringProperty()
     val themeProperty = SimpleObjectProperty(Theme.Light)
