@@ -1,4 +1,4 @@
-package kb.tool.cng;
+package kb.plugin.connectfour;
 
 import kb.service.api.Service;
 import kb.service.api.ServiceContext;

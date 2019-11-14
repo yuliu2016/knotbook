@@ -1,5 +1,3 @@
-import kb.plugin.pathplanner.PlannerService;
-
 module kb.plugin.pathplanner {
 
     requires kotlin.stdlib;
@@ -13,7 +11,7 @@ module kb.plugin.pathplanner {
     requires kb.core.fx;
 
     provides kb.service.api.Service
-            with PlannerService;
+            with kb.plugin.pathplanner.PlannerService;
 
     exports kb.plugin.pathplanner;
 }
