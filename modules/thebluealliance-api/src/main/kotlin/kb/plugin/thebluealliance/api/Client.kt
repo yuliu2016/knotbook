@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package kb.tba.client
+package kb.plugin.thebluealliance.api
 
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonBase

@@ -2,7 +2,7 @@
 
 @file:Suppress("unused", "SpellCheckingInspection", "KDocUnresolvedReference", "UNUSED_VARIABLE", "DuplicatedCode")
 
-package kb.tba.client
+package kb.plugin.thebluealliance.api
 
 import com.beust.klaxon.JsonObject
 

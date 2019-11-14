@@ -14,6 +14,6 @@ dependencies {
     runtimeOnly(project(":kb.core.camera.fx"))
     runtimeOnly(project(":kb.core.bowline"))
     runtimeOnly(project(":connect-four"))
-    runtimeOnly(project(":kb.tba.extension"))
+    runtimeOnly(project(":thebluealliance-provider"))
     runtimeOnly(project(":path-planner"))
 }

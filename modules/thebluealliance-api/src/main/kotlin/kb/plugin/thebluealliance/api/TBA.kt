@@ -1,4 +1,4 @@
-package kb.tba.client
+package kb.plugin.thebluealliance.api
 
 /**
  * The Blue Alliance API

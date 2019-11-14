@@ -1,4 +1,4 @@
-package kb.tba.extension
+package kb.plugin.thebluealliance.provider
 
 import kb.service.api.Service
 import kb.service.api.ServiceContext

@@ -2,7 +2,7 @@
 
 @file:Suppress("unused", "SpellCheckingInspection", "KDocUnresolvedReference")
 
-package kb.tba.client
+package kb.plugin.thebluealliance.api
 
 import com.beust.klaxon.JsonObject
 
