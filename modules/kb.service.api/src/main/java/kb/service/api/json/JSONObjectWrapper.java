@@ -24,11 +24,17 @@ public class JSONObjectWrapper implements Map<String, Object> {
         return object;
     }
 
-    public JSONArray getJSONArray(String key) throws JSONException {
-        return object.getJSONArray(key);
+    public JSONArrayWrapper getJSONArray(String key) throws JSONException {
+        if (!object.has(key)) {
+            object.put(key, new JSONArray());
+        }
+        return new JSONArrayWrapper(object.getJSONArray(key));
     }
 
     public JSONObjectWrapper getJSONObject(String key) throws JSONException {
+        if (!object.has(key)) {
+            object.put(key, new JSONObject());
+        }
         return new JSONObjectWrapper(object.getJSONObject(key));
     }
 

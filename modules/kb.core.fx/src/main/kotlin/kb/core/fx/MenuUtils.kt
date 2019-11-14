@@ -30,12 +30,17 @@ fun Menu.name(name: String) {
 typealias Combination = KeyCodeCombination
 
 @FXKtDSL
-fun MenuItem.shortcut(keyCode: KeyCode, control: Boolean = false, shift: Boolean = false, alt: Boolean = false) {
+fun MenuItem.shortcut(
+        keyCode: KeyCode,
+        control: Boolean = false,
+        shift: Boolean = false,
+        alt: Boolean = false
+) {
     accelerator = KeyCodeCombination(
             keyCode,
             if (control) SHORTCUT_DOWN else SHORTCUT_ANY,
-            if (shift) SHIFT_DOWN else SHIFT_ANY,
-            if (alt) ALT_DOWN else ALT_ANY
+            if (alt) ALT_DOWN else ALT_ANY,
+            if (shift) SHIFT_DOWN else SHIFT_ANY
     )
 }
 

@@ -12,7 +12,7 @@ class Application : ApplicationService {
     private val metadata = ServiceMetadata()
 
     init {
-        metadata.packageName = "kb.core.view"
+        metadata.packageName = "KnotBook DataView"
         metadata.packageVersion = "3.0"
     }
 

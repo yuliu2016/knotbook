@@ -17,7 +17,6 @@ class ViewManager : UIManager {
     }
 
     val memoryUsed = SimpleStringProperty()
-    val serverState = SimpleStringProperty()
     val themeProperty = SimpleObjectProperty(Theme.Light)
 
     val commandManager = CommandManager()

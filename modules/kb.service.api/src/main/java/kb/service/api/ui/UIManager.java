@@ -1,5 +1,8 @@
 package kb.service.api.ui;
 
+import javafx.scene.input.KeyCombination;
+
+@SuppressWarnings("unused")
 public interface UIManager {
 
     boolean isOptionBarShown();
@@ -16,4 +19,23 @@ public interface UIManager {
      * Create a notification handler
      */
     Notification createNotification();
+
+    default void registerCommand(
+            String id,
+            String name,
+            String icon,
+            KeyCombination shortcut,
+            Runnable callback
+    ) {
+        registerCommand(id, new Command(name, icon, shortcut, callback));
+    }
+
+    default void registerCommand(
+            String id,
+            String name,
+            String icon,
+            Runnable callback
+    ) {
+        registerCommand(id, new Command(name, icon, null, callback));
+    }
 }

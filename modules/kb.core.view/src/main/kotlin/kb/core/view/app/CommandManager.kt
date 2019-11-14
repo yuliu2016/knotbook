@@ -1,5 +1,6 @@
 package kb.core.view.app
 
+import kb.core.icon.IkonResolver
 import kb.core.icon.fontIcon
 import kb.service.api.ui.Command
 import kb.service.api.ui.OptionBar
@@ -18,19 +19,23 @@ class CommandManager {
         }
     }
 
-    private val commands: MutableMap<String, Command> = LinkedHashMap()
     private val keys: MutableList<String> = ArrayList()
+    private val values: MutableList<Command> = ArrayList()
 
     fun setAll() {
-        bar.items.setAll(commands.values.map {
-            OptionItem(
-                    it.name,
-                    it.shortcut?.toString(),
-                    it.icon?.let { ik -> fontIcon(ik, 14) },
-                    null
-            )
-        })
+        bar.items.setAll(values.map { toItem(it, null) })
     }
+
+    private fun toItem(command: Command, highlight: BooleanArray?): OptionItem = OptionItem(
+            command.name,
+            command.shortcut?.displayText,
+            command.icon?.let { code ->
+                IkonResolver.resolveIcon(code)?.let { icon ->
+                    fontIcon(icon, 14)
+                }
+            },
+            highlight
+    )
 
     private fun updateSearch(ov: String?, nv: String) {
         val q = nv.trim()
@@ -38,46 +43,30 @@ class CommandManager {
         if (q.isEmpty()) {
             setAll()
         } else {
-            val search = commands.values
+            bar.items.setAll(values
                     .mapIndexed { index, command -> index to OptionItem.parse(command.name, q) }
                     .filter { it.second != null }
                     .sortedWith(Comparator { o1, o2 ->
                         OptionItem.compare(o2.second, o1.second)
                     })
-            val opList = mutableListOf<OptionItem>()
-            val v = commands.values.toList()
-            for (i in search) {
-                val command = v[i.first]
-                opList.add(OptionItem(
-                        command.name,
-                        command.shortcut?.toString(),
-                        command.icon?.let { ik -> fontIcon(ik, 14) },
-                        i.second
-                ))
-            }
-            bar.items.setAll(opList)
+                    .map { toItem(values[it.first], it.second) }
+            )
         }
     }
 
     fun registerCommand(id: String, command: Command) {
-        bar.items.add(OptionItem(
-                command.name,
-                command.shortcut?.toString(),
-                command.icon?.let { fontIcon(it, 14) },
-                null
-        ))
-        if (id !in commands) {
-            commands[id] = command
+        if (id !in keys) {
             keys.add(id)
+            values.add(command)
         }
     }
 
     fun hasCommand(id: String): Boolean {
-        return id in commands
+        return id in keys
     }
 
     fun invokeCommand(id: String) {
         println("Invoking Command #$id")
-        commands[id]?.callback?.run()
+        values.getOrNull(keys.indexOf(id))?.callback?.run()
     }
 }

@@ -117,6 +117,7 @@ class StagedOptionBar {
         optionBar = null
         tf.promptTextProperty().unbind()
         tf.textProperty().unbindBidirectional(ob.textProperty())
+        tf.text = ""
         ob.selectedItemProperty().unbind()
         container.centerProperty().unbind()
         topBox.children.remove(okButton)

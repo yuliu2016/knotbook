@@ -12,12 +12,7 @@ public interface ServiceContext {
     Service getService();
 
     /**
-     * Get the properties that belongs to this context
-     */
-    ServiceProps getProps();
-
-    /**
-     * Get configuration
+     * Get the configuration data of this service
      */
     JSONObjectWrapper getConfig();
 
