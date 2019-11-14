@@ -1,6 +1,6 @@
-import kb.tool.path.planner.PlannerService;
+import kb.plugin.pathplanner.PlannerService;
 
-module kb.tool.path.planner {
+module kb.plugin.pathplanner {
 
     requires kotlin.stdlib;
 
@@ -15,5 +15,5 @@ module kb.tool.path.planner {
     provides kb.service.api.Service
             with PlannerService;
 
-    exports kb.tool.path.planner;
+    exports kb.plugin.pathplanner;
 }

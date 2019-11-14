@@ -1,4 +1,4 @@
-package kb.tool.path.planner
+package kb.plugin.pathplanner
 
 import ca.warp7.frc.geometry.Translation2D
 import javafx.scene.canvas.Canvas

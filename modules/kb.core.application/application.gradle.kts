@@ -14,6 +14,6 @@ dependencies {
     runtimeOnly(project(":kb.core.camera.fx"))
     runtimeOnly(project(":kb.core.bowline"))
     runtimeOnly(project(":kb.tool.cng"))
-    runtimeOnly(project(":kb.tool.path.planner"))
     runtimeOnly(project(":kb.tba.extension"))
+    runtimeOnly(project(":path-planner"))
 }

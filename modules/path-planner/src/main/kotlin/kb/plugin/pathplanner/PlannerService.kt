@@ -1,4 +1,4 @@
-package kb.tool.path.planner
+package kb.plugin.pathplanner
 
 import javafx.scene.input.KeyCode
 import kb.core.fx.combo
