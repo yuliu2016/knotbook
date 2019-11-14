@@ -4,6 +4,7 @@ import kb.service.api.ui.TextEditor;
 import kb.service.api.ui.TextEditorCallback;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.swing.*;
@@ -11,6 +12,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,6 +115,14 @@ class TextEditorImpl implements TextEditor {
         JPanel cp = new JPanel();
 
         cp.setLayout(new BoxLayout(cp, BoxLayout.Y_AXIS));
+
+        try {
+            Theme.load(RSyntaxTextArea.class
+                    .getResourceAsStream("/org/fife/ui/rsyntaxtextarea/themes/idea.xml"))
+                    .apply(area);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         area.setSyntaxEditingStyle(getSyntax());
         area.setCurrentLineHighlightColor(Color.white);

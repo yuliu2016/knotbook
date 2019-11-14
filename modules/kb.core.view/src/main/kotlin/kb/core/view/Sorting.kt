@@ -9,3 +9,7 @@ data class SortColumn(val sortType: SortType, val index: Int) {
         return index
     }
 }
+
+enum class SortType {
+    Ascending, Descending
+}

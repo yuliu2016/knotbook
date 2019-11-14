@@ -3,6 +3,7 @@ package kb.core.view.app
 import javafx.beans.InvalidationListener
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
+import kb.core.view.DataView
 import kb.service.api.ui.Command
 import kb.service.api.ui.Notification
 import kb.service.api.ui.OptionBar
@@ -22,7 +23,8 @@ class ViewManager : UIManager {
     val commandManager = CommandManager()
     val stagedOptionBar = StagedOptionBar()
 
-    var focusedWindow: WindowBase? = null
+    // The currently focused view
+    var view: DataView? = null
 
     init {
         themeProperty.addListener(InvalidationListener { updateTheme() })
@@ -53,7 +55,7 @@ class ViewManager : UIManager {
     }
 
     override fun showOptionBar(optionBar: OptionBar) {
-        focusedWindow?.let { win -> stagedOptionBar.show(optionBar, win.stage) }
+        view?.let { win -> stagedOptionBar.show(optionBar, win.stage) }
     }
 
     override fun registerCommand(id: String, command: Command) {

@@ -7,6 +7,7 @@ import javafx.scene.effect.DropShadow
 import javafx.stage.Popup
 import kb.core.fx.*
 import kb.core.icon.fontIcon
+import kb.core.view.DataView
 import kb.service.api.ui.Notification
 import org.kordamp.ikonli.materialdesign.MaterialDesign
 
@@ -39,13 +40,13 @@ class EventNotification : Notification {
 
     override fun show() = apply {
         runOnFxThread {
-            Singleton.uiManager.focusedWindow?.let {
+            Singleton.uiManager.view?.let {
                 showImpl(it)
             }
         }
     }
 
-    private fun showImpl(base: WindowBase) {
+    private fun showImpl(base: DataView) {
         val popup = Popup()
         val cont = hbox {
             effect = DropShadow()

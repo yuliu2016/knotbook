@@ -3,15 +3,22 @@ package kb.core.view
 import javafx.application.Platform
 import javafx.beans.InvalidationListener
 import javafx.beans.property.SimpleStringProperty
-import javafx.scene.input.KeyCode
+import javafx.beans.property.StringProperty
+import javafx.geometry.Insets
+import javafx.geometry.Orientation
+import javafx.geometry.Pos
+import javafx.scene.Scene
+import javafx.scene.control.Separator
+import javafx.scene.image.Image
 import javafx.stage.FileChooser
+import javafx.stage.Stage
 import kb.core.fx.*
-import kb.core.icon.icon
+import kb.core.icon.fontIcon
 import kb.core.view.app.Singleton
-import kb.core.view.app.WindowBase
 import kb.service.api.array.TableArray
 import kb.service.api.array.TableUtil
 import org.controlsfx.control.spreadsheet.SpreadsheetView
+import org.kordamp.ikonli.Ikon
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 import java.io.FileInputStream
 
@@ -19,22 +26,79 @@ import java.io.FileInputStream
 @Suppress("MemberVisibilityCanBePrivate", "DuplicatedCode", "unused")
 class DataView {
 
-    val base = WindowBase()
+    val stage = Stage()
+
+    val themeListener = InvalidationListener {
+        updateTheme()
+    }
+
+    private var isFullScreen = false
+
+    fun toggleFullScreen() {
+        isFullScreen = !isFullScreen
+        stage.isFullScreen = isFullScreen
+    }
+
+    fun toggleStatusBar() {
+        if (layout.bottom == null) {
+            layout.bottom = statusBar
+        } else {
+            layout.bottom = null
+        }
+    }
+
+    fun updateTheme() {
+        val theme = Singleton.uiManager.themeProperty.get()
+        layout.stylesheets.setAll("/knotbook.css", theme.viewStyle)
+    }
+
+    val docLabel = label {
+        text = ""
+        graphic = fontIcon(MDI_FOLDER_MULTIPLE_OUTLINE, 14)
+    }
+
+    private val statusBar = hbox {
+        align(Pos.CENTER_LEFT)
+        padding = Insets(0.0, 8.0, 0.0, 8.0)
+        prefHeight = 22.0
+        styleClass("status-bar")
+        spacing = 8.0
+        add(docLabel)
+        hspace()
+    }
+
+    val layout = borderPane {
+        prefWidth = 720.0
+        prefHeight = 480.0
+        bottom = statusBar
+    }
+
+    val scene = Scene(layout)
+    val appIcon = Image(DataView::class.java.getResourceAsStream("/icon.png"))
+    var showing = false
+
+    fun addStatus(prop: StringProperty, icon: Ikon) {
+        statusBar.add(Separator(Orientation.VERTICAL))
+        statusBar.add(label {
+            textProperty().bind(prop)
+            this.graphic = fontIcon(icon, 14)
+        })
+    }
 
     fun tableFromFile() {
         val fc = FileChooser()
         fc.title = "Open Table from File"
-        val f = fc.showOpenDialog(base.stage)
+        val f = fc.showOpenDialog(stage)
         if (f != null && f.extension == "csv") {
-            base.docLabel.text = "Loading"
+            docLabel.text = "Loading"
             Thread {
                 try {
                     val a = TableArray.fromCSV(FileInputStream(f), true)
                     runOnFxThread {
-                        base.stage.isMaximized = true
+                        stage.isMaximized = true
                         spreadsheet.grid = a.toGrid()
                         spreadsheet.fixedRows.setAll(0)
-                        base.docLabel.text = f.absolutePath
+                        docLabel.text = f.absolutePath
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -57,56 +121,7 @@ class DataView {
         zoomFactorProperty().addListener { _, _, nv ->
             zoomText.value = "${(nv.toDouble() * 100).toInt()}%"
         }
-        hgrow()
-        contextMenu = contextMenu {
-            modify {
-                item {
-                    name("Undo")
-                    shortcut(KeyCode.Z, control = true)
-                    icon(MDI_UNDO, 14)
-                }
-                item {
-                    name("Redo")
-                    shortcut(KeyCode.Z, control = true, shift = true)
-                    icon(MDI_REDO, 14)
-                }
-                separator()
-                item {
-                    shortcut(KeyCode.X, control = true)
-                    name("Cut")
-                    icon(MDI_CONTENT_CUT, 14)
-                }
-                item {
-                    shortcut(KeyCode.C, control = true)
-                    name("Copy")
-                    icon(MDI_CONTENT_COPY, 14)
-                }
-                item {
-                    shortcut(KeyCode.C, control = true, shift = true)
-                    name("Copy Special")
-                }
-                item {
-                    shortcut(KeyCode.V, control = true)
-                    name("Paste")
-                    icon(MDI_CONTENT_PASTE, 14)
-                }
-                item {
-                    shortcut(KeyCode.V, control = true, shift = true)
-                    name("Paste Special")
-                }
-                separator()
-                item {
-                    name("Edit Cell")
-                    icon(MDI_TABLE_EDIT, 14)
-                    shortcut(KeyCode.BACK_QUOTE, control = true)
-                }
-                item {
-                    shortcut(KeyCode.F, control = true)
-                    name("Find and Replace")
-                }
-            }
-        }
-
+        contextMenu = null
         Platform.runLater {
             columns.forEach {
                 it.minWidth = 42.0
@@ -115,13 +130,43 @@ class DataView {
     }
 
     fun show() {
-        base.layout.center = spreadsheet
+        layout.center = spreadsheet
         themeText.bind(Singleton.uiManager.themeProperty.asString())
-        base.addStatus(selectionText, MDI_MOUSE)
-        base.addStatus(zoomText, MDI_MAGNIFY_PLUS)
-        base.addStatus(themeText, MDI_COMPARE)
-        base.addStatus(Singleton.uiManager.memoryUsed, MDI_MEMORY)
-        base.show()
+        addStatus(selectionText, MDI_MOUSE)
+        addStatus(zoomText, MDI_MAGNIFY_PLUS)
+        addStatus(themeText, MDI_COMPARE)
+        addStatus(Singleton.uiManager.memoryUsed, MDI_MEMORY)
+        showImpl()
+    }
+
+
+    fun showImpl() {
+        if (showing) {
+            return
+        }
+        showing = true
+        updateTheme()
+        Singleton.uiManager.themeProperty.addListener(themeListener)
+        Singleton.uiManager.commandManager.forEachShortcut { shortcut, key ->
+            scene.accelerators[shortcut] = Runnable {
+                Singleton.uiManager.commandManager.invokeCommand(key)
+            }
+        }
+        stage.fullScreenExitHint = "Press F11 to Exit Full Screen"
+        stage.title = "KnotBook"
+        stage.icons.add(appIcon)
+        stage.scene = scene
+        stage.focusedProperty().addListener { _, _, focused ->
+            if (focused) {
+                Singleton.uiManager.view = this
+            } else if (Singleton.uiManager.view === this) {
+                Singleton.uiManager.view = null
+            }
+        }
+        stage.setOnCloseRequest {
+            Singleton.uiManager.themeProperty.removeListener(themeListener)
+        }
+        stage.show()
     }
 
     private fun getRange(): String {

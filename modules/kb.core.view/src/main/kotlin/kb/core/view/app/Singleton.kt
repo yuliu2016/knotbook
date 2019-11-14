@@ -128,12 +128,10 @@ internal object Singleton {
             exitProcess(0)
         }
         launchCommands()
-        // getList().forEach { context.uiManager.registerCommand(it.name, it) }
-        DataView().show()
     }
 
     private fun closeWindow() {
-        uiManager.focusedWindow?.let { win ->
+        uiManager.view?.let { win ->
             val alert = Alert(Alert.AlertType.CONFIRMATION, "Close Window?", ButtonType.YES, ButtonType.NO)
             alert.showAndWait()
             if (alert.result == ButtonType.YES) {
@@ -142,11 +140,11 @@ internal object Singleton {
         }
     }
 
-    private fun newWindow() {
+    fun newWindow() {
         val dv = DataView()
-        uiManager.focusedWindow?.let { win ->
-            dv.base.stage.x = win.stage.x + 48.0
-            dv.base.stage.y = win.stage.y + 36.0
+        uiManager.view?.let { win ->
+            dv.stage.x = win.stage.x + 48.0
+            dv.stage.y = win.stage.y + 36.0
             dv.show()
         }
     }
@@ -154,7 +152,7 @@ internal object Singleton {
     private fun launchCommands() {
         val m = context.uiManager
         m.registerCommand("app.about", "About KnotBook", MDI_INFORMATION_OUTLINE.description,
-                combo(KeyCode.F1)) { uiManager.focusedWindow?.let { Splash.info(it.stage) } }
+                combo(KeyCode.F1)) { uiManager.view?.let { Splash.info(it.stage) } }
         m.registerCommand("nav.recent", "Open Recent", MDI_HISTORY.description,
                 combo(KeyCode.R, control = true)) { }
         m.registerCommand("nav.file", "Open File", MDI_FOLDER_OUTLINE.description,
@@ -171,11 +169,11 @@ internal object Singleton {
                 MDI_COMPARE.description, combo(KeyCode.F3)) { uiManager.toggleTheme() }
         m.registerCommand("fullscreen.toggle", "Toggle Full Screen",
                 MDI_ARROW_EXPAND.description, combo(KeyCode.F11)
-        ) { uiManager.focusedWindow?.toggleFullScreen() }
+        ) { uiManager.view?.toggleFullScreen() }
         m.registerCommand("status.toggle", "Toggle Status Bar",
-                null, combo(KeyCode.F10)) { uiManager.focusedWindow?.toggleStatusBar() }
+                null, combo(KeyCode.F10)) { uiManager.view?.toggleStatusBar() }
         m.registerCommand("window.create", "New Window", null,
-                combo(KeyCode.N, control = true)) { DataView().show() }
+                combo(KeyCode.N, control = true)) { newWindow() }
         m.registerCommand("test.python.editor", "Test Python Editor",
                 MDI_LANGUAGE_PYTHON.description, null
         ) { context.createTextEditor().withSyntax("text/python").editable().show() }
