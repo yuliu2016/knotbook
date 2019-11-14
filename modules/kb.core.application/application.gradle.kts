@@ -9,10 +9,9 @@ dependencies {
     implementation(project(":kb.service.api"))
 
     runtimeOnly(project(":kb.core.view"))
-    runtimeOnly(project(":kb.core.bowline"))
     runtimeOnly(project(":kb.core.code"))
     runtimeOnly(project(":kb.core.camera.fx"))
-    runtimeOnly(project(":kb.core.bowline"))
+    runtimeOnly(project(":bowline"))
     runtimeOnly(project(":connect-four"))
     runtimeOnly(project(":thebluealliance-provider"))
     runtimeOnly(project(":path-planner"))
