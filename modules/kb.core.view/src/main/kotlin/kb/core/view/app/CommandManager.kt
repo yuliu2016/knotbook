@@ -1,5 +1,6 @@
 package kb.core.view.app
 
+import javafx.scene.input.KeyCombination
 import kb.core.icon.IkonResolver
 import kb.core.icon.fontIcon
 import kb.service.api.ui.Command
@@ -30,6 +31,15 @@ class CommandManager {
     private val values: MutableList<Command> = ArrayList()
 
     private var filteredIndices: List<Int> = ArrayList()
+
+    fun forEachShortcut(func: (shortcut: KeyCombination, key: String) -> Unit) {
+        for (i in values.indices) {
+            val v = values[i]
+            if (v.shortcut != null && v.callback != null) {
+                func(v.shortcut, keys[i])
+            }
+        }
+    }
 
     fun setAll() {
         bar.items.setAll(values.map { toItem(it, null) })
@@ -70,7 +80,12 @@ class CommandManager {
     }
 
     fun invokeCommand(id: String) {
-        println("Invoking Command #$id")
-        values.getOrNull(keys.indexOf(id))?.callback?.run()
+        val callback = values.getOrNull(keys.indexOf(id))?.callback
+        if (callback == null) {
+            println("Command #$id Not Found or Cannot be Invoked")
+        } else {
+            callback.run()
+            println("Invoking Command #$id")
+        }
     }
 }

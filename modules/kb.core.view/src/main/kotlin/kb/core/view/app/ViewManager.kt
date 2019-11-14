@@ -42,7 +42,7 @@ class ViewManager : UIManager {
         stagedOptionBar.setTheme("/knotbook.css", theme.optionStyle)
     }
 
-    fun showCommandsBar() {
+    fun showCommandsPalette() {
         commandManager.setAll()
         commandManager.bar.text = ""
         showOptionBar(commandManager.bar)

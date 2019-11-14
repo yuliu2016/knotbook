@@ -1,4 +1,4 @@
-@file:Suppress("FunctionName")
+@file:Suppress("FunctionName", "unused")
 
 package kb.core.view.app
 
@@ -17,20 +17,15 @@ fun getList(): List<Command> = listOf(
         Entity("Folder: Export As Excel Workbook", MDI_FILE_EXCEL),
         Entity("Data: Calculate Summary for Selection", MDI_CALCULATOR),
         Entity("Graph: Create Histogram", MDI_CHART_HISTOGRAM),
-        Entity("Spreadsheet View: Increment Zoom", MDI_MAGNIFY_PLUS),
-        Entity("Spreadsheet View: Decrement Zoom", MDI_MAGNIFY_MINUS),
-        Entity("Spreadsheet View: Reset Zoom"),
         Entity("Table: Edit as CSV Text", MDI_FILE_DELIMITED),
         Entity("Data: Reveal in Local Cache"),
         Entity("Data: Reveal in Data Source"),
         Entity("Application: Debug with Scenic View", MDI_CLOUD_OUTLINE),
-        Entity("About: GitHub Project", MDI_GITHUB_CIRCLE),
         Entity("Python: Execute A Script", MDI_LANGUAGE_PYTHON),
         Entity("Scouting App: Set Event"),
         Entity("Scouting App: Start Scanner", MDI_QRCODE),
         Entity("Colour Scale: Add for Selection", MDI_GRADIENT),
         Entity("Colour Scale: Clear for Selection"),
         Entity("Folder: Open in Command Prompt", MDI_CONSOLE),
-        Entity("Table: Duplicate Data"),
-        Entity("Table: Find in Cells", MDI_FILE_FIND)
+        Entity("Table: Duplicate Data")
 )
