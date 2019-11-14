@@ -11,7 +11,7 @@ public class CNGService implements Service {
     private static ServiceMetadata metadata = new ServiceMetadata();
 
     static {
-        metadata.setPackageName("kb.tool.cng");
+        metadata.setPackageName("Connect Four Game");
         metadata.setPackageVersion("1.0");
     }
 

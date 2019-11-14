@@ -44,6 +44,7 @@ class ViewManager : UIManager {
 
     fun showCommandsBar() {
         commandManager.setAll()
+        commandManager.bar.text = ""
         showOptionBar(commandManager.bar)
     }
 
@@ -52,9 +53,7 @@ class ViewManager : UIManager {
     }
 
     override fun showOptionBar(optionBar: OptionBar) {
-        focusedWindow?.let { win ->
-            stagedOptionBar.show(optionBar, win.stage, win.contentYOffset())
-        }
+        focusedWindow?.let { win -> stagedOptionBar.show(optionBar, win.stage) }
     }
 
     override fun registerCommand(id: String, command: Command) {

@@ -35,8 +35,14 @@ class WindowBase {
         stage.isFullScreen = isFullScreen
     }
 
-    fun contentYOffset(): Double {
-        return menuBar.height
+    fun toggleStatusBar() {
+        if (layout.bottom == null) {
+            layout.bottom = statusBar
+            layout.top = menuBar
+        } else {
+            layout.bottom = null
+            layout.top = null
+        }
     }
 
     fun updateTheme() {

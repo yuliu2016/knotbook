@@ -11,19 +11,29 @@ class CommandManager {
     val bar = OptionBar().apply {
         hint = "Search Commands"
         textProperty().addListener { _, ov, nv ->
-            updateSearch(ov, nv)
+            val q = nv.trim()
+            if (q != ov?.trim()) {
+                if (q.isEmpty()) {
+                    if (isShowing) {
+                        setAll()
+                    }
+                } else updateSearch(q)
+            }
         }
         setOnEnterPressed {
             isShowing = false
-            invokeCommand(keys[selectedItem])
+            values[filteredIndices[selectedItem]].callback?.run()
         }
     }
 
     private val keys: MutableList<String> = ArrayList()
     private val values: MutableList<Command> = ArrayList()
 
+    private var filteredIndices: List<Int> = ArrayList()
+
     fun setAll() {
         bar.items.setAll(values.map { toItem(it, null) })
+        filteredIndices = keys.indices.toList()
     }
 
     private fun toItem(command: Command, highlight: BooleanArray?): OptionItem = OptionItem(
@@ -37,21 +47,15 @@ class CommandManager {
             highlight
     )
 
-    private fun updateSearch(ov: String?, nv: String) {
-        val q = nv.trim()
-        if (q == ov) return
-        if (q.isEmpty()) {
-            setAll()
-        } else {
-            bar.items.setAll(values
-                    .mapIndexed { index, command -> index to OptionItem.parse(command.name, q) }
-                    .filter { it.second != null }
-                    .sortedWith(Comparator { o1, o2 ->
-                        OptionItem.compare(o2.second, o1.second)
-                    })
-                    .map { toItem(values[it.first], it.second) }
-            )
-        }
+    private fun updateSearch(q: String) {
+        val items = values
+                .mapIndexed { index, command -> index to OptionItem.parse(command.name, q) }
+                .filter { it.second != null }
+                .sortedWith(Comparator { o1, o2 ->
+                    OptionItem.compare(o2.second, o1.second)
+                })
+        filteredIndices = items.map { it.first }
+        bar.items.setAll(items.map { toItem(values[it.first], it.second) })
     }
 
     fun registerCommand(id: String, command: Command) {

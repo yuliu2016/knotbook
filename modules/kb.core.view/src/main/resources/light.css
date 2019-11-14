@@ -94,7 +94,7 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
     -fx-border-width: 0;
     -fx-border-insets: 0;
     -fx-background-insets: 0;
-    -fx-background-color: #f4f4f4;
+    -fx-background-color: #eee;
 }
 
 .menu {

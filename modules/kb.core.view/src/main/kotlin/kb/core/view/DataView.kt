@@ -178,6 +178,11 @@ class DataView {
                 }
                 separator()
                 item {
+                    name("Toggle Status Bar")
+                    shortcut(KeyCode.F10)
+                    action { base.toggleStatusBar() }
+                }
+                item {
                     name("Toggle Colour Scheme")
                     shortcut(KeyCode.F3)
                     icon(MDI_COMPARE, 14)

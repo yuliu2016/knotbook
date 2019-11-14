@@ -4,5 +4,7 @@ module kb.core.bowline {
 
     requires kb.service.api;
 
+    provides kb.service.api.Service with kb.core.bowline.BowlineService;
+
     exports kb.core.bowline;
 }

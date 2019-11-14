@@ -5,6 +5,14 @@ public class ServiceMetadata {
     private String packageName;
     private String packageVersion;
 
+    public ServiceMetadata() {
+    }
+
+    public ServiceMetadata(String packageName, String packageVersion) {
+        this.packageName = packageName;
+        this.packageVersion = packageVersion;
+    }
+
     /**
      * @return The name of the package. This should be unique and case-insensitive.
      * Format it like a java package

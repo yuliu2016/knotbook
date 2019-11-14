@@ -9,6 +9,7 @@ dependencies {
     implementation(project(":kb.service.api"))
 
     runtimeOnly(project(":kb.core.view"))
+    runtimeOnly(project(":kb.core.bowline"))
     runtimeOnly(project(":kb.core.code"))
     runtimeOnly(project(":kb.core.camera.fx"))
     runtimeOnly(project(":kb.core.bowline"))

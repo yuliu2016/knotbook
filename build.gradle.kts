@@ -38,5 +38,5 @@ subprojects {
         }
     }
     buildDir = File(rootProject.projectDir, "build/$name")
-    version = "3.1.0"
+    version = "3.3.13"
 }
