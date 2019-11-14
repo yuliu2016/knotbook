@@ -1,14 +1,21 @@
 package kb.core.application;
 
-import kb.service.api.*;
+import kb.service.api.MetaService;
+import kb.service.api.Service;
+import kb.service.api.ServiceContext;
+import kb.service.api.ServiceMetadata;
 import kb.service.api.application.ApplicationProps;
 import kb.service.api.application.ApplicationService;
 import kb.service.api.application.ServiceManager;
+import kb.service.api.json.JSONObjectWrapper;
 import kb.service.api.ui.TextEditor;
 import kb.service.api.ui.TextEditorService;
 import kb.service.api.ui.UIManager;
 
-import java.io.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -17,27 +24,34 @@ import java.util.ServiceLoader;
 @SuppressWarnings("unused")
 class KnotBook {
 
-    public interface RegistryHandle {
-        InputStream input() throws IOException;
+    public interface ConfigHandle {
+        String read();
 
-        OutputStream output() throws IOException;
+        void write(String s);
     }
 
-    private static class FileRegistryHandle implements RegistryHandle {
-        File file;
+    private static class FileConfigHandle implements ConfigHandle {
+        Path path;
 
-        FileRegistryHandle(File file) {
-            this.file = file;
+        FileConfigHandle(Path path) {
+            this.path = path;
         }
 
         @Override
-        public InputStream input() throws IOException {
-            return new FileInputStream(file);
+        public String read() {
+            try {
+                return Files.readString(path);
+            } catch (IOException e) {
+                return "{}";
+            }
         }
 
         @Override
-        public OutputStream output() throws IOException {
-            return new FileOutputStream(file);
+        public void write(String s) {
+            try {
+                Files.writeString(path, s);
+            } catch (IOException ignored) {
+            }
         }
     }
 
@@ -93,8 +107,8 @@ class KnotBook {
         }
 
         @Override
-        public ServiceProps getProps() {
-            return getKnotBook().registry.getProps(service.getMetadata().getPackageName());
+        public JSONObjectWrapper getConfig() {
+            return getKnotBook().config.getConfig(service);
         }
 
         @Override
@@ -112,7 +126,7 @@ class KnotBook {
 
         @Override
         public ApplicationProps getProps() {
-            return getKnotBook().registry;
+            return getKnotBook().config;
         }
 
         @Override
@@ -122,15 +136,15 @@ class KnotBook {
 
         @Override
         public String getVersion() {
-            return "3.3.8";
+            return "3.3.13";
         }
 
         @Override
-        public void exit() {
+        public void exitOK() {
             for (Service service : getServices()) {
                 service.terminate();
             }
-            getKnotBook().registry.save();
+            getKnotBook().config.save();
             System.exit(0);
         }
     }
@@ -160,18 +174,19 @@ class KnotBook {
         return theKnotBook;
     }
 
-    private String home = System.getProperty("user.home").replace(File.separatorChar, '/');
     private List<String> args;
 
     private boolean isDebug() {
         return args == null || args.contains("debug");
     }
 
-    private RegistryHandle getHandle() {
+    private ConfigHandle getHandle() {
         if (isDebug()) {
-            return new FileRegistryHandle(new File(home, "knotbook.properties"));
+            String home = System.getProperty("user.home");
+            return new FileConfigHandle(Paths.get(home, "knotbook-config-debug.json"));
         }
-        return new FileRegistryHandle(new File(home, "knotbook-release.properties"));
+        String launcherPath = System.getProperty("java.launcher.path");
+        return new FileConfigHandle(Paths.get(launcherPath, "app", "config.json"));
     }
 
     private final ResolvedServices<ApplicationService> applications =
@@ -180,7 +195,7 @@ class KnotBook {
             loadServices(Service.class);
     private final ResolvedServices<TextEditorService> textEditors =
             loadServices(TextEditorService.class);
-    private final Registry2 registry = new Registry2(getHandle());
+    private final Config config = new Config(getHandle());
     private final Manager manager = new Manager();
 
     void launch(List<String> args) {
@@ -198,7 +213,9 @@ class KnotBook {
         textEditors.print();
         app.launch(manager, contextForService(serviceForApplication(app.getMetadata()), app), () -> {
             for (Service service : extensions.services) {
-                service.launch(contextForService(service, app));
+                if (service.isAvailable()) {
+                    service.launch(contextForService(service, app));
+                }
             }
         });
     }

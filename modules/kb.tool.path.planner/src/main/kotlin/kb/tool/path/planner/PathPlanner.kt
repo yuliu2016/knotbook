@@ -147,8 +147,6 @@ class PathPlanner {
                     addRow(r++, label { text = "Angular Acceleration" }, checkbox { })
                     addRow(r++, label { text = "Angular Jerk" }, checkbox { })
                     addRow(r++, label { text = "Time Steps" }, checkbox { })
-                    addRow(r++, label { text = "Time Steps" }, checkbox { })
-
                 }
             }
             +tab {

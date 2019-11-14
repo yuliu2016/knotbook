@@ -1,5 +1,6 @@
 package kb.service.api;
 
+import kb.service.api.json.JSONObjectWrapper;
 import kb.service.api.ui.TextEditor;
 import kb.service.api.ui.UIManager;
 
@@ -11,9 +12,9 @@ public interface ServiceContext {
     Service getService();
 
     /**
-     * Get the properties that belongs to this context
+     * Get the configuration data of this service
      */
-    ServiceProps getProps();
+    JSONObjectWrapper getConfig();
 
     /**
      * Create a text editor instance for text/code editing

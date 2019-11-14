@@ -12,5 +12,5 @@ public interface ServiceManager {
 
     String getVersion();
 
-    void exit();
+    void exitOK();
 }

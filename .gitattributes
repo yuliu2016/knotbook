@@ -1,10 +1,12 @@
 *.gradle.kts linguist-generated=true
 modules/kb.tba.client/src/main/kotlin/kb/tba/client/* linguist-generated=true
-modules/kb.core.camera.fx/src/main/java/kb/core/camera/fx/BufferedImageLuminanceSource.java linguist-vendored=true
+modules/kb.core.camera.fx/src/main/java/kb/core/camera/fx/* linguist-vendored=true
 modules/kb.core.icon/* linguist-vendored=true
 modules/kb.core.bowline/* linguist-vendored=true
 modules/kb.core.fx/* linguist-vendored=true
 modules/kb.service.api/src/main/java/kb/service/api/array/* linguist-vendored=true
+modules/kb.service.api/src/main/java/kb/service/api/json/* linguist-generated=true
 modules/kb.service.api/src/test/* linguist-vendored=true
 modules/kb.core.view/src/main/java/kb/core/view/util/* linguist-vendored=true
+modules/kb.tool.cng/* linguist-vendored=true
 modules/kb.tool.path.planner/* linguist-vendored=true

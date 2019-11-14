@@ -2,12 +2,19 @@ package kb.core.view.app
 
 import javafx.application.Platform
 import javafx.beans.InvalidationListener
+import javafx.scene.control.Alert
+import javafx.scene.input.KeyCode
 import javafx.stage.Window
+import kb.core.fx.combo
 import kb.core.view.DataView
 import kb.core.view.server.Server
+import kb.core.view.splash.Splash
 import kb.service.api.ServiceContext
 import kb.service.api.application.ServiceManager
+import org.kordamp.ikonli.materialdesign.MaterialDesign.*
+import java.io.IOException
 import kotlin.concurrent.thread
+import kotlin.system.exitProcess
 
 /**
  * Singleton object representing the application
@@ -29,7 +36,7 @@ internal object Singleton {
     fun editAppProperties() {
         context.createTextEditor()
                 .editable()
-                .withSyntax("text/properties")
+                .withSyntax("text/json")
                 .withTitle("Application Properties")
                 .withInitialText(manager.props.joinedText)
                 .addAction("Save Changes") { changed, finalText ->
@@ -37,14 +44,6 @@ internal object Singleton {
                         manager.props.setInputText(finalText)
                     }
                 }
-                .show()
-    }
-
-    fun viewAppProperties() {
-        context.createTextEditor()
-                .withSyntax("text/properties")
-                .withTitle("Application Properties (Read Only)")
-                .withInitialText(manager.props.joinedText)
                 .show()
     }
 
@@ -120,18 +119,57 @@ internal object Singleton {
         startMemoryObserver()
         Platform.setImplicitExit(false)
         val windows = Window.getWindows()
-        windows.addListener(InvalidationListener { if (windows.isEmpty()) exit() })
-        dataServer.stateCallback = { Platform.runLater { uiManager.serverState.set(it) } }
-        dataServer.bindAndStart()
+        windows.addListener(InvalidationListener { if (windows.isEmpty()) exitOK() })
+        try {
+            dataServer.bindAndStart()
+        } catch (e: IOException) {
+            Alert(Alert.AlertType.ERROR, "Application Already Started").showAndWait()
+            exitProcess(0)
+        }
+        launchCommands()
         getList().forEach { context.uiManager.registerCommand(it.name, it) }
         DataView().show()
     }
 
-    fun exit() {
+    private fun launchCommands() {
+        val m = context.uiManager
+        m.registerCommand("app.about", "About KnotBook", MDI_INFORMATION_OUTLINE.description,
+                combo(KeyCode.F1)) { uiManager.focusedWindow?.let { Splash.info(it.stage) } }
+        m.registerCommand("nav.recent", "Open Recent", MDI_HISTORY.description,
+                combo(KeyCode.R, control = true)) { }
+        m.registerCommand("nav.file", "Open File", MDI_FOLDER_OUTLINE.description,
+                combo(KeyCode.O, control = true)) { }
+        m.registerCommand("window.close", "Close Window", MDI_CLOSE.description,
+                combo(KeyCode.W, control = true)) { }
+        m.registerCommand("jvm.properties", "JVM Properties",
+                MDI_COFFEE.description, null) { viewJVMProperties() }
+        m.registerCommand("jvm.gc", "JVM: Run Memory Garbage Collection",
+                MDI_DELETE_SWEEP.description, combo(KeyCode.B, control = true)) { Splash.gc() }
+        m.registerCommand("app.config", "Settings",
+                MDI_TUNE.description, combo(KeyCode.COMMA, control = true)) { editAppProperties() }
+        m.registerCommand("theme.toggle", "Toggle Colour Scheme",
+                MDI_COMPARE.description, combo(KeyCode.F3)) { uiManager.toggleTheme() }
+        m.registerCommand("fullscreen.toggle", "Toggle Full Screen",
+                MDI_ARROW_EXPAND.description, combo(KeyCode.F11)
+        ) { uiManager.focusedWindow?.toggleFullScreen() }
+        m.registerCommand("status.toggle", "Toggle Status Bar",
+                null, null) { uiManager.focusedWindow?.toggleStatusBar() }
+        m.registerCommand("window.create", "New Window", null,
+                combo(KeyCode.N, control = true)) { DataView().show() }
+        m.registerCommand("test.python.editor", "Test Python Editor",
+                MDI_LANGUAGE_PYTHON.description, null
+        ) { context.createTextEditor().withSyntax("text/python").editable().show() }
+        m.registerCommand("command.palette", "Command Palette", MDI_CONSOLE.description,
+                combo(KeyCode.K, control = true)) { uiManager.showCommandsBar() }
+        m.registerCommand("app.license", "Open Source Licenses", null,
+                null) { viewOpenSource() }
+    }
+
+    fun exitOK() {
         Platform.runLater {
             dataServer.exit()
             Platform.exit()
-            manager.exit()
+            manager.exitOK()
         }
     }
 }

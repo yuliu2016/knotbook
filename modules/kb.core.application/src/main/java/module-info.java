@@ -3,6 +3,7 @@ import kb.service.api.ui.TextEditorService;
 module kb.core.application {
 
     requires java.desktop;
+    requires org.json;
 
     requires kb.service.abc;
     provides kb.service.abc.ABC with kb.core.application.KnotBookABC;

@@ -39,10 +39,7 @@ class Server {
     fun bindAndStart() {
         server.bind(InetSocketAddress(8650), 0)
         server.start()
-        stateCallback?.invoke("Idle")
     }
-
-    var stateCallback: ((String) -> Unit)? = null
 
     fun exit() {
         server.stop(0)

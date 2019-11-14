@@ -32,7 +32,7 @@ class StagedOptionBar {
     val tf = textField {
         this.setOnKeyPressed { e ->
             when {
-                e.code == KeyCode.UP || e.code == KeyCode.LEFT -> {
+                e.code == KeyCode.UP || (e.code == KeyCode.TAB && e.isShiftDown) -> {
                     val i = lv.selectionModel.selectedIndex
                     if (i != 0) {
                         lv.selectionModel.select(i - 1)
@@ -43,7 +43,7 @@ class StagedOptionBar {
                     }
                     e.consume()
                 }
-                e.code == KeyCode.DOWN || e.code == KeyCode.RIGHT -> {
+                e.code == KeyCode.DOWN || e.code == KeyCode.TAB -> {
                     val i = lv.selectionModel.selectedIndex
                     if (i != lv.items.size - 1) {
                         lv.selectionModel.select(i + 1)
@@ -72,7 +72,7 @@ class StagedOptionBar {
         graphic = fontIcon(MaterialDesign.MDI_CHECK, 14)
         isFocusTraversable = false
         setOnAction {
-            cancel()
+            popup.hide()
             optionBar?.onHideAndContinue?.handle(ActionEvent())
         }
     }
@@ -86,7 +86,7 @@ class StagedOptionBar {
 
     val container = borderPane {
         effect = DropShadow().apply {
-            color = Color.DARKGRAY
+            color = Color.rgb(64, 64, 64)
             blurType = BlurType.GAUSSIAN
             height = 10.0
             width = 10.0
@@ -104,7 +104,7 @@ class StagedOptionBar {
         isAutoHide = true
         showingProperty().addListener(InvalidationListener {
             if (!isShowing) {
-                unbindAll(optionBar!!)
+                optionBar?.let { unbindAll(it) }
             }
         })
     }
@@ -142,15 +142,15 @@ class StagedOptionBar {
         })
     }
 
-    fun show(ob: OptionBar, stage: Stage, contentYOffset: Double) {
+    fun show(ob: OptionBar, stage: Stage) {
         if (popup.isShowing) {
             // unbind the previous option bar
-            unbindAll(optionBar!!)
+            optionBar?.isShowing = false
         }
         bindAll(ob)
         ob.isShowing = true
         popup.x = stage.x + stage.width / 2.0 - container.prefWidth / 2.0 - 10.0
-        popup.y = stage.y + stage.scene.y + contentYOffset - 5.0
+        popup.y = stage.y + stage.scene.y - 5.0
         popup.show(stage)
     }
 

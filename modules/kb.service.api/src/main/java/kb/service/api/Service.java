@@ -18,13 +18,6 @@ public interface Service extends MetaService {
     }
 
     /**
-     * @return true if the service cannot be paused or stopped now
-     */
-    default boolean isBusy() {
-        return false;
-    }
-
-    /**
      * Stops the service
      */
     default void terminate() {

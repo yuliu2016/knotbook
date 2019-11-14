@@ -59,7 +59,9 @@ class OptionItemCell : ListCell<OptionItem>() {
             add(item.graphic.centered(24))
             add(t)
             if (item.info != null) {
-                add(label(item.info))
+                add(label(item.info).apply {
+                    styleClass("list-info")
+                })
             }
         }
         alignment = Pos.CENTER_LEFT

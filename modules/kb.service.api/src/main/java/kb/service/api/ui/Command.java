@@ -1,18 +1,17 @@
 package kb.service.api.ui;
 
 import javafx.scene.input.KeyCombination;
-import org.kordamp.ikonli.Ikon;
 
 /**
  * Represents a command of the UI
  */
 public class Command {
     private String name;
-    private Ikon icon;
+    private String icon;
     private KeyCombination shortcut;
     private Runnable callback;
 
-    public Command(String name, Ikon icon, KeyCombination shortcut, Runnable callback) {
+    public Command(String name, String icon, KeyCombination shortcut, Runnable callback) {
         this.name = name;
         this.icon = icon;
         this.shortcut = shortcut;
@@ -23,7 +22,7 @@ public class Command {
         return name;
     }
 
-    public Ikon getIcon() {
+    public String getIcon() {
         return icon;
     }
 

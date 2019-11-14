@@ -11,8 +11,12 @@ import kb.service.api.ui.UIManager
 @Suppress("MemberVisibilityCanBePrivate")
 class ViewManager : UIManager {
 
+    enum class Theme(val viewStyle: String, val optionStyle: String) {
+        Light("/light.css", "/light-option.css"),
+        Dark("/dark.css", "/dark-option.css");
+    }
+
     val memoryUsed = SimpleStringProperty()
-    val serverState = SimpleStringProperty()
     val themeProperty = SimpleObjectProperty(Theme.Light)
 
     val commandManager = CommandManager()
@@ -40,6 +44,7 @@ class ViewManager : UIManager {
 
     fun showCommandsBar() {
         commandManager.setAll()
+        commandManager.bar.text = ""
         showOptionBar(commandManager.bar)
     }
 
@@ -48,9 +53,7 @@ class ViewManager : UIManager {
     }
 
     override fun showOptionBar(optionBar: OptionBar) {
-        focusedWindow?.let { win ->
-            stagedOptionBar.show(optionBar, win.stage, win.contentYOffset())
-        }
+        focusedWindow?.let { win -> stagedOptionBar.show(optionBar, win.stage) }
     }
 
     override fun registerCommand(id: String, command: Command) {

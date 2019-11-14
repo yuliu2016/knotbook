@@ -98,7 +98,7 @@ class DataView {
                 separator()
                 item {
                     name("Exit")
-                    action { Singleton.exit() }
+                    action { Singleton.exitOK() }
                 }
             }
         }
@@ -177,6 +177,11 @@ class DataView {
                     action { Singleton.uiManager.showCommandsBar() }
                 }
                 separator()
+                item {
+                    name("Toggle Status Bar")
+                    shortcut(KeyCode.F10)
+                    action { base.toggleStatusBar() }
+                }
                 item {
                     name("Toggle Colour Scheme")
                     shortcut(KeyCode.F3)
@@ -294,7 +299,6 @@ class DataView {
         base.layout.center = spreadsheet
         themeText.bind(Singleton.uiManager.themeProperty.asString())
         base.addStatus(selectionText, MDI_MOUSE)
-        base.addStatus(Singleton.uiManager.serverState, MDI_ACCESS_POINT)
         base.addStatus(zoomText, MDI_MAGNIFY_PLUS)
         base.addStatus(themeText, MDI_COMPARE)
         base.addStatus(Singleton.uiManager.memoryUsed, MDI_MEMORY)
@@ -317,7 +321,7 @@ class DataView {
         return if (a.size == 1) {
             "$y$w"
         } else {
-            "$y$w:$z$x [${a.size}]"
+            "$y$w:$z$x"
         }
     }
 }

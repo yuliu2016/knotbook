@@ -6,6 +6,9 @@ import javafx.collections.ObservableList
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.Label
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyCodeCombination
+import javafx.scene.input.KeyCombination.*
 import javafx.scene.layout.HBox
 
 @Suppress("unused")
@@ -39,3 +42,15 @@ fun Node?.centered(width: Int): HBox = HBox().also {
         it.alignment = Pos.CENTER
     }
 }
+
+fun combo(
+        keyCode: KeyCode,
+        control: Boolean = false,
+        alt: Boolean = false,
+        shift: Boolean = false
+): KeyCodeCombination = KeyCodeCombination(
+        keyCode,
+        if (control) SHORTCUT_DOWN else SHORTCUT_ANY,
+        if (alt) ALT_DOWN else ALT_ANY,
+        if (shift) SHIFT_DOWN else SHIFT_ANY
+)
