@@ -10,7 +10,7 @@ import com.beust.klaxon.JsonObject
 /**
  * Returns API status, and TBA status information.
  */
-suspend fun TBA.getStatus(): APIStatus {
+fun TBA.getStatus(): APIStatus {
     val response = get("/status")
     return APIStatus(
             raw = response,
@@ -39,7 +39,7 @@ suspend fun TBA.getStatus(): APIStatus {
 /**
  * Gets a list of `Team` objects, paginated in groups of 500.
  */
-suspend fun TBA.getTeams(
+fun TBA.getTeams(
         page_num: Int
 ): List<Team> {
     val response = getArray("/teams/$page_num")
@@ -72,7 +72,7 @@ suspend fun TBA.getTeams(
 /**
  * Gets a list of short form `Team_Simple` objects, paginated in groups of 500.
  */
-suspend fun TBA.getTeamsSimple(
+fun TBA.getTeamsSimple(
         page_num: Int
 ): List<TeamSimple> {
     val response = getArray("/teams/$page_num/simple")
@@ -94,7 +94,7 @@ suspend fun TBA.getTeamsSimple(
 /**
  * Gets a list of Team keys, paginated in groups of 500. (Note, each page will not have 500 teams, but will include the teams within that range of 500.)
  */
-suspend fun TBA.getTeamsKeys(
+fun TBA.getTeamsKeys(
         page_num: Int
 ): List<String> {
     val response = getArray("/teams/$page_num/keys")
@@ -105,7 +105,7 @@ suspend fun TBA.getTeamsKeys(
 /**
  * Gets a list of `Team` objects that competed in the given year, paginated in groups of 500.
  */
-suspend fun TBA.getTeamsByYear(
+fun TBA.getTeamsByYear(
         year: Int,
         page_num: Int
 ): List<Team> {
@@ -139,7 +139,7 @@ suspend fun TBA.getTeamsByYear(
 /**
  * Gets a list of short form `Team_Simple` objects that competed in the given year, paginated in groups of 500.
  */
-suspend fun TBA.getTeamsByYearSimple(
+fun TBA.getTeamsByYearSimple(
         year: Int,
         page_num: Int
 ): List<TeamSimple> {
@@ -162,7 +162,7 @@ suspend fun TBA.getTeamsByYearSimple(
 /**
  * Gets a list Team Keys that competed in the given year, paginated in groups of 500.
  */
-suspend fun TBA.getTeamsByYearKeys(
+fun TBA.getTeamsByYearKeys(
         year: Int,
         page_num: Int
 ): List<String> {
@@ -174,7 +174,7 @@ suspend fun TBA.getTeamsByYearKeys(
 /**
  * Gets a `Team` object for the team referenced by the given key.
  */
-suspend fun TBA.getTeam(
+fun TBA.getTeam(
         team_key: String
 ): Team {
     val response = get("/team/$team_key")
@@ -205,7 +205,7 @@ suspend fun TBA.getTeam(
 /**
  * Gets a `Team_Simple` object for the team referenced by the given key.
  */
-suspend fun TBA.getTeamSimple(
+fun TBA.getTeamSimple(
         team_key: String
 ): TeamSimple {
     val response = get("/team/$team_key/simple")
@@ -225,7 +225,7 @@ suspend fun TBA.getTeamSimple(
 /**
  * Gets a list of years in which the team participated in at least one competition.
  */
-suspend fun TBA.getTeamYearsParticipated(
+fun TBA.getTeamYearsParticipated(
         team_key: String
 ): List<Int> {
     val response = getArray("/team/$team_key/years_participated")
@@ -236,7 +236,7 @@ suspend fun TBA.getTeamYearsParticipated(
 /**
  * Gets an array of districts representing each year the team was in a district. Will return an empty array if the team was never in a district.
  */
-suspend fun TBA.getTeamDistricts(
+fun TBA.getTeamDistricts(
         team_key: String
 ): List<DistrictList> {
     val response = getArray("/team/$team_key/districts")
@@ -255,7 +255,7 @@ suspend fun TBA.getTeamDistricts(
 /**
  * Gets a list of year and robot name pairs for each year that a robot name was provided. Will return an empty array if the team has never named a robot.
  */
-suspend fun TBA.getTeamRobots(
+fun TBA.getTeamRobots(
         team_key: String
 ): List<TeamRobot> {
     val response = getArray("/team/$team_key/robots")
@@ -274,7 +274,7 @@ suspend fun TBA.getTeamRobots(
 /**
  * Gets a list of all events this team has competed at.
  */
-suspend fun TBA.getTeamEvents(
+fun TBA.getTeamEvents(
         team_key: String
 ): List<Event> {
     val response = getArray("/team/$team_key/events")
@@ -334,7 +334,7 @@ suspend fun TBA.getTeamEvents(
 /**
  * Gets a short-form list of all events this team has competed at.
  */
-suspend fun TBA.getTeamEventsSimple(
+fun TBA.getTeamEventsSimple(
         team_key: String
 ): List<EventSimple> {
     val response = getArray("/team/$team_key/events/simple")
@@ -368,7 +368,7 @@ suspend fun TBA.getTeamEventsSimple(
 /**
  * Gets a list of the event keys for all events this team has competed at.
  */
-suspend fun TBA.getTeamEventsKeys(
+fun TBA.getTeamEventsKeys(
         team_key: String
 ): List<String> {
     val response = getArray("/team/$team_key/events/keys")
@@ -379,7 +379,7 @@ suspend fun TBA.getTeamEventsKeys(
 /**
  * Gets a list of events this team has competed at in the given year.
  */
-suspend fun TBA.getTeamEventsByYear(
+fun TBA.getTeamEventsByYear(
         team_key: String,
         year: Int
 ): List<Event> {
@@ -440,7 +440,7 @@ suspend fun TBA.getTeamEventsByYear(
 /**
  * Gets a short-form list of events this team has competed at in the given year.
  */
-suspend fun TBA.getTeamEventsByYearSimple(
+fun TBA.getTeamEventsByYearSimple(
         team_key: String,
         year: Int
 ): List<EventSimple> {
@@ -475,7 +475,7 @@ suspend fun TBA.getTeamEventsByYearSimple(
 /**
  * Gets a list of the event keys for events this team has competed at in the given year.
  */
-suspend fun TBA.getTeamEventsByYearKeys(
+fun TBA.getTeamEventsByYearKeys(
         team_key: String,
         year: Int
 ): List<String> {
@@ -487,7 +487,7 @@ suspend fun TBA.getTeamEventsByYearKeys(
 /**
  * Gets a key-value list of the event statuses for events this team has competed at in the given year.
  */
-suspend fun TBA.getTeamEventsStatusesByYear(
+fun TBA.getTeamEventsStatusesByYear(
         team_key: String,
         year: Int
 ): Map<String, TeamEventStatus?> {
@@ -556,7 +556,7 @@ suspend fun TBA.getTeamEventsStatusesByYear(
 /**
  * Gets a list of matches for the given team and event.
  */
-suspend fun TBA.getTeamEventMatches(
+fun TBA.getTeamEventMatches(
         team_key: String,
         event_key: String
 ): List<Match> {
@@ -604,7 +604,7 @@ suspend fun TBA.getTeamEventMatches(
 /**
  * Gets a short-form list of matches for the given team and event.
  */
-suspend fun TBA.getTeamEventMatchesSimple(
+fun TBA.getTeamEventMatchesSimple(
         team_key: String,
         event_key: String
 ): List<Match> {
@@ -652,7 +652,7 @@ suspend fun TBA.getTeamEventMatchesSimple(
 /**
  * Gets a list of match keys for matches for the given team and event.
  */
-suspend fun TBA.getTeamEventMatchesKeys(
+fun TBA.getTeamEventMatchesKeys(
         team_key: String,
         event_key: String
 ): List<String> {
@@ -664,7 +664,7 @@ suspend fun TBA.getTeamEventMatchesKeys(
 /**
  * Gets a list of awards the given team won at the given event.
  */
-suspend fun TBA.getTeamEventAwards(
+fun TBA.getTeamEventAwards(
         team_key: String,
         event_key: String
 ): List<Award> {
@@ -691,7 +691,7 @@ suspend fun TBA.getTeamEventAwards(
 /**
  * Gets the competition rank and status of the team at the given event.
  */
-suspend fun TBA.getTeamEventStatus(
+fun TBA.getTeamEventStatus(
         team_key: String,
         event_key: String
 ): TeamEventStatus {
@@ -758,7 +758,7 @@ suspend fun TBA.getTeamEventStatus(
 /**
  * Gets a list of awards the given team has won.
  */
-suspend fun TBA.getTeamAwards(
+fun TBA.getTeamAwards(
         team_key: String
 ): List<Award> {
     val response = getArray("/team/$team_key/awards")
@@ -784,7 +784,7 @@ suspend fun TBA.getTeamAwards(
 /**
  * Gets a list of awards the given team has won in a given year.
  */
-suspend fun TBA.getTeamAwardsByYear(
+fun TBA.getTeamAwardsByYear(
         team_key: String,
         year: Int
 ): List<Award> {
@@ -811,7 +811,7 @@ suspend fun TBA.getTeamAwardsByYear(
 /**
  * Gets a list of matches for the given team and year.
  */
-suspend fun TBA.getTeamMatchesByYear(
+fun TBA.getTeamMatchesByYear(
         team_key: String,
         year: Int
 ): List<Match> {
@@ -859,7 +859,7 @@ suspend fun TBA.getTeamMatchesByYear(
 /**
  * Gets a short-form list of matches for the given team and year.
  */
-suspend fun TBA.getTeamMatchesByYearSimple(
+fun TBA.getTeamMatchesByYearSimple(
         team_key: String,
         year: Int
 ): List<MatchSimple> {
@@ -904,7 +904,7 @@ suspend fun TBA.getTeamMatchesByYearSimple(
 /**
  * Gets a list of match keys for matches for the given team and year.
  */
-suspend fun TBA.getTeamMatchesByYearKeys(
+fun TBA.getTeamMatchesByYearKeys(
         team_key: String,
         year: Int
 ): List<String> {
@@ -916,7 +916,7 @@ suspend fun TBA.getTeamMatchesByYearKeys(
 /**
  * Gets a list of Media (videos / pictures) for the given team and year.
  */
-suspend fun TBA.getTeamMediaByYear(
+fun TBA.getTeamMediaByYear(
         team_key: String,
         year: Int
 ): List<Media> {
@@ -939,7 +939,7 @@ suspend fun TBA.getTeamMediaByYear(
 /**
  * Gets a list of Media (videos / pictures) for the given team and tag.
  */
-suspend fun TBA.getTeamMediaByTag(
+fun TBA.getTeamMediaByTag(
         team_key: String,
         media_tag: String
 ): List<Media> {
@@ -962,7 +962,7 @@ suspend fun TBA.getTeamMediaByTag(
 /**
  * Gets a list of Media (videos / pictures) for the given team, tag and year.
  */
-suspend fun TBA.getTeamMediaByTagYear(
+fun TBA.getTeamMediaByTagYear(
         team_key: String,
         media_tag: String,
         year: Int
@@ -986,7 +986,7 @@ suspend fun TBA.getTeamMediaByTagYear(
 /**
  * Gets a list of Media (social media) for the given team.
  */
-suspend fun TBA.getTeamSocialMedia(
+fun TBA.getTeamSocialMedia(
         team_key: String
 ): List<Media> {
     val response = getArray("/team/$team_key/social_media")
@@ -1008,7 +1008,7 @@ suspend fun TBA.getTeamSocialMedia(
 /**
  * Gets a list of events in the given year.
  */
-suspend fun TBA.getEventsByYear(
+fun TBA.getEventsByYear(
         year: Int
 ): List<Event> {
     val response = getArray("/events/$year")
@@ -1068,7 +1068,7 @@ suspend fun TBA.getEventsByYear(
 /**
  * Gets a short-form list of events in the given year.
  */
-suspend fun TBA.getEventsByYearSimple(
+fun TBA.getEventsByYearSimple(
         year: Int
 ): List<EventSimple> {
     val response = getArray("/events/$year/simple")
@@ -1102,7 +1102,7 @@ suspend fun TBA.getEventsByYearSimple(
 /**
  * Gets a list of event keys in the given year.
  */
-suspend fun TBA.getEventsByYearKeys(
+fun TBA.getEventsByYearKeys(
         year: Int
 ): List<String> {
     val response = getArray("/events/$year/keys")
@@ -1113,7 +1113,7 @@ suspend fun TBA.getEventsByYearKeys(
 /**
  * Gets an Event.
  */
-suspend fun TBA.getEvent(
+fun TBA.getEvent(
         event_key: String
 ): Event {
     val response = get("/event/$event_key")
@@ -1171,7 +1171,7 @@ suspend fun TBA.getEvent(
 /**
  * Gets a short-form Event.
  */
-suspend fun TBA.getEventSimple(
+fun TBA.getEventSimple(
         event_key: String
 ): EventSimple {
     val response = get("/event/$event_key/simple")
@@ -1203,7 +1203,7 @@ suspend fun TBA.getEventSimple(
 /**
  * Gets a list of Elimination Alliances for the given Event.
  */
-suspend fun TBA.getEventAlliances(
+fun TBA.getEventAlliances(
         event_key: String
 ): List<EliminationAlliance> {
     val response = getArray("/event/$event_key/alliances")
@@ -1223,7 +1223,7 @@ suspend fun TBA.getEventAlliances(
 /**
  * Gets a set of Event-specific insights for the given Event.
  */
-suspend fun TBA.getEventInsights(
+fun TBA.getEventInsights(
         event_key: String
 ): EventInsights {
     val response = get("/event/$event_key/insights")
@@ -1238,7 +1238,7 @@ suspend fun TBA.getEventInsights(
 /**
  * Gets a set of Event OPRs (including OPR, DPR, and CCWM) for the given Event.
  */
-suspend fun TBA.getEventOPRs(
+fun TBA.getEventOPRs(
         event_key: String
 ): EventOPRs {
     val response = get("/event/$event_key/oprs")
@@ -1254,7 +1254,7 @@ suspend fun TBA.getEventOPRs(
 /**
  * Gets information on TBA-generated predictions for the given Event. Contains year-specific information. *WARNING* This endpoint is currently under development and may change at any time.
  */
-suspend fun TBA.getEventPredictions(
+fun TBA.getEventPredictions(
         event_key: String
 ): EventPredictions {
     val response = get("/event/$event_key/predictions")
@@ -1267,7 +1267,7 @@ suspend fun TBA.getEventPredictions(
 /**
  * Gets a list of team rankings for the Event.
  */
-suspend fun TBA.getEventRankings(
+fun TBA.getEventRankings(
         event_key: String
 ): EventRanking {
     val response = get("/event/$event_key/rankings")
@@ -1283,7 +1283,7 @@ suspend fun TBA.getEventRankings(
 /**
  * Gets a list of team rankings for the Event.
  */
-suspend fun TBA.getEventDistrictPoints(
+fun TBA.getEventDistrictPoints(
         event_key: String
 ): EventDistrictPoints {
     val response = get("/event/$event_key/district_points")
@@ -1298,7 +1298,7 @@ suspend fun TBA.getEventDistrictPoints(
 /**
  * Gets a list of `Team` objects that competed in the given event.
  */
-suspend fun TBA.getEventTeams(
+fun TBA.getEventTeams(
         event_key: String
 ): List<Team> {
     val response = getArray("/event/$event_key/teams")
@@ -1331,7 +1331,7 @@ suspend fun TBA.getEventTeams(
 /**
  * Gets a short-form list of `Team` objects that competed in the given event.
  */
-suspend fun TBA.getEventTeamsSimple(
+fun TBA.getEventTeamsSimple(
         event_key: String
 ): List<TeamSimple> {
     val response = getArray("/event/$event_key/teams/simple")
@@ -1353,7 +1353,7 @@ suspend fun TBA.getEventTeamsSimple(
 /**
  * Gets a list of `Team` keys that competed in the given event.
  */
-suspend fun TBA.getEventTeamsKeys(
+fun TBA.getEventTeamsKeys(
         event_key: String
 ): List<String> {
     val response = getArray("/event/$event_key/teams/keys")
@@ -1364,7 +1364,7 @@ suspend fun TBA.getEventTeamsKeys(
 /**
  * Gets a key-value list of the event statuses for teams competing at the given event.
  */
-suspend fun TBA.getEventTeamsStatuses(
+fun TBA.getEventTeamsStatuses(
         event_key: String
 ): Map<String, TeamEventStatus?> {
     val response = get("/event/$event_key/teams/statuses")
@@ -1432,7 +1432,7 @@ suspend fun TBA.getEventTeamsStatuses(
 /**
  * Gets a list of matches for the given event.
  */
-suspend fun TBA.getEventMatches(
+fun TBA.getEventMatches(
         event_key: String
 ): List<Match> {
     val response = getArray("/event/$event_key/matches")
@@ -1479,7 +1479,7 @@ suspend fun TBA.getEventMatches(
 /**
  * Gets a short-form list of matches for the given event.
  */
-suspend fun TBA.getEventMatchesSimple(
+fun TBA.getEventMatchesSimple(
         event_key: String
 ): List<MatchSimple> {
     val response = getArray("/event/$event_key/matches/simple")
@@ -1523,7 +1523,7 @@ suspend fun TBA.getEventMatchesSimple(
 /**
  * Gets a list of match keys for the given event.
  */
-suspend fun TBA.getEventMatchesKeys(
+fun TBA.getEventMatchesKeys(
         event_key: String
 ): List<String> {
     val response = getArray("/event/$event_key/matches/keys")
@@ -1536,7 +1536,7 @@ suspend fun TBA.getEventMatchesKeys(
  *WARNING:* This is *not* official data, and is subject to a significant possibility of error, or missing data. Do not rely on this data for any purpose. In fact, pretend we made it up.
  *WARNING:* This endpoint and corresponding data models are under *active development* and may change at any time, including in breaking ways.
  */
-suspend fun TBA.getEventMatchTimeseries(
+fun TBA.getEventMatchTimeseries(
         event_key: String
 ): List<String> {
     val response = getArray("/event/$event_key/matches/timeseries")
@@ -1547,7 +1547,7 @@ suspend fun TBA.getEventMatchTimeseries(
 /**
  * Gets a list of awards from the given event.
  */
-suspend fun TBA.getEventAwards(
+fun TBA.getEventAwards(
         event_key: String
 ): List<Award> {
     val response = getArray("/event/$event_key/awards")
@@ -1573,7 +1573,7 @@ suspend fun TBA.getEventAwards(
 /**
  * Gets a `Match` object for the given match key.
  */
-suspend fun TBA.getMatch(
+fun TBA.getMatch(
         match_key: String
 ): Match {
     val response = get("/match/$match_key")
@@ -1618,7 +1618,7 @@ suspend fun TBA.getMatch(
 /**
  * Gets a short-form `Match` object for the given match key.
  */
-suspend fun TBA.getMatchSimple(
+fun TBA.getMatchSimple(
         match_key: String
 ): MatchSimple {
     val response = get("/match/$match_key/simple")
@@ -1662,7 +1662,7 @@ suspend fun TBA.getMatchSimple(
  *WARNING:* This is *not* official data, and is subject to a significant possibility of error, or missing data. Do not rely on this data for any purpose. In fact, pretend we made it up.
  *WARNING:* This endpoint and corresponding data models are under *active development* and may change at any time, including in breaking ways.
  */
-suspend fun TBA.getMatchTimeseries(
+fun TBA.getMatchTimeseries(
         match_key: String
 ): List<Map<String, Any?>> {
     val response = getArray("/match/$match_key/timeseries")
@@ -1673,7 +1673,7 @@ suspend fun TBA.getMatchTimeseries(
 /**
  * Gets a list of districts and their corresponding district key, for the given year.
  */
-suspend fun TBA.getDistrictsByYear(
+fun TBA.getDistrictsByYear(
         year: Int
 ): List<DistrictList> {
     val response = getArray("/districts/$year")
@@ -1692,7 +1692,7 @@ suspend fun TBA.getDistrictsByYear(
 /**
  * Gets a list of events in the given district.
  */
-suspend fun TBA.getDistrictEvents(
+fun TBA.getDistrictEvents(
         district_key: String
 ): List<Event> {
     val response = getArray("/district/$district_key/events")
@@ -1752,7 +1752,7 @@ suspend fun TBA.getDistrictEvents(
 /**
  * Gets a short-form list of events in the given district.
  */
-suspend fun TBA.getDistrictEventsSimple(
+fun TBA.getDistrictEventsSimple(
         district_key: String
 ): List<EventSimple> {
     val response = getArray("/district/$district_key/events/simple")
@@ -1786,7 +1786,7 @@ suspend fun TBA.getDistrictEventsSimple(
 /**
  * Gets a list of event keys for events in the given district.
  */
-suspend fun TBA.getDistrictEventsKeys(
+fun TBA.getDistrictEventsKeys(
         district_key: String
 ): List<String> {
     val response = getArray("/district/$district_key/events/keys")
@@ -1797,7 +1797,7 @@ suspend fun TBA.getDistrictEventsKeys(
 /**
  * Gets a list of `Team` objects that competed in events in the given district.
  */
-suspend fun TBA.getDistrictTeams(
+fun TBA.getDistrictTeams(
         district_key: String
 ): List<Team> {
     val response = getArray("/district/$district_key/teams")
@@ -1830,7 +1830,7 @@ suspend fun TBA.getDistrictTeams(
 /**
  * Gets a short-form list of `Team` objects that competed in events in the given district.
  */
-suspend fun TBA.getDistrictTeamsSimple(
+fun TBA.getDistrictTeamsSimple(
         district_key: String
 ): List<TeamSimple> {
     val response = getArray("/district/$district_key/teams/simple")
@@ -1852,7 +1852,7 @@ suspend fun TBA.getDistrictTeamsSimple(
 /**
  * Gets a list of `Team` objects that competed in events in the given district.
  */
-suspend fun TBA.getDistrictTeamsKeys(
+fun TBA.getDistrictTeamsKeys(
         district_key: String
 ): List<String> {
     val response = getArray("/district/$district_key/teams/keys")
@@ -1863,7 +1863,7 @@ suspend fun TBA.getDistrictTeamsKeys(
 /**
  * Gets a list of team district rankings for the given district.
  */
-suspend fun TBA.getDistrictRankings(
+fun TBA.getDistrictRankings(
         district_key: String
 ): List<DistrictRanking> {
     val response = getArray("/district/$district_key/rankings")

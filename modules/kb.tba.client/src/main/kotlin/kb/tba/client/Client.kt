@@ -8,42 +8,35 @@ import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import java.net.HttpURLConnection
 import java.net.URL
-import java.util.concurrent.Executors
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
-private val singleThreadExecutor = Executors.newSingleThreadExecutor()
 
-private suspend fun TBA.getTBAString(
+private fun TBA.getTBAString(
         requestURL: String
-): String = suspendCoroutine { cont ->
-    singleThreadExecutor.submit {
-        try {
-            val url = URL("https://www.thebluealliance.com/api/v3$requestURL")
-            val conn = url.openConnection() as HttpURLConnection
-            conn.requestMethod = "GET"
-            conn.useCaches = false
-            conn.setRequestProperty("X-TBA-Auth-Key", authKey)
-            conn.setRequestProperty("User-Agent", userAgent)
-            val response = conn.inputStream.bufferedReader().use { br -> br.readText() }
-            cont.resume(response)
-        } catch (e: Throwable) {
-            cont.resumeWithException(e)
-        }
+): String {
+    try {
+        val url = URL("https://www.thebluealliance.com/api/v3$requestURL")
+        val conn = url.openConnection() as HttpURLConnection
+        conn.requestMethod = "GET"
+        conn.useCaches = false
+        conn.setRequestProperty("X-TBA-Auth-Key", authKey)
+        conn.setRequestProperty("User-Agent", userAgent)
+        return conn.inputStream.bufferedReader().use { br -> br.readText() }
+    } catch (e: Throwable) {
+        throw e
     }
 }
 
-private suspend fun TBA.getParsed(requestURL: String): JsonBase {
+
+private fun TBA.getParsed(requestURL: String): JsonBase {
     val response = getTBAString(requestURL)
     return Parser.default().parse(StringBuilder(response)) as JsonBase
 }
 
-internal suspend fun TBA.get(requestURL: String): JsonObject {
+internal fun TBA.get(requestURL: String): JsonObject {
     return getParsed(requestURL) as JsonObject
 }
 
-internal suspend fun TBA.getArray(requestURL: String): JsonArray<*> {
+internal fun TBA.getArray(requestURL: String): JsonArray<*> {
     return getParsed(requestURL) as JsonArray<*>
 }
 
