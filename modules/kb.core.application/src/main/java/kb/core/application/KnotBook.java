@@ -149,12 +149,13 @@ class KnotBook {
         }
     }
 
-    private static <T extends MetaService> ResolvedServices<T> loadServices(Class<T> service) {
+    private static <T extends MetaService> ResolvedServices<T> loadServices(
+            ServiceLoader<T> loader, Class<T> theClass) {
         List<T> providers = new ArrayList<>();
-        for (T provider : ServiceLoader.load(service)) {
+        for (T provider : loader) {
             providers.add(provider);
         }
-        return new ResolvedServices<>(service, providers);
+        return new ResolvedServices<>(theClass, providers);
     }
 
     private static Service serviceForApplication(ServiceMetadata metadata) {
@@ -190,11 +191,11 @@ class KnotBook {
     }
 
     private final ResolvedServices<ApplicationService> applications =
-            loadServices(ApplicationService.class);
+            loadServices(ServiceLoader.load(ApplicationService.class), ApplicationService.class);
     private final ResolvedServices<Service> extensions =
-            loadServices(Service.class);
+            loadServices(ServiceLoader.load(Service.class), Service.class);
     private final ResolvedServices<TextEditorService> textEditors =
-            loadServices(TextEditorService.class);
+            loadServices(ServiceLoader.load(TextEditorService.class), TextEditorService.class);
     private final Config config = new Config(getHandle());
     private final Manager manager = new Manager();
 

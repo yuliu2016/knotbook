@@ -3,6 +3,7 @@ package kb.core.view.app
 import javafx.application.Platform
 import javafx.beans.InvalidationListener
 import javafx.scene.control.Alert
+import javafx.scene.control.ButtonType
 import javafx.scene.input.KeyCode
 import javafx.stage.Window
 import kb.core.fx.combo
@@ -127,8 +128,27 @@ internal object Singleton {
             exitProcess(0)
         }
         launchCommands()
-        getList().forEach { context.uiManager.registerCommand(it.name, it) }
+        // getList().forEach { context.uiManager.registerCommand(it.name, it) }
         DataView().show()
+    }
+
+    private fun closeWindow() {
+        uiManager.focusedWindow?.let { win ->
+            val alert = Alert(Alert.AlertType.CONFIRMATION, "Close Window?", ButtonType.YES, ButtonType.NO)
+            alert.showAndWait()
+            if (alert.result == ButtonType.YES) {
+                win.stage.close()
+            }
+        }
+    }
+
+    private fun newWindow() {
+        val dv = DataView()
+        uiManager.focusedWindow?.let { win ->
+            dv.base.stage.x = win.stage.x + 48.0
+            dv.base.stage.y = win.stage.y + 36.0
+            dv.show()
+        }
     }
 
     private fun launchCommands() {
@@ -140,7 +160,7 @@ internal object Singleton {
         m.registerCommand("nav.file", "Open File", MDI_FOLDER_OUTLINE.description,
                 combo(KeyCode.O, control = true)) { }
         m.registerCommand("window.close", "Close Window", MDI_CLOSE.description,
-                combo(KeyCode.W, control = true)) { }
+                combo(KeyCode.W, control = true)) { closeWindow() }
         m.registerCommand("jvm.properties", "JVM Properties",
                 MDI_COFFEE.description, null) { viewJVMProperties() }
         m.registerCommand("jvm.gc", "JVM: Run Memory Garbage Collection",
@@ -153,16 +173,44 @@ internal object Singleton {
                 MDI_ARROW_EXPAND.description, combo(KeyCode.F11)
         ) { uiManager.focusedWindow?.toggleFullScreen() }
         m.registerCommand("status.toggle", "Toggle Status Bar",
-                null, null) { uiManager.focusedWindow?.toggleStatusBar() }
+                null, combo(KeyCode.F10)) { uiManager.focusedWindow?.toggleStatusBar() }
         m.registerCommand("window.create", "New Window", null,
                 combo(KeyCode.N, control = true)) { DataView().show() }
         m.registerCommand("test.python.editor", "Test Python Editor",
                 MDI_LANGUAGE_PYTHON.description, null
         ) { context.createTextEditor().withSyntax("text/python").editable().show() }
         m.registerCommand("command.palette", "Command Palette", MDI_CONSOLE.description,
-                combo(KeyCode.K, control = true)) { uiManager.showCommandsBar() }
+                combo(KeyCode.K, control = true)) { uiManager.showCommandsPalette() }
         m.registerCommand("app.license", "Open Source Licenses", null,
                 null) { viewOpenSource() }
+        m.registerCommand("app.exit", "Exit Application", null,
+                null) { exitOK() }
+        m.registerCommand("app.plugins", "Application Plugins", null,
+                null) { viewPlugins() }
+        m.registerCommand("edit.undo", "Undo", MDI_UNDO.description, combo(KeyCode.Z, control = true)) {}
+        m.registerCommand("edit.redo", "Redo", MDI_REDO.description,
+                combo(KeyCode.Z, control = true, shift = true)) {}
+        m.registerCommand("edit.cut", "Cut", MDI_CONTENT_CUT.description,
+                combo(KeyCode.X, control = true)) {}
+        m.registerCommand("edit.copy", "Copy", MDI_CONTENT_COPY.description,
+                combo(KeyCode.C, control = true)) {}
+        m.registerCommand("edit.copy.special", "Copy Special", null,
+                combo(KeyCode.C, control = true, shift = true)) {}
+        m.registerCommand("edit.paste", "Paste", MDI_CONTENT_PASTE.description,
+                combo(KeyCode.V, control = true)) {}
+        m.registerCommand("edit.paste.special", "Paste Special", null,
+                combo(KeyCode.V, control = true, shift = true)) {}
+        m.registerCommand("select.all", "Select All", null, combo(KeyCode.A, control = true)) {}
+        m.registerCommand("select.none", "Select None", null,
+                combo(KeyCode.A, control = true, shift = true)) {}
+        m.registerCommand("nav.find", "Find in Cells", null,
+                combo(KeyCode.F, control = true)) {}
+        m.registerCommand("view.zoom.in", "Zoom In", MDI_MAGNIFY_PLUS.description,
+                combo(KeyCode.EQUALS, control = true)) {}
+        m.registerCommand("view.zoom.out", "Zoom Out", MDI_MAGNIFY_MINUS.description,
+                combo(KeyCode.MINUS, control = true)) {}
+        m.registerCommand("view.zoom.reset", "Reset Zoom", null,
+                combo(KeyCode.DIGIT0, control = true)) {}
     }
 
     fun exitOK() {
