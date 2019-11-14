@@ -136,7 +136,7 @@ class KnotBook {
 
         @Override
         public String getVersion() {
-            return "3.3.13";
+            return "3.3.14";
         }
 
         @Override

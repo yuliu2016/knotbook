@@ -13,9 +13,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-public class FXCameraTest {
+class FXCameraTest {
 
-    public static void test() {
+    static void test() {
         Webcam.setDriver(new WebcamDefaultDriver());
         FXCamera camera;
         try {
