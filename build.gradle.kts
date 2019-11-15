@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     java
-    id("org.jetbrains.kotlin.jvm") version "1.3.50"
+    id("org.jetbrains.kotlin.jvm") version "1.3.60"
     id("org.javamodularity.moduleplugin") version "1.6.0"
     id("org.openjfx.javafxplugin") version "0.0.9-SNAPSHOT"
 }
