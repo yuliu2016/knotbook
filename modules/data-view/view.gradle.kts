@@ -11,8 +11,8 @@ javafx {
 
 dependencies {
     implementation(project(":service-api"))
-    implementation(project(":kb.core.fx"))
-    implementation(project(":kb.core.icon"))
+    implementation(project(":kotlin-fx"))
+    implementation(project(":icon-utils"))
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
 
