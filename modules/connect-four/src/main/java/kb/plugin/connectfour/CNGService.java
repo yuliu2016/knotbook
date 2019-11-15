@@ -8,12 +8,7 @@ import javax.swing.*;
 
 public class CNGService implements Service {
 
-    private static ServiceMetadata metadata = new ServiceMetadata();
-
-    static {
-        metadata.setPackageName("Connect Four Game");
-        metadata.setPackageVersion("1.0");
-    }
+    private static ServiceMetadata metadata = new ServiceMetadata("Connect Four Game", "1.0");
 
     @Override
     public void launch(ServiceContext context) {

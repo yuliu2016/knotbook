@@ -48,7 +48,7 @@ class CommandManager {
 
     private fun toItem(command: Command, highlight: BooleanArray?): OptionItem = OptionItem(
             command.name,
-            command.shortcut?.displayText,
+            command.shortcut?.displayText?.replace("+", " + "),
             command.icon?.let { code ->
                 IkonResolver.resolveIcon(code)?.let { icon ->
                     fontIcon(icon, 14)

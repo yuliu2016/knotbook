@@ -76,7 +76,7 @@ public class OptionItem {
             // Find next query char that is a letter or digit
             while (j < q.length && !Character.isLetterOrDigit(q[j])) j++;
             // Break if the end of query is reached
-            if (j == q.length) return list;
+            if (j == q.length) break;
             // Find the next name char that matches the query char
             while (i < n.length && n[i] != q[j]) i++;
             // Return null if the name cursor reached the end
@@ -86,49 +86,7 @@ public class OptionItem {
             i++;
             j++;
         }
-        return null;
-    }
-
-    @SuppressWarnings("ALL")
-    public static boolean[] parse2(String name, String query) {
-        // todo
-        if (name == null || query == null) {
-            return null;
-        }
-        if (name.isEmpty() || query.isEmpty()) {
-            return null;
-        }
-        boolean[] list = new boolean[name.length()];
-        boolean[] words = new boolean[name.length()];
-        // The char array of the name
-        char[] n = name.toLowerCase().toCharArray();
-        // The char array of the query
-        char[] q = query.toLowerCase().toCharArray();
-        boolean inWord = false;
-        for (int i = 0; i < words.length; i++) {
-            boolean isWordChar = Character.isLetterOrDigit(n[i]);
-            if (!inWord && isWordChar) words[i] = true;
-            inWord = isWordChar;
-        }
-        // The index of n
-        int i = 0;
-        // The index of q
-        int j = 0;
-        while (i < n.length) {
-            // Find next query char that is a letter or digit
-            while (j < q.length && !Character.isLetterOrDigit(q[j])) j++;
-            // Break if the end of query is reached
-            if (j == q.length) return list;
-            // Find the next name char that matches the query char
-            while (i < n.length && n[i] != q[j]) i++;
-            // Return null if the name cursor reached the end
-            if (i == n.length) return null;
-            // Add to the index list
-            list[i] = true;
-            i++;
-            j++;
-        }
-        return null;
+        return list;
     }
 
     public static int compare(boolean[] a, boolean[] b) {

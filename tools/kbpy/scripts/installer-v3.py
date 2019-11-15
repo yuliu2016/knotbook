@@ -1,6 +1,6 @@
-#! usr/bin/env python3
-
 """
+KnotBook Installer Script Version 3 for Python 3.6+
+
 v3.0:
   - Using 2 repositories for separate part of the app
   - Auto-install and auto-update functions
@@ -16,7 +16,12 @@ v3.2:
   - More helpful prints
   - Version store now excludes build number
   - Remove parse_build_id
-
+  
+v3.3:
+  - Remove shebang so that script is launchable
+  - Improve version parsing
+  - Improve extraction message
+  - Fix image updating not triggering build update
 """
 
 from urllib.request import urlopen, urlretrieve
@@ -30,8 +35,7 @@ import tarfile
 import zipfile
 import os
 import shutil
-
-
+    
 def get_version_data():
     try:
         with open("KnotBook/app/version-info.json", "r") as f:
@@ -42,6 +46,20 @@ def get_version_data():
         print("Starting a fresh install.")
         return {}
 
+def build_number_to_version(build_number: str):
+    try:
+        a, b = build_number.split(".")
+        year = int(a[0:4])
+        month = int(a[4:6])
+        day = int(a[6:8])
+        if year == 2019:
+            minor = month - 8
+        else:
+            minor = 4 + month + (year - 2020) * 12
+        return f"3.{minor}.{day}+{b}"
+    except Exception:
+        return "None"
+
 def exit_error():
     input("Press Enter to Exit")
     sys.exit(1)
@@ -49,8 +67,8 @@ def exit_error():
 # See https://stackoverflow.com/questions/3667865/python-tarfile-progress-output
 def track_progress(members: Iterable[tarfile.TarInfo]):
     for member in members:
+        print(f"Extract ({member.size // 1000:>6} K) {member.name[8:]}")
         yield member
-        print(f"Extracted (size:{member.size // 1000:>6} KB) {member.name}")
 
 def api_base(repo: str):
     return f"https://dev.azure.com/yuliu2016/{repo}/_apis/build"
@@ -66,9 +84,8 @@ def get_build_id(repo: str, check_success=True):
         build_number = build_data["buildNumber"]
     except Exception:
         print_exc()
-        print("Failed to get latest build ID")
+        print(f"Failed to get latest build ID for {repo}")
         exit_error()
-    print(f"Found latest build ID from {repo}/master: {build_number}+{build_id}")
     return build_id, build_number
 
 def get_artifact_url(repo: str, target:str, build_id):
@@ -116,13 +133,12 @@ def download_into(name, download_url, download_size):
 
 def download_image(target: str, version_data):
     build_id, build_number = get_build_id(repo="knotbook-image", check_success=False)
-    image_version = f"{build_number}+{build_id}"
     if version_data["image"] == build_number:
-        print(f"Image {image_version} is up-to-date. Continuing to next step.")
+        print(f"Image {build_number} is up-to-date. Continuing to next step.")
         return
-    print(f"Updating Image from {version_data['image']} to {image_version}")
+    print(f"Updating Image from {version_data['image']} to {build_number}")
     version_data["image"] = build_number
-
+    version_data["build"] = "None"
     download_url, download_size = get_artifact_url(repo="knotbook-image", target=target, build_id=build_id)
     download_into("image.zip", download_url, download_size)
     try:
@@ -149,11 +165,12 @@ def download_image(target: str, version_data):
 
 def download_build(target: str, version_data):
     build_id, build_number = get_build_id(repo="knotbook", check_success=True)
-    build_version = f"{build_number}+{build_id}"
+    build_version = build_number_to_version(build_number)
     if version_data["build"] == build_number:
         print(f"Build {build_version} is up-to-date. Continuing to next step.")
         return
-    print(f"Updating Build from {version_data['build']} to {build_version}")
+    old_version = build_number_to_version(version_data["build"])
+    print(f"Updating Build from {old_version} to {build_version}")
     version_data["build"] = build_number
     download_url, download_size = get_artifact_url(repo="knotbook", target=target, build_id=build_id)
     download_into("build.zip", download_url, download_size)
@@ -192,7 +209,6 @@ def main():
     with open("KnotBook/app/version-info.json", "w") as f:
         json.dump(version_data, f)
     print("Done")
-
 
 if __name__ == '__main__':
     main()

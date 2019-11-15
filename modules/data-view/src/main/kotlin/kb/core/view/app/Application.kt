@@ -10,12 +10,7 @@ import kb.service.api.ui.UIManager
 
 class Application : ApplicationService {
 
-    private val metadata = ServiceMetadata()
-
-    init {
-        metadata.packageName = "KnotBook DataView"
-        metadata.packageVersion = "3.0"
-    }
+    private val metadata = ServiceMetadata("KnotBook DataView", "3.0")
 
     override fun getMetadata(): ServiceMetadata {
         return metadata

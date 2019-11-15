@@ -9,12 +9,7 @@ import org.kordamp.ikonli.materialdesign.MaterialDesign
 
 class PlannerService : Service {
 
-    private val metadata = ServiceMetadata()
-
-    init {
-        metadata.packageName = "Drive Path Planner"
-        metadata.packageVersion = "1.0"
-    }
+    private val metadata = ServiceMetadata("Drive Path Planner", "1.0")
 
     override fun getMetadata(): ServiceMetadata {
         return metadata
