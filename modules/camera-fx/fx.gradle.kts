@@ -8,7 +8,7 @@ javafx {
 }
 
 dependencies {
-    implementation(project(":kb.service.api"))
+    implementation(project(":service-api"))
     implementation(group = "com.github.sarxos", name = "webcam-capture", version = "0.3.12")
     implementation(group = "com.google.zxing", name = "core", version = "3.4.0")
     implementation(group = "org.slf4j", name = "slf4j-simple", version = "1.7.6")

@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":kb.service.api"))
+    implementation(project(":service-api"))
 }

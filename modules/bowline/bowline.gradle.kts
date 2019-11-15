@@ -24,7 +24,7 @@ tasks {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation(project(":kb.service.api"))
+    implementation(project(":service-api"))
 
     testImplementation(kotlin("test"))
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = "5.5.1")

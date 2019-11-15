@@ -6,7 +6,7 @@ plugins {
 dependencies {
     implementation(group = "org.json", name = "json", version = "20190722")
     implementation(project(":service-abc"))
-    implementation(project(":kb.service.api"))
+    implementation(project(":service-api"))
 
     runtimeOnly(project(":data-view"))
     runtimeOnly(project(":code-editor"))
