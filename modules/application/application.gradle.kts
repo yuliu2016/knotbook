@@ -15,4 +15,5 @@ dependencies {
     runtimeOnly(project(":connect-four"))
     runtimeOnly(project(":thebluealliance-provider"))
     runtimeOnly(project(":path-planner"))
+    runtimeOnly(project(":scouting-app-plugin"))
 }

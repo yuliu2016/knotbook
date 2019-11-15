@@ -7,12 +7,7 @@ import kb.service.api.ui.UIManager
 
 class TBAClientService : Service {
 
-    private val metadata = ServiceMetadata()
-
-    init {
-        metadata.packageName = "The Blue Alliance Integration"
-        metadata.packageVersion = "3.0"
-    }
+    private val metadata = ServiceMetadata("The Blue Alliance Integration", "3.0")
 
     override fun getMetadata(): ServiceMetadata {
         return metadata

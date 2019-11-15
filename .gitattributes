@@ -1,4 +1,5 @@
 *.gradle.kts linguist-generated=true
+*-info.java linguist-generated=true
 modules/thebluealliance-api/* linguist-generated=true
 modules/camera-rx/* linguist-vendored=true
 modules/icon-utils/* linguist-vendored=true

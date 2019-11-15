@@ -6,19 +6,12 @@ import kb.service.api.ui.TextEditorService;
 
 public class ProviderImpl implements TextEditorService {
 
-    private ServiceMetadata metadata = new ServiceMetadata();
-
-    public ProviderImpl() {
-        metadata.setPackageName("text.editor");
-        metadata.setPackageVersion("1.0");
-    }
-
+    private ServiceMetadata metadata = new ServiceMetadata("Syntax Editor", "1.0");
 
     @Override
     public ServiceMetadata getMetadata() {
         return metadata;
     }
-
 
     @Override
     public TextEditor create() {
