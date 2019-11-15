@@ -34,7 +34,7 @@ jobs:
       - task: PublishPipelineArtifact@1
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
-          path: "$(System.DefaultWorkingDirectory)/build/kb.abc/collected/"
+          path: "$(System.DefaultWorkingDirectory)/build/abc/collected/"
           artifact: "windows-$(Build.BuildNumber)"
   - job: Linux
     pool:
@@ -65,7 +65,7 @@ jobs:
       - task: PublishPipelineArtifact@1
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
-          path: "$(System.DefaultWorkingDirectory)/build/kb.abc/collected/"
+          path: "$(System.DefaultWorkingDirectory)/build/abc/collected/"
           artifact: "ubuntu-$(Build.BuildNumber)"
   - job: macOS
     pool:
@@ -96,5 +96,5 @@ jobs:
       - task: PublishPipelineArtifact@1
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
         inputs:
-          path: "$(System.DefaultWorkingDirectory)/build/kb.abc/collected/"
+          path: "$(System.DefaultWorkingDirectory)/build/abc/collected/"
           artifact: "macOS-$(Build.BuildNumber)"

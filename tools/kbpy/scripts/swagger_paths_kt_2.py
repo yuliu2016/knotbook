@@ -23,7 +23,7 @@ function_template = """
 /**
  * {des}
  */
-suspend fun TBA.{op_id}({params}): {typing} {{
+fun TBA.{op_id}({params}): {typing} {{
     val response = {fname}("{k}")
     {body}
 }}"""

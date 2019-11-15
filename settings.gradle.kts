@@ -19,7 +19,7 @@ include(*submodules.toTypedArray())
 
 for (descriptor in rootProject.children) {
     val projectName = descriptor.name
-    val subModuleName = projectName.split(".").last()
+    val subModuleName = projectName.split(".", "-").last()
 
     descriptor.projectDir = file("modules/$projectName")
     descriptor.buildFileName = "$subModuleName.gradle.kts"
