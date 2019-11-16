@@ -22,7 +22,9 @@ class ScoutingAppPlugin : Service {
         config["Raw Data Location"] = "~/Desktop/RawData/{event}"
 
         context.uiManager.registerCommand("scouting.scanner", "Scouting App: Launch Scanner",
-                "mdi-qrcode", combo(KeyCode.I, control = true, shift = true)) {}
+                "mdi-qrcode", combo(KeyCode.I, control = true, shift = true)) {
+            ScannerScreen().show()
+        }
         context.uiManager.registerCommand("scouting.event.set", "Scouting App: Set Event",
                 null) {}
     }

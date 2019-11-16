@@ -185,6 +185,10 @@ internal object Singleton {
                 null) { exitOK() }
         m.registerCommand("app.plugins", "Application Plugins", null,
                 null) { viewPlugins() }
+    }
+
+    private fun launchCommands2() {
+        val m = context.uiManager
         m.registerCommand("edit.undo", "Undo", MDI_UNDO.description, combo(KeyCode.Z, control = true)) {}
         m.registerCommand("edit.redo", "Redo", MDI_REDO.description,
                 combo(KeyCode.Z, control = true, shift = true)) {}

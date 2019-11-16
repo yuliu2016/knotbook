@@ -29,27 +29,27 @@ public class FXCamera {
 
     private ReadOnlyObjectWrapper<Image> imageProperty = new ReadOnlyObjectWrapper<>(null);
 
-    public ReadOnlyObjectProperty<Image> getImageProperty() {
+    public ReadOnlyObjectProperty<Image> imageProperty() {
         return imageProperty.getReadOnlyProperty();
     }
 
     public Image getImage() {
-        return getImageProperty().get();
+        return imageProperty().get();
     }
 
     private ReadOnlyStringWrapper resultProperty = new ReadOnlyStringWrapper(null);
 
-    public ReadOnlyStringProperty getResultProperty() {
+    public ReadOnlyStringProperty resultProperty() {
         return resultProperty.getReadOnlyProperty();
     }
 
     public String getResult() {
-        return getResultProperty().get();
+        return resultProperty().get();
     }
 
     private BooleanProperty streamingProperty;
 
-    public BooleanProperty getStreamingProperty() {
+    public BooleanProperty streamingProperty() {
         if (streamingProperty == null) {
             streamingProperty = new SimpleBooleanProperty(false);
             streamingProperty.addListener((ob, ov, nv) -> updateStreamingState(nv));
@@ -57,12 +57,12 @@ public class FXCamera {
         return streamingProperty;
     }
 
-    public boolean getStreaming() {
-        return getStreamingProperty().get();
+    public boolean isStreaming() {
+        return streamingProperty().get();
     }
 
     public void setStreaming(boolean streaming) {
-        getStreamingProperty().set(streaming);
+        streamingProperty().set(streaming);
     }
 
     private BooleanProperty decodingProperty;
@@ -162,11 +162,11 @@ public class FXCamera {
                 webcam.setCustomViewSizes(WebcamResolution.VGA.getSize());
                 webcam.setViewSize(WebcamResolution.VGA.getSize());
                 webcam.open();
+                thread = new Thread(this::readCameraStream);
+                thread.setDaemon(true);
+                thread.start();
+                timer.start();
             }
-            thread = new Thread(this::readCameraStream);
-            thread.setDaemon(true);
-            thread.start();
-            timer.start();
         } else {
             if (thread != null) {
                 threadRunning = false;
@@ -186,7 +186,7 @@ public class FXCamera {
             BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
             Result result = getReader().decode(bitmap);
             return result.getText();
-        } catch (NotFoundException e) {
+        } catch (NotFoundException | ArrayIndexOutOfBoundsException e) {
             return null;
         }
     }

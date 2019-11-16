@@ -9,7 +9,7 @@ public interface ApplicationService extends MetaService {
     /**
      * Launch the application service
      */
-    void launch(ServiceManager manager, ServiceContext context, Runnable callback);
+    void launch(ServiceManager manager, ServiceContext context, Runnable pluginSetup);
 
     /**
      * Retrieve an instance of the UI manager for this context,
