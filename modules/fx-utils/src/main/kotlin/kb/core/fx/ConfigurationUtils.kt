@@ -40,6 +40,13 @@ inline fun <T> listView(builder: ListView<T>.() -> Unit): ListView<T> = ListView
 inline fun <T> treeView(builder: TreeView<T>.() -> Unit): TreeView<T> = TreeView<T>().apply(builder)
 
 @FXKtDSL
+inline fun <S> tableView(builder: TableView<S>.() -> Unit): TableView<S> = TableView<S>().apply(builder)
+
+@FXKtDSL
+inline fun <S, T> tableColumn(builder: TableColumn<S, T>.() -> Unit): TableColumn<S, T> =
+        TableColumn<S, T>().apply(builder)
+
+@FXKtDSL
 inline fun slider(builder: Slider.() -> Unit): Slider = Slider().apply(builder)
 
 @FXKtDSL
@@ -74,6 +81,9 @@ inline fun contextMenu(builder: ContextMenu.() -> Unit): ContextMenu = ContextMe
 
 @FXKtDSL
 inline fun button(builder: Button.() -> Unit): Button = Button().apply(builder)
+
+@FXKtDSL
+inline fun toggleButton(builder: ToggleButton.() -> Unit): ToggleButton = ToggleButton().apply(builder)
 
 @FXKtDSL
 inline fun borderPane(builder: BorderPane.() -> Unit): BorderPane = BorderPane().apply(builder)
