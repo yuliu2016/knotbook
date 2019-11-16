@@ -117,7 +117,7 @@ public class FXCamera {
 
     public List<String> getWebcamNames() {
         List<String> names = new ArrayList<>();
-        for (Webcam wc : getWebcams()) {
+        for (Webcam wc : getWebcams(true)) {
             names.add(wc.getName());
         }
         return names;
@@ -157,7 +157,7 @@ public class FXCamera {
 
     private void updateStreamingState(boolean isStreaming) {
         if (isStreaming) {
-            webcam = getWebcams().get(getWebcamID());
+            webcam = getWebcams(false).get(getWebcamID());
             if (webcam != null && !webcam.isOpen()) {
                 webcam.setCustomViewSizes(WebcamResolution.VGA.getSize());
                 webcam.setViewSize(WebcamResolution.VGA.getSize());
@@ -217,8 +217,8 @@ public class FXCamera {
 
     private static List<Webcam> webcams = null;
 
-    private static List<Webcam> getWebcams() {
-        if (webcams == null) {
+    private static List<Webcam> getWebcams(boolean forceUpdate) {
+        if (webcams == null || forceUpdate) {
             webcams = Webcam.getWebcams();
         }
         return webcams;
