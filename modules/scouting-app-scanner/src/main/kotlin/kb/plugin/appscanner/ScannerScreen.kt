@@ -1,4 +1,4 @@
-package kb.plugin.scoutingapp
+package kb.plugin.appscanner
 
 import javafx.event.EventHandler
 import javafx.geometry.Insets
@@ -45,7 +45,6 @@ class ScannerScreen {
         padding = Insets(8.0)
         prefWidth = 300.0
         add(cameraChooser)
-        add(driverChooser)
         add(toggle)
         add(flip)
         add(fit)

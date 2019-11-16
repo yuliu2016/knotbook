@@ -5,7 +5,7 @@ module kb.plugin.scoutingapp {
     requires kb.core.fx;
     requires javafx.controls;
 
-    provides kb.service.api.Service with kb.plugin.scoutingapp.ScoutingAppPlugin;
+    provides kb.service.api.Service with kb.plugin.appscanner.AppScannerPlugin;
 
-    exports kb.plugin.scoutingapp;
+    exports kb.plugin.appscanner;
 }
