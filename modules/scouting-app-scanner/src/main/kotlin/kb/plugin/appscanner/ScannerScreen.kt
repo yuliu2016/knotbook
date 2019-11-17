@@ -6,11 +6,8 @@ import javafx.event.EventHandler
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Scene
-import javafx.scene.control.Alert
+import javafx.scene.control.*
 import javafx.scene.control.Alert.AlertType
-import javafx.scene.control.ButtonType
-import javafx.scene.control.CheckBox
-import javafx.scene.control.ChoiceBox
 import javafx.scene.input.KeyCode
 import javafx.stage.FileChooser
 import javafx.stage.Stage
@@ -37,6 +34,22 @@ class ScannerScreen {
     val entriesLock = ReentrantLock()
     val previousEntries: MutableList<String> = ArrayList()
 
+
+    fun alert(s: String) {
+        val dialog = Dialog<ButtonType>()
+        val pane = dialog.dialogPane
+        pane.buttonTypes.addAll(ButtonType.OK)
+        dialog.dialogPane.content = label(s)
+        dialog.title = "Info"
+        dialog.showAndWait()
+    }
+
+    fun confirm(s: String): Boolean {
+        val alert = Alert(AlertType.CONFIRMATION, s, ButtonType.YES, ButtonType.NO)
+        alert.showAndWait()
+        return alert.result == ButtonType.YES
+    }
+
     fun save() {
         val savePath = savePath ?: return
         saveState.text = "Saving"
@@ -54,12 +67,7 @@ class ScannerScreen {
     fun removeSelection() {
         val i = tv.selectionModel.selectedIndex
         if (i != -1) {
-            val alert = Alert(AlertType.CONFIRMATION, "Delete Entry? This Cannot be Undone.",
-                    ButtonType.YES, ButtonType.NO)
-            alert.showAndWait()
-            if (alert.result != ButtonType.YES) {
-                return
-            }
+            if (!confirm("Delete Entry? This Cannot be Undone.")) return
             tv.items.removeAt(i)
             entriesLock.withLock { previousEntries.removeAt(i) }
             save()
@@ -73,14 +81,7 @@ class ScannerScreen {
     }
 
     fun openFile() {
-        if (previousEntries.isNotEmpty()) {
-            val alert = Alert(AlertType.CONFIRMATION, "Override all current entries?",
-                    ButtonType.YES, ButtonType.NO)
-            alert.showAndWait()
-            if (alert.result != ButtonType.YES) {
-                return
-            }
-        }
+        if (previousEntries.isNotEmpty() && !confirm("Override all current entries?")) return
         val chooser = FileChooser()
         chooser.title = "Save As"
         chooser.initialDirectory = File(System.getProperty("user.home"), "Desktop")
@@ -108,8 +109,7 @@ class ScannerScreen {
             Platform.runLater {
                 tv.items.setAll(items)
                 saveState.text = "Save File Loaded"
-                val alert = Alert(AlertType.INFORMATION, "Loaded $i entries out of ${data.size} lines")
-                alert.showAndWait()
+                alert("Loaded $i entries out of ${data.size} lines")
             }
         }
     }
@@ -121,6 +121,13 @@ class ScannerScreen {
         savePath = chooser.showSaveDialog(stage)?.toPath() ?: return
         updateTitle()
         save()
+    }
+
+    fun showComment() {
+        val i = tv.selectionModel.selectedIndex
+        if (i != -1) {
+            alert(tv.items[i].comments)
+        }
     }
 
     val iv = imageView {
@@ -138,7 +145,8 @@ class ScannerScreen {
     val flip = CheckBox("Flip Image Horizontally")
     val fit = CheckBox("Fit Image to Window")
     val sortByMatch = CheckBox("Sort By Match")
-    val scoutStats = CheckBox("Show Scout Stats")
+    val scoutStats = Button("Show Scout Stats")
+    val showWarnings = Button("Show Warnings")
 
     val saveState = label("No Save File")
 
@@ -150,6 +158,13 @@ class ScannerScreen {
             isSortable = false
             prefWidth = 45.0
             setCellValueFactory { SimpleStringProperty(it.value.match.split("_").last()) }
+            setCellFactory { MatchCell() }
+        })
+        columns.add(tableColumn<V5Entry, String> {
+            text = "Scout"
+            isSortable = false
+            prefWidth = 75.0
+            setCellValueFactory { SimpleStringProperty(it.value.scout) }
         })
         columns.add(tableColumn<V5Entry, String> {
             text = "Board"
@@ -165,12 +180,6 @@ class ScannerScreen {
             isSortable = false
         })
         columns.add(tableColumn<V5Entry, String> {
-            text = "Scout"
-            isSortable = false
-            prefWidth = 75.0
-            setCellValueFactory { SimpleStringProperty(it.value.scout) }
-        })
-        columns.add(tableColumn<V5Entry, String> {
             isSortable = false
             text = "Comments"
             setCellValueFactory { SimpleStringProperty(it.value.comments) }
@@ -182,12 +191,28 @@ class ScannerScreen {
         spacing = 8.0
         padding = Insets(8.0)
         prefWidth = 360.0
-        add(cameraChooser)
-        add(toggle)
-        add(flip)
-        add(fit)
-        add(sortByMatch)
-        add(scoutStats)
+        add(hbox {
+            add(cameraChooser)
+            spacing = 8.0
+            add(button {
+                text = "Refresh"
+            })
+        })
+        add(hbox {
+            spacing = 8.0
+            add(toggle)
+            add(fit)
+        })
+        add(hbox {
+            spacing = 8.0
+            add(flip)
+            add(sortByMatch)
+        })
+        add(hbox {
+            spacing = 8.0
+            add(showWarnings)
+            add(scoutStats)
+        })
         add(hbox {
             align(Pos.CENTER_LEFT)
             spacing = 8.0
@@ -216,12 +241,16 @@ class ScannerScreen {
             align(Pos.CENTER_LEFT)
             spacing = 8.0
             add(button {
-                text = "Deselect Entry"
+                text = "Deselect"
                 setOnAction { tv.selectionModel.clearSelection() }
             })
             add(button {
-                text = "Delete Selected Entry"
+                text = "Delete Selected"
                 setOnAction { removeSelection() }
+            })
+            add(button {
+                text = "Show Comment"
+                setOnAction { showComment() }
             })
         })
     }
@@ -260,6 +289,7 @@ class ScannerScreen {
                 camera.isStreaming = !camera.isStreaming
             }
         }
+
         fit.selectedProperty().addListener { _, _, nv ->
             if (nv) {
                 iv.fitHeightProperty().bind(ivCont.heightProperty())
@@ -270,18 +300,23 @@ class ScannerScreen {
                 iv.fitHeight = 480.0
             }
         }
+
         camera.resultProperty().addListener { _, _, nv ->
             if (nv != null && nv.isNotEmpty()) {
                 onQRCodeResult(nv)
             }
         }
-        iv.imageProperty().bind(camera.imageProperty())
+
         cameraChooser.items = camera.webcamNames.observable()
-        camera.webcamIDProperty.bind(cameraChooser.selectionModel.selectedIndexProperty())
-        camera.streamingProperty().bindBidirectional(toggle.selectedProperty())
         cameraChooser.selectionModel.select(0)
+        camera.webcamIDProperty.bind(cameraChooser.selectionModel.selectedIndexProperty())
+
+        iv.imageProperty().bind(camera.imageProperty())
+        camera.streamingProperty().bindBidirectional(toggle.selectedProperty())
         camera.flippedProperty.bind(flip.selectedProperty())
+
         camera.isDecoding = true
+
         stage.focusedProperty().addListener { _, _, nv ->
             if (!nv) {
                 camera.isStreaming = false

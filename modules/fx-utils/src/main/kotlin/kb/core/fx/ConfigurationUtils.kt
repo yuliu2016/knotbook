@@ -19,6 +19,9 @@ inline fun vbox(builder: VBox.() -> Unit): VBox = VBox().apply(builder)
 inline fun textField(builder: TextField.() -> Unit): TextField = TextField().apply(builder)
 
 @FXKtDSL
+inline fun textArea(builder: TextArea.() -> Unit): TextArea = TextArea().apply(builder)
+
+@FXKtDSL
 inline fun splitPane(builder: SplitPane.() -> Unit): SplitPane = SplitPane().apply(builder)
 
 @FXKtDSL
