@@ -6,8 +6,11 @@ import javafx.event.EventHandler
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Scene
-import javafx.scene.control.*
+import javafx.scene.control.Alert
 import javafx.scene.control.Alert.AlertType
+import javafx.scene.control.ButtonType
+import javafx.scene.control.CheckBox
+import javafx.scene.control.ChoiceBox
 import javafx.scene.input.KeyCode
 import javafx.stage.FileChooser
 import javafx.stage.Stage
@@ -42,26 +45,6 @@ class ScannerScreen {
     val flip = CheckBox("Flip Image Horizontally")
     val fit = CheckBox("Fit Image to Window")
     val cameraChooser = ChoiceBox<String>()
-
-    class TeamCell : TableCell<V5Entry, String>() {
-        override fun updateItem(item: String?, empty: Boolean) {
-            super.updateItem(item, empty)
-            if (item == null || empty) {
-                graphic = null
-                return
-            }
-            graphic = label {
-                text = item
-                val entry = tableRow?.item
-                if (entry != null) {
-                    style = when (entry.board.alliance) {
-                        Alliance.Red -> "-fx-font-weight: bold; -fx-text-fill: red"
-                        Alliance.Blue -> "-fx-font-weight: bold; -fx-text-fill: blue"
-                    }
-                }
-            }
-        }
-    }
 
     val tv = tableView<V5Entry> {
         vgrow()
@@ -111,9 +94,8 @@ class ScannerScreen {
         saveState.text = "Saving"
         executor.submit {
             try {
-                entriesLock.withLock {
-                    Files.writeString(savePath, previousEntries.joinToString("\n"))
-                }
+                val data = entriesLock.withLock { previousEntries.joinToString("\n") }
+                Files.writeString(savePath, data)
                 Platform.runLater { saveState.text = "AutoSaved" }
             } catch (e: Exception) {
                 Platform.runLater { saveState.text = "AutoSave Error" }
@@ -131,9 +113,7 @@ class ScannerScreen {
                 return
             }
             tv.items.removeAt(i)
-            entriesLock.withLock {
-                previousEntries.removeAt(i)
-            }
+            entriesLock.withLock { previousEntries.removeAt(i) }
             save()
         }
     }
@@ -158,6 +138,7 @@ class ScannerScreen {
         chooser.initialDirectory = File(System.getProperty("user.home"), "Desktop")
         val path = chooser.showOpenDialog(stage)?.toPath() ?: return
         savePath = path
+        saveState.text = "Loading"
         updateTitle()
         previousEntries.clear()
         tv.items.clear()
@@ -165,18 +146,19 @@ class ScannerScreen {
             val data = Files.readAllLines(path)
             var i = 0
             val items = ArrayList<V5Entry>()
-            entriesLock.withLock {
-                data.forEach {
-                    try {
-                        val entry = DecodedEntry(it)
-                        previousEntries.add(it)
-                        items.add(entry)
-                        i++
-                    } catch (e: Exception) {
-                    }
+            val entries = ArrayList<String>()
+            data.forEach {
+                try {
+                    val entry = DecodedEntry(it)
+                    items.add(entry)
+                    entries.add(it)
+                    i++
+                } catch (e: Exception) {
                 }
             }
+            entriesLock.withLock { previousEntries.addAll(entries) }
             Platform.runLater {
+                tv.items.setAll(items)
                 saveState.text = "Save File Loaded"
                 val alert = Alert(AlertType.INFORMATION, "Loaded $i entries out of ${data.size} lines")
                 alert.showAndWait()
@@ -254,9 +236,7 @@ class ScannerScreen {
             try {
                 val decoded = DecodedEntry(encoded)
                 tv.items.add(decoded)
-                entriesLock.withLock {
-                    previousEntries.add(encoded)
-                }
+                entriesLock.withLock { previousEntries.add(encoded) }
                 tv.scrollTo(tv.items.size - 1)
                 save()
             } catch (e: Exception) {
