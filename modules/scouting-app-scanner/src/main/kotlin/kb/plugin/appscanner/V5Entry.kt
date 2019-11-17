@@ -2,7 +2,6 @@ package kb.plugin.appscanner
 
 import kb.plugin.appscanner.Alliance.Blue
 import kb.plugin.appscanner.Alliance.Red
-import java.util.*
 
 interface V5Entry {
     val match: String
@@ -50,9 +49,9 @@ data class DecodedEntry(override val encoded: String) : V5Entry {
     override val timestamp = split[4].toInt(16)
     override val undone = split[5].toInt()
     override val comments = split[7]
-    override val dataPoints = Base64.getDecoder().decode(split[6]).map { it.toInt() }
+    override val dataPoints = ArrayList<DataPoint>() /*Base64.getDecoder().decode(split[6]).map { it.toInt() }
             .run { (0 until size / 3).map { DataPoint(get(it * 3), get(it * 3 + 1), get(it * 3 + 2)) } }
-            .sortedBy { it.time }
+            .sortedBy { it.time }*/
 
     override fun count(type: Int) = dataPoints.count { it.type == type }
     override fun lastValue(type: Int) = dataPoints.lastOrNull { it.type == type }

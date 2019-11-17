@@ -31,58 +31,6 @@ class ScannerScreen {
 
     val camera = FXCamera()
 
-    val iv = imageView {
-        isPreserveRatio = true
-        fitHeight = 480.0
-    }
-
-    val ivCont = hbox {
-        align(Pos.CENTER)
-        add(iv)
-    }
-
-    val toggle = CheckBox("Run WebCam Stream")
-    val flip = CheckBox("Flip Image Horizontally")
-    val fit = CheckBox("Fit Image to Window")
-    val cameraChooser = ChoiceBox<String>()
-
-    val tv = tableView<V5Entry> {
-        vgrow()
-
-        columns.add(tableColumn<V5Entry, String> {
-            text = "Match"
-            isSortable = false
-            prefWidth = 45.0
-            setCellValueFactory { SimpleStringProperty(it.value.match.split("_").last()) }
-        })
-        columns.add(tableColumn<V5Entry, String> {
-            text = "Board"
-            isSortable = false
-            prefWidth = 45.0
-            setCellValueFactory { SimpleStringProperty(it.value.board.name) }
-        })
-        columns.add(tableColumn<V5Entry, String> {
-            text = "Team"
-            prefWidth = 45.0
-            setCellValueFactory { SimpleStringProperty(it.value.team) }
-            setCellFactory { TeamCell() }
-            isSortable = false
-        })
-        columns.add(tableColumn<V5Entry, String> {
-            text = "Scout"
-            isSortable = false
-            prefWidth = 75.0
-            setCellValueFactory { SimpleStringProperty(it.value.scout) }
-        })
-        columns.add(tableColumn<V5Entry, String> {
-            isSortable = false
-            text = "Comments"
-            setCellValueFactory { SimpleStringProperty(it.value.comments) }
-        })
-    }
-
-    val saveState = label("No Save File")
-
     var savePath: Path? = null
 
     val executor: ExecutorService = Executors.newSingleThreadExecutor()
@@ -175,6 +123,60 @@ class ScannerScreen {
         save()
     }
 
+    val iv = imageView {
+        isPreserveRatio = true
+        fitHeight = 480.0
+    }
+
+    val ivCont = hbox {
+        align(Pos.CENTER)
+        add(iv)
+    }
+
+    val cameraChooser = ChoiceBox<String>()
+    val toggle = CheckBox("Run WebCam Stream")
+    val flip = CheckBox("Flip Image Horizontally")
+    val fit = CheckBox("Fit Image to Window")
+    val sortByMatch = CheckBox("Sort By Match")
+    val scoutStats = CheckBox("Show Scout Stats")
+
+    val saveState = label("No Save File")
+
+    val tv = tableView<V5Entry> {
+        vgrow()
+
+        columns.add(tableColumn<V5Entry, String> {
+            text = "Match"
+            isSortable = false
+            prefWidth = 45.0
+            setCellValueFactory { SimpleStringProperty(it.value.match.split("_").last()) }
+        })
+        columns.add(tableColumn<V5Entry, String> {
+            text = "Board"
+            isSortable = false
+            prefWidth = 45.0
+            setCellValueFactory { SimpleStringProperty(it.value.board.name) }
+        })
+        columns.add(tableColumn<V5Entry, String> {
+            text = "Team"
+            prefWidth = 45.0
+            setCellValueFactory { SimpleStringProperty(it.value.team) }
+            setCellFactory { TeamCell() }
+            isSortable = false
+        })
+        columns.add(tableColumn<V5Entry, String> {
+            text = "Scout"
+            isSortable = false
+            prefWidth = 75.0
+            setCellValueFactory { SimpleStringProperty(it.value.scout) }
+        })
+        columns.add(tableColumn<V5Entry, String> {
+            isSortable = false
+            text = "Comments"
+            setCellValueFactory { SimpleStringProperty(it.value.comments) }
+        })
+    }
+
     val sidebar = vbox {
         style = "-fx-background-color: white"
         spacing = 8.0
@@ -184,6 +186,8 @@ class ScannerScreen {
         add(toggle)
         add(flip)
         add(fit)
+        add(sortByMatch)
+        add(scoutStats)
         add(hbox {
             align(Pos.CENTER_LEFT)
             spacing = 8.0

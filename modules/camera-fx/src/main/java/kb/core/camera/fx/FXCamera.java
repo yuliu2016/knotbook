@@ -132,8 +132,6 @@ public class FXCamera {
     private boolean flipped = false;
     private int skippedPulseCounter = 0;
 
-    private Webcam webcam = null;
-
     private final AnimationTimer timer = new AnimationTimer() {
         @Override
         public void handle(long now) {
@@ -157,12 +155,12 @@ public class FXCamera {
 
     private void updateStreamingState(boolean isStreaming) {
         if (isStreaming) {
-            webcam = getWebcams(false).get(getWebcamID());
+            List<Webcam> webcams = getWebcams(false);
+            int id = getWebcamID();
+            if (id < 0 || id > webcams.size()) return;
+            Webcam webcam = webcams.get(id);
             if (webcam != null && !webcam.isOpen()) {
-                webcam.setCustomViewSizes(WebcamResolution.VGA.getSize());
-                webcam.setViewSize(WebcamResolution.VGA.getSize());
-                webcam.open();
-                thread = new Thread(this::readCameraStream);
+                thread = new Thread(() -> readCameraStream(webcam));
                 thread.setDaemon(true);
                 thread.start();
                 timer.start();
@@ -171,10 +169,6 @@ public class FXCamera {
             if (thread != null) {
                 threadRunning = false;
                 thread.interrupt();
-            }
-            if (webcam != null) {
-                webcam.close();
-                webcam = null;
             }
             timer.stop();
         }
@@ -191,20 +185,21 @@ public class FXCamera {
         }
     }
 
-    private void readCameraStream() {
+    private void readCameraStream(Webcam webcam) {
+        if (webcam == null) throw new IllegalArgumentException("webcam must not be null");
+        webcam.setCustomViewSizes(WebcamResolution.VGA.getSize());
+        webcam.setViewSize(WebcamResolution.VGA.getSize());
+        webcam.open();
         final AtomicReference<WritableImage> imgRef = new AtomicReference<>(null);
         threadRunning = true;
         while (threadRunning) {
-            Webcam webcam = this.webcam;
-            if (webcam != null) {
-                BufferedImage capture = webcam.getImage();
-                if (capture != null) {
-                    imgRef.set(toFXImageFlipped(capture, imgRef.get(), flipped));
-                    capture.flush();
-                    String decoded = decoding ? decode(capture) : null;
-                    image = imgRef.get();
-                    result = decoded;
-                }
+            BufferedImage capture = webcam.getImage();
+            if (capture != null) {
+                imgRef.set(toFXImageFlipped(capture, imgRef.get(), flipped));
+                capture.flush();
+                String decoded = decoding ? decode(capture) : null;
+                image = imgRef.get();
+                result = decoded;
             }
             try {
                 Thread.sleep(20);
@@ -212,6 +207,7 @@ public class FXCamera {
                 break;
             }
         }
+        webcam.close();
         thread = null;
     }
 
