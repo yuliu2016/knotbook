@@ -6,19 +6,21 @@ import javafx.event.EventHandler
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Scene
-import javafx.scene.control.CheckBox
-import javafx.scene.control.ChoiceBox
-import javafx.scene.control.TableCell
+import javafx.scene.control.*
+import javafx.scene.control.Alert.AlertType
 import javafx.scene.input.KeyCode
+import javafx.stage.FileChooser
 import javafx.stage.Stage
 import kb.core.camera.fx.FXCamera
 import kb.core.fx.*
+import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
+
 
 @Suppress("MemberVisibilityCanBePrivate")
 class ScannerScreen {
@@ -50,9 +52,12 @@ class ScannerScreen {
             }
             graphic = label {
                 text = item
-                style = when (tableRow.item.board.alliance) {
-                    Alliance.Red -> "-fx-font-weight: bold; -fx-text-fill: red"
-                    Alliance.Blue -> "-fx-font-weight: bold; -fx-text-fill: blue"
+                val entry = tableRow?.item
+                if (entry != null) {
+                    style = when (entry.board.alliance) {
+                        Alliance.Red -> "-fx-font-weight: bold; -fx-text-fill: red"
+                        Alliance.Blue -> "-fx-font-weight: bold; -fx-text-fill: blue"
+                    }
                 }
             }
         }
@@ -119,19 +124,68 @@ class ScannerScreen {
     fun removeSelection() {
         val i = tv.selectionModel.selectedIndex
         if (i != -1) {
+            val alert = Alert(AlertType.CONFIRMATION, "Delete Entry? This Cannot be Undone.",
+                    ButtonType.YES, ButtonType.NO)
+            alert.showAndWait()
+            if (alert.result != ButtonType.YES) {
+                return
+            }
             tv.items.removeAt(i)
             entriesLock.withLock {
                 previousEntries.removeAt(i)
             }
+            save()
         }
     }
 
-    fun openFile() {
+    fun updateTitle() {
+        val sf = savePath?.toString() ?: "No Save File"
+        stage.title = "Scouting App Scanner | $sf"
+    }
 
+    fun openFile() {
+        if (previousEntries.isNotEmpty()) {
+            val alert = Alert(AlertType.CONFIRMATION, "Override all current entries?",
+                    ButtonType.YES, ButtonType.NO)
+            alert.showAndWait()
+            if (alert.result != ButtonType.YES) {
+                return
+            }
+        }
+        val chooser = FileChooser()
+        chooser.title = "Save As"
+        chooser.initialDirectory = File(System.getProperty("user.home"), "Desktop")
+        val path = chooser.showOpenDialog(stage)?.toPath() ?: return
+        savePath = path
+        updateTitle()
+
+        previousEntries.clear()
+        tv.items.clear()
+        val data = Files.readAllLines(path)
+        var i = 0
+        entriesLock.withLock {
+            data.forEach {
+                try {
+                    val entry = DecodedEntry(it)
+                    previousEntries.add(it)
+                    tv.items.add(entry)
+                    i++
+                } catch (e: Exception) {
+                }
+            }
+        }
+        saveState.text = "Save File Loaded"
+        val alert = Alert(AlertType.INFORMATION, "Loaded $i entries out of ${data.size} lines")
+        alert.showAndWait()
     }
 
     fun saveAs() {
-
+        val chooser = FileChooser()
+        chooser.title = "Save As"
+        chooser.initialDirectory = File(System.getProperty("user.home"), "Desktop")
+        savePath = chooser.showSaveDialog(stage)?.toPath() ?: return
+        updateTitle()
+        save()
     }
 
     val sidebar = vbox {
@@ -148,12 +202,11 @@ class ScannerScreen {
             spacing = 8.0
             add(button {
                 text = "Open File"
-                setOnAction {
-
-                }
+                setOnAction { openFile() }
             })
             add(button {
                 text = "Save As"
+                setOnAction { saveAs() }
             })
             add(saveState)
         })
@@ -162,11 +215,11 @@ class ScannerScreen {
             align(Pos.CENTER_LEFT)
             spacing = 8.0
             add(button {
-                text = "Clear Selection"
+                text = "Unselect Entry"
                 setOnAction { tv.selectionModel.clearSelection() }
             })
             add(button {
-                text = "Remove Selection"
+                text = "Delete Selected Entry"
                 setOnAction { removeSelection() }
             })
         })
@@ -197,6 +250,10 @@ class ScannerScreen {
     }
 
     fun show() {
+        stage.show()
+    }
+
+    init {
         stage.title = "Scouting App Scanner"
         stage.scene = scene
         scene.onKeyPressed = EventHandler {
@@ -236,6 +293,5 @@ class ScannerScreen {
                 Runtime.getRuntime().gc()
             }
         }
-        stage.show()
     }
 }
