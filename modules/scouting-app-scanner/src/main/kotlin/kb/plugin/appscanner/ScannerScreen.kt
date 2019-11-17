@@ -139,8 +139,9 @@ class ScannerScreen {
     }
 
     fun updateTitle() {
-        val sf = savePath?.toString() ?: "No Save File"
-        stage.title = "Scouting App Scanner | $sf"
+        val path = savePath
+        stage.title = if (path == null) "Scouting App Scanner" else
+            "Scouting App Scanner | $path"
     }
 
     fun openFile() {
@@ -158,25 +159,29 @@ class ScannerScreen {
         val path = chooser.showOpenDialog(stage)?.toPath() ?: return
         savePath = path
         updateTitle()
-
         previousEntries.clear()
         tv.items.clear()
-        val data = Files.readAllLines(path)
-        var i = 0
-        entriesLock.withLock {
-            data.forEach {
-                try {
-                    val entry = DecodedEntry(it)
-                    previousEntries.add(it)
-                    tv.items.add(entry)
-                    i++
-                } catch (e: Exception) {
+        executor.submit {
+            val data = Files.readAllLines(path)
+            var i = 0
+            val items = ArrayList<V5Entry>()
+            entriesLock.withLock {
+                data.forEach {
+                    try {
+                        val entry = DecodedEntry(it)
+                        previousEntries.add(it)
+                        items.add(entry)
+                        i++
+                    } catch (e: Exception) {
+                    }
                 }
             }
+            Platform.runLater {
+                saveState.text = "Save File Loaded"
+                val alert = Alert(AlertType.INFORMATION, "Loaded $i entries out of ${data.size} lines")
+                alert.showAndWait()
+            }
         }
-        saveState.text = "Save File Loaded"
-        val alert = Alert(AlertType.INFORMATION, "Loaded $i entries out of ${data.size} lines")
-        alert.showAndWait()
     }
 
     fun saveAs() {
@@ -208,14 +213,24 @@ class ScannerScreen {
                 text = "Save As"
                 setOnAction { saveAs() }
             })
-            add(saveState)
+            add(button {
+                text = "Close Save File"
+                setOnAction {
+                    savePath = null
+                    previousEntries.clear()
+                    tv.items.clear()
+                    updateTitle()
+                    saveState.text = "Save File Closed"
+                }
+            })
         })
+        add(saveState)
         add(tv)
         add(hbox {
             align(Pos.CENTER_LEFT)
             spacing = 8.0
             add(button {
-                text = "Unselect Entry"
+                text = "Deselect Entry"
                 setOnAction { tv.selectionModel.clearSelection() }
             })
             add(button {
@@ -283,7 +298,7 @@ class ScannerScreen {
         cameraChooser.selectionModel.select(0)
         camera.flippedProperty.bind(flip.selectedProperty())
         camera.isDecoding = true
-        stage.showingProperty().addListener { _, _, nv ->
+        stage.focusedProperty().addListener { _, _, nv ->
             if (!nv) {
                 camera.isStreaming = false
             }
