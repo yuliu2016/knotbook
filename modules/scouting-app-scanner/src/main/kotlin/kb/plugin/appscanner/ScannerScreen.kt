@@ -13,6 +13,7 @@ import javafx.stage.FileChooser
 import javafx.stage.Stage
 import kb.core.camera.fx.FXCamera
 import kb.core.fx.*
+import kb.service.api.array.NaturalOrderComparator
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -33,6 +34,7 @@ class ScannerScreen {
     val executor: ExecutorService = Executors.newSingleThreadExecutor()
     val entriesLock = ReentrantLock()
     val previousEntries: MutableList<String> = ArrayList()
+    val comparator = NaturalOrderComparator()
 
 
     fun alert(s: String) {
@@ -76,8 +78,7 @@ class ScannerScreen {
 
     fun updateTitle() {
         val path = savePath
-        stage.title = if (path == null) "Scouting App Scanner" else
-            "Scouting App Scanner | $path"
+        stage.title = if (path == null) "Scouting App Scanner" else "Scouting App Scanner | $path"
     }
 
     fun updateCameras() {
@@ -132,11 +133,68 @@ class ScannerScreen {
         save()
     }
 
+    fun closeSaveFile() {
+        savePath = null
+        previousEntries.clear()
+        tv.items.clear()
+        updateTitle()
+        saveState.text = "Save File Closed"
+    }
+
     fun showComment() {
         val i = tv.selectionModel.selectedIndex
         if (i != -1) {
             alert(tv.items[i].comments)
         }
+    }
+
+    fun showScoutStats() {
+        val map = HashMap<String, MutableList<String>>()
+        tv.items.forEach {
+            val matchNum = it.match.split("_").last()
+            if (it.scout in map) {
+                map[it.scout]!!.add(matchNum)
+            } else {
+                map[it.scout] = mutableListOf(matchNum)
+            }
+        }
+        val entries = map.entries.sortedByDescending { it.value.size }
+        val s = entries.joinToString("\n") {
+            it.value.sortWith(comparator)
+            val size = it.value.size
+            val sizeStr = if (size == 1) "1 total match" else "$size total matches"
+            "${it.key}: $sizeStr. Last: ${it.value.last()}"
+        }
+        alert(s)
+    }
+
+    fun showWarnings() {
+        val map = HashMap<String, MutableList<Board>>()
+        tv.items.forEach {
+            val matchNum = it.match.split("_").last()
+            if (matchNum in map) {
+                map[matchNum]!!.add(it.board)
+            } else {
+                map[matchNum] = mutableListOf(it.board)
+            }
+        }
+        val order = map.keys.sortedWith(comparator)
+        val w = StringBuilder()
+        val v = Board.values().toMutableList()
+        v.remove(Board.RX)
+        v.remove(Board.BX)
+        val missing = mutableListOf<Board>()
+        order.forEach { key ->
+            missing.clear()
+            val md = map[key]!!
+            v.forEach { board -> if (!md.contains(board)) missing.add(board) }
+            if (missing.isNotEmpty()) {
+                w.append("Match ").append(key).append(": Missing ")
+                for (i in 0 until missing.size - 1) w.append(missing[i]).append(", ")
+                w.append(missing.last()).append("\n")
+            }
+        }
+        alert(w.toString())
     }
 
     val iv = imageView {
@@ -159,7 +217,6 @@ class ScannerScreen {
 
     val tv = tableView<V5Entry> {
         vgrow()
-
         columns.add(tableColumn<V5Entry, String> {
             text = "Match"
             isSortable = false
@@ -219,10 +276,12 @@ class ScannerScreen {
         add(hbox {
             spacing = 8.0
             add(button {
-                text = "Show Warnings"
+                text = "Missing Entries"
+                setOnAction { showWarnings() }
             })
             add(button {
                 text = "Scout Stats"
+                setOnAction { showScoutStats() }
             })
         })
         add(hbox {
@@ -238,13 +297,7 @@ class ScannerScreen {
             })
             add(button {
                 text = "Close Save File"
-                setOnAction {
-                    savePath = null
-                    previousEntries.clear()
-                    tv.items.clear()
-                    updateTitle()
-                    saveState.text = "Save File Closed"
-                }
+                setOnAction { closeSaveFile() }
             })
         })
         add(saveState)
