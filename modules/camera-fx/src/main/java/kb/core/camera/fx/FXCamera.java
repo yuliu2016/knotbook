@@ -159,7 +159,7 @@ public class FXCamera {
             int id = getWebcamID();
             if (id < 0 || id > webcams.size()) return;
             Webcam webcam = webcams.get(id);
-            if (webcam != null && !webcam.isOpen()) {
+            if (webcam != null && !webcam.isOpen() && !webcam.getLock().isLocked()) {
                 thread = new Thread(() -> readCameraStream(webcam));
                 thread.setDaemon(true);
                 thread.start();
@@ -187,13 +187,17 @@ public class FXCamera {
 
     private void readCameraStream(Webcam webcam) {
         if (webcam == null) throw new IllegalArgumentException("webcam must not be null");
+
         webcam.setCustomViewSizes(WebcamResolution.VGA.getSize());
         webcam.setViewSize(WebcamResolution.VGA.getSize());
         webcam.open();
+
         final AtomicReference<WritableImage> imgRef = new AtomicReference<>(null);
         threadRunning = true;
-        while (threadRunning) {
+
+        while (threadRunning && webcam.isOpen()) {
             BufferedImage capture = webcam.getImage();
+
             if (capture != null) {
                 imgRef.set(toFXImageFlipped(capture, imgRef.get(), flipped));
                 capture.flush();
@@ -201,12 +205,14 @@ public class FXCamera {
                 image = imgRef.get();
                 result = decoded;
             }
+
             try {
                 Thread.sleep(20);
             } catch (InterruptedException e) {
                 break;
             }
         }
+
         webcam.close();
         thread = null;
     }

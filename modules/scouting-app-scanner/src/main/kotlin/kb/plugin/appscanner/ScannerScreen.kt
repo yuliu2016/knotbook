@@ -80,6 +80,15 @@ class ScannerScreen {
             "Scouting App Scanner | $path"
     }
 
+    fun updateCameras() {
+        var i = cameraChooser.selectionModel.selectedIndex
+        val names = camera.webcamNames
+        if (names.isEmpty()) return
+        if (i < 0 || i > names.size) i = 0
+        cameraChooser.items = names.observable()
+        cameraChooser.selectionModel.select(i)
+    }
+
     fun openFile() {
         if (previousEntries.isNotEmpty() && !confirm("Override all current entries?")) return
         val chooser = FileChooser()
@@ -145,8 +154,6 @@ class ScannerScreen {
     val flip = CheckBox("Flip Image Horizontally")
     val fit = CheckBox("Fit Image to Window")
     val sortByMatch = CheckBox("Sort By Match")
-    val scoutStats = Button("Show Scout Stats")
-    val showWarnings = Button("Show Warnings")
 
     val saveState = label("No Save File")
 
@@ -196,6 +203,7 @@ class ScannerScreen {
             spacing = 8.0
             add(button {
                 text = "Refresh"
+                setOnAction { updateCameras() }
             })
         })
         add(hbox {
@@ -210,8 +218,12 @@ class ScannerScreen {
         })
         add(hbox {
             spacing = 8.0
-            add(showWarnings)
-            add(scoutStats)
+            add(button {
+                text = "Show Warnings"
+            })
+            add(button {
+                text = "Scout Stats"
+            })
         })
         add(hbox {
             align(Pos.CENTER_LEFT)
@@ -307,8 +319,7 @@ class ScannerScreen {
             }
         }
 
-        cameraChooser.items = camera.webcamNames.observable()
-        cameraChooser.selectionModel.select(0)
+        updateCameras()
         camera.webcamIDProperty.bind(cameraChooser.selectionModel.selectedIndexProperty())
 
         iv.imageProperty().bind(camera.imageProperty())
