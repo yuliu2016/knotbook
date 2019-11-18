@@ -127,7 +127,6 @@ public class FXCamera {
     private String result = null;
     private Thread thread = null;
 
-    private boolean threadRunning = false;
     private boolean decoding = false;
     private boolean flipped = false;
     private int skippedPulseCounter = 0;
@@ -154,12 +153,13 @@ public class FXCamera {
     };
 
     private void updateStreamingState(boolean isStreaming) {
+
         if (isStreaming) {
             List<Webcam> webcams = getWebcams(false);
             int id = getWebcamID();
             if (id < 0 || id > webcams.size()) return;
             Webcam webcam = webcams.get(id);
-            if (webcam != null && !webcam.isOpen() && !webcam.getLock().isLocked()) {
+            if (webcam != null && !webcam.isOpen()) {
                 thread = new Thread(() -> readCameraStream(webcam));
                 thread.setDaemon(true);
                 thread.start();
@@ -167,7 +167,6 @@ public class FXCamera {
             }
         } else {
             if (thread != null) {
-                threadRunning = false;
                 thread.interrupt();
             }
             timer.stop();
@@ -193,9 +192,8 @@ public class FXCamera {
         webcam.open();
 
         final AtomicReference<WritableImage> imgRef = new AtomicReference<>(null);
-        threadRunning = true;
 
-        while (threadRunning && webcam.isOpen()) {
+        while (!Thread.currentThread().isInterrupted() && webcam.isOpen()) {
             BufferedImage capture = webcam.getImage();
 
             if (capture != null) {
@@ -207,7 +205,7 @@ public class FXCamera {
             }
 
             try {
-                Thread.sleep(20);
+                Thread.sleep(10);
             } catch (InterruptedException e) {
                 break;
             }
