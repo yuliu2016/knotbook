@@ -33,7 +33,8 @@ class ScannerScreen {
 
     val executor: ExecutorService = Executors.newSingleThreadExecutor()
     val entriesLock = ReentrantLock()
-    val previousEntries: MutableList<String> = ArrayList()
+    val unsortedEntries: MutableList<V5Entry> = ArrayList()
+    val textEntries: MutableList<String> = ArrayList()
     val comparator = NaturalOrderComparator()
 
 
@@ -57,7 +58,7 @@ class ScannerScreen {
         saveState.text = "Saving"
         executor.submit {
             try {
-                val data = entriesLock.withLock { previousEntries.joinToString("\n") }
+                val data = entriesLock.withLock { textEntries.joinToString("\n") }
                 Files.writeString(savePath, data)
                 Platform.runLater { saveState.text = "AutoSaved" }
             } catch (e: Exception) {
@@ -70,8 +71,10 @@ class ScannerScreen {
         val i = tv.selectionModel.selectedIndex
         if (i != -1) {
             if (!confirm("Delete Entry? This Cannot be Undone.")) return
+            val originalIndex = if (sortByMatch.isSelected) unsortedEntries.indexOf(tv.items[i]) else i
+            unsortedEntries.removeAt(originalIndex)
             tv.items.removeAt(i)
-            entriesLock.withLock { previousEntries.removeAt(i) }
+            entriesLock.withLock { textEntries.removeAt(originalIndex) }
             save()
         }
     }
@@ -91,7 +94,7 @@ class ScannerScreen {
     }
 
     fun openFile() {
-        if (previousEntries.isNotEmpty() && !confirm("Override all current entries?")) return
+        if (textEntries.isNotEmpty() && !confirm("Override all current entries?")) return
         val chooser = FileChooser()
         chooser.title = "Save As"
         chooser.initialDirectory = File(System.getProperty("user.home"), "Desktop")
@@ -99,8 +102,8 @@ class ScannerScreen {
         savePath = path
         saveState.text = "Loading"
         updateTitle()
-        previousEntries.clear()
-        tv.items.clear()
+        textEntries.clear()
+        unsortedEntries.clear()
         executor.submit {
             val data = Files.readAllLines(path)
             var i = 0
@@ -115,9 +118,10 @@ class ScannerScreen {
                 } catch (e: Exception) {
                 }
             }
-            entriesLock.withLock { previousEntries.addAll(entries) }
+            entriesLock.withLock { textEntries.addAll(entries) }
             Platform.runLater {
-                tv.items.setAll(items)
+                unsortedEntries.addAll(items)
+                updateSorted(sortByMatch.isSelected)
                 saveState.text = "Save File Loaded"
                 alert("Loaded $i entries out of ${data.size} lines")
             }
@@ -135,7 +139,8 @@ class ScannerScreen {
 
     fun closeSaveFile() {
         savePath = null
-        previousEntries.clear()
+        textEntries.clear()
+        unsortedEntries.clear()
         tv.items.clear()
         updateTitle()
         saveState.text = "Save File Closed"
@@ -150,7 +155,7 @@ class ScannerScreen {
 
     fun showScoutStats() {
         val map = HashMap<String, MutableList<String>>()
-        tv.items.forEach {
+        unsortedEntries.forEach {
             val matchNum = it.match.split("_").last()
             if (it.scout in map) {
                 map[it.scout]!!.add(matchNum)
@@ -170,7 +175,7 @@ class ScannerScreen {
 
     fun showWarnings() {
         val map = HashMap<String, MutableList<Board>>()
-        tv.items.forEach {
+        unsortedEntries.forEach {
             val matchNum = it.match.split("_").last()
             if (matchNum in map) {
                 map[matchNum]!!.add(it.board)
@@ -195,6 +200,16 @@ class ScannerScreen {
             }
         }
         alert(w.toString())
+    }
+
+    fun updateSorted(sorted: Boolean) {
+        if (sorted) {
+            tv.items.setAll(unsortedEntries.sortedWith(Comparator { o1, o2 ->
+                comparator.compare(o1.match, o2.match)
+            }))
+        } else {
+            tv.items.setAll(unsortedEntries)
+        }
     }
 
     val iv = imageView {
@@ -330,12 +345,19 @@ class ScannerScreen {
     val scene = Scene(layout)
 
     fun onQRCodeResult(encoded: String) {
-        if (encoded !in previousEntries) {
+        if (encoded !in textEntries) {
             try {
                 val decoded = DecodedEntry(encoded)
-                tv.items.add(decoded)
-                entriesLock.withLock { previousEntries.add(encoded) }
-                tv.scrollTo(tv.items.size - 1)
+                unsortedEntries.add(decoded)
+                if (sortByMatch.isSelected) {
+                    updateSorted(true)
+                } else {
+                    tv.items.add(decoded)
+                }
+                entriesLock.withLock { textEntries.add(encoded) }
+                tv.selectionModel.select(decoded)
+                tv.scrollTo(decoded)
+                tv.requestFocus()
                 save()
             } catch (e: Exception) {
             }
@@ -364,6 +386,10 @@ class ScannerScreen {
                 iv.fitWidthProperty().unbind()
                 iv.fitHeight = 480.0
             }
+        }
+
+        sortByMatch.selectedProperty().addListener { _, _, nv ->
+            updateSorted(nv)
         }
 
         camera.resultProperty().addListener { _, _, nv ->
