@@ -29,27 +29,27 @@ public class FXCamera {
 
     private ReadOnlyObjectWrapper<Image> imageProperty = new ReadOnlyObjectWrapper<>(null);
 
-    public ReadOnlyObjectProperty<Image> getImageProperty() {
+    public ReadOnlyObjectProperty<Image> imageProperty() {
         return imageProperty.getReadOnlyProperty();
     }
 
     public Image getImage() {
-        return getImageProperty().get();
+        return imageProperty().get();
     }
 
     private ReadOnlyStringWrapper resultProperty = new ReadOnlyStringWrapper(null);
 
-    public ReadOnlyStringProperty getResultProperty() {
+    public ReadOnlyStringProperty resultProperty() {
         return resultProperty.getReadOnlyProperty();
     }
 
     public String getResult() {
-        return getResultProperty().get();
+        return resultProperty().get();
     }
 
     private BooleanProperty streamingProperty;
 
-    public BooleanProperty getStreamingProperty() {
+    public BooleanProperty streamingProperty() {
         if (streamingProperty == null) {
             streamingProperty = new SimpleBooleanProperty(false);
             streamingProperty.addListener((ob, ov, nv) -> updateStreamingState(nv));
@@ -57,12 +57,12 @@ public class FXCamera {
         return streamingProperty;
     }
 
-    public boolean getStreaming() {
-        return getStreamingProperty().get();
+    public boolean isStreaming() {
+        return streamingProperty().get();
     }
 
     public void setStreaming(boolean streaming) {
-        getStreamingProperty().set(streaming);
+        streamingProperty().set(streaming);
     }
 
     private BooleanProperty decodingProperty;
@@ -117,22 +117,20 @@ public class FXCamera {
 
     public List<String> getWebcamNames() {
         List<String> names = new ArrayList<>();
-        for (Webcam wc : getWebcams()) {
+        for (Webcam wc : getWebcams(true)) {
             names.add(wc.getName());
         }
         return names;
     }
 
+    private Webcam webcam = null;
     private Image image = null;
     private String result = null;
     private Thread thread = null;
 
-    private boolean threadRunning = false;
     private boolean decoding = false;
     private boolean flipped = false;
     private int skippedPulseCounter = 0;
-
-    private Webcam webcam = null;
 
     private final AnimationTimer timer = new AnimationTimer() {
         @Override
@@ -156,25 +154,24 @@ public class FXCamera {
     };
 
     private void updateStreamingState(boolean isStreaming) {
+
         if (isStreaming) {
-            webcam = getWebcams().get(getWebcamID());
-            if (webcam != null && !webcam.isOpen()) {
-                webcam.setCustomViewSizes(WebcamResolution.VGA.getSize());
-                webcam.setViewSize(WebcamResolution.VGA.getSize());
-                webcam.open();
+            List<Webcam> webcams = getWebcams(false);
+            int id = getWebcamID();
+            if (id < 0 || id > webcams.size()) return;
+            webcam = webcams.get(id);
+            if (webcam != null) {
+                if (webcam.isOpen()) webcam.close();
+                thread = new Thread(() -> readCameraStream(webcam));
+                thread.setDaemon(true);
+                thread.start();
+                timer.start();
             }
-            thread = new Thread(this::readCameraStream);
-            thread.setDaemon(true);
-            thread.start();
-            timer.start();
         } else {
             if (thread != null) {
-                threadRunning = false;
                 thread.interrupt();
-            }
-            if (webcam != null) {
                 webcam.close();
-                webcam = null;
+                thread = null;
             }
             timer.stop();
         }
@@ -186,39 +183,45 @@ public class FXCamera {
             BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
             Result result = getReader().decode(bitmap);
             return result.getText();
-        } catch (NotFoundException e) {
+        } catch (NotFoundException | ArrayIndexOutOfBoundsException e) {
             return null;
         }
     }
 
-    private void readCameraStream() {
+    private void readCameraStream(Webcam webcam) {
+        if (webcam == null) throw new IllegalArgumentException("webcam must not be null");
+
+        webcam.setCustomViewSizes(WebcamResolution.VGA.getSize());
+        webcam.setViewSize(WebcamResolution.VGA.getSize());
+        webcam.open();
+
         final AtomicReference<WritableImage> imgRef = new AtomicReference<>(null);
-        threadRunning = true;
-        while (threadRunning) {
-            Webcam webcam = this.webcam;
-            if (webcam != null) {
-                BufferedImage capture = webcam.getImage();
-                if (capture != null) {
-                    imgRef.set(toFXImageFlipped(capture, imgRef.get(), flipped));
-                    capture.flush();
-                    String decoded = decoding ? decode(capture) : null;
-                    image = imgRef.get();
-                    result = decoded;
-                }
+
+        while (!Thread.currentThread().isInterrupted() && webcam.isOpen()) {
+            BufferedImage capture = webcam.getImage();
+
+            if (capture != null) {
+                imgRef.set(toFXImageFlipped(capture, imgRef.get(), flipped));
+                capture.flush();
+                String decoded = decoding ? decode(capture) : null;
+                image = imgRef.get();
+                result = decoded;
             }
+
             try {
-                Thread.sleep(20);
+                Thread.sleep(10);
             } catch (InterruptedException e) {
                 break;
             }
         }
-        thread = null;
+
+        webcam.close();
     }
 
     private static List<Webcam> webcams = null;
 
-    private static List<Webcam> getWebcams() {
-        if (webcams == null) {
+    private static List<Webcam> getWebcams(boolean forceUpdate) {
+        if (webcams == null || forceUpdate) {
             webcams = Webcam.getWebcams();
         }
         return webcams;

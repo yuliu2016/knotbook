@@ -1,7 +1,5 @@
 package kb.core.camera.fx;
 
-import com.github.sarxos.webcam.Webcam;
-import com.github.sarxos.webcam.ds.buildin.WebcamDefaultDriver;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -16,7 +14,6 @@ import javafx.stage.Stage;
 class FXCameraTest {
 
     static void test() {
-        Webcam.setDriver(new WebcamDefaultDriver());
         FXCamera camera;
         try {
             camera = new FXCamera();
@@ -32,20 +29,20 @@ class FXCameraTest {
         VBox box = new VBox();
 
         ImageView view = new ImageView();
-        view.imageProperty().bind(camera.getImageProperty());
+        view.imageProperty().bind(camera.imageProperty());
         view.setPreserveRatio(true);
         view.setFitHeight(720.0);
 
         Label label = new Label();
         label.setStyle("-fx-text-fill: white; -fx-font-size: 13");
-        camera.getResultProperty().addListener((observable, oldValue, newValue) -> {
+        camera.resultProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
                 box.setBackground(null);
             } else {
                 box.setBackground(new Background(new BackgroundFill(Color.rgb(0, 169, 0), null, null)));
             }
         });
-        label.textProperty().bind(camera.getResultProperty());
+        label.textProperty().bind(camera.resultProperty());
 
         box.getChildren().addAll(view, label);
         box.setPrefHeight(760.0);
@@ -57,5 +54,8 @@ class FXCameraTest {
         stage.setResizable(false);
         camera.setStreaming(true);
         stage.show();
+        stage.showingProperty().addListener((o, ov, nv) -> {
+            if (!nv) camera.setStreaming(false);
+        });
     }
 }

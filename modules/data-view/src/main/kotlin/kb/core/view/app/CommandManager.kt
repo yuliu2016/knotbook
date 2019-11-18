@@ -23,6 +23,7 @@ class CommandManager {
         }
         setOnEnterPressed {
             isShowing = false
+            println("Invoking Command #${keys[filteredIndices[selectedItem]]}")
             values[filteredIndices[selectedItem]].callback?.run()
         }
     }

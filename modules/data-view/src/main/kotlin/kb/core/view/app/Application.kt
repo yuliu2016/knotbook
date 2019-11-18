@@ -19,11 +19,14 @@ class Application : ApplicationService {
     override fun launch(
             manager: ServiceManager,
             context: ServiceContext,
-            callback: Runnable
+            pluginSetup: Runnable
     ) {
+        if (context.config.optBoolean("Disable DPI Scaling")) {
+            System.setProperty("prism.allowhidpi", "false")
+        }
         Platform.startup {
             Singleton.launch(manager, context)
-            callback.run()
+            pluginSetup.run()
             DataView().show()
         }
     }
