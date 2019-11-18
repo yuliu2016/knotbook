@@ -10,28 +10,21 @@ import javafx.geometry.Pos
 import javafx.scene.Scene
 import javafx.scene.control.Separator
 import javafx.scene.image.Image
-import javafx.stage.FileChooser
 import javafx.stage.Stage
 import kb.core.fx.*
 import kb.core.icon.fontIcon
 import kb.core.view.app.Singleton
-import kb.service.api.array.TableArray
 import kb.service.api.array.TableUtil
 import org.controlsfx.control.spreadsheet.SpreadsheetView
 import org.kordamp.ikonli.Ikon
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
-import java.io.FileInputStream
 
 
 @Suppress("MemberVisibilityCanBePrivate", "DuplicatedCode", "unused")
 class DataView {
 
     val stage = Stage()
-
-    val themeListener = InvalidationListener {
-        updateTheme()
-    }
-
+    val themeListener = InvalidationListener { updateTheme() }
     private var isFullScreen = false
 
     fun toggleFullScreen() {
@@ -85,33 +78,11 @@ class DataView {
         })
     }
 
-    fun tableFromFile() {
-        val fc = FileChooser()
-        fc.title = "Open Table from File"
-        val f = fc.showOpenDialog(stage)
-        if (f != null && f.extension == "csv") {
-            docLabel.text = "Loading"
-            Thread {
-                try {
-                    val a = TableArray.fromCSV(FileInputStream(f), true)
-                    runOnFxThread {
-                        stage.isMaximized = true
-                        spreadsheet.grid = a.toGrid()
-                        spreadsheet.fixedRows.setAll(0)
-                        docLabel.text = f.absolutePath
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }.start()
-        }
-    }
-
     val zoomText = SimpleStringProperty("100%")
     val themeText = SimpleStringProperty("Light")
     val selectionText = SimpleStringProperty("None")
 
-    private val spreadsheet = SpreadsheetView(emptyGrid()).apply {
+    val spreadsheet = SpreadsheetView(emptyGrid()).apply {
         selectionModel.selectedCells.addListener(InvalidationListener {
             selectionText.value = getRange()
         })
@@ -142,7 +113,7 @@ class DataView {
 
     fun showImpl() {
         if (showing) {
-            return
+            throw IllegalStateException()
         }
         showing = true
         updateTheme()
@@ -163,29 +134,19 @@ class DataView {
                 Singleton.uiManager.view = null
             }
         }
-        stage.setOnCloseRequest {
-            Singleton.uiManager.themeProperty.removeListener(themeListener)
-        }
+        stage.setOnCloseRequest { Singleton.uiManager.themeProperty.removeListener(themeListener) }
         stage.show()
     }
 
     private fun getRange(): String {
         val a = spreadsheet.selectionModel.selectedCells
-        if (a.isEmpty()) {
-            return "None"
-        }
+        if (a.isEmpty()) return "None"
         val rows = a.map { it.row }
         val cols = a.map { it.column }
-
         val w = rows.min()!! + 1
         val x = rows.max()!! + 1
         val y = TableUtil.columnIndexToString(cols.min()!!)
         val z = TableUtil.columnIndexToString(cols.max()!!)
-
-        return if (a.size == 1) {
-            "$y$w"
-        } else {
-            "$y$w:$z$x"
-        }
+        return if (a.size == 1) "$y$w" else "$y$w:$z$x"
     }
 }

@@ -21,9 +21,7 @@ fun TableArray.toGrid(): GridBase {
             cell
         }.observable()
     })
-    grid.rows.first().forEachIndexed { _, c ->
-        c.style = "-fx-alignment: CENTER; -fx-background-color: rgba(240,240,240)"
-    }
+    grid.rows.first().forEach { c -> c.styleClass.add("header-cell") }
     return grid
 }
 

@@ -46,6 +46,12 @@
     -fx-stroke-width: 2;
 }
 
+.header-cell {
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER;
+    -fx-background-color: #eee;
+}
+
 VerticalHeader {
     -fx-border-width: 0;
 }

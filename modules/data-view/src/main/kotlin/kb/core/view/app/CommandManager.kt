@@ -10,7 +10,6 @@ import kb.service.api.ui.OptionItem
 class CommandManager {
 
     val bar = OptionBar().apply {
-        hint = "Search Commands"
         textProperty().addListener { _, ov, nv ->
             val q = nv.trim()
             if (q != ov?.trim()) {
@@ -44,6 +43,7 @@ class CommandManager {
 
     fun setAll() {
         bar.items.setAll(values.map { toItem(it, null) })
+        bar.hint = "Search ${values.size} Commands"
         filteredIndices = keys.indices.toList()
     }
 
