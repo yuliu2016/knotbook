@@ -223,7 +223,7 @@ class ScannerScreen {
     }
 
     val cameraChooser = ChoiceBox<String>()
-    val toggle = CheckBox("Run WebCam Stream")
+    val streaming = CheckBox("Run WebCam Stream")
     val flip = CheckBox("Flip Image Horizontally")
     val fit = CheckBox("Fit Image to Window")
     val sortByMatch = CheckBox("Sort By Match")
@@ -280,7 +280,7 @@ class ScannerScreen {
         })
         add(hbox {
             spacing = 8.0
-            add(toggle)
+            add(streaming)
             add(fit)
         })
         add(hbox {
@@ -373,7 +373,7 @@ class ScannerScreen {
         stage.scene = scene
         scene.onKeyPressed = EventHandler {
             if (it.code == KeyCode.K) {
-                camera.isStreaming = !camera.isStreaming
+                streaming.isSelected = !streaming.isSelected
             }
         }
 
@@ -402,18 +402,14 @@ class ScannerScreen {
         camera.webcamIDProperty.bind(cameraChooser.selectionModel.selectedIndexProperty())
 
         iv.imageProperty().bind(camera.imageProperty())
-        camera.streamingProperty().bindBidirectional(toggle.selectedProperty())
+        camera.streamingProperty().bind(streaming.selectedProperty())
         camera.flippedProperty.bind(flip.selectedProperty())
 
         camera.isDecoding = true
 
         stage.focusedProperty().addListener { _, _, nv ->
             if (!nv) {
-                camera.isStreaming = false
-            }
-        }
-        camera.streamingProperty().addListener { _, _, nv ->
-            if (!nv) {
+                streaming.isSelected = false
                 Runtime.getRuntime().gc()
             }
         }

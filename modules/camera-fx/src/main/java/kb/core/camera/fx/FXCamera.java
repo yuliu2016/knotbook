@@ -123,6 +123,7 @@ public class FXCamera {
         return names;
     }
 
+    private Webcam webcam = null;
     private Image image = null;
     private String result = null;
     private Thread thread = null;
@@ -158,8 +159,9 @@ public class FXCamera {
             List<Webcam> webcams = getWebcams(false);
             int id = getWebcamID();
             if (id < 0 || id > webcams.size()) return;
-            Webcam webcam = webcams.get(id);
-            if (webcam != null && !webcam.isOpen()) {
+            webcam = webcams.get(id);
+            if (webcam != null) {
+                if (webcam.isOpen()) webcam.close();
                 thread = new Thread(() -> readCameraStream(webcam));
                 thread.setDaemon(true);
                 thread.start();
@@ -168,6 +170,8 @@ public class FXCamera {
         } else {
             if (thread != null) {
                 thread.interrupt();
+                webcam.close();
+                thread = null;
             }
             timer.stop();
         }
@@ -212,7 +216,6 @@ public class FXCamera {
         }
 
         webcam.close();
-        thread = null;
     }
 
     private static List<Webcam> webcams = null;
