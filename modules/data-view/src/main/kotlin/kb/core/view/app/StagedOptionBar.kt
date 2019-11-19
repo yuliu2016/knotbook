@@ -26,6 +26,7 @@ class StagedOptionBar {
         vgrow()
         isFocusTraversable = false
         maxHeight = 320.0
+        styleClass("option-bar")
         setCellFactory { OptionItemCell() }
     }
 

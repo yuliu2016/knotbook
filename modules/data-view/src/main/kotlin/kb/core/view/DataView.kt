@@ -93,6 +93,7 @@ class DataView {
             zoomText.value = "${(nv.toDouble() * 100).toInt()}%"
         }
         contextMenu = null
+        isEditable = false
         Platform.runLater {
             columns.forEach {
                 it.minWidth = 42.0

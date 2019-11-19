@@ -22,8 +22,8 @@ class CommandManager {
         }
         setOnEnterPressed {
             isShowing = false
-            println("Invoking Command #${keys[filteredIndices[selectedItem]]}")
-            values[filteredIndices[selectedItem]].callback?.run()
+            val i = filteredIndices[selectedItem]
+            invokeCommand(keys[i], values[i].callback)
         }
     }
 
@@ -81,12 +81,20 @@ class CommandManager {
     }
 
     fun invokeCommand(id: String) {
-        val callback = values.getOrNull(keys.indexOf(id))?.callback
+        val command = values.getOrNull(keys.indexOf(id))
+        if (command == null) {
+            println("Command #$id Not Found ")
+        } else {
+            invokeCommand(id, command.callback)
+        }
+    }
+
+    private fun invokeCommand(key: String, callback: Runnable?) {
         if (callback == null) {
-            println("Command #$id Not Found or Cannot be Invoked")
+            println("Command #$key Cannot be Invoked")
         } else {
             callback.run()
-            println("Invoking Command #$id")
+            println("Invoking Command #$key")
         }
     }
 }

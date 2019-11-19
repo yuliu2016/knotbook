@@ -25,7 +25,6 @@ class OptionItemCell : ListCell<OptionItem>() {
         if (item.highlight == null || item.highlight.isEmpty()) {
             t.add(Label(item.name))
         } else {
-//            println("${item.name} ${item.highlight.toList()}")
             val ix = item.highlight
             var highlighted = ix[0]
             var i = 0 // start index
@@ -45,11 +44,9 @@ class OptionItemCell : ListCell<OptionItem>() {
                 }
             }
             if (highlighted) {
-                t.add(Label(item.name.substring(i)).apply {
-                    styleClass("list-highlight")
-                })
+                t.add(label(item.name.substring(i)).styleClass("list-highlight"))
             } else {
-                t.add(Label(item.name.substring(i)))
+                t.add(label(item.name.substring(i)))
             }
         }
         graphic = hbox {
@@ -59,9 +56,7 @@ class OptionItemCell : ListCell<OptionItem>() {
             add(item.graphic.centered(24))
             add(t)
             if (item.info != null) {
-                add(label(item.info).apply {
-                    styleClass("list-info")
-                })
+                add(label(item.info).styleClass("list-info"))
             }
         }
         alignment = Pos.CENTER_LEFT

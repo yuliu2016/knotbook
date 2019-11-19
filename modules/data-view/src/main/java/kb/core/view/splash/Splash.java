@@ -89,9 +89,7 @@ public class Splash {
                 Singleton.INSTANCE
                         .getContext()
                         .getUIManager()
-                        .createNotification()
-                        .setMessage(msg)
-                        .show();
+                        .showAlert("JVM", msg);
             });
         });
         thread.start();

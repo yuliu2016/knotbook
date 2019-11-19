@@ -15,10 +15,7 @@ public interface UIManager {
 
     void invokeCommand(String id);
 
-    /**
-     * Create a notification handler
-     */
-    Notification createNotification();
+    void showAlert(String title, String message);
 
     default void registerCommand(
             String id,
