@@ -1,6 +1,7 @@
 package kb.service.api.array;
 
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -49,6 +50,7 @@ public class TableArray {
     private static final byte MODE_INT = 1;
     private static final byte MODE_FLOAT = 2;
     private static final byte MODE_STR = 3;
+    private static final DecimalFormat floatFormat = new DecimalFormat("####0.000");
 
     public static TableArray emptyTableArray() {
         return new TableArray();
@@ -194,7 +196,7 @@ public class TableArray {
         if (m == MODE_NULL) {
             return null;
         } else if (m == MODE_FLOAT) {
-            return Float.toString(num.value[i]);
+            return floatFormat.format(num.value[i]);
         } else if (m == MODE_INT) {
             return Integer.toString((int) num.value[i]);
         } else {
@@ -221,7 +223,7 @@ public class TableArray {
     }
 
     public void delimitToStream(OutputStream stream,
-                                String delimiter,
+                                char delimiter,
                                 boolean prettyPrint) {
         boolean isNum = false;
         int startRow;
@@ -251,7 +253,7 @@ public class TableArray {
                             }
                             if (m == MODE_FLOAT) {
                                 w.write(prettyPrint ? TableUtil
-                                        .formatFloat(f, padding) : Float.toString(f));
+                                        .formatRight(floatFormat.format(f), padding) : floatFormat.format(f));
                             } else {
                                 w.write(prettyPrint ? TableUtil
                                         .formatInt(f, padding) : Integer.toString((int) f));
@@ -445,7 +447,7 @@ public class TableArray {
     @Override
     public String toString() {
         ByteArrayOutputStream o = new ByteArrayOutputStream();
-        delimitToStream(o, "\t", true);
+        delimitToStream(o, '\t', true);
         return o.toString();
     }
 

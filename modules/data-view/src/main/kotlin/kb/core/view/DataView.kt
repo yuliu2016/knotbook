@@ -3,20 +3,20 @@ package kb.core.view
 import javafx.beans.InvalidationListener
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
+import javafx.collections.ObservableList
 import javafx.geometry.Insets
-import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import javafx.scene.Scene
-import javafx.scene.control.Separator
 import javafx.scene.image.Image
+import javafx.scene.input.Clipboard
+import javafx.scene.input.ClipboardContent
 import javafx.stage.Stage
 import kb.core.fx.*
-import kb.core.icon.fontIcon
 import kb.core.view.app.Singleton
+import kb.service.api.array.TableArray
 import kb.service.api.array.TableUtil
+import org.controlsfx.control.spreadsheet.SpreadsheetCell
 import org.controlsfx.control.spreadsheet.SpreadsheetView
-import org.kordamp.ikonli.Ikon
-import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 
 
 @Suppress("MemberVisibilityCanBePrivate", "DuplicatedCode", "unused")
@@ -41,14 +41,17 @@ class DataView {
         layout.stylesheets.setAll("/knotbook.css", theme.viewStyle)
     }
 
-    val docLabel = label { graphic = fontIcon(MDI_FOLDER_MULTIPLE_OUTLINE, 14) }
+    val calculations = label {
+        text = "Average: 1.5    Count: 2    Unique: 4    Sum: 3    Min: 4    Max: 8"
+    }
+
     private val statusBar = hbox {
         align(Pos.CENTER_LEFT)
-        padding = Insets(0.0, 8.0, 0.0, 8.0)
-        prefHeight = 24.0
+        padding = Insets(0.0, 12.0, 0.0, 12.0)
+        prefHeight = 22.0
         styleClass("status-bar")
-        spacing = 8.0
-        add(docLabel)
+        spacing = 12.0
+        add(calculations)
         hspace()
     }
 
@@ -57,7 +60,6 @@ class DataView {
         columns.forEach { it.setPrefWidth(75.0) }
         zoomFactorProperty().addListener(InvalidationListener { zoomText.value = "${(zoomFactor * 100).toInt()}%" })
         contextMenu = null
-        isEditable = false
     }
 
     val layout = borderPane {
@@ -71,11 +73,9 @@ class DataView {
     val appIcon = Image(DataView::class.java.getResourceAsStream("/icon.png"))
     var showing = false
 
-    fun addStatus(prop: StringProperty, icon: Ikon) {
-        statusBar.add(Separator(Orientation.VERTICAL))
+    fun addStatus(prop: StringProperty) {
         statusBar.add(label {
             textProperty().bind(prop)
-            this.graphic = fontIcon(icon, 14)
         })
     }
 
@@ -89,10 +89,10 @@ class DataView {
 
         updateTheme()
         themeText.bind(Singleton.uiManager.themeProperty.asString())
-        addStatus(selectionText, MDI_MOUSE)
-        addStatus(zoomText, MDI_MAGNIFY_PLUS)
-        addStatus(themeText, MDI_COMPARE)
-        addStatus(Singleton.uiManager.memoryUsed, MDI_MEMORY)
+        addStatus(selectionText)
+        addStatus(zoomText)
+        addStatus(themeText)
+        addStatus(Singleton.uiManager.memoryUsed)
 
         Singleton.uiManager.themeProperty.addListener(themeListener)
         Singleton.uiManager.commandManager.forEachShortcut { shortcut, key ->
@@ -109,6 +109,40 @@ class DataView {
         stage.setOnCloseRequest { Singleton.uiManager.themeProperty.removeListener(themeListener) }
         stage.show()
     }
+
+    var array: TableArray? = null
+
+    private val sortColumns = ArrayList<SortColumn>()
+    private val colourScales = ArrayList<ColorScale>()
+    private var referenceOrder: List<ObservableList<SpreadsheetCell>>? = null
+
+    private inline fun copyWithMinMax(block: (minRow: Int, maxRow: Int, minCol: Int, maxCol: Int) -> String) {
+        val se = spreadsheet.getSelection()
+        val content = ClipboardContent()
+        content.putString(block(se.minRow, se.maxRow, se.minCol, se.maxCol))
+        Clipboard.getSystemClipboard().setContent(content)
+    }
+
+    private fun copyDelimited(delimiter: Char) {
+        copyWithMinMax { minRow, maxRow, minCol, maxCol ->
+            val builder = StringBuilder()
+            val grid = spreadsheet.grid
+            for (i in minRow..maxRow) {
+                for (j in minCol until maxCol) {
+                    val it = grid.rows[i][j].item
+                    if (it != null) builder.append(it)
+                    builder.append(delimiter)
+                }
+                val it = grid.rows[i][maxCol].item
+                if (it != null) builder.append(it)
+                builder.append("\n")
+            }
+            builder.toString()
+        }
+    }
+
+    fun copyTabDelimited() = copyDelimited('\t')
+    fun copyCommaDelimited() = copyDelimited(',')
 
     private fun getRangeText(): String {
         val a = spreadsheet.selectionModel.selectedCells

@@ -93,8 +93,8 @@ class CommandManager {
         if (callback == null) {
             println("Command #$key Cannot be Invoked")
         } else {
-            callback.run()
             println("Invoking Command #$key")
+            callback.run()
         }
     }
 }
