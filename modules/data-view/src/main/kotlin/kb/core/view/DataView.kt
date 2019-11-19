@@ -1,6 +1,5 @@
 package kb.core.view
 
-import javafx.application.Platform
 import javafx.beans.InvalidationListener
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
@@ -33,11 +32,8 @@ class DataView {
     }
 
     fun toggleStatusBar() {
-        if (layout.bottom == null) {
-            layout.bottom = statusBar
-        } else {
-            layout.bottom = null
-        }
+        if (layout.bottom == null) layout.bottom = statusBar
+        else layout.bottom = null
     }
 
     fun updateTheme() {
@@ -45,24 +41,29 @@ class DataView {
         layout.stylesheets.setAll("/knotbook.css", theme.viewStyle)
     }
 
-    val docLabel = label {
-        text = ""
-        graphic = fontIcon(MDI_FOLDER_MULTIPLE_OUTLINE, 14)
-    }
-
+    val docLabel = label { graphic = fontIcon(MDI_FOLDER_MULTIPLE_OUTLINE, 14) }
     private val statusBar = hbox {
         align(Pos.CENTER_LEFT)
         padding = Insets(0.0, 8.0, 0.0, 8.0)
-        prefHeight = 22.0
+        prefHeight = 24.0
         styleClass("status-bar")
         spacing = 8.0
         add(docLabel)
         hspace()
     }
 
+    val spreadsheet = SpreadsheetView(emptyGrid()).apply {
+        selectionModel.selectedCells.addListener(InvalidationListener { selectionText.value = getRangeText() })
+        columns.forEach { it.setPrefWidth(75.0) }
+        zoomFactorProperty().addListener(InvalidationListener { zoomText.value = "${(zoomFactor * 100).toInt()}%" })
+        contextMenu = null
+        isEditable = false
+    }
+
     val layout = borderPane {
         prefWidth = 720.0
         prefHeight = 480.0
+        center = spreadsheet
         bottom = statusBar
     }
 
@@ -82,64 +83,34 @@ class DataView {
     val themeText = SimpleStringProperty("Light")
     val selectionText = SimpleStringProperty("None")
 
-    val spreadsheet = SpreadsheetView(emptyGrid()).apply {
-        selectionModel.selectedCells.addListener(InvalidationListener {
-            selectionText.value = getRange()
-        })
-        columns.forEach {
-            it.setPrefWidth(75.0)
-        }
-        zoomFactorProperty().addListener { _, _, nv ->
-            zoomText.value = "${(nv.toDouble() * 100).toInt()}%"
-        }
-        contextMenu = null
-        isEditable = false
-        Platform.runLater {
-            columns.forEach {
-                it.minWidth = 42.0
-            }
-        }
-    }
-
     fun show() {
-        layout.center = spreadsheet
+        if (showing) throw IllegalStateException("DataView is already shown")
+        showing = true
+
+        updateTheme()
         themeText.bind(Singleton.uiManager.themeProperty.asString())
         addStatus(selectionText, MDI_MOUSE)
         addStatus(zoomText, MDI_MAGNIFY_PLUS)
         addStatus(themeText, MDI_COMPARE)
         addStatus(Singleton.uiManager.memoryUsed, MDI_MEMORY)
-        showImpl()
-    }
 
-
-    fun showImpl() {
-        if (showing) {
-            throw IllegalStateException()
-        }
-        showing = true
-        updateTheme()
         Singleton.uiManager.themeProperty.addListener(themeListener)
         Singleton.uiManager.commandManager.forEachShortcut { shortcut, key ->
-            scene.accelerators[shortcut] = Runnable {
-                Singleton.uiManager.commandManager.invokeCommand(key)
-            }
+            scene.accelerators[shortcut] = Runnable { Singleton.uiManager.commandManager.invokeCommand(key) }
         }
         stage.fullScreenExitHint = "Press F11 to Exit Full Screen"
         stage.title = "KnotBook"
         stage.icons.add(appIcon)
         stage.scene = scene
         stage.focusedProperty().addListener { _, _, focused ->
-            if (focused) {
-                Singleton.uiManager.view = this
-            } else if (Singleton.uiManager.view === this) {
-                Singleton.uiManager.view = null
-            }
+            if (focused) Singleton.uiManager.view = this
+            else if (Singleton.uiManager.view === this) Singleton.uiManager.view = null
         }
         stage.setOnCloseRequest { Singleton.uiManager.themeProperty.removeListener(themeListener) }
         stage.show()
     }
 
-    private fun getRange(): String {
+    private fun getRangeText(): String {
         val a = spreadsheet.selectionModel.selectedCells
         if (a.isEmpty()) return "None"
         val rows = a.map { it.row }
