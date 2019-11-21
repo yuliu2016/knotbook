@@ -9,9 +9,10 @@ import javafx.scene.layout.Region
 import javafx.scene.layout.VBox
 
 @FXKtDSL
-fun Node.styleClass(sc: String) {
+fun <T : Node> T.styleClass(sc: String): T {
     styleClass.add(sc)
     properties["FXKtStyleClass"] = sc
+    return this
 }
 
 @FXKtDSL

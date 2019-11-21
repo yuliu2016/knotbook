@@ -3,14 +3,16 @@ package kb.core.view.app
 import javafx.beans.InvalidationListener
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
+import javafx.scene.control.ButtonType
+import javafx.scene.control.Dialog
+import kb.core.fx.label
 import kb.core.view.DataView
 import kb.service.api.ui.Command
-import kb.service.api.ui.Notification
 import kb.service.api.ui.OptionBar
 import kb.service.api.ui.UIManager
 
 @Suppress("MemberVisibilityCanBePrivate")
-class ViewManager : UIManager {
+class DataUIManager : UIManager {
 
     enum class Theme(val viewStyle: String, val optionStyle: String) {
         Light("/light.css", "/light-option.css"),
@@ -70,7 +72,12 @@ class ViewManager : UIManager {
         commandManager.invokeCommand(id)
     }
 
-    override fun createNotification(): Notification {
-        return EventNotification()
+    override fun showAlert(title: String, message: String) {
+        val dialog = Dialog<ButtonType>()
+        val pane = dialog.dialogPane
+        pane.buttonTypes.addAll(ButtonType.OK)
+        dialog.dialogPane.content = label(message)
+        dialog.title = title
+        dialog.showAndWait()
     }
 }

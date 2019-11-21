@@ -26,6 +26,7 @@ class StagedOptionBar {
         vgrow()
         isFocusTraversable = false
         maxHeight = 320.0
+        styleClass("option-bar")
         setCellFactory { OptionItemCell() }
     }
 
@@ -150,7 +151,7 @@ class StagedOptionBar {
         bindAll(ob)
         ob.isShowing = true
         popup.x = stage.x + stage.width / 2.0 - container.prefWidth / 2.0 - 10.0
-        popup.y = stage.y + stage.scene.y - 5.0
+        popup.y = stage.y + stage.scene.y
         popup.show(stage)
     }
 

@@ -6,11 +6,12 @@ import kb.core.icon.fontIcon
 import kb.service.api.ui.Command
 import kb.service.api.ui.OptionBar
 import kb.service.api.ui.OptionItem
+import java.io.ByteArrayOutputStream
+import java.io.PrintWriter
 
 class CommandManager {
 
     val bar = OptionBar().apply {
-        hint = "Search Commands"
         textProperty().addListener { _, ov, nv ->
             val q = nv.trim()
             if (q != ov?.trim()) {
@@ -23,8 +24,8 @@ class CommandManager {
         }
         setOnEnterPressed {
             isShowing = false
-            println("Invoking Command #${keys[filteredIndices[selectedItem]]}")
-            values[filteredIndices[selectedItem]].callback?.run()
+            val i = filteredIndices[selectedItem]
+            invokeCommand(keys[i], values[i].callback)
         }
     }
 
@@ -44,6 +45,7 @@ class CommandManager {
 
     fun setAll() {
         bar.items.setAll(values.map { toItem(it, null) })
+        bar.hint = "Search ${values.size} Commands"
         filteredIndices = keys.indices.toList()
     }
 
@@ -81,12 +83,27 @@ class CommandManager {
     }
 
     fun invokeCommand(id: String) {
-        val callback = values.getOrNull(keys.indexOf(id))?.callback
-        if (callback == null) {
-            println("Command #$id Not Found or Cannot be Invoked")
+        val command = values.getOrNull(keys.indexOf(id))
+        if (command == null) {
+            println("Command #$id Not Found ")
         } else {
-            callback.run()
-            println("Invoking Command #$id")
+            invokeCommand(id, command.callback)
+        }
+    }
+
+    private fun invokeCommand(key: String, callback: Runnable?) {
+        if (callback == null) {
+            println("Command #$key Cannot be Invoked")
+        } else {
+            println("Invoking Command #$key")
+            try {
+                callback.run()
+            } catch (e: Exception) {
+                val ba = ByteArrayOutputStream()
+                e.printStackTrace(PrintWriter(ba))
+                Singleton.uiManager.showAlert("Error", ba.toString())
+                throw e
+            }
         }
     }
 }

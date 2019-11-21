@@ -62,14 +62,16 @@ public class TableUtil {
         return s + " ".repeat(Math.max(0, p - s.length()));
     }
 
-    public static String formatFloat(float f, int p) {
-        String n = Float.toString(f);
+    public static String formatRight(String n, int p) {
         return " ".repeat(Math.max(0, p - n.length())) + n;
     }
 
     public static String formatInt(float f, int p) {
-        String n = Integer.toString((int) f);
-        return " ".repeat(Math.max(0, p - n.length())) + n;
+        return formatRight(Integer.toString((int) f), p);
+    }
+
+    public static String formatFloat(float f, int p) {
+        return formatRight(Float.toString(f), p);
     }
 
     public static int widthForSplitHeader(String s) {

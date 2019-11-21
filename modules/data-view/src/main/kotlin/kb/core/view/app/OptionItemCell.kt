@@ -22,34 +22,33 @@ class OptionItemCell : ListCell<OptionItem>() {
             hgrow()
         }
 
+        val name = if (item.name.length > 50) item.name.substring(0, 47) + "..." else item.name
+
         if (item.highlight == null || item.highlight.isEmpty()) {
-            t.add(Label(item.name))
+            t.add(Label(name))
         } else {
-//            println("${item.name} ${item.highlight.toList()}")
             val ix = item.highlight
             var highlighted = ix[0]
             var i = 0 // start index
-            for (j in item.name.indices) {
+            for (j in name.indices) {
                 if (ix[j]) {
                     if (!highlighted) {
                         highlighted = true
-                        t.add(Label(item.name.substring(i, j)))
+                        t.add(Label(name.substring(i, j)))
                         i = j
                     }
                 } else if (highlighted) {
                     highlighted = false
-                    t.add(Label(item.name.substring(i, j)).apply {
+                    t.add(Label(name.substring(i, j)).apply {
                         styleClass("list-highlight")
                     })
                     i = j
                 }
             }
             if (highlighted) {
-                t.add(Label(item.name.substring(i)).apply {
-                    styleClass("list-highlight")
-                })
+                t.add(label(name.substring(i)).styleClass("list-highlight"))
             } else {
-                t.add(Label(item.name.substring(i)))
+                t.add(label(name.substring(i)))
             }
         }
         graphic = hbox {
@@ -59,9 +58,7 @@ class OptionItemCell : ListCell<OptionItem>() {
             add(item.graphic.centered(24))
             add(t)
             if (item.info != null) {
-                add(label(item.info).apply {
-                    styleClass("list-info")
-                })
+                add(label(item.info).styleClass("list-info"))
             }
         }
         alignment = Pos.CENTER_LEFT

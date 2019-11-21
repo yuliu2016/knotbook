@@ -5,14 +5,19 @@ import javafx.beans.InvalidationListener
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.input.KeyCode
+import javafx.stage.FileChooser
 import javafx.stage.Window
 import kb.core.fx.combo
+import kb.core.fx.runOnFxThread
 import kb.core.view.DataView
 import kb.core.view.server.Server
 import kb.core.view.splash.Splash
+import kb.core.view.toGrid
 import kb.service.api.ServiceContext
 import kb.service.api.application.ServiceManager
+import kb.service.api.array.TableArray
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
+import java.io.FileInputStream
 import java.io.IOException
 import kotlin.concurrent.thread
 import kotlin.system.exitProcess
@@ -32,7 +37,7 @@ internal object Singleton {
     val context get() = nullableContext!!
 
     val dataServer = Server()
-    val uiManager = ViewManager()
+    val uiManager = DataUIManager()
 
     fun editAppProperties() {
         context.createTextEditor()
@@ -128,6 +133,7 @@ internal object Singleton {
             exitProcess(0)
         }
         launchCommands()
+        launchCommands2()
     }
 
     private fun closeWindow() {
@@ -149,6 +155,26 @@ internal object Singleton {
         }
     }
 
+    fun tableFromFile(view: DataView) {
+        val fc = FileChooser()
+        fc.title = "Open Table from File"
+        val f = fc.showOpenDialog(view.stage)
+        if (f != null && f.extension == "csv") {
+            Thread {
+                try {
+                    val a = TableArray.fromCSV(FileInputStream(f), true)
+                    runOnFxThread {
+                        view.spreadsheet.grid = a.toGrid()
+                        view.spreadsheet.fixedRows.setAll(0)
+                        view.stage.title = f.name
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }.start()
+        }
+    }
+
     private fun launchCommands() {
         val m = context.uiManager
         m.registerCommand("app.about", "About KnotBook", MDI_INFORMATION_OUTLINE.description,
@@ -156,7 +182,7 @@ internal object Singleton {
         m.registerCommand("nav.recent", "Open Recent", MDI_HISTORY.description,
                 combo(KeyCode.R, control = true)) { }
         m.registerCommand("nav.file", "Open File", MDI_FOLDER_OUTLINE.description,
-                combo(KeyCode.O, control = true)) { }
+                combo(KeyCode.O, control = true)) { uiManager.view?.let { tableFromFile(it) } }
         m.registerCommand("window.close", "Close Window", MDI_CLOSE.description,
                 combo(KeyCode.W, control = true)) { closeWindow() }
         m.registerCommand("jvm.properties", "JVM Properties",
@@ -195,7 +221,7 @@ internal object Singleton {
         m.registerCommand("edit.cut", "Cut", MDI_CONTENT_CUT.description,
                 combo(KeyCode.X, control = true)) {}
         m.registerCommand("edit.copy", "Copy", MDI_CONTENT_COPY.description,
-                combo(KeyCode.C, control = true)) {}
+                combo(KeyCode.C, control = true)) { uiManager.view?.copyTabDelimited() }
         m.registerCommand("edit.copy.special", "Copy Special", null,
                 combo(KeyCode.C, control = true, shift = true)) {}
         m.registerCommand("edit.paste", "Paste", MDI_CONTENT_PASTE.description,

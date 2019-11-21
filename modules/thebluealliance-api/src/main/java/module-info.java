@@ -1,6 +1,6 @@
 module kb.plugin.thebluealliance.api {
     requires kotlin.stdlib;
-    requires klaxon;
+    requires org.json;
 
     exports kb.plugin.thebluealliance.api;
 }

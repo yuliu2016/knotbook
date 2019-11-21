@@ -113,7 +113,7 @@
     /*-fx-background-insets: 0, 0 0 1 0;*/
 }
 
-.spreadsheet-cell {/*todo*/
+.spreadsheet-cell {
     -fx-padding: 0 0.2em 0 0.2em;
     -fx-border-color: white;
     -fx-border-width: 0.3;
@@ -121,6 +121,13 @@
     -fx-font-weight: normal;
     /*-fx-background-color: -fx-table-cell-border-color, white;*/
     -fx-background-color: black;
+}
+
+.header-cell {
+    -fx-alignment: CENTER;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffd344;
+    -fx-background-color: #444;
 }
 
 VerticalHeader > Label ,

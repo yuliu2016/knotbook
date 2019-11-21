@@ -34,9 +34,15 @@ class Config implements ApplicationProps {
         if (wrapper != null) {
             return wrapper;
         }
-        JSONObject newObject = new JSONObject();
-        object.put(key, newObject);
-        JSONObjectWrapper newWrapper = new JSONObjectWrapper(newObject);
+        JSONObject savedConfig = object.optJSONObject(key);
+        JSONObjectWrapper newWrapper;
+        if (savedConfig != null) {
+            newWrapper = new JSONObjectWrapper(savedConfig);
+        } else {
+            JSONObject newObject = new JSONObject();
+            object.put(key, newObject);
+            newWrapper = new JSONObjectWrapper(newObject);
+        }
         wrappers.put(key, newWrapper);
         return newWrapper;
     }
