@@ -1,6 +1,4 @@
 import json
-import pprint
-import io
 
 swagger_file = open("api_v3.json")
 json_data = swagger_file.read()
@@ -14,12 +12,11 @@ definitions = data["components"]["schemas"]
 
 header = """@file:Suppress("unused", "SpellCheckingInspection", "KDocUnresolvedReference", "UNUSED_VARIABLE", "DuplicatedCode")
 
-package kb.tba.client
+package kb.plugin.thebluealliance.api
 
 import com.beust.klaxon.JsonObject"""
 
 function_template = """
-
 /**
  * {des}
  */
@@ -54,11 +51,9 @@ alliance_template = """Alliances(
 )"""
 
 
-def convert_to_kotlin_case(path_name):
-    sp = path_name.split("_")
-    sl = list(map(lambda x: x[0].capitalize() + x[1:], sp))
-    kk = "".join(sl)
-    return kk
+def convert_to_kotlin_case(underscore_case):
+    split = underscore_case.split("_")
+    return "".join(word[0].capitalize() + word[1:] for word in split)
 
 
 def function_code_for_definition(referenced_definition, name, indent):
@@ -86,7 +81,7 @@ def function_code_for_definition(referenced_definition, name, indent):
         else:
             fixed_param_name = property_name
 
-        kotlin_param_data = fixed_param_name + " = "
+        kotlin_param_data = ""#fixed_param_name + " = "
 
         if "$ref" in property_def:
             referenced_definition = property_def["$ref"].split("/")[-1]
@@ -168,7 +163,7 @@ def function_code_for_definition(referenced_definition, name, indent):
 
         parameter_list.append(kotlin_param_data)
 
-    return_string += ",\n".join(map(lambda x: " " * indent4 + x, parameter_list))
+    return_string += ",\n".join(" " * indent4 + x for x in parameter_list)
 
     return_string += "\n" + " " * indent + ")"
 

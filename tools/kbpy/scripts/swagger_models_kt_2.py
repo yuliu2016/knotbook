@@ -1,6 +1,4 @@
 import json
-import pprint
-import io
 
 swagger_file = open("api_v3.json")
 json_data = swagger_file.read()
@@ -10,76 +8,48 @@ data = json.loads(json_data)
 
 api_version = data["info"]["version"]
 
-definitions = data["components"]["schemas"]
+model_schemas = data["components"]["schemas"]
 
 header = """@file:Suppress("unused", "SpellCheckingInspection", "KDocUnresolvedReference")
 
-package kb.tba.client
+package kb.plugin.thebluealliance.api
 
-import com.beust.klaxon.JsonObject
+import org.json.JSONObject
 
 /**
- * Represents Alliance Data
+ * Alliance Data
  */
-data class Alliances<T>(
-
-    /**
-     * The Blue Alliance
-     */
-    val blue: T,
-
-    /**
-     * The Red Alliance
-     */
-    val red: T
-)"""
+class Alliances<T>(val blue: T, val red: T)"""
 
 template = """
-
-/**
- * {clz}
- * ------------------------------
- * {des}
- */
-
-data class {clz}(
-    /**
-     * Raw Data Map
-     */
-    val raw: JsonObject{dat}
-){{
-    override fun toString(): String {{
-        return raw.toJsonString(true)
-    }}
-}}"""
+{class_description}class {clz}(
+    val data: JSONObject{fields}
+)"""
 
 class_field_template = """,
 
-    /**
-     * {des}
-     */
-    val {name}: {typing}?"""
+    {field_description}val {property_name}: {kotlin_type}?"""
 
 
-def definition_to_kotlin_class(k, v):
-    if "properties" in v:
-        properties = v["properties"]
+def schema_to_class(key, definition):
+    if "properties" in definition:
+        properties = definition["properties"]
     else:
         properties = {}
 
-    if "description" in v:
-        description = v["description"]
+    if "description" in definition:
+        description = "/** " + definition["description"] + " */\n"
     else:
-        description = "No description available"
+        description = ""
 
-    dat = ""
+    class_fields = ""
 
     for propperty_name, property_def in properties.items():
 
         if "description" in property_def:
-            sdes = property_def["description"]
+            field_description = "/** " + property_def["description"] + " */\n    "
         else:
-            sdes = "No description available"
+            field_description = ""
 
         if "$ref" in property_def:
             reference_class = property_def["$ref"].split("/")[-1]
@@ -92,7 +62,7 @@ def definition_to_kotlin_class(k, v):
         else:
             data_type = property_def["type"]
             if data_type == "object":
-                kotlin_type = "Map<String, Any?>"
+                kotlin_type = "JSONObject"
             elif data_type == "number":
                 kotlin_type = "Double"
             elif data_type == "string":
@@ -110,7 +80,7 @@ def definition_to_kotlin_class(k, v):
                 else:
                     array_type = array_items["type"]
                     if array_type == "object":
-                        kotlin_type = "List<Map<String, Any?>>"
+                        kotlin_type = "List<JSONObject>"
                     elif array_type == "number":
                         kotlin_type = "List<Double>"
                     elif array_type == "string":
@@ -125,28 +95,23 @@ def definition_to_kotlin_class(k, v):
             else:
                 raise TypeError()
 
-        # reserved words
+        # "in" is reserved in Kotlin
         if propperty_name == "in":
             propperty_name = "_in"
 
-        dat += class_field_template.format(des=sdes, name=propperty_name, typing=kotlin_type)
-    s = template.format(des=description, clz=k, dat=dat)
-    return s
+        class_fields += class_field_template.format(
+            field_description=field_description, property_name=propperty_name, kotlin_type=kotlin_type)
+    return template.format(class_description=description, clz=key, fields=class_fields)
 
-def convert_to_kotlin_case(k):
-    sp = k.split("_")
-    sl = list(map(lambda x: x[0].capitalize() + x[1:], sp))
-    kk = "".join(sl)
-    return kk
+
+def convert_to_kotlin_case(underscore_case):
+    split = underscore_case.split("_")
+    return "".join(word[0].capitalize() + word[1:] for word in split)
 
 
 with open("Models.kt", mode="w") as f:
-    print("// API Version", api_version, "\n", file=f) 
+    print("// The Blue Alliance API Version", api_version, "\n", file=f)
     print(header, file=f)
-    for def_key, def_content in definitions.items():
-        kotlin_name = convert_to_kotlin_case(def_key)
-        print(definition_to_kotlin_class(kotlin_name, def_content), file=f)
-    
-        
-
-    
+    for schema_key, schema_definition in model_schemas.items():
+        kotlin_name = convert_to_kotlin_case(schema_key)
+        print(schema_to_class(kotlin_name, schema_definition), file=f)

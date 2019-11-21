@@ -1219,4 +1219,4 @@ print(fib(10))
 """
 
 if __name__ == '__main__':
-    print(format_printing(_tokenize_t(_test_funcdef)))
+    print(format_printing(_tokenize_t(_test_recursive_fibonacci)))
