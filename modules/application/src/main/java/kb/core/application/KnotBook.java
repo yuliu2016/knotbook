@@ -136,7 +136,7 @@ class KnotBook {
 
         @Override
         public String getVersion() {
-            return "3.3.14";
+            return "3.3.19";
         }
 
         @Override
@@ -208,7 +208,6 @@ class KnotBook {
     }
 
     private void launch(ApplicationService app) {
-        System.out.println(args);
         applications.print();
         extensions.print();
         textEditors.print();
