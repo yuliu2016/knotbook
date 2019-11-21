@@ -42,38 +42,24 @@ public class OptionBar {
         hintProperty().set(hint);
     }
 
-    private ObjectProperty<Node> arbitraryView = new SimpleObjectProperty<>(null);
+    private ObjectProperty<Node> placeholder = new SimpleObjectProperty<>(null);
 
-    public ObjectProperty<Node> arbitraryViewProperty() {
-        return arbitraryView;
+    public ObjectProperty<Node> placeholderProperty() {
+        return placeholder;
     }
 
-    public Node getArbitraryView() {
-        return arbitraryViewProperty().get();
+    public Node getPlaceholder() {
+        return placeholderProperty().get();
     }
 
-    public void setArbitraryView(Node arbitraryView) {
-        arbitraryViewProperty().set(arbitraryView);
+    public void setPlaceholder(Node placeholder) {
+        placeholderProperty().set(placeholder);
     }
 
     private ObservableList<OptionItem> items = FXCollections.observableArrayList();
 
     public ObservableList<OptionItem> getItems() {
         return items;
-    }
-
-    private ObjectProperty<EventHandler<ActionEvent>> onDismissed = new SimpleObjectProperty<>();
-
-    public ObjectProperty<EventHandler<ActionEvent>> onDismissedProperty() {
-        return onDismissed;
-    }
-
-    public EventHandler<ActionEvent> getOnDismissed() {
-        return onDismissedProperty().get();
-    }
-
-    public void setOnDismissed(EventHandler<ActionEvent> onDismissed) {
-        onDismissedProperty().set(onDismissed);
     }
 
     private ObjectProperty<EventHandler<ActionEvent>> onHideAndContinue = new SimpleObjectProperty<>(null);

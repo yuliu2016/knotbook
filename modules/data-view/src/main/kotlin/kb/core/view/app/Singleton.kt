@@ -43,7 +43,7 @@ internal object Singleton {
         context.createTextEditor()
                 .editable()
                 .withSyntax("text/json")
-                .withTitle("Application Properties")
+                .withTitle(manager.props.path.toString())
                 .withInitialText(manager.props.joinedText)
                 .addAction("Save Changes") { changed, finalText ->
                     if (changed) {

@@ -2,6 +2,9 @@ package kb.service.api.ui;
 
 import javafx.scene.input.KeyCombination;
 
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 @SuppressWarnings("unused")
 public interface UIManager {
 
@@ -16,6 +19,10 @@ public interface UIManager {
     void invokeCommand(String id);
 
     void showAlert(String title, String message);
+
+    void showException(Exception e);
+
+    void getTextInput(String prompt, Function<String, Boolean> validator, Consumer<String> callback);
 
     default void registerCommand(
             String id,

@@ -28,6 +28,8 @@ class KnotBook {
         String read();
 
         void write(String s);
+
+        Path getPath();
     }
 
     private static class FileConfigHandle implements ConfigHandle {
@@ -42,6 +44,7 @@ class KnotBook {
             try {
                 return Files.readString(path);
             } catch (IOException e) {
+                e.printStackTrace();
                 return "{}";
             }
         }
@@ -50,8 +53,14 @@ class KnotBook {
         public void write(String s) {
             try {
                 Files.writeString(path, s);
-            } catch (IOException ignored) {
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+        }
+
+        @Override
+        public Path getPath() {
+            return path;
         }
     }
 
@@ -166,6 +175,16 @@ class KnotBook {
         return new ContextImpl(service, app);
     }
 
+    private static void launchPlugin(Service service, ApplicationService app) {
+        if (service.isAvailable()) {
+            try {
+                service.launch(contextForService(service, app));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private KnotBook() {
     }
 
@@ -178,7 +197,7 @@ class KnotBook {
     private List<String> args;
 
     private boolean isDebug() {
-        return args == null || args.contains("debug");
+        return args != null && args.contains("debug");
     }
 
     private ConfigHandle getHandle() {
@@ -196,11 +215,14 @@ class KnotBook {
             loadServices(ServiceLoader.load(Service.class), Service.class);
     private final ResolvedServices<TextEditorService> textEditors =
             loadServices(ServiceLoader.load(TextEditorService.class), TextEditorService.class);
-    private final Config config = new Config(getHandle());
-    private final Manager manager = new Manager();
+
+    private Config config;
+    private Manager manager;
 
     void launch(List<String> args) {
         this.args = args;
+        config = new Config(getHandle());
+        manager = new Manager();
         if (!applications.services.isEmpty()) {
             ApplicationService app = applications.services.get(0);
             launch(app);
@@ -212,11 +234,7 @@ class KnotBook {
         extensions.print();
         textEditors.print();
         app.launch(manager, contextForService(serviceForApplication(app.getMetadata()), app), () -> {
-            for (Service service : extensions.services) {
-                if (service.isAvailable()) {
-                    service.launch(contextForService(service, app));
-                }
-            }
+            for (Service service : extensions.services) launchPlugin(service, app);
         });
     }
 
