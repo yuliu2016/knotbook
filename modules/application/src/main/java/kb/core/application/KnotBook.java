@@ -219,15 +219,17 @@ class KnotBook {
             return new FileConfigHandle(Paths.get(home, "knotbook-config-debug.json"));
         }
         if (launcherPath != null) {
-            return new FileConfigHandle(Paths.get(launcherPath, "app", "config.json"));
+            return new FileConfigHandle(Paths.get(launcherPath, "config.json"));
         }
         throw new IllegalStateException();
     }
 
     private final ResolvedServices<ApplicationService> applications =
             loadServices(ServiceLoader.load(ApplicationService.class), ApplicationService.class);
+
     private final ResolvedServices<Service> extensions =
             loadServices(ServiceLoader.load(Service.class), Service.class);
+
     private final ResolvedServices<TextEditorService> textEditors =
             loadServices(ServiceLoader.load(TextEditorService.class), TextEditorService.class);
 

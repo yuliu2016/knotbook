@@ -25,11 +25,17 @@ object TBASingleton {
     fun showEvents() {
         executor.submit {
             try {
-                if (data == null)
-                    data = tba.getEventsByYear(2019).sortedWith(compareBy({ it.event_type }, {it.district?.abbreviation}, { it.week }, {it.name}))
-
+                if (data == null) {
+                    data = tba.getEventsByYear(2019).sortedWith(compareBy(
+                            { it.event_type },
+                            {it.district?.abbreviation},
+                            { it.week },
+                            {it.name}
+                    ))
+                }
                 Platform.runLater { showEventsBar(data!!) }
             } catch (e: Exception) {
+                Platform.runLater { context.uiManager.showException(e) }
                 e.printStackTrace()
             }
         }
@@ -41,8 +47,7 @@ object TBASingleton {
         if (bar == null) {
             val bar = OptionBar()
             for (event in events) {
-                val type = event.event_type!!
-                val info = when (type) {
+                val info = when (event.event_type!!) {
                     0 -> "Week ${event.week}"
                     1 -> "${event.district?.abbreviation?.toUpperCase()} Week ${event.week?.plus(1)}"
                     else -> event.event_type_string

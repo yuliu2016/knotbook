@@ -45,6 +45,7 @@ internal object Singleton {
                 .withSyntax("text/json")
                 .withTitle(manager.props.path.toString())
                 .withInitialText(manager.props.joinedText)
+                .withDarkTheme(uiManager.isDarkTheme())
                 .addAction("Save Changes") { changed, finalText ->
                     if (changed) {
                         manager.props.setInputText(finalText)
@@ -71,6 +72,7 @@ internal object Singleton {
                 .withTitle("JVM Properties (Read-Only)")
                 .withSyntax("text/properties")
                 .withInitialText(properties)
+                .withDarkTheme(uiManager.isDarkTheme())
                 .show()
     }
 
@@ -81,6 +83,7 @@ internal object Singleton {
         context.createTextEditor()
                 .withTitle("Plugins and Services")
                 .withInitialText(t)
+                .withDarkTheme(uiManager.isDarkTheme())
                 .show()
     }
 
@@ -91,6 +94,7 @@ internal object Singleton {
         context.createTextEditor()
                 .withTitle("Open Source Licences")
                 .withInitialText(t)
+                .withDarkTheme(uiManager.isDarkTheme())
                 .show()
     }
 

@@ -24,6 +24,10 @@ public interface TextEditor {
 
     TextEditor addAction(String name, TextEditorCallback action);
 
+    boolean isDarkTheme();
+
+    void setDarkTheme(boolean darkTheme);
+
     default TextEditor withSyntax(String syntax) {
         setSyntax(syntax);
         return this;
@@ -41,6 +45,11 @@ public interface TextEditor {
 
     default TextEditor withInitialText(String initialText) {
         setInitialText(initialText);
+        return this;
+    }
+
+    default TextEditor withDarkTheme(boolean darkTheme) {
+        setDarkTheme(darkTheme);
         return this;
     }
 }

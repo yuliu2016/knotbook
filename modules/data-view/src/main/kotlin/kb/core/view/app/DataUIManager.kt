@@ -50,6 +50,10 @@ class DataUIManager : UIManager {
         stagedOptionBar.setTheme("/knotbook.css", theme.optionStyle)
     }
 
+    fun isDarkTheme(): Boolean {
+        return themeProperty.get() == Theme.Dark
+    }
+
     fun showCommandsPalette() {
         commandManager.setAll()
         commandManager.bar.text = ""
