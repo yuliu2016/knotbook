@@ -5,11 +5,11 @@ package kb.plugin.thebluealliance.api
 import org.json.JSONArray
 import org.json.JSONObject
 
-internal inline fun JSONObject.int(key: String) = optInt(key)
-internal inline fun JSONObject.string(key: String) = optString(key)
-internal inline fun JSONObject.double(key: String) = optDouble(key)
-internal inline fun JSONObject.boolean(key: String) = optBoolean(key)
-internal inline fun JSONObject.obj(key: String) = optJSONObject(key)
+internal fun JSONObject.int(key: String) = optInt(key)
+internal fun JSONObject.string(key: String) = optString(key)
+internal fun JSONObject.double(key: String) = optDouble(key)
+internal fun JSONObject.boolean(key: String) = optBoolean(key)
+internal fun JSONObject.obj(key: String) = optJSONObject(key)
 
 
 internal inline fun <T> JSONArray.mapToList(func: (JSONObject) -> T): List<T> {
@@ -18,7 +18,7 @@ internal inline fun <T> JSONArray.mapToList(func: (JSONObject) -> T): List<T> {
     return result
 }
 
-internal inline fun <T> JSONObject.mapValues(func: (Any?) -> T): Map<String, T> {
+internal fun <T> JSONObject.mapValues(func: (Any?) -> T): Map<String, T> {
     return keySet().associateWith { func(get(it)) }
 }
 

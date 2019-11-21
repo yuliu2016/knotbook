@@ -22,31 +22,33 @@ class OptionItemCell : ListCell<OptionItem>() {
             hgrow()
         }
 
+        val name = if (item.name.length > 50) item.name.substring(0, 47) + "..." else item.name
+
         if (item.highlight == null || item.highlight.isEmpty()) {
-            t.add(Label(item.name))
+            t.add(Label(name))
         } else {
             val ix = item.highlight
             var highlighted = ix[0]
             var i = 0 // start index
-            for (j in item.name.indices) {
+            for (j in name.indices) {
                 if (ix[j]) {
                     if (!highlighted) {
                         highlighted = true
-                        t.add(Label(item.name.substring(i, j)))
+                        t.add(Label(name.substring(i, j)))
                         i = j
                     }
                 } else if (highlighted) {
                     highlighted = false
-                    t.add(Label(item.name.substring(i, j)).apply {
+                    t.add(Label(name.substring(i, j)).apply {
                         styleClass("list-highlight")
                     })
                     i = j
                 }
             }
             if (highlighted) {
-                t.add(label(item.name.substring(i)).styleClass("list-highlight"))
+                t.add(label(name.substring(i)).styleClass("list-highlight"))
             } else {
-                t.add(label(item.name.substring(i)))
+                t.add(label(name.substring(i)))
             }
         }
         graphic = hbox {

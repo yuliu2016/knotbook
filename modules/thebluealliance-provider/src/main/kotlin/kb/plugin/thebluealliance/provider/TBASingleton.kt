@@ -4,9 +4,9 @@ import javafx.application.Platform
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
-import kb.plugin.thebluealliance.api.EventSimple
+import kb.plugin.thebluealliance.api.Event
 import kb.plugin.thebluealliance.api.TBA
-import kb.plugin.thebluealliance.api.getEventsByYearSimple
+import kb.plugin.thebluealliance.api.getEventsByYear
 import kb.service.api.ServiceContext
 import kb.service.api.ui.OptionBar
 import kb.service.api.ui.OptionItem
@@ -20,13 +20,13 @@ object TBASingleton {
     lateinit var tba: TBA
     val executor: ExecutorService = Executors.newSingleThreadExecutor()
 
-    var data: List<EventSimple>? = null
+    var data: List<Event>? = null
 
     fun showEvents() {
         executor.submit {
             try {
                 if (data == null)
-                data = tba.getEventsByYearSimple(2019).sortedBy { it.name }
+                    data = tba.getEventsByYear(2019).sortedWith(compareBy({ it.event_type }, {it.district?.abbreviation}, { it.week }, {it.name}))
 
                 Platform.runLater { showEventsBar(data!!) }
             } catch (e: Exception) {
@@ -37,11 +37,17 @@ object TBASingleton {
 
     var bar: OptionBar? = null
 
-    fun showEventsBar(events: List<EventSimple>) {
+    fun showEventsBar(events: List<Event>) {
         if (bar == null) {
             val bar = OptionBar()
             for (event in events) {
-                bar.items.add(OptionItem(event.name, "${event.year}${event.event_code}", null, null))
+                val type = event.event_type!!
+                val info = when (type) {
+                    0 -> "Week ${event.week}"
+                    1 -> "${event.district?.abbreviation?.toUpperCase()} Week ${event.week?.plus(1)}"
+                    else -> event.event_type_string
+                }
+                bar.items.add(OptionItem(event.name, info, null, null))
             }
             this.bar = bar
         }
