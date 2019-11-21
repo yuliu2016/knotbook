@@ -24,6 +24,12 @@
     -fx-text-fill: black;
 }
 
+.selection-rectangle {
+    -fx-fill: transparent;
+    -fx-stroke: #3c5c94;
+    -fx-stroke-width: 2;
+}
+
 .spreadsheet-cell:hover,
 .spreadsheet-cell:filled:focused {
     /*-fx-background-color: #988490;*/
@@ -40,16 +46,11 @@
     -fx-background-color: white;
 }
 
-.selection-rectangle {
-    -fx-fill: transparent;
-    -fx-stroke: #3c5c94;
-    -fx-stroke-width: 2;
-}
 
 .header-cell {
     -fx-font-weight: bold;
     -fx-alignment: CENTER;
-    -fx-background-color: #eee;
+    -fx-text-fill: black;
 }
 
 VerticalHeader {
@@ -60,7 +61,12 @@ VerticalHeader > Label {
     -fx-background-color: #fff;
     -fx-background-insets: 0;
     -fx-text-fill: #3c5c94;
-    -fx-font-weight: normal;
+}
+
+VerticalHeader > Label.selected {
+    -fx-background-color: #e0e8ef;
+    -fx-border-color: #e0e8ef;
+    -fx-text-fill: #3c5c94;
 }
 
 HorizontalHeaderColumn > TableColumnHeader.column-header.table-column {
@@ -71,14 +77,9 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column {
 HorizontalHeaderColumn > TableColumnHeader.column-header.table-column > Label {
     -fx-background-insets: 0;
     -fx-text-fill: #3c5c94;
-    -fx-font-weight: normal;
     -fx-background-color: none;
 }
 
-VerticalHeader > Label.selected {
-    -fx-background-color: #e0e8ef;
-    -fx-text-fill: #3c5c94;
-}
 
 HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected,
 HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected > Label {
@@ -161,9 +162,4 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 
 .button:hover {
     -fx-background-color: #ddd;
-}
-
-.tree-cell.drag-over {
-    -fx-background-color: red, white;
-    -fx-background-insets: 0, 1;
 }

@@ -10,83 +10,6 @@
     -fx-icon-color: white;
 }
 
-
-/*==========LIST VIEW==========*/
-
-
-.list-cell {
-    -fx-background-color: #333;
-    -fx-padding: 0;
-}
-
-.list-cell:hover:filled {
-    -fx-background-color: #ddd;
-}
-
-.list-cell:selected:filled {
-    -fx-background-color: #ccc;
-    -fx-text-fill: black;
-}
-
-.list-view:focused .list-cell:filled:selected {
-    -fx-background-color: #5a8ade;
-    -fx-text-fill: white;
-}
-
-.list-view:focused .list-cell:filled:selected .ikonli-font-icon {
-    -fx-icon-color: white;
-}
-
-.properties-list {
-    -fx-background-color: #333;
-}
-
-.properties-list .list-cell {
-    -fx-padding: 2 8 2 8;
-    -fx-background-color: #333;
-    -fx-text-fill: white;
-    -fx-background-insets: 0;
-}
-
-.properties-list .list-cell:filled:hover {
-    -fx-background-color: #555;
-}
-
-.properties-list .list-cell.drag-over {
-    -fx-background-color: red, #333;
-    -fx-background-insets: 0, 2;
-}
-
-.tree-cell .arrow {
-    -fx-background-color: white;
-}
-
-.tree-cell .label{
-    -fx-text-fill: white;
-}
-
-.tree-cell .ikonli-font-icon {
-    -fx-icon-color: white;
-}
-
-.tree-view:focused .tree-cell:filled:selected {
-    -fx-background-color: #5a8ade;
-}
-
-.tree-cell:hover:filled {
-    -fx-background-color: #555;
-}
-
-.tree-cell:selected:filled {
-    -fx-background-color: #666;
-    -fx-text-fill: black;
-}
-
-
-.split-pane-divider {
-    -fx-padding: 0 0 0 1;
-}
-
 /*SPREADSHEET VIEW*/
 
 /* NORMAL CELL */
@@ -94,7 +17,7 @@
 .spreadsheet-cell:filled:focused:selected,
 .spreadsheet-cell:filled:focused:selected:hover {
     /*-fx-background-color: #8cb1ff;*/
-    -fx-background-color: #333;
+    -fx-background-color: #1e2e4a;
     /*-fx-border-color: #555;*/
     /*-fx-border-width: 1px;*/
     -fx-text-fill: white;
@@ -103,7 +26,7 @@
 .selection-rectangle {
     -fx-fill: transparent;
     -fx-stroke: #3c5c94;
-    -fx-stroke-width: 1.3;
+    -fx-stroke-width: 2;
 }
 
 .spreadsheet-cell:hover,
@@ -115,10 +38,10 @@
 
 .spreadsheet-cell {
     -fx-padding: 0 0.2em 0 0.2em;
+    -fx-font-weight: normal;
     -fx-border-color: white;
     -fx-border-width: 0.3;
     -fx-text-fill: white;
-    -fx-font-weight: normal;
     /*-fx-background-color: -fx-table-cell-border-color, white;*/
     -fx-background-color: black;
 }
@@ -127,14 +50,23 @@
     -fx-alignment: CENTER;
     -fx-font-weight: bold;
     -fx-text-fill: #ffd344;
-    -fx-background-color: #444;
 }
 
-VerticalHeader > Label ,
+/*VerticalHeader > Label ,
 HorizontalHeaderColumn > TableColumnHeader.column-header.table-column{
     -fx-background-color: -fx-box-border, #F3F3F3;
     -fx-background-insets: 0, 0 1 1 0, 1 2 2 1;
     -fx-font-weight: normal;
+}*/
+
+VerticalHeader {
+    -fx-border-width: 0;
+}
+
+VerticalHeader > Label {
+    -fx-background-color: black;
+    -fx-text-fill: white;
+    -fx-border-width: 0;
 }
 
 VerticalHeader > Label.selected {
@@ -143,23 +75,13 @@ VerticalHeader > Label.selected {
     -fx-text-fill: white;
 }
 
-VerticalHeader > Label {
-    -fx-background-color: #333;
-    -fx-text-fill: white;
-    -fx-border-width: 0;
-}
-
 HorizontalHeaderColumn > TableColumnHeader.column-header.table-column {
-    -fx-background-color: #333;
-    -fx-border-color: #555;
+    -fx-background-color: black;
+    -fx-border-color: black;
 }
 
 HorizontalHeaderColumn > TableColumnHeader.column-header.table-column > Label {
     -fx-text-fill: white;
-}
-
-.table-view .filler {
-    -fx-background-color: black;
 }
 
 HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected,
@@ -168,6 +90,13 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
     -fx-background-color: #3c5c94;
     -fx-border-color: #3c5c94;
     -fx-text-fill: white;
+}
+
+.filler {
+    -fx-background-color: black;
+    -fx-border-width: 0;
+    -fx-border-insets: 0;
+    -fx-background-insets: 0;
 }
 
 .menu-bar {

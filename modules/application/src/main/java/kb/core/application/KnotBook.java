@@ -16,10 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.ServiceLoader;
+import java.util.*;
 
 @SuppressWarnings("unused")
 class KnotBook {
@@ -28,6 +25,8 @@ class KnotBook {
         String read();
 
         void write(String s);
+
+        Path getPath();
     }
 
     private static class FileConfigHandle implements ConfigHandle {
@@ -42,6 +41,7 @@ class KnotBook {
             try {
                 return Files.readString(path);
             } catch (IOException e) {
+                e.printStackTrace();
                 return "{}";
             }
         }
@@ -50,8 +50,14 @@ class KnotBook {
         public void write(String s) {
             try {
                 Files.writeString(path, s);
-            } catch (IOException ignored) {
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+        }
+
+        @Override
+        public Path getPath() {
+            return path;
         }
     }
 
@@ -136,6 +142,21 @@ class KnotBook {
 
         @Override
         public String getVersion() {
+            if (getKnotBook().isDebug()) {
+                Date date = new Date();
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(date);
+                int year = cal.get(Calendar.YEAR);
+                int month = cal.get(Calendar.MONTH) + 1;
+                int day = cal.get(Calendar.DAY_OF_MONTH);
+                int minor;
+                if (year == 2019) {
+                    minor = month - 8;
+                } else {
+                    minor = 4 + month + (year - 2020) * 12;
+                }
+                return "3." + minor + "." + day + "-dev";
+            }
             return "3.3.19";
         }
 
@@ -166,6 +187,16 @@ class KnotBook {
         return new ContextImpl(service, app);
     }
 
+    private static void launchPlugin(Service service, ApplicationService app) {
+        if (service.isAvailable()) {
+            try {
+                service.launch(contextForService(service, app));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private KnotBook() {
     }
 
@@ -176,18 +207,21 @@ class KnotBook {
     }
 
     private List<String> args;
+    private String launcherPath = System.getProperty("java.launcher.path");
+    private String home = System.getProperty("user.home");
 
     private boolean isDebug() {
-        return args == null || args.contains("debug");
+        return args != null && args.contains("debug");
     }
 
     private ConfigHandle getHandle() {
         if (isDebug()) {
-            String home = System.getProperty("user.home");
             return new FileConfigHandle(Paths.get(home, "knotbook-config-debug.json"));
         }
-        String launcherPath = System.getProperty("java.launcher.path");
-        return new FileConfigHandle(Paths.get(launcherPath, "app", "config.json"));
+        if (launcherPath != null) {
+            return new FileConfigHandle(Paths.get(launcherPath, "app", "config.json"));
+        }
+        throw new IllegalStateException();
     }
 
     private final ResolvedServices<ApplicationService> applications =
@@ -196,11 +230,14 @@ class KnotBook {
             loadServices(ServiceLoader.load(Service.class), Service.class);
     private final ResolvedServices<TextEditorService> textEditors =
             loadServices(ServiceLoader.load(TextEditorService.class), TextEditorService.class);
-    private final Config config = new Config(getHandle());
-    private final Manager manager = new Manager();
+
+    private Config config;
+    private Manager manager;
 
     void launch(List<String> args) {
         this.args = args;
+        config = new Config(getHandle());
+        manager = new Manager();
         if (!applications.services.isEmpty()) {
             ApplicationService app = applications.services.get(0);
             launch(app);
@@ -212,11 +249,7 @@ class KnotBook {
         extensions.print();
         textEditors.print();
         app.launch(manager, contextForService(serviceForApplication(app.getMetadata()), app), () -> {
-            for (Service service : extensions.services) {
-                if (service.isAvailable()) {
-                    service.launch(contextForService(service, app));
-                }
-            }
+            for (Service service : extensions.services) launchPlugin(service, app);
         });
     }
 

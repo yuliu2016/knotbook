@@ -11,11 +11,10 @@ import javafx.scene.paint.Color
 import javafx.stage.Popup
 import javafx.stage.Stage
 import kb.core.fx.*
-import kb.core.icon.fontIcon
 import kb.core.view.util.PrettyListView
 import kb.service.api.ui.OptionBar
 import kb.service.api.ui.OptionItem
-import org.kordamp.ikonli.materialdesign.MaterialDesign
+import kotlin.math.min
 
 @Suppress("MemberVisibilityCanBePrivate")
 class StagedOptionBar {
@@ -70,7 +69,7 @@ class StagedOptionBar {
 
     val okButton = button {
         styleClass("ok-button")
-        graphic = fontIcon(MaterialDesign.MDI_CHECK, 14)
+        text = "OK"
         isFocusTraversable = false
         setOnAction {
             popup.hide()
@@ -95,7 +94,7 @@ class StagedOptionBar {
             offsetY = 5.0
         }
         styleClass("option-bar")
-        prefWidth = 540.0
+        prefWidth = 560.0
         top = topBox
         bottom = lv
     }
@@ -123,29 +122,35 @@ class StagedOptionBar {
         topBox.children.remove(okButton)
     }
 
+    private fun updateListHeight() {
+        val h = min(320.0, 24.0 * lv.items.size)
+        lv.maxHeight = h
+        lv.prefHeight = 24.0 * lv.items.size
+    }
+
     private fun bindAll(ob: OptionBar) {
         optionBar = ob
         lv.items = ob.items
+        ob.items.addListener(InvalidationListener { updateListHeight() })
+        updateListHeight()
         if (lv.items.isNotEmpty()) {
             lv.selectionModel.select(0)
         }
         if (ob.onHideAndContinue != null) {
             topBox.add(okButton)
         }
+
         tf.promptTextProperty().bind(ob.hintProperty())
         tf.textProperty().bindBidirectional(ob.textProperty())
         ob.selectedItemProperty().bind(lv.selectionModel.selectedIndexProperty())
-        container.centerProperty().bind(ob.arbitraryViewProperty())
-        ob.showingProperty().addListener(InvalidationListener {
-            if (!ob.isShowing) {
-                cancel()
-            }
-        })
+        lv.placeholderProperty().bind(ob.placeholderProperty())
+
+        ob.showingProperty().addListener(InvalidationListener { if (!ob.isShowing) { cancel() } })
     }
 
     fun show(ob: OptionBar, stage: Stage) {
         if (popup.isShowing) {
-            // unbind the previous option bar
+            // unbind the previous option bar (and closing the popup)
             optionBar?.isShowing = false
         }
         bindAll(ob)
@@ -157,5 +162,9 @@ class StagedOptionBar {
 
     fun cancel() {
         popup.hide()
+    }
+
+    fun isShowing(): Boolean {
+        return popup.isShowing
     }
 }

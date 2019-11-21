@@ -59,11 +59,17 @@ object TBASingleton {
 
         val m = context.uiManager
 
-        m.registerCommand("tba.get_match_schedule", "Get Event Match Schedule", null, KeyCodeCombination(KeyCode.E, KeyCombination.ALT_DOWN)) {
+        m.registerCommand("tba.get_match_schedule", "The Blue Alliance: Get Event Match Schedule",
+                null, KeyCodeCombination(KeyCode.E, KeyCombination.ALT_DOWN)) {
             showEvents()
         }
+        m.registerCommand("tba.set_key", "The Blue Alliance: Set APIv3 Key", "mdi-key",
+                KeyCodeCombination(KeyCode.M, KeyCombination.CONTROL_DOWN, KeyCombination.ALT_DOWN)) {
+            m.getTextInput("Enter the API Key for The Blue Alliance", null) {
+                println(it)
+            }
+        }
         m.apply {
-            register("set_key", "Set APIv3 Key")
             register("set_year", "Set Year")
             register("set_district", "Set Primary District")
             register("get_event_rankings", "Get Event Rankings")

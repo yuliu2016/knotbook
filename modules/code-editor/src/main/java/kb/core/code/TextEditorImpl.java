@@ -104,7 +104,7 @@ class TextEditorImpl implements TextEditor {
 
     private void showImpl() {
         JFrame frame = new JFrame();
-        RSyntaxTextArea area = new RSyntaxTextArea(35, 84);
+        RSyntaxTextArea area = new RSyntaxTextArea(32, 88);
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -135,8 +135,6 @@ class TextEditorImpl implements TextEditor {
         area.setFont(area.getFont().deriveFont(15f));
         area.setText(initialText);
         area.setEditable(editable);
-        area.setLineWrap(true);
-        area.setWrapStyleWord(true);
 
         RTextScrollPane sp = new RTextScrollPane(area);
         sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);

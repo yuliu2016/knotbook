@@ -10,6 +10,10 @@ import kb.core.view.DataView
 import kb.service.api.ui.Command
 import kb.service.api.ui.OptionBar
 import kb.service.api.ui.UIManager
+import java.io.ByteArrayOutputStream
+import java.io.PrintWriter
+import java.util.function.Consumer
+import java.util.function.Function
 
 @Suppress("MemberVisibilityCanBePrivate")
 class DataUIManager : UIManager {
@@ -53,11 +57,14 @@ class DataUIManager : UIManager {
     }
 
     override fun isOptionBarShown(): Boolean {
-        return stagedOptionBar.popup.isShowing
+        return stagedOptionBar.isShowing()
     }
 
     override fun showOptionBar(optionBar: OptionBar) {
-        view?.let { win -> stagedOptionBar.show(optionBar, win.stage) }
+        val win = view
+        if (win != null) {
+            stagedOptionBar.show(optionBar, win.stage)
+        }
     }
 
     override fun registerCommand(id: String, command: Command) {
@@ -79,5 +86,24 @@ class DataUIManager : UIManager {
         dialog.dialogPane.content = label(message)
         dialog.title = title
         dialog.showAndWait()
+    }
+
+    override fun showException(e: Exception?) {
+        if (e == null) return
+        val ba = ByteArrayOutputStream()
+        e.printStackTrace(PrintWriter(ba))
+        showAlert("Error", ba.toString())
+    }
+
+    override fun getTextInput(prompt: String, validator: Function<String, Boolean>?, callback: Consumer<String>) {
+        val ob = OptionBar()
+        ob.hint = prompt
+
+        ob.setOnEnterPressed {
+            ob.isShowing = false
+            callback.accept(ob.text)
+        }
+
+        showOptionBar(ob)
     }
 }

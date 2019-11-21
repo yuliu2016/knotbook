@@ -6,6 +6,7 @@ import kb.service.api.json.JSONObjectWrapper;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,7 +50,7 @@ class Config implements ApplicationProps {
 
     @Override
     public String getJoinedText() {
-        return object.toString(4);
+        return object.toString(2);
     }
 
     @Override
@@ -59,5 +60,10 @@ class Config implements ApplicationProps {
         } catch (JSONException e) {
             object = new JSONObject();
         }
+    }
+
+    @Override
+    public Path getPath() {
+        return handle.getPath();
     }
 }
