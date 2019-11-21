@@ -16,10 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.ServiceLoader;
+import java.util.*;
 
 @SuppressWarnings("unused")
 class KnotBook {
@@ -145,6 +142,21 @@ class KnotBook {
 
         @Override
         public String getVersion() {
+            if (getKnotBook().isDebug()) {
+                Date date = new Date();
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(date);
+                int year = cal.get(Calendar.YEAR);
+                int month = cal.get(Calendar.MONTH) + 1;
+                int day = cal.get(Calendar.DAY_OF_MONTH);
+                int minor;
+                if (year == 2019) {
+                    minor = month - 8;
+                } else {
+                    minor = 4 + month + (year - 2020) * 12;
+                }
+                return "3." + minor + "." + day + "-dev";
+            }
             return "3.3.19";
         }
 
@@ -195,6 +207,8 @@ class KnotBook {
     }
 
     private List<String> args;
+    private String launcherPath = System.getProperty("java.launcher.path");
+    private String home = System.getProperty("user.home");
 
     private boolean isDebug() {
         return args != null && args.contains("debug");
@@ -202,11 +216,12 @@ class KnotBook {
 
     private ConfigHandle getHandle() {
         if (isDebug()) {
-            String home = System.getProperty("user.home");
             return new FileConfigHandle(Paths.get(home, "knotbook-config-debug.json"));
         }
-        String launcherPath = System.getProperty("java.launcher.path");
-        return new FileConfigHandle(Paths.get(launcherPath, "app", "config.json"));
+        if (launcherPath != null) {
+            return new FileConfigHandle(Paths.get(launcherPath, "app", "config.json"));
+        }
+        throw new IllegalStateException();
     }
 
     private final ResolvedServices<ApplicationService> applications =
