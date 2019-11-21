@@ -6,6 +6,8 @@ import kb.core.icon.fontIcon
 import kb.service.api.ui.Command
 import kb.service.api.ui.OptionBar
 import kb.service.api.ui.OptionItem
+import java.io.ByteArrayOutputStream
+import java.io.PrintWriter
 
 class CommandManager {
 
@@ -94,7 +96,14 @@ class CommandManager {
             println("Command #$key Cannot be Invoked")
         } else {
             println("Invoking Command #$key")
-            callback.run()
+            try {
+                callback.run()
+            } catch (e: Exception) {
+                val ba = ByteArrayOutputStream()
+                e.printStackTrace(PrintWriter(ba))
+                Singleton.uiManager.showAlert("Error", ba.toString())
+                throw e
+            }
         }
     }
 }

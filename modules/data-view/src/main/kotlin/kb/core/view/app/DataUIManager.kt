@@ -12,7 +12,7 @@ import kb.service.api.ui.OptionBar
 import kb.service.api.ui.UIManager
 
 @Suppress("MemberVisibilityCanBePrivate")
-class ViewManager : UIManager {
+class DataUIManager : UIManager {
 
     enum class Theme(val viewStyle: String, val optionStyle: String) {
         Light("/light.css", "/light-option.css"),

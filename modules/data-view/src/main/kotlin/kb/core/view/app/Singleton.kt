@@ -37,7 +37,7 @@ internal object Singleton {
     val context get() = nullableContext!!
 
     val dataServer = Server()
-    val uiManager = ViewManager()
+    val uiManager = DataUIManager()
 
     fun editAppProperties() {
         context.createTextEditor()

@@ -1,15 +1,15 @@
-@file:Suppress("unused")
+@file:Suppress("unused", "NOTHING_TO_INLINE")
 
 package kb.plugin.thebluealliance.api
 
 import org.json.JSONArray
 import org.json.JSONObject
 
-internal fun JSONObject.int(key: String) = optInt(key)
-internal fun JSONObject.string(key: String) = optString(key)
-internal fun JSONObject.double(key: String) = optDouble(key)
-internal fun JSONObject.boolean(key: String) = optBoolean(key)
-internal fun JSONObject.obj(key: String) = optJSONObject(key)
+internal inline fun JSONObject.int(key: String) = optInt(key)
+internal inline fun JSONObject.string(key: String) = optString(key)
+internal inline fun JSONObject.double(key: String) = optDouble(key)
+internal inline fun JSONObject.boolean(key: String) = optBoolean(key)
+internal inline fun JSONObject.obj(key: String) = optJSONObject(key)
 
 
 internal inline fun <T> JSONArray.mapToList(func: (JSONObject) -> T): List<T> {
