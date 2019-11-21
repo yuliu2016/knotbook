@@ -4,19 +4,15 @@
 
 package kb.plugin.thebluealliance.api
 
+import org.json.JSONObject
+
 /**
  * Alliance Data
  */
-class Alliances<T>(
-
-    /** The Blue Alliance */
-    val blue: T,
-
-    /** The Red Alliance */
-    val red: T
-)
+class Alliances<T>(val blue: T, val red: T)
 
 class APIStatus(
+    val data: JSONObject,
 
     /** Year of the current FRC season. */
     val current_season: Int?,
@@ -36,6 +32,7 @@ class APIStatus(
 )
 
 class APIStatusAppVersion(
+    val data: JSONObject,
 
     /** Internal use - Minimum application version required to correctly connect and process data. */
     val min_app_version: Int?,
@@ -45,6 +42,7 @@ class APIStatusAppVersion(
 )
 
 class TeamSimple(
+    val data: JSONObject,
 
     /** TBA team key with the format `frcXXXX` with `XXXX` representing the team number. */
     val key: String?,
@@ -69,6 +67,7 @@ class TeamSimple(
 )
 
 class Team(
+    val data: JSONObject,
 
     /** TBA team key with the format `frcXXXX` with `XXXX` representing the team number. */
     val key: String?,
@@ -122,10 +121,11 @@ class Team(
     val motto: String?,
 
     /** Location of the team's home championship each year as a key-value pair. The year (as a string) is the key, and the city is the value. */
-    val home_championship: Map<String, Any?>?
+    val home_championship: JSONObject?
 )
 
 class TeamRobot(
+    val data: JSONObject,
 
     /** Year this robot competed in. */
     val year: Int?,
@@ -141,6 +141,7 @@ class TeamRobot(
 )
 
 class EventSimple(
+    val data: JSONObject,
 
     /** TBA event key with the format yyyy[EVENT_CODE], where yyyy is the year, and EVENT_CODE is the event code of the event. */
     val key: String?,
@@ -176,6 +177,7 @@ class EventSimple(
 )
 
 class Event(
+    val data: JSONObject,
 
     /** TBA event key with the format yyyy[EVENT_CODE], where yyyy is the year, and EVENT_CODE is the event code of the event. */
     val key: String?,
@@ -267,6 +269,7 @@ class Event(
 )
 
 class TeamEventStatus(
+    val data: JSONObject,
 
     val qual: TeamEventStatusRank?,
 
@@ -291,19 +294,21 @@ class TeamEventStatus(
 )
 
 class TeamEventStatusRank(
+    val data: JSONObject,
 
     /** Number of teams ranked. */
     val num_teams: Int?,
 
-    val ranking: Map<String, Any?>?,
+    val ranking: JSONObject?,
 
     /** Ordered list of names corresponding to the elements of the `sort_orders` array. */
-    val sort_order_info: List<Map<String, Any?>>?,
+    val sort_order_info: List<JSONObject>?,
 
     val status: String?
 )
 
 class TeamEventStatusAlliance(
+    val data: JSONObject,
 
     /** Alliance name, may be null. */
     val name: String?,
@@ -319,6 +324,7 @@ class TeamEventStatusAlliance(
 
 /** Backup status, may be null. */
 class TeamEventStatusAllianceBackup(
+    val data: JSONObject,
 
     /** TBA key for the team replaced by the backup. */
     val out: String?,
@@ -329,6 +335,7 @@ class TeamEventStatusAllianceBackup(
 
 /** Playoff status for this team, may be null if the team did not make playoffs, or playoffs have not begun. */
 class TeamEventStatusPlayoff(
+    val data: JSONObject,
 
     /** The highest playoff level the team reached. */
     val level: String?,
@@ -345,38 +352,42 @@ class TeamEventStatusPlayoff(
 )
 
 class EventRanking(
+    val data: JSONObject,
 
     /** List of rankings at the event. */
-    val rankings: List<Map<String, Any?>>?,
+    val rankings: List<JSONObject>?,
 
     /** List of special TBA-generated values provided in the `extra_stats` array for each item. */
-    val extra_stats_info: List<Map<String, Any?>>?,
+    val extra_stats_info: List<JSONObject>?,
 
     /** List of year-specific values provided in the `sort_orders` array for each team. */
-    val sort_order_info: List<Map<String, Any?>>?
+    val sort_order_info: List<JSONObject>?
 )
 
 class EventDistrictPoints(
+    val data: JSONObject,
 
     /** Points gained for each team at the event. Stored as a key-value pair with the team key as the key, and an object describing the points as its value. */
-    val points: Map<String, Any?>?,
+    val points: JSONObject?,
 
     /** Tiebreaker values for each team at the event. Stored as a key-value pair with the team key as the key, and an object describing the tiebreaker elements as its value. */
-    val tiebreakers: Map<String, Any?>?
+    val tiebreakers: JSONObject?
 )
 
 /** A year-specific event insight object expressed as a JSON string, separated in to `qual` and `playoff` fields. See also Event_Insights_2016, Event_Insights_2017, etc. */
 class EventInsights(
+    val data: JSONObject,
 
     /** Inights for the qualification round of an event */
-    val qual: Map<String, Any?>?,
+    val qual: JSONObject?,
 
     /** Insights for the playoff round of an event */
-    val playoff: Map<String, Any?>?
+    val playoff: JSONObject?
 )
 
 /** Insights for FIRST Stronghold qualification and elimination matches. */
 class EventInsights2016(
+    val data: JSONObject,
 
     /** For the Low Bar - An array with three values, number of times damaged, number of opportunities to damage, and percentage. */
     val LowBar: List<Double>?,
@@ -453,6 +464,7 @@ class EventInsights2016(
 
 /** Insights for FIRST STEAMWORKS qualification and elimination matches. */
 class EventInsights2017(
+    val data: JSONObject,
 
     /** Average foul score. */
     val average_foul_score: Double?,
@@ -553,6 +565,7 @@ class EventInsights2017(
 
 /** Insights for FIRST Power Up qualification and elimination matches. */
 class EventInsights2018(
+    val data: JSONObject,
 
     /** An array with three values, number of times auto quest was completed, number of opportunities to complete the auto quest, and percentage. */
     val auto_quest_achieved: List<Double>?,
@@ -668,22 +681,25 @@ class EventInsights2018(
 
 /** OPR, DPR, and CCWM for teams at the event. */
 class EventOPRs(
+    val data: JSONObject,
 
     /** A key-value pair with team key (eg `frc254`) as key and OPR as value. */
-    val oprs: Map<String, Any?>?,
+    val oprs: JSONObject?,
 
     /** A key-value pair with team key (eg `frc254`) as key and DPR as value. */
-    val dprs: Map<String, Any?>?,
+    val dprs: JSONObject?,
 
     /** A key-value pair with team key (eg `frc254`) as key and CCWM as value. */
-    val ccwms: Map<String, Any?>?
+    val ccwms: JSONObject?
 )
 
 /** JSON Object containing prediction information for the event. Contains year-specific information and is subject to change. */
 class EventPredictions(
+    val data: JSONObject
 )
 
 class MatchSimple(
+    val data: JSONObject,
 
     /** TBA match key with the format `yyyy[EVENT_CODE]_[COMP_LEVEL]m[MATCH_NUMBER]`, where `yyyy` is the year, and `EVENT_CODE` is the event code of the event, `COMP_LEVEL` is (qm, ef, qf, sf, f), and `MATCH_NUMBER` is the match number in the competition level. A set number may append the competition level if more than one match in required per set. */
     val key: String?,
@@ -717,6 +733,7 @@ class MatchSimple(
 )
 
 class Match(
+    val data: JSONObject,
 
     /** TBA match key with the format `yyyy[EVENT_CODE]_[COMP_LEVEL]m[MATCH_NUMBER]`, where `yyyy` is the year, and `EVENT_CODE` is the event code of the event, `COMP_LEVEL` is (qm, ef, qf, sf, f), and `MATCH_NUMBER` is the match number in the competition level. A set number may be appended to the competition level if more than one match in required per set. */
     val key: String?,
@@ -752,13 +769,14 @@ class Match(
     val post_result_time: Int?,
 
     /** Score breakdown for auto, teleop, etc. points. Varies from year to year. May be null. */
-    val score_breakdown: Map<String, Any?>?,
+    val score_breakdown: JSONObject?,
 
     /** Array of video objects associated with this match. */
-    val videos: List<Map<String, Any?>>?
+    val videos: List<JSONObject>?
 )
 
 class MatchAlliance(
+    val data: JSONObject,
 
     /** Score for this alliance. Will be null or -1 for an unplayed match. */
     val score: Int?,
@@ -774,6 +792,7 @@ class MatchAlliance(
 
 /** See the 2015 FMS API documentation for a description of each value */
 class MatchScoreBreakdown2015(
+    val data: JSONObject,
 
     val blue: MatchScoreBreakdown2015Alliance?,
 
@@ -785,6 +804,7 @@ class MatchScoreBreakdown2015(
 )
 
 class MatchScoreBreakdown2015Alliance(
+    val data: JSONObject,
 
     val auto_points: Int?,
 
@@ -837,6 +857,7 @@ class MatchScoreBreakdown2015Alliance(
 
 /** See the 2016 FMS API documentation for a description of each value. */
 class MatchScoreBreakdown2016(
+    val data: JSONObject,
 
     val blue: MatchScoreBreakdown2016Alliance?,
 
@@ -844,6 +865,7 @@ class MatchScoreBreakdown2016(
 )
 
 class MatchScoreBreakdown2016Alliance(
+    val data: JSONObject,
 
     val autoPoints: Int?,
 
@@ -924,6 +946,7 @@ class MatchScoreBreakdown2016Alliance(
 
 /** See the 2017 FMS API documentation for a description of each value. */
 class MatchScoreBreakdown2017(
+    val data: JSONObject,
 
     val blue: MatchScoreBreakdown2017Alliance?,
 
@@ -931,6 +954,7 @@ class MatchScoreBreakdown2017(
 )
 
 class MatchScoreBreakdown2017Alliance(
+    val data: JSONObject,
 
     val autoPoints: Int?,
 
@@ -1001,6 +1025,7 @@ class MatchScoreBreakdown2017Alliance(
 
 /** See the 2018 FMS API documentation for a description of each value. */
 class MatchScoreBreakdown2018(
+    val data: JSONObject,
 
     val blue: MatchScoreBreakdown2018Alliance?,
 
@@ -1008,6 +1033,7 @@ class MatchScoreBreakdown2018(
 )
 
 class MatchScoreBreakdown2018Alliance(
+    val data: JSONObject,
 
     val adjustPoints: Int?,
 
@@ -1089,6 +1115,7 @@ class MatchScoreBreakdown2018Alliance(
 *WARNING:* This is *not* official data, and is subject to a significant possibility of error, or missing data. Do not rely on this data for any purpose. In fact, pretend we made it up.
 *WARNING:* This model is currently under active development and may change at any time, including in breaking ways. */
 class MatchTimeseries2018(
+    val data: JSONObject,
 
     /** TBA event key with the format yyyy[EVENT_CODE], where yyyy is the year, and EVENT_CODE is the event code of the event. */
     val event_key: String?,
@@ -1185,6 +1212,7 @@ class MatchTimeseries2018(
 
 /** See the 2019 FMS API documentation for a description of each value. https://frcevents2.docs.apiary.io/#reference/match-results/score-details */
 class MatchScoreBreakdown2019(
+    val data: JSONObject,
 
     val blue: MatchScoreBreakdown2019Alliance?,
 
@@ -1192,6 +1220,7 @@ class MatchScoreBreakdown2019(
 )
 
 class MatchScoreBreakdown2019Alliance(
+    val data: JSONObject,
 
     val adjustPoints: Int?,
 
@@ -1298,6 +1327,7 @@ class MatchScoreBreakdown2019Alliance(
 
 /** The `Media` object contains a reference for most any media associated with a team or event on TBA. */
 class Media(
+    val data: JSONObject,
 
     /** TBA identifier for this media. */
     val key: String?,
@@ -1309,7 +1339,7 @@ class Media(
     val foreign_key: String?,
 
     /** If required, a JSON dict of additional media information. */
-    val details: Map<String, Any?>?,
+    val details: JSONObject?,
 
     /** True if the media is of high quality. */
     val preferred: Boolean?,
@@ -1322,12 +1352,13 @@ class Media(
 )
 
 class EliminationAlliance(
+    val data: JSONObject,
 
     /** Alliance name, may be null. */
     val name: String?,
 
     /** Backup team called in, may be null. */
-    val backup: Map<String, Any?>?,
+    val backup: JSONObject?,
 
     /** List of teams that declined the alliance. */
     val declines: List<String>?,
@@ -1335,10 +1366,11 @@ class EliminationAlliance(
     /** List of team keys picked for the alliance. First pick is captain. */
     val picks: List<String>?,
 
-    val status: Map<String, Any?>?
+    val status: JSONObject?
 )
 
 class Award(
+    val data: JSONObject,
 
     /** The name of the award as provided by FIRST. May vary for the same award type. */
     val name: String?,
@@ -1358,6 +1390,7 @@ class Award(
 
 /** An `Award_Recipient` object represents the team and/or person who received an award at an event. */
 class AwardRecipient(
+    val data: JSONObject,
 
     /** The TBA team key for the team that was given the award. May be null. */
     val team_key: String?,
@@ -1367,6 +1400,7 @@ class AwardRecipient(
 )
 
 class DistrictList(
+    val data: JSONObject,
 
     /** The short identifier for the district. */
     val abbreviation: String?,
@@ -1383,6 +1417,7 @@ class DistrictList(
 
 /** Rank of a team in a district. */
 class DistrictRanking(
+    val data: JSONObject,
 
     /** TBA team key for the team. */
     val team_key: String?,
@@ -1397,11 +1432,12 @@ class DistrictRanking(
     val point_total: Int?,
 
     /** List of events that contributed to the point total for the team. */
-    val event_points: List<Map<String, Any?>>?
+    val event_points: List<JSONObject>?
 )
 
 /** A Win-Loss-Tie record for a team, or an alliance. */
 class WLTRecord(
+    val data: JSONObject,
 
     /** Number of losses. */
     val losses: Int?,
@@ -1414,6 +1450,7 @@ class WLTRecord(
 )
 
 class Webcast(
+    val data: JSONObject,
 
     /** Type of webcast, typically descriptive of the streaming provider. */
     val type: String?,

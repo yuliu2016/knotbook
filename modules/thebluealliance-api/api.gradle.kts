@@ -5,7 +5,5 @@ plugins {
 
 dependencies {
     implementation(kotlin("stdlib"))
-
-    // JSON Library
-    implementation(group = "com.beust", name = "klaxon", version = "5.2")
+    implementation(group = "org.json", name = "json", version = "20190722")
 }

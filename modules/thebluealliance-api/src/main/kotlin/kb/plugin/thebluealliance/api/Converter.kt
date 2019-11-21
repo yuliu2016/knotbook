@@ -4,10 +4,11 @@
 
 package kb.plugin.thebluealliance.api
 
-import com.beust.klaxon.JsonObject
+import org.json.JSONObject
 
 
-fun JsonObject.toAPIStatus() = APIStatus(
+fun JSONObject.toAPIStatus() = APIStatus(
+    this,
     int("current_season"),
     int("max_season"),
     boolean("is_datafeed_down"),
@@ -16,12 +17,14 @@ fun JsonObject.toAPIStatus() = APIStatus(
     obj("android")?.toAPIStatusAppVersion()
 )
 
-fun JsonObject.toAPIStatusAppVersion() = APIStatusAppVersion(
+fun JSONObject.toAPIStatusAppVersion() = APIStatusAppVersion(
+    this,
     int("min_app_version"),
     int("latest_app_version")
 )
 
-fun JsonObject.toTeamSimple() = TeamSimple(
+fun JSONObject.toTeamSimple() = TeamSimple(
+    this,
     string("key"),
     int("team_number"),
     string("nickname"),
@@ -31,7 +34,8 @@ fun JsonObject.toTeamSimple() = TeamSimple(
     string("country")
 )
 
-fun JsonObject.toTeam() = Team(
+fun JSONObject.toTeam() = Team(
+    this,
     string("key"),
     int("team_number"),
     string("nickname"),
@@ -52,14 +56,16 @@ fun JsonObject.toTeam() = Team(
     obj("home_championship")
 )
 
-fun JsonObject.toTeamRobot() = TeamRobot(
+fun JSONObject.toTeamRobot() = TeamRobot(
+    this,
     int("year"),
     string("robot_name"),
     string("key"),
     string("team_key")
 )
 
-fun JsonObject.toEventSimple() = EventSimple(
+fun JSONObject.toEventSimple() = EventSimple(
+    this,
     string("key"),
     string("name"),
     string("event_code"),
@@ -73,7 +79,8 @@ fun JsonObject.toEventSimple() = EventSimple(
     int("year")
 )
 
-fun JsonObject.toEvent() = Event(
+fun JSONObject.toEvent() = Event(
+    this,
     string("key"),
     string("name"),
     string("event_code"),
@@ -106,7 +113,8 @@ fun JsonObject.toEvent() = Event(
     string("playoff_type_string")
 )
 
-fun JsonObject.toTeamEventStatus() = TeamEventStatus(
+fun JSONObject.toTeamEventStatus() = TeamEventStatus(
+    this,
     obj("qual")?.toTeamEventStatusRank(),
     obj("alliance")?.toTeamEventStatusAlliance(),
     obj("playoff")?.toTeamEventStatusPlayoff(),
@@ -117,26 +125,30 @@ fun JsonObject.toTeamEventStatus() = TeamEventStatus(
     string("last_match_key")
 )
 
-fun JsonObject.toTeamEventStatusRank() = TeamEventStatusRank(
+fun JSONObject.toTeamEventStatusRank() = TeamEventStatusRank(
+    this,
     int("num_teams"),
     obj("ranking"),
     objList("sort_order_info"),
     string("status")
 )
 
-fun JsonObject.toTeamEventStatusAlliance() = TeamEventStatusAlliance(
+fun JSONObject.toTeamEventStatusAlliance() = TeamEventStatusAlliance(
+    this,
     string("name"),
     int("number"),
     obj("backup")?.toTeamEventStatusAllianceBackup(),
     int("pick")
 )
 
-fun JsonObject.toTeamEventStatusAllianceBackup() = TeamEventStatusAllianceBackup(
+fun JSONObject.toTeamEventStatusAllianceBackup() = TeamEventStatusAllianceBackup(
+    this,
     string("out"),
     string("in")
 )
 
-fun JsonObject.toTeamEventStatusPlayoff() = TeamEventStatusPlayoff(
+fun JSONObject.toTeamEventStatusPlayoff() = TeamEventStatusPlayoff(
+    this,
     string("level"),
     obj("current_level_record")?.toWLTRecord(),
     obj("record")?.toWLTRecord(),
@@ -144,23 +156,27 @@ fun JsonObject.toTeamEventStatusPlayoff() = TeamEventStatusPlayoff(
     int("playoff_average")
 )
 
-fun JsonObject.toEventRanking() = EventRanking(
+fun JSONObject.toEventRanking() = EventRanking(
+    this,
     objList("rankings"),
     objList("extra_stats_info"),
     objList("sort_order_info")
 )
 
-fun JsonObject.toEventDistrictPoints() = EventDistrictPoints(
+fun JSONObject.toEventDistrictPoints() = EventDistrictPoints(
+    this,
     obj("points"),
     obj("tiebreakers")
 )
 
-fun JsonObject.toEventInsights() = EventInsights(
+fun JSONObject.toEventInsights() = EventInsights(
+    this,
     obj("qual"),
     obj("playoff")
 )
 
-fun JsonObject.toEventInsights2016() = EventInsights2016(
+fun JSONObject.toEventInsights2016() = EventInsights2016(
+    this,
     doubleList("LowBar"),
     doubleList("A_ChevalDeFrise"),
     doubleList("A_Portcullis"),
@@ -187,7 +203,8 @@ fun JsonObject.toEventInsights2016() = EventInsights2016(
     stringList("high_score")
 )
 
-fun JsonObject.toEventInsights2017() = EventInsights2017(
+fun JSONObject.toEventInsights2017() = EventInsights2017(
+    this,
     double("average_foul_score"),
     double("average_fuel_points"),
     double("average_fuel_points_auto"),
@@ -222,7 +239,8 @@ fun JsonObject.toEventInsights2017() = EventInsights2017(
     doubleList("unicorn_matches")
 )
 
-fun JsonObject.toEventInsights2018() = EventInsights2018(
+fun JSONObject.toEventInsights2018() = EventInsights2018(
+    this,
     doubleList("auto_quest_achieved"),
     double("average_boost_played"),
     double("average_endgame_points"),
@@ -262,17 +280,19 @@ fun JsonObject.toEventInsights2018() = EventInsights2018(
     double("winning_scale_ownership_percentage_teleop")
 )
 
-fun JsonObject.toEventOPRs() = EventOPRs(
+fun JSONObject.toEventOPRs() = EventOPRs(
+    this,
     obj("oprs"),
     obj("dprs"),
     obj("ccwms")
 )
 
-fun JsonObject.toEventPredictions() = EventPredictions(
-    
+fun JSONObject.toEventPredictions() = EventPredictions(
+    this
 )
 
-fun JsonObject.toMatchSimple() = MatchSimple(
+fun JSONObject.toMatchSimple() = MatchSimple(
+    this,
     string("key"),
     string("comp_level"),
     int("set_number"),
@@ -288,7 +308,8 @@ fun JsonObject.toMatchSimple() = MatchSimple(
     int("actual_time")
 )
 
-fun JsonObject.toMatch() = Match(
+fun JSONObject.toMatch() = Match(
+    this,
     string("key"),
     string("comp_level"),
     int("set_number"),
@@ -307,21 +328,24 @@ fun JsonObject.toMatch() = Match(
     objList("videos")
 )
 
-fun JsonObject.toMatchAlliance() = MatchAlliance(
+fun JSONObject.toMatchAlliance() = MatchAlliance(
+    this,
     int("score"),
     stringList("team_keys"),
     stringList("surrogate_team_keys"),
     stringList("dq_team_keys")
 )
 
-fun JsonObject.toMatchScoreBreakdown2015() = MatchScoreBreakdown2015(
+fun JSONObject.toMatchScoreBreakdown2015() = MatchScoreBreakdown2015(
+    this,
     obj("blue")?.toMatchScoreBreakdown2015Alliance(),
     obj("red")?.toMatchScoreBreakdown2015Alliance(),
     string("coopertition"),
     int("coopertition_points")
 )
 
-fun JsonObject.toMatchScoreBreakdown2015Alliance() = MatchScoreBreakdown2015Alliance(
+fun JSONObject.toMatchScoreBreakdown2015Alliance() = MatchScoreBreakdown2015Alliance(
+    this,
     int("auto_points"),
     int("teleop_points"),
     int("container_points"),
@@ -348,12 +372,14 @@ fun JsonObject.toMatchScoreBreakdown2015Alliance() = MatchScoreBreakdown2015Alli
     boolean("robot_set")
 )
 
-fun JsonObject.toMatchScoreBreakdown2016() = MatchScoreBreakdown2016(
+fun JSONObject.toMatchScoreBreakdown2016() = MatchScoreBreakdown2016(
+    this,
     obj("blue")?.toMatchScoreBreakdown2016Alliance(),
     obj("red")?.toMatchScoreBreakdown2016Alliance()
 )
 
-fun JsonObject.toMatchScoreBreakdown2016Alliance() = MatchScoreBreakdown2016Alliance(
+fun JSONObject.toMatchScoreBreakdown2016Alliance() = MatchScoreBreakdown2016Alliance(
+    this,
     int("autoPoints"),
     int("teleopPoints"),
     int("breachPoints"),
@@ -394,12 +420,14 @@ fun JsonObject.toMatchScoreBreakdown2016Alliance() = MatchScoreBreakdown2016Alli
     int("position5crossings")
 )
 
-fun JsonObject.toMatchScoreBreakdown2017() = MatchScoreBreakdown2017(
+fun JSONObject.toMatchScoreBreakdown2017() = MatchScoreBreakdown2017(
+    this,
     obj("blue")?.toMatchScoreBreakdown2017Alliance(),
     obj("red")?.toMatchScoreBreakdown2017Alliance()
 )
 
-fun JsonObject.toMatchScoreBreakdown2017Alliance() = MatchScoreBreakdown2017Alliance(
+fun JSONObject.toMatchScoreBreakdown2017Alliance() = MatchScoreBreakdown2017Alliance(
+    this,
     int("autoPoints"),
     int("teleopPoints"),
     int("foulPoints"),
@@ -435,12 +463,14 @@ fun JsonObject.toMatchScoreBreakdown2017Alliance() = MatchScoreBreakdown2017Alli
     string("touchpadFar")
 )
 
-fun JsonObject.toMatchScoreBreakdown2018() = MatchScoreBreakdown2018(
+fun JSONObject.toMatchScoreBreakdown2018() = MatchScoreBreakdown2018(
+    this,
     obj("blue")?.toMatchScoreBreakdown2018Alliance(),
     obj("red")?.toMatchScoreBreakdown2018Alliance()
 )
 
-fun JsonObject.toMatchScoreBreakdown2018Alliance() = MatchScoreBreakdown2018Alliance(
+fun JSONObject.toMatchScoreBreakdown2018Alliance() = MatchScoreBreakdown2018Alliance(
+    this,
     int("adjustPoints"),
     int("autoOwnershipPoints"),
     int("autoPoints"),
@@ -480,7 +510,8 @@ fun JsonObject.toMatchScoreBreakdown2018Alliance() = MatchScoreBreakdown2018Alli
     string("tba_gameData")
 )
 
-fun JsonObject.toMatchTimeseries2018() = MatchTimeseries2018(
+fun JSONObject.toMatchTimeseries2018() = MatchTimeseries2018(
+    this,
     string("event_key"),
     string("match_id"),
     string("mode"),
@@ -514,12 +545,14 @@ fun JsonObject.toMatchTimeseries2018() = MatchTimeseries2018(
     int("red_switch_owned")
 )
 
-fun JsonObject.toMatchScoreBreakdown2019() = MatchScoreBreakdown2019(
+fun JSONObject.toMatchScoreBreakdown2019() = MatchScoreBreakdown2019(
+    this,
     obj("blue")?.toMatchScoreBreakdown2019Alliance(),
     obj("red")?.toMatchScoreBreakdown2019Alliance()
 )
 
-fun JsonObject.toMatchScoreBreakdown2019Alliance() = MatchScoreBreakdown2019Alliance(
+fun JSONObject.toMatchScoreBreakdown2019Alliance() = MatchScoreBreakdown2019Alliance(
+    this,
     int("adjustPoints"),
     int("autoPoints"),
     string("bay1"),
@@ -573,7 +606,8 @@ fun JsonObject.toMatchScoreBreakdown2019Alliance() = MatchScoreBreakdown2019Alli
     int("totalPoints")
 )
 
-fun JsonObject.toMedia() = Media(
+fun JSONObject.toMedia() = Media(
+    this,
     string("key"),
     string("type"),
     string("foreign_key"),
@@ -583,7 +617,8 @@ fun JsonObject.toMedia() = Media(
     string("view_url")
 )
 
-fun JsonObject.toEliminationAlliance() = EliminationAlliance(
+fun JSONObject.toEliminationAlliance() = EliminationAlliance(
+    this,
     string("name"),
     obj("backup"),
     stringList("declines"),
@@ -591,7 +626,8 @@ fun JsonObject.toEliminationAlliance() = EliminationAlliance(
     obj("status")
 )
 
-fun JsonObject.toAward() = Award(
+fun JSONObject.toAward() = Award(
+    this,
     string("name"),
     int("award_type"),
     string("event_key"),
@@ -599,19 +635,22 @@ fun JsonObject.toAward() = Award(
     int("year")
 )
 
-fun JsonObject.toAwardRecipient() = AwardRecipient(
+fun JSONObject.toAwardRecipient() = AwardRecipient(
+    this,
     string("team_key"),
     string("awardee")
 )
 
-fun JsonObject.toDistrictList() = DistrictList(
+fun JSONObject.toDistrictList() = DistrictList(
+    this,
     string("abbreviation"),
     string("display_name"),
     string("key"),
     int("year")
 )
 
-fun JsonObject.toDistrictRanking() = DistrictRanking(
+fun JSONObject.toDistrictRanking() = DistrictRanking(
+    this,
     string("team_key"),
     int("rank"),
     int("rookie_bonus"),
@@ -619,13 +658,15 @@ fun JsonObject.toDistrictRanking() = DistrictRanking(
     objList("event_points")
 )
 
-fun JsonObject.toWLTRecord() = WLTRecord(
+fun JSONObject.toWLTRecord() = WLTRecord(
+    this,
     int("losses"),
     int("wins"),
     int("ties")
 )
 
-fun JsonObject.toWebcast() = Webcast(
+fun JSONObject.toWebcast() = Webcast(
+    this,
     string("type"),
     string("channel"),
     string("file")
