@@ -85,7 +85,6 @@ object TBASingleton {
             register("set_cache", "Data Caching")
             register("event_list", "Get Event List")
             register("event_predictions", "Get Event Predictions")
-            register("event_list", "Get Event Match Results")
         }
         val config = context.config
         tba = TBA(config.getString("API Key")) // FIXME

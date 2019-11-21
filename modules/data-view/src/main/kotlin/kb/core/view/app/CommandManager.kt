@@ -29,51 +29,55 @@ class CommandManager {
 
     private val keys: MutableList<String> = ArrayList()
     private val values: MutableList<Command> = ArrayList()
+    private val referenceItems: MutableList<OptionItem> = ArrayList()
 
     private var filteredIndices: List<Int> = ArrayList()
 
     fun forEachShortcut(func: (shortcut: KeyCombination, key: String) -> Unit) {
         for (i in values.indices) {
             val v = values[i]
-            if (v.shortcut != null && v.callback != null) {
+            if (v.shortcut != null) {
                 func(v.shortcut, keys[i])
             }
         }
     }
 
     fun setAll() {
-        bar.items.setAll(values.map { toItem(it, null) })
+        for (item in referenceItems) {
+            item.highlight = null
+        }
+        bar.items.setAll(referenceItems)
         bar.hint = "Search ${values.size} Commands"
         filteredIndices = keys.indices.toList()
     }
 
-    private fun toItem(command: Command, highlight: BooleanArray?): OptionItem = OptionItem(
-            command.name,
-            command.shortcut?.displayText?.replace("+", " + "),
-            command.icon?.let { code ->
-                IkonResolver.resolveIcon(code)?.let { icon ->
-                    fontIcon(icon, 14)
-                }
-            },
-            highlight
-    )
 
     private fun updateSearch(q: String) {
-        val items = values
-                .mapIndexed { index, command -> index to OptionItem.parse(command.name, q) }
-                .filter { it.second != null }
-                .sortedWith(Comparator { o1, o2 ->
-                    OptionItem.compare(o2.second, o1.second)
+        for (i in keys.indices) {
+            referenceItems[i].highlight = OptionItem.parse(values[i].name, q)
+        }
+        filteredIndices = keys.indices
+                .filter { i -> referenceItems[i].highlight != null }
+                .sortedWith(Comparator { i, j ->
+                    OptionItem.compare(referenceItems[j].highlight, referenceItems[i].highlight)
                 })
-        filteredIndices = items.map { it.first }
-        bar.items.setAll(items.map { toItem(values[it.first], it.second) })
+        bar.items.setAll(filteredIndices.map { i -> referenceItems[i] })
     }
 
     fun registerCommand(id: String, command: Command) {
         if (id !in keys) {
             keys.add(id)
             values.add(command)
-        }
+            referenceItems.add(OptionItem(
+                    command.name,
+                    command.shortcut?.displayText?.replace("+", " + "),
+                    command.icon?.let { code ->
+                        IkonResolver.resolveIcon(code)?.let { icon ->
+                            fontIcon(icon, 14)
+                        }
+                    }, null
+            ))
+        } else throw IllegalStateException("The Command $id is already registered")
     }
 
     fun hasCommand(id: String): Boolean {

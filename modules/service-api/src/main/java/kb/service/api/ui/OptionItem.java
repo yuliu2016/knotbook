@@ -42,6 +42,10 @@ public class OptionItem {
         return highlight;
     }
 
+    public void setHighlight(boolean[] highlight) {
+        this.highlight = highlight;
+    }
+
     /**
      * Given a name and a query, returns a boolean array
      * in which the query matches the name
