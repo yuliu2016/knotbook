@@ -7,7 +7,8 @@ import java.util.Arrays;
 @SuppressWarnings("DuplicatedCode")
 public class OptionItem {
     private String name;
-    private String info;
+    private String info1;
+    private String info2;
     private Node graphic;
     private boolean[] highlight;
 
@@ -15,13 +16,14 @@ public class OptionItem {
      * Creates a new item
      *
      * @param name      the name of the item
-     * @param info      additional info
+     * @param info1      additional info
      * @param graphic   a graphic item, like an icon or a checkbox
      * @param highlight the characters to be highlighted
      */
-    public OptionItem(String name, String info, Node graphic, boolean[] highlight) {
+    public OptionItem(String name, String info1, String info2, Node graphic, boolean[] highlight) {
         this.name = name;
-        this.info = info;
+        this.info1 = info1;
+        this.info2 = info2;
         this.graphic = graphic;
         this.highlight = highlight;
     }
@@ -30,8 +32,12 @@ public class OptionItem {
         return name;
     }
 
-    public String getInfo() {
-        return info;
+    public String getInfo1() {
+        return info1;
+    }
+
+    public String getInfo2() {
+        return info2;
     }
 
     public Node getGraphic() {
@@ -40,6 +46,10 @@ public class OptionItem {
 
     public boolean[] getHighlight() {
         return highlight;
+    }
+
+    public void setHighlight(boolean[] highlight) {
+        this.highlight = highlight;
     }
 
     /**

@@ -1,5 +1,6 @@
 package kb.service.api;
 
+import kb.service.api.data.DataSpace;
 import kb.service.api.json.JSONObjectWrapper;
 import kb.service.api.ui.TextEditor;
 import kb.service.api.ui.UIManager;
@@ -26,4 +27,10 @@ public interface ServiceContext {
      * used to add options to the user interface
      */
     UIManager getUIManager();
+
+    /**
+     * Retrieve an instance of the data space, which can manipulate
+     * all the data
+     */
+    DataSpace getDataSpace();
 }

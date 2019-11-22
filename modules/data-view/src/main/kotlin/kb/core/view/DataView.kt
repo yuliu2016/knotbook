@@ -10,6 +10,7 @@ import javafx.scene.Scene
 import javafx.scene.image.Image
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
+import javafx.stage.Screen
 import javafx.stage.Stage
 import kb.core.fx.*
 import kb.core.view.app.Singleton
@@ -25,6 +26,11 @@ class DataView {
     val stage = Stage()
     val themeListener = InvalidationListener { updateTheme() }
     private var isFullScreen = false
+    private var grid = emptyGrid()
+
+    init {
+        stage.title = "KnotBook"
+    }
 
     fun toggleFullScreen() {
         isFullScreen = !isFullScreen
@@ -55,11 +61,12 @@ class DataView {
         hspace()
     }
 
-    val spreadsheet = SpreadsheetView(emptyGrid()).apply {
+    val spreadsheet = SpreadsheetView(grid).apply {
         selectionModel.selectedCells.addListener(InvalidationListener { selectionText.value = getRangeText() })
         columns.forEach { it.setPrefWidth(75.0) }
         zoomFactorProperty().addListener(InvalidationListener { zoomText.value = "${(zoomFactor * 100).toInt()}%" })
         contextMenu = null
+        isEditable = false
     }
 
     val layout = borderPane {
@@ -87,6 +94,10 @@ class DataView {
         if (showing) throw IllegalStateException("DataView is already shown")
         showing = true
 
+        val area = Screen.getPrimary().visualBounds
+        layout.prefWidth = area.width / 2.0
+        layout.prefHeight = area.height / 2.0 - 32.0
+
         updateTheme()
         themeText.bind(Singleton.uiManager.themeProperty.asString())
         addStatus(selectionText)
@@ -99,7 +110,6 @@ class DataView {
             scene.accelerators[shortcut] = Runnable { Singleton.uiManager.commandManager.invokeCommand(key) }
         }
         stage.fullScreenExitHint = "Press F11 to Exit Full Screen"
-        stage.title = "KnotBook"
         stage.icons.add(appIcon)
         stage.scene = scene
         stage.focusedProperty().addListener { _, _, focused ->
@@ -114,7 +124,15 @@ class DataView {
 
     private val sortColumns = ArrayList<SortColumn>()
     private val colourScales = ArrayList<ColorScale>()
-    private var referenceOrder: List<ObservableList<SpreadsheetCell>>? = null
+    private var referenceOrder = ArrayList<ObservableList<SpreadsheetCell>>()
+
+    fun setData(title: String, data: TableArray) {
+        stage.title = title
+        array = data
+        grid = data.toGrid()
+        this.spreadsheet.grid = grid
+        spreadsheet.fixedRows.setAll(0)
+    }
 
     private inline fun copyWithMinMax(block: (minRow: Int, maxRow: Int, minCol: Int, maxCol: Int) -> String) {
         val se = spreadsheet.getSelection()
@@ -123,10 +141,9 @@ class DataView {
         Clipboard.getSystemClipboard().setContent(content)
     }
 
-    private fun copyDelimited(delimiter: Char) {
+    fun copyDelimited(delimiter: Char) {
         copyWithMinMax { minRow, maxRow, minCol, maxCol ->
             val builder = StringBuilder()
-            val grid = spreadsheet.grid
             for (i in minRow..maxRow) {
                 for (j in minCol until maxCol) {
                     val it = grid.rows[i][j].item
@@ -140,9 +157,6 @@ class DataView {
             builder.toString()
         }
     }
-
-    fun copyTabDelimited() = copyDelimited('\t')
-    fun copyCommaDelimited() = copyDelimited(',')
 
     private fun getRangeText(): String {
         val a = spreadsheet.selectionModel.selectedCells

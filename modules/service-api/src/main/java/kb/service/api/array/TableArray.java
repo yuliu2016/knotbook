@@ -8,7 +8,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 /**
- * Table implementation. Row major. Expandable.
+ * Table implementation. Row major. Expandable. Mutable
  * Designed for table UI. Basic processing.
  */
 @SuppressWarnings({"unused", "WeakerAccess", "DuplicatedCode"})
@@ -33,13 +33,6 @@ public class TableArray {
     // more information
     private Map<String, String> header = new HashMap<>();
 
-    // Used for caching references returned by the formula
-    // provider
-    private List<Reference[]> ref = new ArrayList<>();
-
-    // The last formula provider
-    private FormulaProvider last_provider = null;
-
     // The character-width of each column (for pretty-printing)
     private IntArrayList pretty_col_size = new IntArrayList();
 
@@ -52,8 +45,18 @@ public class TableArray {
     private static final byte MODE_STR = 3;
     private static final DecimalFormat floatFormat = new DecimalFormat("####0.000");
 
+    /**
+     * Create a new TableArray without anything in it
+     */
     public static TableArray emptyTableArray() {
         return new TableArray();
+    }
+
+    public static TableArray ofSize(int rows, int cols) {
+        TableArray array = emptyTableArray();
+        array.cols = cols;
+        array.ensureSizeFromRowSize(rows);
+        return array;
     }
 
     /**
@@ -74,13 +77,13 @@ public class TableArray {
         array.ensureSizeFromRowSize(data.size());
 
         int startIndex = 0;
+
         if (headers) {
-            // title row
             String[] titles = data.get(0);
             for (int i = 0; i < cols; i++) {
                 array.mode.value[i] = MODE_STR;
                 array.pretty_col_size.value[i] = TableUtil.widthForSplitHeader(titles[i]);
-                array.str.add(titles[i]);
+                array.str.set(i, titles[i]);
             }
             array.pretty_headers = true;
             startIndex = 1;
@@ -92,13 +95,11 @@ public class TableArray {
                 int ai = i * array.cols + j;
                 if (j >= row.length) {
                     array.mode.value[ai] = 0;
-                    array.str.add(null);
                     continue;
                 }
                 String v = row[j].strip();
                 if (v.isEmpty()) {
                     array.mode.value[ai] = 0;
-                    array.str.add(null);
                 } else {
                     try {
                         float fv = Float.parseFloat(v);
@@ -114,12 +115,11 @@ public class TableArray {
                         }
                         array.pretty_col_size.value[j] = Math
                                 .max(array.pretty_col_size.value[j], f.length());
-                        array.str.add(f);
                     } catch (NumberFormatException e) {
                         array.mode.value[ai] = MODE_STR;
                         array.pretty_col_size.value[j] = Math
                                 .max(array.pretty_col_size.value[j], v.length());
-                        array.str.add(v);
+                        array.str.set(ai, v);
                     }
                 }
             }
@@ -155,7 +155,7 @@ public class TableArray {
             BufferedReader strIn = new BufferedReader(new InputStreamReader(zip.getInputStream(numEntry)));
             for (int i = 0; i < array.len; i++) {
                 int m = array.mode.value[i];
-                array.str.add(m == MODE_STR ? strIn.readLine() : null);
+                array.str.set(i, m == MODE_STR ? strIn.readLine() : null);
             }
             return array;
         } catch (IOException e) {
@@ -171,7 +171,10 @@ public class TableArray {
         len = rows * cols;
         mode.resize(len);
         num.resize(len);
-        pretty_col_size.resize(len);
+        pretty_col_size.resize(cols);
+        for (int i = str.size(); i < len; i++) {
+            str.add(null);
+        }
     }
 
     public boolean isPrettyHeaders() {
@@ -180,6 +183,10 @@ public class TableArray {
 
     public int getCols() {
         return cols;
+    }
+
+    public void setCols(int cols) {
+        this.cols = cols;
     }
 
     public int getSize() {
@@ -202,6 +209,24 @@ public class TableArray {
         } else {
             return str.get(i);
         }
+    }
+
+    public void set(int row, int col, String s) {
+        int i = row * cols + col;
+        mode.value[i] = MODE_STR;
+        str.set(i, s);
+    }
+
+    public void set(int row, int col, int s) {
+        int i = row * cols + col;
+        mode.value[i] = MODE_INT;
+        num.value[i] = s;
+    }
+
+    public void set(int row, int col, double s) {
+        int i = row * cols + col;
+        mode.value[i] = MODE_FLOAT;
+        num.value[i] = (float) s;
     }
 
     public boolean isNumber(int row, int col) {
@@ -381,12 +406,6 @@ public class TableArray {
             out.closeEntry();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    public void applyFormulas(FormulaProvider provider) {
-        if (provider != last_provider) {
-            last_provider = provider;
         }
     }
 

@@ -4,12 +4,11 @@ import javafx.application.Platform
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
-import kb.plugin.thebluealliance.api.Event
-import kb.plugin.thebluealliance.api.TBA
-import kb.plugin.thebluealliance.api.getEventsByYear
+import kb.plugin.thebluealliance.api.*
 import kb.service.api.ServiceContext
-import kb.service.api.ui.OptionBar
+import kb.service.api.array.TableArray
 import kb.service.api.ui.OptionItem
+import kb.service.api.ui.SearchBar
 import kb.service.api.ui.UIManager
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -20,38 +19,92 @@ object TBASingleton {
     lateinit var tba: TBA
     val executor: ExecutorService = Executors.newSingleThreadExecutor()
 
-    var data: List<Event>? = null
+    var data: List<Event> = ArrayList()
+    var items: List<OptionItem> = ArrayList()
 
     fun showEvents() {
+        if (data.isNotEmpty()) showEventsBar()
+        else executor.submit { showEvents0() }
+    }
+
+    val eventBar = SearchBar()
+
+    fun showEvents0() {
+        try {
+            if (data.isEmpty()) {
+                data = tba.getEventsByYear(2019).sortedWith(compareBy(
+                        { it.event_type },
+                        { it.district?.abbreviation },
+                        { it.week },
+                        { it.name }
+                ))
+                items = data.map { event ->
+                    val info = when (event.event_type!!) {
+                        0 -> "Week ${event.week}"
+                        1 -> "${event.district?.abbreviation?.toUpperCase()} Week ${event.week?.plus(1)}"
+                        else -> event.event_type_string
+                    }
+                    OptionItem(event.name, null, info, null, null)
+                }
+            }
+            Platform.runLater { showEventsBar() }
+        } catch (e: Exception) {
+            Platform.runLater { context.uiManager.showException(e) }
+            e.printStackTrace()
+        }
+    }
+
+    fun showEventsBar() {
+        eventBar.setItems(items)
+        eventBar.setHandler { getData(data[it]) }
+        context.uiManager.showOptionBar(eventBar.toOptionBar())
+    }
+
+    fun String.toTeam(): Int {
+        return substring(3).toInt()
+    }
+
+    fun MatchSimple.getTeam(i: Int): Int {
+        val red = alliances?.red?.team_keys!!
+        val blue = alliances?.blue?.team_keys!!
+        return when (i) {
+            0 -> red[0].toTeam()
+            1 -> red[1].toTeam()
+            2 -> red[2].toTeam()
+            3 -> blue[0].toTeam()
+            4 -> blue[1].toTeam()
+            5 -> blue[2].toTeam()
+            else -> throw IllegalStateException()
+        }
+    }
+
+    fun getData(event: Event) {
         executor.submit {
             try {
-                if (data == null)
-                    data = tba.getEventsByYear(2019).sortedWith(compareBy({ it.event_type }, {it.district?.abbreviation}, { it.week }, {it.name}))
-
-                Platform.runLater { showEventsBar(data!!) }
+                val m = tba.getEventMatchesSimple("${event.year}${event.event_code}")
+                        .filter { it.comp_level == "qm" }.sortedBy { it.match_number }
+                val a = TableArray.ofSize(m.size + 1, 6)
+                a[0, 0] = "Red 1"
+                a[0, 1] = "Red 2"
+                a[0, 2] = "Red 3"
+                a[0, 3] = "Blue 1"
+                a[0, 4] = "Blue 2"
+                a[0, 5] = "Blue 3"
+                for (i in m.indices) {
+                    for (j in 0..5) {
+                        a[i + 1, j] = m[i].getTeam(j)
+                    }
+                }
+                Platform.runLater { context.dataSpace.newData(event.name + " Match Schedule", a) }
             } catch (e: Exception) {
+                Platform.runLater { context.uiManager.showException(e) }
                 e.printStackTrace()
             }
         }
     }
 
-    var bar: OptionBar? = null
+    fun getData() {
 
-    fun showEventsBar(events: List<Event>) {
-        if (bar == null) {
-            val bar = OptionBar()
-            for (event in events) {
-                val type = event.event_type!!
-                val info = when (type) {
-                    0 -> "Week ${event.week}"
-                    1 -> "${event.district?.abbreviation?.toUpperCase()} Week ${event.week?.plus(1)}"
-                    else -> event.event_type_string
-                }
-                bar.items.add(OptionItem(event.name, info, null, null))
-            }
-            this.bar = bar
-        }
-        context.uiManager.showOptionBar(bar)
     }
 
     fun launch(context: ServiceContext) {
@@ -69,6 +122,10 @@ object TBASingleton {
                 println(it)
             }
         }
+        m.registerCommand("tba.get_win", "The Blue Alliance: Get Windsor Matches", null,
+                KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN)) {
+            getData()
+        }
         m.apply {
             register("set_year", "Set Year")
             register("set_district", "Set Primary District")
@@ -80,7 +137,6 @@ object TBASingleton {
             register("set_cache", "Data Caching")
             register("event_list", "Get Event List")
             register("event_predictions", "Get Event Predictions")
-            register("event_list", "Get Event Match Results")
         }
         val config = context.config
         tba = TBA(config.getString("API Key")) // FIXME

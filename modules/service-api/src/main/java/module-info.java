@@ -10,4 +10,5 @@ module kb.service.api {
     exports kb.service.api.array;
     exports kb.service.api.ui;
     exports kb.service.api.json;
+    exports kb.service.api.data;
 }

@@ -9,6 +9,16 @@ import kb.service.api.ui.OptionItem
 
 class OptionItemCell : ListCell<OptionItem>() {
 
+    private val textBox = hbox {
+        align(Pos.CENTER_LEFT)
+        hgrow()
+    }
+
+    private val graphicBox = hbox {
+        align(Pos.CENTER)
+        prefWidth = 24.0
+    }
+
     override fun updateItem(item: OptionItem?, empty: Boolean) {
         super.updateItem(item, empty)
         prefHeight = 24.0
@@ -17,15 +27,11 @@ class OptionItemCell : ListCell<OptionItem>() {
             return
         }
 
-        val t = hbox {
-            align(Pos.CENTER_LEFT)
-            hgrow()
-        }
-
+        textBox.children.clear()
         val name = if (item.name.length > 50) item.name.substring(0, 47) + "..." else item.name
 
         if (item.highlight == null || item.highlight.isEmpty()) {
-            t.add(Label(name))
+            textBox.add(Label(name))
         } else {
             val ix = item.highlight
             var highlighted = ix[0]
@@ -34,31 +40,38 @@ class OptionItemCell : ListCell<OptionItem>() {
                 if (ix[j]) {
                     if (!highlighted) {
                         highlighted = true
-                        t.add(Label(name.substring(i, j)))
+                        textBox.add(Label(name.substring(i, j)))
                         i = j
                     }
                 } else if (highlighted) {
                     highlighted = false
-                    t.add(Label(name.substring(i, j)).apply {
+                    textBox.add(Label(name.substring(i, j)).apply {
                         styleClass("list-highlight")
                     })
                     i = j
                 }
             }
             if (highlighted) {
-                t.add(label(name.substring(i)).styleClass("list-highlight"))
+                textBox.add(label(name.substring(i)).styleClass("list-highlight"))
             } else {
-                t.add(label(name.substring(i)))
+                textBox.add(label(name.substring(i)))
             }
+        }
+        graphicBox.children.clear()
+        if (item.graphic != null) {
+            graphicBox.children.add(item.graphic)
         }
         graphic = hbox {
             alignment = Pos.CENTER_LEFT
             padding = Insets(0.0, 24.0, 0.0, 8.0)
             spacing = 4.0
-            add(item.graphic.centered(24))
-            add(t)
-            if (item.info != null) {
-                add(label(item.info).styleClass("list-info"))
+            add(graphicBox)
+            add(textBox)
+            if (item.info1 != null) {
+                add(label(item.info1).styleClass("list-info"))
+            }
+            if (item.info2 != null) {
+                add(label(item.info2))
             }
         }
         alignment = Pos.CENTER_LEFT

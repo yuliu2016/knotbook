@@ -30,6 +30,7 @@ class TextEditorImpl implements TextEditor {
     private String title = "Text Editor";
     private boolean textChanged = false;
     private String finalText = null;
+    private boolean darkTheme = false;
 
     static class Action {
         String name;
@@ -102,6 +103,16 @@ class TextEditorImpl implements TextEditor {
         return this;
     }
 
+    @Override
+    public boolean isDarkTheme() {
+        return darkTheme;
+    }
+
+    @Override
+    public void setDarkTheme(boolean darkTheme) {
+        this.darkTheme = darkTheme;
+    }
+
     private void showImpl() {
         JFrame frame = new JFrame();
         RSyntaxTextArea area = new RSyntaxTextArea(32, 88);
@@ -117,15 +128,14 @@ class TextEditorImpl implements TextEditor {
         cp.setLayout(new BoxLayout(cp, BoxLayout.Y_AXIS));
 
         try {
-            Theme.load(RSyntaxTextArea.class
-                    .getResourceAsStream("/org/fife/ui/rsyntaxtextarea/themes/idea.xml"))
+            Theme.load(TextEditorImpl.class
+                    .getResourceAsStream(darkTheme ?"/kb/core/code/monokai.xml": "/kb/core/code/idea.xml"))
                     .apply(area);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         area.setSyntaxEditingStyle(getSyntax());
-        area.setCurrentLineHighlightColor(Color.white);
         area.setCodeFoldingEnabled(true);
         area.setAutoIndentEnabled(true);
         area.setPaintTabLines(true);

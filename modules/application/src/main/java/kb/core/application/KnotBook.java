@@ -7,10 +7,13 @@ import kb.service.api.ServiceMetadata;
 import kb.service.api.application.ApplicationProps;
 import kb.service.api.application.ApplicationService;
 import kb.service.api.application.ServiceManager;
+import kb.service.api.data.DataSpace;
 import kb.service.api.json.JSONObjectWrapper;
 import kb.service.api.ui.TextEditor;
 import kb.service.api.ui.TextEditorService;
 import kb.service.api.ui.UIManager;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,6 +30,64 @@ class KnotBook {
         void write(String s);
 
         Path getPath();
+    }
+
+    public static class Config implements ApplicationProps {
+        private JSONObject object;
+        private ConfigHandle handle;
+
+        private Map<String, JSONObjectWrapper> wrappers = new HashMap<>();
+
+        Config(ConfigHandle handle) {
+            this.handle = handle;
+            try {
+                object = new JSONObject(handle.read());
+            } catch (JSONException e) {
+                object = new JSONObject();
+            }
+        }
+
+        void save() {
+            handle.write(getJoinedText());
+        }
+
+        JSONObjectWrapper getConfig(Service service) {
+            String key = service.getMetadata().getPackageName();
+            JSONObjectWrapper wrapper = wrappers.get(key);
+            if (wrapper != null) {
+                return wrapper;
+            }
+            JSONObject savedConfig = object.optJSONObject(key);
+            JSONObjectWrapper newWrapper;
+            if (savedConfig != null) {
+                newWrapper = new JSONObjectWrapper(savedConfig);
+            } else {
+                JSONObject newObject = new JSONObject();
+                object.put(key, newObject);
+                newWrapper = new JSONObjectWrapper(newObject);
+            }
+            wrappers.put(key, newWrapper);
+            return newWrapper;
+        }
+
+        @Override
+        public String getJoinedText() {
+            return object.toString(2);
+        }
+
+        @Override
+        public void setInputText(String inputText) {
+            try {
+                object = new JSONObject(inputText);
+            } catch (JSONException e) {
+                object = new JSONObject();
+            }
+        }
+
+        @Override
+        public Path getPath() {
+            return handle.getPath();
+        }
     }
 
     private static class FileConfigHandle implements ConfigHandle {
@@ -126,6 +187,11 @@ class KnotBook {
         public UIManager getUIManager() {
             return app.getUIManager();
         }
+
+        @Override
+        public DataSpace getDataSpace() {
+            return app.getDataSpace();
+        }
     }
 
     private static class Manager implements ServiceManager {
@@ -187,7 +253,7 @@ class KnotBook {
         return new ContextImpl(service, app);
     }
 
-    private static void launchPlugin(Service service, ApplicationService app) {
+    private static void launchService(Service service, ApplicationService app) {
         if (service.isAvailable()) {
             try {
                 service.launch(contextForService(service, app));
@@ -219,38 +285,46 @@ class KnotBook {
             return new FileConfigHandle(Paths.get(home, "knotbook-config-debug.json"));
         }
         if (launcherPath != null) {
-            return new FileConfigHandle(Paths.get(launcherPath, "app", "config.json"));
+            return new FileConfigHandle(Paths.get(launcherPath, "config.json"));
         }
         throw new IllegalStateException();
     }
 
     private final ResolvedServices<ApplicationService> applications =
             loadServices(ServiceLoader.load(ApplicationService.class), ApplicationService.class);
+
     private final ResolvedServices<Service> extensions =
             loadServices(ServiceLoader.load(Service.class), Service.class);
+
     private final ResolvedServices<TextEditorService> textEditors =
             loadServices(ServiceLoader.load(TextEditorService.class), TextEditorService.class);
 
     private Config config;
     private Manager manager;
+    private ApplicationService app;
 
     void launch(List<String> args) {
         this.args = args;
         config = new Config(getHandle());
         manager = new Manager();
         if (!applications.services.isEmpty()) {
-            ApplicationService app = applications.services.get(0);
-            launch(app);
-        }
+            app = applications.services.get(0);
+            launchApplication();
+        } else throw new IllegalStateException("No Application Found");
     }
 
-    private void launch(ApplicationService app) {
+    private void launchApplication() {
         applications.print();
         extensions.print();
         textEditors.print();
-        app.launch(manager, contextForService(serviceForApplication(app.getMetadata()), app), () -> {
-            for (Service service : extensions.services) launchPlugin(service, app);
-        });
+        ServiceContext context = contextForService(serviceForApplication(app.getMetadata()), app);
+        app.launch(manager, context, this::launchServices);
+    }
+
+    private void launchServices() {
+        for (Service service : extensions.services) {
+            launchService(service, app);
+        }
     }
 
     private TextEditor createTextEditor() {
