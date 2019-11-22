@@ -8,7 +8,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 /**
- * Table implementation. Row major. Expandable.
+ * Table implementation. Row major. Expandable. Mutable
  * Designed for table UI. Basic processing.
  */
 @SuppressWarnings({"unused", "WeakerAccess", "DuplicatedCode"})
@@ -33,13 +33,6 @@ public class TableArray {
     // more information
     private Map<String, String> header = new HashMap<>();
 
-    // Used for caching references returned by the formula
-    // provider
-    private List<Reference[]> ref = new ArrayList<>();
-
-    // The last formula provider
-    private FormulaProvider last_provider = null;
-
     // The character-width of each column (for pretty-printing)
     private IntArrayList pretty_col_size = new IntArrayList();
 
@@ -52,6 +45,9 @@ public class TableArray {
     private static final byte MODE_STR = 3;
     private static final DecimalFormat floatFormat = new DecimalFormat("####0.000");
 
+    /**
+     * Create a new TableArray without anything in it
+     */
     public static TableArray emptyTableArray() {
         return new TableArray();
     }
@@ -381,12 +377,6 @@ public class TableArray {
             out.closeEntry();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    public void applyFormulas(FormulaProvider provider) {
-        if (provider != last_provider) {
-            last_provider = provider;
         }
     }
 

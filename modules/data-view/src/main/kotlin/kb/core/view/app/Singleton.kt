@@ -12,7 +12,6 @@ import kb.core.fx.runOnFxThread
 import kb.core.view.DataView
 import kb.core.view.server.Server
 import kb.core.view.splash.Splash
-import kb.core.view.toGrid
 import kb.service.api.ServiceContext
 import kb.service.api.application.ServiceManager
 import kb.service.api.array.TableArray
@@ -30,14 +29,13 @@ import kotlin.system.exitProcess
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 internal object Singleton {
 
-    private var nullableManager: ServiceManager? = null
-    private var nullableContext: ServiceContext? = null
-
-    val manager get() = nullableManager!!
-    val context get() = nullableContext!!
+    // Application interfaces
+    lateinit var manager: ServiceManager
+    lateinit var context: ServiceContext
 
     val dataServer = Server()
     val uiManager = DataUIManager()
+    val dataSpace = TableSpace()
 
     fun editAppProperties() {
         context.createTextEditor()
@@ -119,10 +117,12 @@ internal object Singleton {
         }
     }
 
-    fun launch(manager: ServiceManager, context: ServiceContext) {
-        nullableContext = context
-        nullableManager = manager
+    fun launch(manager: ServiceManager, context: ServiceContext, serviceLauncher: Runnable) {
+        this.manager = manager
+        this.context = context
         launchImpl()
+        serviceLauncher.run()
+        DataView().show()
     }
 
     private fun launchImpl() {
@@ -150,13 +150,13 @@ internal object Singleton {
         }
     }
 
-    fun newWindow() {
+    fun newWindow(): DataView {
         val dv = DataView()
         uiManager.view?.let { win ->
             dv.stage.x = win.stage.x + 48.0
             dv.stage.y = win.stage.y + 36.0
-            dv.show()
         }
+        return dv
     }
 
     fun tableFromFile(view: DataView) {
@@ -167,11 +167,7 @@ internal object Singleton {
             Thread {
                 try {
                     val a = TableArray.fromCSV(FileInputStream(f), true)
-                    runOnFxThread {
-                        view.spreadsheet.grid = a.toGrid()
-                        view.spreadsheet.fixedRows.setAll(0)
-                        view.stage.title = f.name
-                    }
+                    runOnFxThread { view.setData(f.name, a) }
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -203,7 +199,7 @@ internal object Singleton {
         m.registerCommand("status.toggle", "Toggle Status Bar",
                 null, combo(KeyCode.F10)) { uiManager.view?.toggleStatusBar() }
         m.registerCommand("window.create", "New Window", null,
-                combo(KeyCode.N, control = true)) { newWindow() }
+                combo(KeyCode.N, control = true)) { newWindow().show() }
         m.registerCommand("test.python.editor", "Test Python Editor",
                 MDI_LANGUAGE_PYTHON.description, null
         ) { context.createTextEditor().withSyntax("text/python").editable().show() }
@@ -225,7 +221,7 @@ internal object Singleton {
         m.registerCommand("edit.cut", "Cut", MDI_CONTENT_CUT.description,
                 combo(KeyCode.X, control = true)) {}
         m.registerCommand("edit.copy", "Copy", MDI_CONTENT_COPY.description,
-                combo(KeyCode.C, control = true)) { uiManager.view?.copyTabDelimited() }
+                combo(KeyCode.C, control = true)) { uiManager.view?.copyDelimited(',') }
         m.registerCommand("edit.copy.special", "Copy Special", null,
                 combo(KeyCode.C, control = true, shift = true)) {}
         m.registerCommand("edit.paste", "Paste", MDI_CONTENT_PASTE.description,

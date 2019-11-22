@@ -67,8 +67,11 @@ class OptionItemCell : ListCell<OptionItem>() {
             spacing = 4.0
             add(graphicBox)
             add(textBox)
-            if (item.info != null) {
-                add(label(item.info).styleClass("list-info"))
+            if (item.info1 != null) {
+                add(label(item.info1).styleClass("list-info"))
+            }
+            if (item.info2 != null) {
+                add(label(item.info2))
             }
         }
         alignment = Pos.CENTER_LEFT

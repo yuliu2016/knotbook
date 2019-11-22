@@ -52,7 +52,7 @@ object TBASingleton {
                     1 -> "${event.district?.abbreviation?.toUpperCase()} Week ${event.week?.plus(1)}"
                     else -> event.event_type_string
                 }
-                bar.items.add(OptionItem(event.name, info, null, null))
+                bar.items.add(OptionItem(event.name, null, info, null, null))
             }
             this.bar = bar
         }

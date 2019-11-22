@@ -71,6 +71,7 @@ class CommandManager {
             referenceItems.add(OptionItem(
                     command.name,
                     command.shortcut?.displayText?.replace("+", " + "),
+                    null,
                     command.icon?.let { code ->
                         IkonResolver.resolveIcon(code)?.let { icon ->
                             fontIcon(icon, 14)
