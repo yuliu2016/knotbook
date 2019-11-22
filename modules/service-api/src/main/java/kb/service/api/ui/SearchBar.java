@@ -1,17 +1,15 @@
 package kb.service.api.ui;
 
-import javafx.util.Pair;
-
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.IntConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class SearchBar {
     private OptionBar optionBar = new OptionBar();
     private List<Integer> filteredIndices = null;
-    private List<OptionItem> items = null;
-    private Function<Integer, Boolean> handler = null;
+    private List<OptionItem> referenceItems = null;
+    private IntConsumer handler = null;
 
     {
         optionBar.textProperty().addListener((o, ov, nv) -> {
@@ -27,29 +25,44 @@ public class SearchBar {
         optionBar.setOnEnterPressed(e -> {
             if (handler != null) {
                 int i = filteredIndices.get(optionBar.getSelectedItem());
-                if (handler.apply(i)) {
-                    optionBar.setShowing(false);
-                }
+                handler.accept(i);
             }
         });
     }
 
     private void setAll() {
-
+        for (OptionItem item : referenceItems) {
+            item.setHighlight(null);
+        }
+        optionBar.getItems().setAll(referenceItems);
+        filteredIndices = IntStream.range(0, referenceItems.size()).boxed().collect(Collectors.toList());
     }
 
     private void updateSearch(String q) {
-        List<Pair<Integer, boolean[]>> res = IntStream.range(0, items.size())
-                .mapToObj(i -> new Pair<>(i, OptionItem.parse(items.get(i).getName(), q)))
-                .filter(x -> x.getValue() != null)
-                .sorted((a, b) -> OptionItem.compare(a.getValue(), b.getValue()))
+        for (OptionItem item : referenceItems) {
+            item.setHighlight(OptionItem.parse(item.getName(), q));
+        }
+        filteredIndices = IntStream.range(0, referenceItems.size())
+                .filter(x -> referenceItems.get(x).getHighlight() != null)
+                .boxed()
+                .sorted((a, b) -> OptionItem.compare(
+                        referenceItems.get(b).getHighlight(),
+                        referenceItems.get(a).getHighlight()
+                ))
                 .collect(Collectors.toList());
-        filteredIndices = res.stream().map(Pair::getKey).collect(Collectors.toList());
-        optionBar.getItems().setAll(res.stream().map(o -> items.get(o.getKey())).collect(Collectors.toList()));
+        optionBar.getItems().setAll(filteredIndices.stream()
+                .map(o -> referenceItems.get(o))
+                .collect(Collectors.toList())
+        );
+    }
+
+    public void setHandler(IntConsumer handler) {
+        this.handler = handler;
     }
 
     public void setItems(List<OptionItem> items) {
-        optionBar.getItems().setAll(items);
+        referenceItems = items;
+        setAll();
     }
 
     public void setHint(String hint) {

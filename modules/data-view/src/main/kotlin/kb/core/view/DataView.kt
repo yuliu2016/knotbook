@@ -10,6 +10,7 @@ import javafx.scene.Scene
 import javafx.scene.image.Image
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
+import javafx.stage.Screen
 import javafx.stage.Stage
 import kb.core.fx.*
 import kb.core.view.app.Singleton
@@ -92,6 +93,10 @@ class DataView {
     fun show() {
         if (showing) throw IllegalStateException("DataView is already shown")
         showing = true
+
+        val area = Screen.getPrimary().visualBounds
+        layout.prefWidth = area.width / 2.0
+        layout.prefHeight = area.height / 2.0 - 32.0
 
         updateTheme()
         themeText.bind(Singleton.uiManager.themeProperty.asString())
