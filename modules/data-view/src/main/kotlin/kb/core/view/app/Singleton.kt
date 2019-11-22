@@ -221,7 +221,7 @@ internal object Singleton {
         m.registerCommand("edit.cut", "Cut", MDI_CONTENT_CUT.description,
                 combo(KeyCode.X, control = true)) {}
         m.registerCommand("edit.copy", "Copy", MDI_CONTENT_COPY.description,
-                combo(KeyCode.C, control = true)) { uiManager.view?.copyDelimited(',') }
+                combo(KeyCode.C, control = true)) { uiManager.view?.copyDelimited('\t') }
         m.registerCommand("edit.copy.special", "Copy Special", null,
                 combo(KeyCode.C, control = true, shift = true)) {}
         m.registerCommand("edit.paste", "Paste", MDI_CONTENT_PASTE.description,

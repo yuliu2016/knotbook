@@ -10,10 +10,11 @@ import kb.core.view.DataView
 import kb.service.api.ui.Command
 import kb.service.api.ui.OptionBar
 import kb.service.api.ui.UIManager
-import java.io.ByteArrayOutputStream
 import java.io.PrintWriter
+import java.io.StringWriter
 import java.util.function.Consumer
 import java.util.function.Function
+
 
 @Suppress("MemberVisibilityCanBePrivate")
 class DataUIManager : UIManager {
@@ -94,9 +95,9 @@ class DataUIManager : UIManager {
 
     override fun showException(e: Exception?) {
         if (e == null) return
-        val ba = ByteArrayOutputStream()
-        e.printStackTrace(PrintWriter(ba))
-        showAlert("Error", ba.toString())
+        val sw = StringWriter()
+        e.printStackTrace(PrintWriter(sw))
+        showAlert("Error", sw.toString())
     }
 
     override fun getTextInput(prompt: String, validator: Function<String, Boolean>?, callback: Consumer<String>) {

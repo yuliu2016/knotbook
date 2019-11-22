@@ -4,10 +4,9 @@ import javafx.application.Platform
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
-import kb.plugin.thebluealliance.api.Event
-import kb.plugin.thebluealliance.api.TBA
-import kb.plugin.thebluealliance.api.getEventsByYear
+import kb.plugin.thebluealliance.api.*
 import kb.service.api.ServiceContext
+import kb.service.api.array.TableArray
 import kb.service.api.ui.OptionBar
 import kb.service.api.ui.OptionItem
 import kb.service.api.ui.UIManager
@@ -59,6 +58,48 @@ object TBASingleton {
         context.uiManager.showOptionBar(bar)
     }
 
+    fun String.toTeam(): Int {
+        return substring(3).toInt()
+    }
+
+    fun MatchSimple.getTeam(i: Int): Int {
+        val red = alliances?.red?.team_keys!!
+        val blue = alliances?.blue?.team_keys!!
+        return when (i) {
+            0 -> red[0].toTeam()
+            1 -> red[1].toTeam()
+            2 -> red[2].toTeam()
+            3 -> blue[0].toTeam()
+            4 -> blue[1].toTeam()
+            5 -> blue[2].toTeam()
+            else -> throw IllegalStateException()
+        }
+    }
+
+    fun getData() {
+        executor.submit {
+            try {
+                val m = tba.getEventMatchesSimple("2019onwin")
+                val a = TableArray.ofSize(m.size + 1, 6)
+                a[0, 0] = "Red 1"
+                a[0, 1] = "Red 2"
+                a[0, 2] = "Red 3"
+                a[0, 3] = "Blue 1"
+                a[0, 4] = "Blue 2"
+                a[0, 5] = "Blue 3"
+                for (i in m.indices) {
+                    for (j in 0..5) {
+                        a[i + 1, j] = m[i].getTeam(j)
+                    }
+                }
+                Platform.runLater { context.dataSpace.newData("2019onwin", a) }
+            } catch (e: Exception) {
+                Platform.runLater { context.uiManager.showException(e) }
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun launch(context: ServiceContext) {
         this.context = context
 
@@ -73,6 +114,10 @@ object TBASingleton {
             m.getTextInput("Enter the API Key for The Blue Alliance", null) {
                 println(it)
             }
+        }
+        m.registerCommand("tba.get_win", "The Blue Alliance: Get Windsor Matches", null,
+                KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN)) {
+            getData()
         }
         m.apply {
             register("set_year", "Set Year")

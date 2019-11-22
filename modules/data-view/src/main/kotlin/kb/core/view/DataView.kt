@@ -27,6 +27,10 @@ class DataView {
     private var isFullScreen = false
     private var grid = emptyGrid()
 
+    init {
+        stage.title = "KnotBook"
+    }
+
     fun toggleFullScreen() {
         isFullScreen = !isFullScreen
         stage.isFullScreen = isFullScreen
@@ -61,6 +65,7 @@ class DataView {
         columns.forEach { it.setPrefWidth(75.0) }
         zoomFactorProperty().addListener(InvalidationListener { zoomText.value = "${(zoomFactor * 100).toInt()}%" })
         contextMenu = null
+        isEditable = false
     }
 
     val layout = borderPane {
@@ -100,7 +105,6 @@ class DataView {
             scene.accelerators[shortcut] = Runnable { Singleton.uiManager.commandManager.invokeCommand(key) }
         }
         stage.fullScreenExitHint = "Press F11 to Exit Full Screen"
-        stage.title = "KnotBook"
         stage.icons.add(appIcon)
         stage.scene = scene
         stage.focusedProperty().addListener { _, _, focused ->
