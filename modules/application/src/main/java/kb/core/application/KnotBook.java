@@ -36,8 +36,6 @@ class KnotBook {
         private JSONObject object;
         private ConfigHandle handle;
 
-        private Map<String, JSONObjectWrapper> wrappers = new HashMap<>();
-
         Config(ConfigHandle handle) {
             this.handle = handle;
             try {
@@ -51,12 +49,8 @@ class KnotBook {
             handle.write(getJoinedText());
         }
 
-        JSONObjectWrapper getConfig(Service service) {
+        JSONObjectWrapper createConfig(Service service) {
             String key = service.getMetadata().getPackageName();
-            JSONObjectWrapper wrapper = wrappers.get(key);
-            if (wrapper != null) {
-                return wrapper;
-            }
             JSONObject savedConfig = object.optJSONObject(key);
             JSONObjectWrapper newWrapper;
             if (savedConfig != null) {
@@ -66,7 +60,6 @@ class KnotBook {
                 object.put(key, newObject);
                 newWrapper = new JSONObjectWrapper(newObject);
             }
-            wrappers.put(key, newWrapper);
             return newWrapper;
         }
 
@@ -162,6 +155,7 @@ class KnotBook {
 
         Service service;
         ApplicationService app;
+        JSONObjectWrapper configCache;
 
         ContextImpl(Service service, ApplicationService app) {
             this.service = service;
@@ -175,7 +169,10 @@ class KnotBook {
 
         @Override
         public JSONObjectWrapper getConfig() {
-            return getKnotBook().config.getConfig(service);
+            if (configCache == null) {
+                configCache = getKnotBook().config.createConfig(service);
+            }
+            return configCache;
         }
 
         @Override
@@ -258,7 +255,7 @@ class KnotBook {
             try {
                 service.launch(contextForService(service, app));
             } catch (Exception e) {
-                e.printStackTrace();
+                app.getUIManager().showException(e);
             }
         }
     }
@@ -273,7 +270,6 @@ class KnotBook {
     }
 
     private List<String> args;
-    private String launcherPath = System.getProperty("java.launcher.path");
     private String home = System.getProperty("user.home");
 
     private boolean isDebug() {
@@ -282,12 +278,9 @@ class KnotBook {
 
     private ConfigHandle getHandle() {
         if (isDebug()) {
-            return new FileConfigHandle(Paths.get(home, "knotbook-config-debug.json"));
+            return new FileConfigHandle(Paths.get(home, ".knotbook", "knotbook-config-debug.json"));
         }
-        if (launcherPath != null) {
-            return new FileConfigHandle(Paths.get(launcherPath, "config.json"));
-        }
-        throw new IllegalStateException();
+        return new FileConfigHandle(Paths.get(home, ".knotbook", "knotbook-config-release.json"));
     }
 
     private final ResolvedServices<ApplicationService> applications =

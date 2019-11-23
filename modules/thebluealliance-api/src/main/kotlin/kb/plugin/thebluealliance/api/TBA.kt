@@ -2,8 +2,8 @@ package kb.plugin.thebluealliance.api
 
 import org.json.JSONArray
 import org.json.JSONObject
-import java.net.HttpURLConnection
 import java.net.URL
+import javax.net.ssl.HttpsURLConnection
 
 /**
  * The Blue Alliance API
@@ -16,7 +16,7 @@ class TBA(
     private fun getTBAString(requestURL: String): String {
         try {
             val url = URL("https://www.thebluealliance.com/api/v3$requestURL")
-            val conn = url.openConnection() as HttpURLConnection
+            val conn = url.openConnection() as HttpsURLConnection
             conn.requestMethod = "GET"
             conn.useCaches = false
             conn.setRequestProperty("X-TBA-Auth-Key", authKey)

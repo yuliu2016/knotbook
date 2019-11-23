@@ -6,12 +6,12 @@ import javafx.beans.property.SimpleStringProperty
 import javafx.scene.control.ButtonType
 import javafx.scene.control.Dialog
 import kb.core.fx.label
+import kb.core.fx.runOnFxThread
 import kb.core.view.DataView
+import kb.core.view.splash.Splash
 import kb.service.api.ui.Command
 import kb.service.api.ui.OptionBar
 import kb.service.api.ui.UIManager
-import java.io.PrintWriter
-import java.io.StringWriter
 import java.util.function.Consumer
 import java.util.function.Function
 
@@ -93,11 +93,9 @@ class DataUIManager : UIManager {
         dialog.showAndWait()
     }
 
-    override fun showException(e: Exception?) {
-        if (e == null) return
-        val sw = StringWriter()
-        e.printStackTrace(PrintWriter(sw))
-        showAlert("Error", sw.toString())
+    override fun showException(e: Throwable?) {
+        val thread = Thread.currentThread()
+        runOnFxThread { Splash.error(thread, e) }
     }
 
     override fun getTextInput(prompt: String, validator: Function<String, Boolean>?, callback: Consumer<String>) {

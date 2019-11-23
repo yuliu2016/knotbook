@@ -20,7 +20,7 @@ public interface UIManager {
 
     void showAlert(String title, String message);
 
-    void showException(Exception e);
+    void showException(Throwable e);
 
     void getTextInput(String prompt, Function<String, Boolean> validator, Consumer<String> callback);
 

@@ -86,6 +86,14 @@ class DataView {
         })
     }
 
+    fun selectAll() {
+        spreadsheet.selectionModel.selectAll()
+    }
+
+    fun selectNone() {
+        spreadsheet.selectionModel.clearSelection()
+    }
+
     val zoomText = SimpleStringProperty("100%")
     val themeText = SimpleStringProperty("Light")
     val selectionText = SimpleStringProperty("None")

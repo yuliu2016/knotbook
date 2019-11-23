@@ -103,7 +103,6 @@ class CommandManager {
                 callback.run()
             } catch (e: Exception) {
                 Singleton.uiManager.showException(e)
-                throw e
             }
         }
     }

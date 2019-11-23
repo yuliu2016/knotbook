@@ -3,15 +3,21 @@ package kb.core.view.splash;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import javafx.stage.Window;
 import kb.core.view.app.Singleton;
+import kb.service.api.ui.UIHelper;
 import kotlin.KotlinVersion;
 
 
@@ -93,5 +99,26 @@ public class Splash {
             });
         });
         thread.start();
+    }
+
+    public static void error(Thread t, Throwable e) {
+        if (e == null) return;
+        String trace = UIHelper.getStackTrace(e);
+        Dialog<ButtonType> dialog = new Dialog<>();
+        DialogPane pane = dialog.getDialogPane();
+        pane.getButtonTypes().addAll(ButtonType.OK);
+
+        Label errorLabel = new Label(trace);
+        errorLabel.setStyle("-fx-font-size: 10; -fx-text-fill: darkred");
+
+        pane.setContent(errorLabel);
+
+        dialog.setTitle("Exception in thread \"" + t.getName() + "\"");
+
+        ClipboardContent content = new ClipboardContent();
+        content.putString(trace);
+
+        Clipboard.getSystemClipboard().setContent(content);
+        dialog.showAndWait();
     }
 }

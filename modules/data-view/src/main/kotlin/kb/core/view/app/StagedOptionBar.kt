@@ -27,6 +27,11 @@ class StagedOptionBar {
         maxHeight = 320.0
         styleClass("option-bar")
         setCellFactory { OptionItemCell() }
+        setOnMouseClicked {
+            if (it.clickCount == 2) {
+                optionBar?.onEnterPressed?.handle(ActionEvent())
+            }
+        }
     }
 
     val tf = textField {

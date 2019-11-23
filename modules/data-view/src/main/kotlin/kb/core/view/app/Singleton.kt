@@ -215,30 +215,21 @@ internal object Singleton {
 
     private fun launchCommands2() {
         val m = context.uiManager
-        m.registerCommand("edit.undo", "Undo", MDI_UNDO.description, combo(KeyCode.Z, control = true)) {}
-        m.registerCommand("edit.redo", "Redo", MDI_REDO.description,
-                combo(KeyCode.Z, control = true, shift = true)) {}
-        m.registerCommand("edit.cut", "Cut", MDI_CONTENT_CUT.description,
-                combo(KeyCode.X, control = true)) {}
         m.registerCommand("edit.copy", "Copy", MDI_CONTENT_COPY.description,
                 combo(KeyCode.C, control = true)) { uiManager.view?.copyDelimited('\t') }
-        m.registerCommand("edit.copy.special", "Copy Special", null,
-                combo(KeyCode.C, control = true, shift = true)) {}
-        m.registerCommand("edit.paste", "Paste", MDI_CONTENT_PASTE.description,
-                combo(KeyCode.V, control = true)) {}
-        m.registerCommand("edit.paste.special", "Paste Special", null,
-                combo(KeyCode.V, control = true, shift = true)) {}
-        m.registerCommand("select.all", "Select All", null, combo(KeyCode.A, control = true)) {}
+        m.registerCommand("select.all", "Select All", null,
+                combo(KeyCode.A, control = true)) { uiManager.view?.selectAll() }
         m.registerCommand("select.none", "Select None", null,
-                combo(KeyCode.A, control = true, shift = true)) {}
+                combo(KeyCode.A, control = true, shift = true)) { uiManager.view?.selectNone() }
+
+        m.registerCommand("view.zoom.in", "Zoom In", MDI_MAGNIFY_PLUS.description, null
+                ) { uiManager.view?.spreadsheet?.incrementZoom() }
+        m.registerCommand("view.zoom.out", "Zoom Out", MDI_MAGNIFY_MINUS.description, null
+                ) { uiManager.view?.spreadsheet?.decrementZoom() }
+        m.registerCommand("view.zoom.reset", "Reset Zoom", null, null
+                ) { uiManager.view?.spreadsheet?.zoomFactor = 1.0 }
         m.registerCommand("nav.find", "Find in Cells", null,
                 combo(KeyCode.F, control = true)) {}
-        m.registerCommand("view.zoom.in", "Zoom In", MDI_MAGNIFY_PLUS.description,
-                combo(KeyCode.EQUALS, control = true)) {}
-        m.registerCommand("view.zoom.out", "Zoom Out", MDI_MAGNIFY_MINUS.description,
-                combo(KeyCode.MINUS, control = true)) {}
-        m.registerCommand("view.zoom.reset", "Reset Zoom", null,
-                combo(KeyCode.DIGIT0, control = true)) {}
     }
 
     fun exitOK() {
