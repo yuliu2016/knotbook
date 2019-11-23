@@ -9,49 +9,69 @@ import kb.service.api.ServiceContext
 import kb.service.api.array.TableArray
 import kb.service.api.ui.OptionItem
 import kb.service.api.ui.SearchBar
+import kb.service.api.ui.UIHelper
 import kb.service.api.ui.UIManager
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
+import java.util.concurrent.Executor
 
 @Suppress("MemberVisibilityCanBePrivate")
 object TBASingleton {
     lateinit var context: ServiceContext
-    lateinit var tba: TBA
-    val executor: ExecutorService = Executors.newSingleThreadExecutor()
+    var tba: TBA? = null
+
+    val executor: Executor = UIHelper.createExecutor("TBA API Executor") {
+        context.uiManager.showException(it)
+    }
+
+    fun withGetKey(func: (key: String) -> Unit) {
+        context.uiManager.getTextInput("Enter the API Key for The Blue Alliance", null) {
+            if (it != null && it.isNotEmpty()) {
+                context.config["API Key"] = it
+                func(it)
+            }
+        }
+    }
+
+    fun withTBA(func: (TBA) -> Unit) {
+        val tba = tba
+        if (tba != null) {
+            executor.execute { func(tba) }
+        } else {
+            withGetKey { key ->
+                val newTBA = TBA(key)
+                this.tba = newTBA
+                executor.execute { func(newTBA) }
+            }
+        }
+    }
 
     var data: List<Event> = ArrayList()
     var items: List<OptionItem> = ArrayList()
 
     fun showEvents() {
         if (data.isNotEmpty()) showEventsBar()
-        else executor.submit { showEvents0() }
+        else withTBA { showEvents0(it) }
     }
 
     val eventBar = SearchBar()
 
-    fun showEvents0() {
-        try {
-            if (data.isEmpty()) {
-                data = tba.getEventsByYear(2019).sortedWith(compareBy(
-                        { it.event_type },
-                        { it.district?.abbreviation },
-                        { it.week },
-                        { it.name }
-                ))
-                items = data.map { event ->
-                    val info = when (event.event_type!!) {
-                        0 -> "Week ${event.week}"
-                        1 -> "${event.district?.abbreviation?.toUpperCase()} Week ${event.week?.plus(1)}"
-                        else -> event.event_type_string
-                    }
-                    OptionItem(event.name, null, info, null, null)
+    fun showEvents0(tba: TBA) {
+        if (data.isEmpty()) {
+            data = tba.getEventsByYear(2019).sortedWith(compareBy(
+                    { it.event_type },
+                    { it.district?.abbreviation },
+                    { it.week },
+                    { it.name }
+            ))
+            items = data.map { event ->
+                val info = when (event.event_type!!) {
+                    0 -> "Week ${event.week}"
+                    1 -> "${event.district?.abbreviation?.toUpperCase()} Week ${event.week?.plus(1)}"
+                    else -> event.event_type_string
                 }
+                OptionItem(event.name, null, info, null, null)
             }
-            Platform.runLater { showEventsBar() }
-        } catch (e: Exception) {
-            Platform.runLater { context.uiManager.showException(e) }
-            e.printStackTrace()
         }
+        Platform.runLater { showEventsBar() }
     }
 
     fun showEventsBar() {
@@ -79,37 +99,27 @@ object TBASingleton {
     }
 
     fun getData(event: Event) {
-        executor.submit {
-            try {
-                val m = tba.getEventMatchesSimple("${event.year}${event.event_code}")
-                        .filter { it.comp_level == "qm" }.sortedBy { it.match_number }
-                val a = TableArray.ofSize(m.size + 1, 6)
-                a[0, 0] = "Red 1"
-                a[0, 1] = "Red 2"
-                a[0, 2] = "Red 3"
-                a[0, 3] = "Blue 1"
-                a[0, 4] = "Blue 2"
-                a[0, 5] = "Blue 3"
-                for (i in m.indices) {
-                    for (j in 0..5) {
-                        a[i + 1, j] = m[i].getTeam(j)
-                    }
+        withTBA { tba ->
+            val m = tba.getEventMatchesSimple("${event.year}${event.event_code}")
+                    .filter { it.comp_level == "qm" }.sortedBy { it.match_number }
+            val a = TableArray.ofSize(m.size + 1, 6)
+            a[0, 0] = "Red 1"
+            a[0, 1] = "Red 2"
+            a[0, 2] = "Red 3"
+            a[0, 3] = "Blue 1"
+            a[0, 4] = "Blue 2"
+            a[0, 5] = "Blue 3"
+            for (i in m.indices) {
+                for (j in 0..5) {
+                    a[i + 1, j] = m[i].getTeam(j)
                 }
-                Platform.runLater { context.dataSpace.newData(event.name + " Match Schedule", a) }
-            } catch (e: Exception) {
-                Platform.runLater { context.uiManager.showException(e) }
-                e.printStackTrace()
             }
+            Platform.runLater { context.dataSpace.newData(event.name + " Match Schedule", a) }
         }
-    }
-
-    fun getData() {
-
     }
 
     fun launch(context: ServiceContext) {
         this.context = context
-
         val m = context.uiManager
 
         m.registerCommand("tba.get_match_schedule", "The Blue Alliance: Get Event Match Schedule",
@@ -118,13 +128,7 @@ object TBASingleton {
         }
         m.registerCommand("tba.set_key", "The Blue Alliance: Set APIv3 Key", "mdi-key",
                 KeyCodeCombination(KeyCode.M, KeyCombination.CONTROL_DOWN, KeyCombination.ALT_DOWN)) {
-            m.getTextInput("Enter the API Key for The Blue Alliance", null) {
-                println(it)
-            }
-        }
-        m.registerCommand("tba.get_win", "The Blue Alliance: Get Windsor Matches", null,
-                KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN)) {
-            getData()
+
         }
         m.apply {
             register("set_year", "Set Year")
@@ -139,7 +143,9 @@ object TBASingleton {
             register("event_predictions", "Get Event Predictions")
         }
         val config = context.config
-        tba = TBA(config.getString("API Key")) // FIXME
+        if (config.containsKey("API Key")) {
+            tba = TBA(config.getString("API Key"))
+        }
         config["Cache Directory"] = "Not Set"
         config["Cache Enabled"] = true
         config["Cache First"] = false
