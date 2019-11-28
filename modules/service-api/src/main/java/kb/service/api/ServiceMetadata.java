@@ -23,4 +23,9 @@ public class ServiceMetadata {
     public String getPackageVersion() {
         return packageVersion;
     }
+
+    @Override
+    public String toString() {
+        return packageName + " => " + packageVersion;
+    }
 }

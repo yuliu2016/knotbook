@@ -8,7 +8,6 @@ import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Scene
 import javafx.scene.control.Label
-import javafx.scene.image.Image
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
 import javafx.stage.Screen
@@ -76,7 +75,7 @@ class DataView {
     }
 
     val scene = Scene(layout)
-    val appIcon = Image(DataView::class.java.getResourceAsStream("/icon.png"))
+
     var showing = false
 
     fun addStatus(prop: StringProperty) {
@@ -117,7 +116,7 @@ class DataView {
             scene.accelerators[shortcut] = Runnable { Singleton.uiManager.commandManager.invokeCommand(key) }
         }
         stage.fullScreenExitHint = "Press F11 to Exit Full Screen"
-        stage.icons.add(appIcon)
+        stage.icons.add(Singleton.appIcon)
         stage.scene = scene
         stage.focusedProperty().addListener { _, _, focused ->
             if (focused) Singleton.uiManager.view = this

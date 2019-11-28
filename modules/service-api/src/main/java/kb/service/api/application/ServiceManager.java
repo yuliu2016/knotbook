@@ -7,7 +7,9 @@ import java.util.List;
 @SuppressWarnings("unused")
 public interface ServiceManager {
 
-    ApplicationProps getProps();
+    String getJSONConfig();
+
+    void setJSONConfig(String json);
 
     List<Service> getServices();
 
@@ -16,4 +18,8 @@ public interface ServiceManager {
     String getImageVersion();
 
     void exitOK();
+
+    void exitError();
+
+    List<String> getJVMArgs();
 }

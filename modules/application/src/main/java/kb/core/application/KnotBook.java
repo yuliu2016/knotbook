@@ -4,7 +4,6 @@ import kb.service.api.MetaService;
 import kb.service.api.Service;
 import kb.service.api.ServiceContext;
 import kb.service.api.ServiceMetadata;
-import kb.service.api.application.ApplicationProps;
 import kb.service.api.application.ApplicationService;
 import kb.service.api.application.ServiceManager;
 import kb.service.api.data.DataSpace;
@@ -28,11 +27,9 @@ class KnotBook {
         String read();
 
         void write(String s);
-
-        Path getPath();
     }
 
-    public static class Config implements ApplicationProps {
+    public static class Config {
         private JSONObject object;
         private ConfigHandle handle;
 
@@ -63,23 +60,16 @@ class KnotBook {
             return newWrapper;
         }
 
-        @Override
         public String getJoinedText() {
             return object.toString(2);
         }
 
-        @Override
         public void setInputText(String inputText) {
             try {
                 object = new JSONObject(inputText);
             } catch (JSONException e) {
                 object = new JSONObject();
             }
-        }
-
-        @Override
-        public Path getPath() {
-            return handle.getPath();
         }
     }
 
@@ -108,11 +98,6 @@ class KnotBook {
                 e.printStackTrace();
             }
         }
-
-        @Override
-        public Path getPath() {
-            return path;
-        }
     }
 
     private static class ResolvedServices<T extends MetaService> {
@@ -128,8 +113,7 @@ class KnotBook {
             System.out.println("\nListing " + services.size() +
                     " package(s) for " + theClass.getSimpleName() + ":");
             for (T s : services) {
-                ServiceMetadata metadata = s.getMetadata();
-                System.out.println(metadata.getPackageName() + " => " + metadata.getPackageVersion());
+                System.out.println(s.getMetadata());
             }
         }
     }
@@ -194,8 +178,13 @@ class KnotBook {
     private static class Manager implements ServiceManager {
 
         @Override
-        public ApplicationProps getProps() {
-            return getKnotBook().config;
+        public String getJSONConfig() {
+            return getKnotBook().config.getJoinedText();
+        }
+
+        @Override
+        public void setJSONConfig(String json) {
+            getKnotBook().config.setInputText(json);
         }
 
         @Override
@@ -216,6 +205,16 @@ class KnotBook {
         @Override
         public void exitOK() {
             getKnotBook().exit();
+        }
+
+        @Override
+        public void exitError() {
+            System.exit(1);
+        }
+
+        @Override
+        public List<String> getJVMArgs() {
+            return getKnotBook().args;
         }
     }
 

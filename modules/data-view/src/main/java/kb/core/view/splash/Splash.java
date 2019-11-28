@@ -28,7 +28,12 @@ public class Splash {
         return label;
     }
 
-    public static void info(Window owner, String version) {
+    public static void info(Window owner, String version, Image iconImage) {
+
+        if (owner == null) {
+            return;
+        }
+
         Popup popup = new Popup();
 
         VBox root = new VBox();
@@ -42,7 +47,6 @@ public class Splash {
         top.setPrefHeight(72.0);
         top.setStyle("-fx-background-color:rgba(96,96,96,0.9)");
 
-        Image iconImage = new Image(Splash.class.getResourceAsStream("/icon.png"));
         ImageView icon = new ImageView(iconImage);
         icon.setPreserveRatio(true);
         icon.setFitHeight(72.0);
