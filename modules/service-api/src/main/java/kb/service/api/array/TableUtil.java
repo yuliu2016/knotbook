@@ -144,14 +144,14 @@ public class TableUtil {
         if (array.isPrettyHeaders()) {
             start = 1;
             for (int i = 0; i < array.getCols(); i++) {
-                html.append("<th>").append(array.get(0, i)).append("</th>");
+                html.append("<th>").append(array.getString(0, i)).append("</th>");
             }
         }
         html.append("</tr>");
         for (int i = start; i < array.getRows(); i++) {
             html.append("<tr>");
             for (int j = 0; j < array.getCols(); j++) {
-                html.append("<td>").append(array.get(i, j)).append("</td>");
+                html.append("<td>").append(array.getString(i, j)).append("</td>");
             }
             html.append("</tr>");
         }

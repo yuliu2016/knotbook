@@ -20,6 +20,10 @@ public interface UIManager {
 
     void showAlert(String title, String message);
 
+    void confirmOK(String title, String message, Runnable runIfOk);
+
+    void confirmYes(String title, String message, Runnable runIfYes);
+
     void showException(Throwable e);
 
     void getTextInput(String prompt, Function<String, Boolean> validator, Consumer<String> callback);

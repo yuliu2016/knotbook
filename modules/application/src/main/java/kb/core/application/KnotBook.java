@@ -204,32 +204,18 @@ class KnotBook {
         }
 
         @Override
-        public String getVersion() {
-            if (getKnotBook().isDebug()) {
-                Date date = new Date();
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(date);
-                int year = cal.get(Calendar.YEAR);
-                int month = cal.get(Calendar.MONTH) + 1;
-                int day = cal.get(Calendar.DAY_OF_MONTH);
-                int minor;
-                if (year == 2019) {
-                    minor = month - 8;
-                } else {
-                    minor = 4 + month + (year - 2020) * 12;
-                }
-                return "3." + minor + "." + day + "-dev";
-            }
-            return "3.3.19";
+        public String getBuildVersion() {
+            return getKnotBook().getBuildVersion();
+        }
+
+        @Override
+        public String getImageVersion() {
+            return getKnotBook().getImageVersion();
         }
 
         @Override
         public void exitOK() {
-            for (Service service : getServices()) {
-                service.terminate();
-            }
-            getKnotBook().config.save();
-            System.exit(0);
+            getKnotBook().exit();
         }
     }
 
@@ -295,6 +281,8 @@ class KnotBook {
     private Config config;
     private Manager manager;
     private ApplicationService app;
+    private String buildVersion;
+    private String imageVersion;
 
     void launch(List<String> args) {
         this.args = args;
@@ -318,6 +306,64 @@ class KnotBook {
         for (Service service : extensions.services) {
             launchService(service, app);
         }
+    }
+
+    private String getBuildVersion() {
+        if (buildVersion == null) {
+            updateVersion();
+        }
+        return buildVersion;
+    }
+
+    private String getImageVersion() {
+        if (imageVersion == null) {
+            updateVersion();
+        }
+        return imageVersion;
+    }
+
+    private void updateVersion() {
+        if (isDebug()) {
+            Date date = new Date();
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            int year = cal.get(Calendar.YEAR);
+            int month = cal.get(Calendar.MONTH) + 1;
+            int day = cal.get(Calendar.DAY_OF_MONTH);
+            updateBuildVersion(year, month, day);
+            buildVersion += "-dev";
+        } else {
+            try {
+                String json = Files.readString(Paths.get(getKnotBook().home, ".knotbook",
+                        "KnotBook", "app", "version-info.json"));
+                JSONObject object = new JSONObject(json);
+                String build = object.getString("build");
+                int year = Integer.parseInt(build.substring(0, 4));
+                int month = Integer.parseInt(build.substring(4, 6));
+                int day = Integer.parseInt(build.substring(6, 8));
+                updateBuildVersion(year, month, day);
+                imageVersion = object.getString("image");
+            } catch (IOException ignored) {
+            }
+        }
+    }
+
+    private void updateBuildVersion(int year, int month, int day) {
+        int minor;
+        if (year == 2019) {
+            minor = month - 8;
+        } else {
+            minor = 4 + month + (year - 2020) * 12;
+        }
+        buildVersion = "3." + minor + "." + day;
+    }
+
+    private void exit() {
+        for (Service service : extensions.services) {
+            service.terminate();
+        }
+        config.save();
+        System.exit(0);
     }
 
     private TextEditor createTextEditor() {

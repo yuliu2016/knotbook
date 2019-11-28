@@ -197,7 +197,7 @@ public class TableArray {
         return (len % cols) == 0 ? len / cols : len / cols + 1;
     }
 
-    public String get(int row, int col) {
+    public String getString(int row, int col) {
         int i = row * cols + col;
         int m = mode.value[i];
         if (m == MODE_NULL) {
@@ -208,6 +208,16 @@ public class TableArray {
             return Integer.toString((int) num.value[i]);
         } else {
             return str.get(i);
+        }
+    }
+
+    public double get(int row, int col) {
+        int i = row * cols + col;
+        int m = mode.value[i];
+        if (m == MODE_FLOAT || m == MODE_INT) {
+            return num.value[i];
+        } else {
+            return Double.NaN;
         }
     }
 

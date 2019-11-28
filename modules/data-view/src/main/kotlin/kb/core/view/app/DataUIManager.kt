@@ -3,9 +3,6 @@ package kb.core.view.app
 import javafx.beans.InvalidationListener
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
-import javafx.scene.control.ButtonType
-import javafx.scene.control.Dialog
-import kb.core.fx.label
 import kb.core.fx.runOnFxThread
 import kb.core.view.DataView
 import kb.core.view.splash.Splash
@@ -85,17 +82,20 @@ class DataUIManager : UIManager {
     }
 
     override fun showAlert(title: String, message: String) {
-        val dialog = Dialog<ButtonType>()
-        val pane = dialog.dialogPane
-        pane.buttonTypes.addAll(ButtonType.OK)
-        dialog.dialogPane.content = label(message)
-        dialog.title = title
-        dialog.showAndWait()
+        runOnFxThread { Splash.alert(title, message) }
     }
 
     override fun showException(e: Throwable?) {
         val thread = Thread.currentThread()
         runOnFxThread { Splash.error(thread, e) }
+    }
+
+    override fun confirmOK(title: String, message: String, runIfOk: Runnable?) {
+        runOnFxThread { if (Splash.confirmOK(title, message)) runIfOk?.run() }
+    }
+
+    override fun confirmYes(title: String, message: String, runIfYes: Runnable?) {
+        runOnFxThread { if (Splash.confirmYes(title, message)) runIfYes?.run() }
     }
 
     override fun getTextInput(prompt: String, validator: Function<String, Boolean>?, callback: Consumer<String>) {

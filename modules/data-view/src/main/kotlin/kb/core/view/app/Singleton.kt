@@ -3,12 +3,10 @@ package kb.core.view.app
 import javafx.application.Platform
 import javafx.beans.InvalidationListener
 import javafx.scene.control.Alert
-import javafx.scene.control.ButtonType
 import javafx.scene.input.KeyCode
 import javafx.stage.FileChooser
 import javafx.stage.Window
 import kb.core.fx.combo
-import kb.core.fx.runOnFxThread
 import kb.core.view.DataView
 import kb.core.view.server.Server
 import kb.core.view.splash.Splash
@@ -93,6 +91,7 @@ internal object Singleton {
                 .withTitle("Open Source Licences")
                 .withInitialText(t)
                 .withDarkTheme(uiManager.isDarkTheme())
+                .textWrapped()
                 .show()
     }
 
@@ -142,9 +141,7 @@ internal object Singleton {
 
     private fun closeWindow() {
         uiManager.view?.let { win ->
-            val alert = Alert(Alert.AlertType.CONFIRMATION, "Close Window?", ButtonType.YES, ButtonType.NO)
-            alert.showAndWait()
-            if (alert.result == ButtonType.YES) {
+            uiManager.confirmOK("Confirming", "Close this window?") {
                 win.stage.close()
             }
         }
@@ -167,7 +164,7 @@ internal object Singleton {
             Thread {
                 try {
                     val a = TableArray.fromCSV(FileInputStream(f), true)
-                    runOnFxThread { view.setData(f.name, a) }
+                    context.dataSpace.newData(f.name, a)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -178,10 +175,10 @@ internal object Singleton {
     private fun launchCommands() {
         val m = context.uiManager
         m.registerCommand("app.about", "About KnotBook", MDI_INFORMATION_OUTLINE.description,
-                combo(KeyCode.F1)) { uiManager.view?.let { Splash.info(it.stage) } }
+                combo(KeyCode.F1)) { uiManager.view?.let { Splash.info(it.stage, manager.buildVersion) } }
         m.registerCommand("nav.recent", "Open Recent", MDI_HISTORY.description,
                 combo(KeyCode.R, control = true)) { }
-        m.registerCommand("nav.file", "Open File", MDI_FOLDER_OUTLINE.description,
+        m.registerCommand("file.open", "Open File", MDI_FOLDER_OUTLINE.description,
                 combo(KeyCode.O, control = true)) { uiManager.view?.let { tableFromFile(it) } }
         m.registerCommand("window.close", "Close Window", MDI_CLOSE.description,
                 combo(KeyCode.W, control = true)) { closeWindow() }
@@ -228,7 +225,7 @@ internal object Singleton {
                 ) { uiManager.view?.spreadsheet?.decrementZoom() }
         m.registerCommand("view.zoom.reset", "Reset Zoom", null, null
                 ) { uiManager.view?.spreadsheet?.zoomFactor = 1.0 }
-        m.registerCommand("nav.find", "Find in Cells", null,
+        m.registerCommand("table.find", "Find in Cells", null,
                 combo(KeyCode.F, control = true)) {}
     }
 

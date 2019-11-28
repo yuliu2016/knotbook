@@ -4,13 +4,16 @@ import kb.service.api.Service;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public interface ServiceManager {
 
     ApplicationProps getProps();
 
     List<Service> getServices();
 
-    String getVersion();
+    String getBuildVersion();
+
+    String getImageVersion();
 
     void exitOK();
 }

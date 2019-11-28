@@ -7,6 +7,7 @@ import javafx.collections.ObservableList
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Scene
+import javafx.scene.control.Label
 import javafx.scene.image.Image
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
@@ -47,9 +48,7 @@ class DataView {
         layout.stylesheets.setAll("/knotbook.css", theme.viewStyle)
     }
 
-    val calculations = label {
-        text = "Average: 1.5    Count: 2    Unique: 4    Sum: 3    Min: 4    Max: 8"
-    }
+    val calculations = Label()
 
     private val statusBar = hbox {
         align(Pos.CENTER_LEFT)
@@ -62,7 +61,7 @@ class DataView {
     }
 
     val spreadsheet = SpreadsheetView(grid).apply {
-        selectionModel.selectedCells.addListener(InvalidationListener { selectionText.value = getRangeText() })
+        selectionModel.selectedCells.addListener(InvalidationListener { onSelectionChanged() })
         columns.forEach { it.setPrefWidth(75.0) }
         zoomFactorProperty().addListener(InvalidationListener { zoomText.value = "${(zoomFactor * 100).toInt()}%" })
         contextMenu = null
@@ -104,7 +103,7 @@ class DataView {
 
         val area = Screen.getPrimary().visualBounds
         layout.prefWidth = area.width / 2.0
-        layout.prefHeight = area.height / 2.0 - 32.0
+        layout.prefHeight = area.height / 2.0 + 32.0
 
         updateTheme()
         themeText.bind(Singleton.uiManager.themeProperty.asString())
@@ -126,6 +125,7 @@ class DataView {
         }
         stage.setOnCloseRequest { Singleton.uiManager.themeProperty.removeListener(themeListener) }
         stage.show()
+        stage.requestFocus()
     }
 
     var array: TableArray? = null
@@ -164,6 +164,35 @@ class DataView {
             }
             builder.toString()
         }
+    }
+
+    private fun onSelectionChanged() {
+        selectionText.value = getRangeText()
+        val a = spreadsheet.selectionModel.selectedCells
+        if (a.size < 2) {
+            calculations.text = ""
+            return
+        }
+        val array = array ?: return
+        var count = 0
+        var sum = 0.0
+        var min = Double.MAX_VALUE
+        var max = Double.MIN_VALUE
+        for (pos in a) {
+            val num = array[pos.row, pos.column]
+            if (num.isFinite()) {
+                count++
+                sum += num
+                if (num < min) min = num
+                if (num > max) max = num
+            }
+        }
+        if (count == 0) {
+            calculations.text = ""
+            return
+        }
+        val average = (sum / count).toFloat() // make it a shorter string
+        calculations.text = "Sum: $sum    Count: $count    Average: $average    Min: $min    Max: $max"
     }
 
     private fun getRangeText(): String {
