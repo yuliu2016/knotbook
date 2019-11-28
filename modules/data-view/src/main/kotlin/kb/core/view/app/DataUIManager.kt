@@ -6,9 +6,8 @@ import javafx.beans.property.SimpleStringProperty
 import kb.core.fx.runOnFxThread
 import kb.core.view.DataView
 import kb.core.view.splash.Splash
-import kb.service.api.ui.Command
-import kb.service.api.ui.OptionBar
-import kb.service.api.ui.UIManager
+import kb.service.api.ui.*
+import java.util.*
 import java.util.function.Consumer
 import java.util.function.Function
 
@@ -26,6 +25,8 @@ class DataUIManager : UIManager {
 
     val commandManager = CommandManager()
     val stagedOptionBar = StagedOptionBar()
+
+    val textEditors = ServiceLoader.load(TextEditorService::class.java).toList()
 
     // The currently focused view
     var view: DataView? = null
@@ -56,10 +57,6 @@ class DataUIManager : UIManager {
         commandManager.setAll()
         commandManager.bar.text = ""
         showOptionBar(commandManager.bar)
-    }
-
-    override fun isOptionBarShown(): Boolean {
-        return stagedOptionBar.isShowing()
     }
 
     override fun showOptionBar(optionBar: OptionBar) {
@@ -108,5 +105,9 @@ class DataUIManager : UIManager {
         }
 
         showOptionBar(ob)
+    }
+
+    override fun createTextEditor(): TextEditor {
+        return textEditors.first().create().withDarkTheme(isDarkTheme())
     }
 }

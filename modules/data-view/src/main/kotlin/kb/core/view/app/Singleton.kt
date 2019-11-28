@@ -37,12 +37,11 @@ internal object Singleton {
     val appIcon = Image(DataView::class.java.getResourceAsStream("/icon.png"))
 
     fun editAppProperties() {
-        context.createTextEditor()
+        uiManager.createTextEditor()
                 .editable()
                 .withSyntax("text/json")
                 .withTitle("Settings")
                 .withInitialText(manager.jsonConfig)
-                .withDarkTheme(uiManager.isDarkTheme())
                 .addAction("Save Changes") { changed, finalText ->
                     if (changed) {
                         manager.jsonConfig = finalText
@@ -65,11 +64,10 @@ internal object Singleton {
                     }
                     "${it.key}=$value"
                 }
-        context.createTextEditor()
+        uiManager.createTextEditor()
                 .withTitle("JVM Properties (Read-Only)")
                 .withSyntax("text/properties")
                 .withInitialText(properties)
-                .withDarkTheme(uiManager.isDarkTheme())
                 .show()
     }
 
@@ -85,10 +83,9 @@ internal object Singleton {
         val t = Singleton::class.java
                 .getResourceAsStream("/open_source.txt")
                 .use { it.bufferedReader().readText() }
-        context.createTextEditor()
+        uiManager.createTextEditor()
                 .withTitle("Open Source Licences")
                 .withInitialText(t)
-                .withDarkTheme(uiManager.isDarkTheme())
                 .textWrapped()
                 .show()
     }
@@ -197,7 +194,7 @@ internal object Singleton {
                 combo(KeyCode.N, control = true)) { newWindow().show() }
         m.registerCommand("test.python.editor", "Test Python Editor",
                 MDI_LANGUAGE_PYTHON.description, null) {
-            context.createTextEditor().withSyntax("text/python")
+            uiManager.createTextEditor().withSyntax("text/python")
                     .withTitle("Python Editor").editable().show()
         }
         m.registerCommand("command.palette", "Command Palette", MDI_CONSOLE.description,

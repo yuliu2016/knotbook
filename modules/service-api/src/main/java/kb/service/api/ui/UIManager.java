@@ -8,8 +8,6 @@ import java.util.function.Function;
 @SuppressWarnings("unused")
 public interface UIManager {
 
-    boolean isOptionBarShown();
-
     void showOptionBar(OptionBar optionBar);
 
     void registerCommand(String id, Command command);
@@ -27,6 +25,8 @@ public interface UIManager {
     void showException(Throwable e);
 
     void getTextInput(String prompt, Function<String, Boolean> validator, Consumer<String> callback);
+
+    TextEditor createTextEditor();
 
     default void registerCommand(
             String id,

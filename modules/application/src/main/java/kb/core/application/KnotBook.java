@@ -8,8 +8,6 @@ import kb.service.api.application.ApplicationService;
 import kb.service.api.application.ServiceManager;
 import kb.service.api.data.DataSpace;
 import kb.service.api.json.JSONObjectWrapper;
-import kb.service.api.ui.TextEditor;
-import kb.service.api.ui.TextEditorService;
 import kb.service.api.ui.UIManager;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -160,11 +158,6 @@ class KnotBook {
         }
 
         @Override
-        public TextEditor createTextEditor() {
-            return getKnotBook().createTextEditor();
-        }
-
-        @Override
         public UIManager getUIManager() {
             return app.getUIManager();
         }
@@ -274,9 +267,6 @@ class KnotBook {
     private final ResolvedServices<Service> extensions =
             loadServices(ServiceLoader.load(Service.class), Service.class);
 
-    private final ResolvedServices<TextEditorService> textEditors =
-            loadServices(ServiceLoader.load(TextEditorService.class), TextEditorService.class);
-
     private Config config;
     private Manager manager;
     private ApplicationService app;
@@ -294,9 +284,7 @@ class KnotBook {
     }
 
     private void launchApplication() {
-        applications.print();
         extensions.print();
-        textEditors.print();
         ServiceContext context = contextForService(serviceForApplication(app.getMetadata()), app);
         app.launch(manager, context, this::launchServices);
     }
@@ -363,12 +351,5 @@ class KnotBook {
         }
         config.save();
         System.exit(0);
-    }
-
-    private TextEditor createTextEditor() {
-        if (!textEditors.services.isEmpty()) {
-            return textEditors.services.get(0).create();
-        }
-        throw new NoSuchElementException();
     }
 }

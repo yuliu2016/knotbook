@@ -168,8 +168,4 @@ class StagedOptionBar {
     fun cancel() {
         popup.hide()
     }
-
-    fun isShowing(): Boolean {
-        return popup.isShowing
-    }
 }
