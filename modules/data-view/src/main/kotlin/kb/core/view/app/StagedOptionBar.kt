@@ -24,7 +24,7 @@ class StagedOptionBar {
     val lv = PrettyListView<OptionItem>().apply {
         vgrow()
         isFocusTraversable = false
-        maxHeight = 320.0
+        maxHeight = 300.0
         styleClass("option-bar")
         setCellFactory { OptionItemCell() }
         setOnMouseClicked {
