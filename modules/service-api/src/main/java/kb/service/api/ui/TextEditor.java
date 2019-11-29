@@ -28,6 +28,10 @@ public interface TextEditor {
 
     void setDarkTheme(boolean darkTheme);
 
+    boolean isWrapText();
+
+    void setWrapText(boolean wrapText);
+
     default TextEditor withSyntax(String syntax) {
         setSyntax(syntax);
         return this;
@@ -50,6 +54,11 @@ public interface TextEditor {
 
     default TextEditor withDarkTheme(boolean darkTheme) {
         setDarkTheme(darkTheme);
+        return this;
+    }
+
+    default TextEditor textWrapped() {
+        setWrapText(true);
         return this;
     }
 }

@@ -3,12 +3,9 @@ package kb.service.api.ui;
 import javafx.scene.input.KeyCombination;
 
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 @SuppressWarnings("unused")
 public interface UIManager {
-
-    boolean isOptionBarShown();
 
     void showOptionBar(OptionBar optionBar);
 
@@ -20,9 +17,15 @@ public interface UIManager {
 
     void showAlert(String title, String message);
 
+    void confirmOK(String title, String message, Runnable runIfOk);
+
+    void confirmYes(String title, String message, Runnable runIfYes);
+
     void showException(Throwable e);
 
-    void getTextInput(String prompt, Function<String, Boolean> validator, Consumer<String> callback);
+    void getTextInput(String prompt, Consumer<String> callback);
+
+    TextEditor createTextEditor();
 
     default void registerCommand(
             String id,

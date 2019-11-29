@@ -7,7 +7,7 @@ import javafx.collections.ObservableList
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Scene
-import javafx.scene.image.Image
+import javafx.scene.control.Label
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
 import javafx.stage.Screen
@@ -16,6 +16,8 @@ import kb.core.fx.*
 import kb.core.view.app.Singleton
 import kb.service.api.array.TableArray
 import kb.service.api.array.TableUtil
+import kb.service.api.ui.OptionBar
+import kb.service.api.ui.OptionItem
 import org.controlsfx.control.spreadsheet.SpreadsheetCell
 import org.controlsfx.control.spreadsheet.SpreadsheetView
 
@@ -45,11 +47,10 @@ class DataView {
     fun updateTheme() {
         val theme = Singleton.uiManager.themeProperty.get()
         layout.stylesheets.setAll("/knotbook.css", theme.viewStyle)
+        updateCS()
     }
 
-    val calculations = label {
-        text = "Average: 1.5    Count: 2    Unique: 4    Sum: 3    Min: 4    Max: 8"
-    }
+    val calculations = Label()
 
     private val statusBar = hbox {
         align(Pos.CENTER_LEFT)
@@ -62,7 +63,7 @@ class DataView {
     }
 
     val spreadsheet = SpreadsheetView(grid).apply {
-        selectionModel.selectedCells.addListener(InvalidationListener { selectionText.value = getRangeText() })
+        selectionModel.selectedCells.addListener(InvalidationListener { onSelectionChanged() })
         columns.forEach { it.setPrefWidth(75.0) }
         zoomFactorProperty().addListener(InvalidationListener { zoomText.value = "${(zoomFactor * 100).toInt()}%" })
         contextMenu = null
@@ -77,7 +78,7 @@ class DataView {
     }
 
     val scene = Scene(layout)
-    val appIcon = Image(DataView::class.java.getResourceAsStream("/icon.png"))
+
     var showing = false
 
     fun addStatus(prop: StringProperty) {
@@ -104,7 +105,7 @@ class DataView {
 
         val area = Screen.getPrimary().visualBounds
         layout.prefWidth = area.width / 2.0
-        layout.prefHeight = area.height / 2.0 - 32.0
+        layout.prefHeight = area.height / 2.0 + 32.0
 
         updateTheme()
         themeText.bind(Singleton.uiManager.themeProperty.asString())
@@ -118,28 +119,86 @@ class DataView {
             scene.accelerators[shortcut] = Runnable { Singleton.uiManager.commandManager.invokeCommand(key) }
         }
         stage.fullScreenExitHint = "Press F11 to Exit Full Screen"
-        stage.icons.add(appIcon)
+        stage.icons.add(Singleton.appIcon)
         stage.scene = scene
         stage.focusedProperty().addListener { _, _, focused ->
-            if (focused) Singleton.uiManager.view = this
-            else if (Singleton.uiManager.view === this) Singleton.uiManager.view = null
+            val m = Singleton.uiManager
+            if (focused) {
+                m.view = this
+            } else if (m.view === this) {
+                m.view = null
+            }
         }
         stage.setOnCloseRequest { Singleton.uiManager.themeProperty.removeListener(themeListener) }
         stage.show()
+        stage.requestFocus()
     }
 
     var array: TableArray? = null
 
     private val sortColumns = ArrayList<SortColumn>()
     private val colourScales = ArrayList<ColorScale>()
-    private var referenceOrder = ArrayList<ObservableList<SpreadsheetCell>>()
+    private var referenceOrder: List<ObservableList<SpreadsheetCell>> = ArrayList()
 
     fun setData(title: String, data: TableArray) {
         stage.title = title
         array = data
         grid = data.toGrid()
         this.spreadsheet.grid = grid
+        referenceOrder = grid.rows.toList()
         spreadsheet.fixedRows.setAll(0)
+    }
+
+    fun getSelectedColumns(): Set<Int> {
+        return spreadsheet.selectionModel.selectedCells.mapTo(HashSet()) { it.column }
+    }
+
+    fun addCS(type: SortType, rgb: RGB) {
+        getSelectedColumns().forEach {
+            val cs = ColorScale(it, type, rgb)
+            colourScales.remove(cs)
+            colourScales.add(cs)
+        }
+        updateCS()
+    }
+
+    fun clearCS() {
+        val array = array ?: return
+        val rows = array.rows
+        getSelectedColumns().forEach {
+            val cs = ColorScale(it, SortType.Descending, ColorScale.green)
+            colourScales.remove(cs)
+            for (row in 0 until rows) {
+                referenceOrder[row][it].style = null
+            }
+        }
+    }
+
+    fun updateCS() {
+        val array = array ?: return
+        val rows = array.rows
+        val bg = if (Singleton.uiManager.isDarkTheme()) 0 else 255
+        for (colourScale in colourScales) {
+            val desc = colourScale.sortType == SortType.Descending
+            val col = colourScale.index
+            val values = (0 until rows).map { array[it, col] }
+
+            var min = Double.MAX_VALUE
+            var max = Double.MIN_VALUE
+            for (v in values) {
+                if (v.isFinite()) {
+                    if (v < min) min = v
+                    if (v > max) max = v
+                }
+            }
+
+            for (row in 0 until rows) {
+                val v = values[row]
+                if (v.isInfinite() || v.isNaN()) continue
+                val x = if (desc) (max - v) / (max - min) else (v - min) / (max - min)
+                referenceOrder[row][col].style = colourScale.rgb.blendStyle(x, bg)
+            }
+        }
     }
 
     private inline fun copyWithMinMax(block: (minRow: Int, maxRow: Int, minCol: Int, maxCol: Int) -> String) {
@@ -164,6 +223,88 @@ class DataView {
             }
             builder.toString()
         }
+    }
+
+    fun saveCSV() {
+        val array = array ?: return
+        val fp = Singleton.getSavePath(this, "csv")
+        if (fp != null) {
+            array.delimitToStream(fp.outputStream(), ',', false)
+        }
+    }
+
+    fun saveZip() {
+        val array = array ?: return
+        val fp = Singleton.getSavePath(this, "kbt")
+        if (fp != null) {
+            array.toZipFormat(fp.outputStream())
+        }
+    }
+
+    fun startFind() {
+        val ob = OptionBar()
+        ob.hint = "Enter Something to search for"
+
+        ob.setOnEnterPressed {
+            ob.isShowing = false
+        }
+
+        ob.textProperty().addListener(InvalidationListener {
+            val t = ob.text.trim()
+            if (t.isEmpty()) {
+                ob.items.clear()
+                return@InvalidationListener
+            }
+            try {
+                val num = t.toDouble()
+                val array = array ?: return@InvalidationListener
+                val rows = array.rows
+                var count = 0
+                for (i in 0 until rows) {
+                    for (j in 0 until array.cols) {
+                        if (array[i, j] == num) {
+                            count++
+                        }
+                    }
+                }
+                ob.items.setAll(
+                        OptionItem("Results in Table", null, "$count Found", null, null)
+                )
+            } catch (e: Exception) {
+            }
+        })
+
+
+        Singleton.uiManager.showOptionBar(ob)
+    }
+
+    private fun onSelectionChanged() {
+        selectionText.value = getRangeText()
+        val a = spreadsheet.selectionModel.selectedCells
+        if (a.size < 2) {
+            calculations.text = ""
+            return
+        }
+        val array = array ?: return
+        var count = 0
+        var sum = 0.0
+        var min = Double.MAX_VALUE
+        var max = Double.MIN_VALUE
+        for (pos in a) {
+            val num = array[pos.row, pos.column]
+            if (num.isFinite()) {
+                count++
+                sum += num
+                if (num < min) min = num
+                if (num > max) max = num
+            }
+        }
+        if (count == 0) {
+            calculations.text = ""
+            return
+        }
+        val average = (sum / count).toFloat() // make it a shorter string
+        calculations.text = "Sum: $sum    Count: $count    Average: $average    Min: $min    Max: $max"
     }
 
     private fun getRangeText(): String {

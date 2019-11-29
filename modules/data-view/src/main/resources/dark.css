@@ -12,44 +12,31 @@
 
 /*SPREADSHEET VIEW*/
 
-/* NORMAL CELL */
-.spreadsheet-cell:filled:selected,
-.spreadsheet-cell:filled:focused:selected,
-.spreadsheet-cell:filled:focused:selected:hover {
-    /*-fx-background-color: #8cb1ff;*/
-    -fx-background-color: #1e2e4a;
-    /*-fx-border-color: #555;*/
-    /*-fx-border-width: 1px;*/
-    -fx-text-fill: white;
-}
-
-.selection-rectangle {
-    -fx-fill: transparent;
-    -fx-stroke: #3c5c94;
-    -fx-stroke-width: 2;
-}
-
-.spreadsheet-cell:hover,
-.spreadsheet-cell:filled:focused {
-    /*-fx-background-color: #988490;*/
-    -fx-text-fill: white;
-    /*-fx-background-insets: 0, 0 0 1 0;*/
-}
-
 .spreadsheet-cell {
     -fx-padding: 0 0.2em 0 0.2em;
     -fx-font-weight: normal;
     -fx-border-color: white;
     -fx-border-width: 0.3;
     -fx-text-fill: white;
-    /*-fx-background-color: -fx-table-cell-border-color, white;*/
     -fx-background-color: black;
+}
+
+.spreadsheet-cell:filled:selected,
+.spreadsheet-cell:filled:focused:selected,
+.spreadsheet-cell:filled:focused:selected:hover {
+    -fx-background-color: #1e2e4a;
 }
 
 .header-cell {
     -fx-alignment: CENTER;
     -fx-font-weight: bold;
     -fx-text-fill: #ffd344;
+}
+
+.selection-rectangle {
+    -fx-fill: transparent;
+    -fx-stroke: #3c5c94;
+    -fx-stroke-width: 2;
 }
 
 /*VerticalHeader > Label ,

@@ -161,3 +161,7 @@
     -fx-pref-width: 0;
     -fx-pref-height: 0;
 }
+
+.num-cell {
+    -fx-alignment: CENTER-RIGHT
+}

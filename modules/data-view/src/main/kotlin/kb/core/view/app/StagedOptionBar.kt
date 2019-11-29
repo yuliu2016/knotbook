@@ -1,6 +1,7 @@
 package kb.core.view.app
 
 import javafx.beans.InvalidationListener
+import javafx.collections.ListChangeListener
 import javafx.event.ActionEvent
 import javafx.geometry.Insets
 import javafx.geometry.Pos
@@ -24,7 +25,7 @@ class StagedOptionBar {
     val lv = PrettyListView<OptionItem>().apply {
         vgrow()
         isFocusTraversable = false
-        maxHeight = 320.0
+        maxHeight = 300.0
         styleClass("option-bar")
         setCellFactory { OptionItemCell() }
         setOnMouseClicked {
@@ -136,7 +137,12 @@ class StagedOptionBar {
     private fun bindAll(ob: OptionBar) {
         optionBar = ob
         lv.items = ob.items
-        ob.items.addListener(InvalidationListener { updateListHeight() })
+        ob.items.addListener(ListChangeListener {
+            updateListHeight()
+            if (ob.items.isNotEmpty()) {
+                lv.selectionModel.select(0)
+            }
+        })
         updateListHeight()
         if (lv.items.isNotEmpty()) {
             lv.selectionModel.select(0)
@@ -161,15 +167,11 @@ class StagedOptionBar {
         bindAll(ob)
         ob.isShowing = true
         popup.x = stage.x + stage.width / 2.0 - container.prefWidth / 2.0 - 10.0
-        popup.y = stage.y + stage.scene.y
+        popup.y = stage.y + stage.scene.y - 5.0
         popup.show(stage)
     }
 
     fun cancel() {
         popup.hide()
-    }
-
-    fun isShowing(): Boolean {
-        return popup.isShowing
     }
 }

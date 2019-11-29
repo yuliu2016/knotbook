@@ -31,6 +31,7 @@ class TextEditorImpl implements TextEditor {
     private boolean textChanged = false;
     private String finalText = null;
     private boolean darkTheme = false;
+    private boolean wrapText = false;
 
     static class Action {
         String name;
@@ -113,6 +114,16 @@ class TextEditorImpl implements TextEditor {
         this.darkTheme = darkTheme;
     }
 
+    @Override
+    public boolean isWrapText() {
+        return wrapText;
+    }
+
+    @Override
+    public void setWrapText(boolean wrapText) {
+        this.wrapText = wrapText;
+    }
+
     private void showImpl() {
         JFrame frame = new JFrame();
         RSyntaxTextArea area = new RSyntaxTextArea(32, 88);
@@ -145,6 +156,7 @@ class TextEditorImpl implements TextEditor {
         area.setFont(area.getFont().deriveFont(15f));
         area.setText(initialText);
         area.setEditable(editable);
+        area.setLineWrap(wrapText);
 
         RTextScrollPane sp = new RTextScrollPane(area);
         sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);

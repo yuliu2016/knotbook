@@ -16,7 +16,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import javafx.stage.Window;
-import kb.core.view.app.Singleton;
 import kb.service.api.ui.UIHelper;
 import kotlin.KotlinVersion;
 
@@ -29,7 +28,12 @@ public class Splash {
         return label;
     }
 
-    public static void info(Window owner) {
+    public static void info(Window owner, String version, Image iconImage) {
+
+        if (owner == null) {
+            return;
+        }
+
         Popup popup = new Popup();
 
         VBox root = new VBox();
@@ -43,7 +47,6 @@ public class Splash {
         top.setPrefHeight(72.0);
         top.setStyle("-fx-background-color:rgba(96,96,96,0.9)");
 
-        Image iconImage = new Image(Splash.class.getResourceAsStream("/icon.png"));
         ImageView icon = new ImageView(iconImage);
         icon.setPreserveRatio(true);
         icon.setFitHeight(72.0);
@@ -58,7 +61,7 @@ public class Splash {
         bottom.setPadding(new Insets(8.0, 32.0, 8.0, 32.0));
 
         bottom.getChildren().addAll(
-                labelOf("KnotBook DataView " + Singleton.INSTANCE.getManager().getVersion()),
+                labelOf("KnotBook DataView " + version),
                 labelOf("Licensed under MIT and powered by open-source software"),
                 labelOf("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.arch")),
                 labelOf("Java Runtime: " + System.getProperty("java.vm.name") +
@@ -84,19 +87,14 @@ public class Splash {
             final long before = (runtime.totalMemory() - runtime.freeMemory());
             runtime.gc();
             try {
-                Thread.sleep(300);
+                Thread.sleep(200);
             } catch (InterruptedException ignored) {
             }
-            Platform.runLater(() -> {
-                long now = (runtime.totalMemory() - runtime.freeMemory());
-                String mem = String.format("Currently Used Memory: %.3f MB", now / 1024.0 / 1024.0);
-                String freed = String.format("Freed Memory: %.3f MB", (before - now) / 1024.0 / 1024.0);
-                String msg = mem + "\n" + freed;
-                Singleton.INSTANCE
-                        .getContext()
-                        .getUIManager()
-                        .showAlert("JVM", msg);
-            });
+            long now = runtime.totalMemory() - runtime.freeMemory();
+            String mem = String.format("Currently Used Memory: %.3f MB", now / 1024.0 / 1024.0);
+            String freed = String.format("GC Freed Memory: %.3f MB", (before - now) / 1024.0 / 1024.0);
+            String msg = mem + "\n" + freed;
+            Platform.runLater(() -> alert("JVM", msg));
         });
         thread.start();
     }
@@ -120,5 +118,39 @@ public class Splash {
 
         Clipboard.getSystemClipboard().setContent(content);
         dialog.showAndWait();
+    }
+
+    public static void alert(String title, String message) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        DialogPane pane = dialog.getDialogPane();
+        pane.getButtonTypes().addAll(ButtonType.OK);
+
+        Label label = new Label(message);
+        pane.setContent(label);
+
+        dialog.setTitle(title);
+        dialog.showAndWait();
+    }
+
+    public static boolean confirmOK(String title, String message) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        DialogPane pane = dialog.getDialogPane();
+        pane.getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
+        Label label = new Label(message);
+        pane.setContent(label);
+
+        dialog.setTitle(title);
+        return dialog.showAndWait().orElse(ButtonType.CANCEL).equals(ButtonType.OK);
+    }
+
+    public static boolean confirmYes(String title, String message) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        DialogPane pane = dialog.getDialogPane();
+        pane.getButtonTypes().addAll(ButtonType.NO, ButtonType.YES);
+        Label label = new Label(message);
+        pane.setContent(label);
+
+        dialog.setTitle(title);
+        return dialog.showAndWait().orElse(ButtonType.NO).equals(ButtonType.YES);
     }
 }

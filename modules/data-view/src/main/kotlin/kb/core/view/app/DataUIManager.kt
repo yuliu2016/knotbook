@@ -3,17 +3,12 @@ package kb.core.view.app
 import javafx.beans.InvalidationListener
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
-import javafx.scene.control.ButtonType
-import javafx.scene.control.Dialog
-import kb.core.fx.label
 import kb.core.fx.runOnFxThread
 import kb.core.view.DataView
 import kb.core.view.splash.Splash
-import kb.service.api.ui.Command
-import kb.service.api.ui.OptionBar
-import kb.service.api.ui.UIManager
+import kb.service.api.ui.*
+import java.util.*
 import java.util.function.Consumer
-import java.util.function.Function
 
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -29,6 +24,8 @@ class DataUIManager : UIManager {
 
     val commandManager = CommandManager()
     val stagedOptionBar = StagedOptionBar()
+
+    val textEditors = ServiceLoader.load(TextEditorService::class.java).toList()
 
     // The currently focused view
     var view: DataView? = null
@@ -61,10 +58,6 @@ class DataUIManager : UIManager {
         showOptionBar(commandManager.bar)
     }
 
-    override fun isOptionBarShown(): Boolean {
-        return stagedOptionBar.isShowing()
-    }
-
     override fun showOptionBar(optionBar: OptionBar) {
         val win = view
         if (win != null) {
@@ -85,12 +78,7 @@ class DataUIManager : UIManager {
     }
 
     override fun showAlert(title: String, message: String) {
-        val dialog = Dialog<ButtonType>()
-        val pane = dialog.dialogPane
-        pane.buttonTypes.addAll(ButtonType.OK)
-        dialog.dialogPane.content = label(message)
-        dialog.title = title
-        dialog.showAndWait()
+        runOnFxThread { Splash.alert(title, message) }
     }
 
     override fun showException(e: Throwable?) {
@@ -98,7 +86,15 @@ class DataUIManager : UIManager {
         runOnFxThread { Splash.error(thread, e) }
     }
 
-    override fun getTextInput(prompt: String, validator: Function<String, Boolean>?, callback: Consumer<String>) {
+    override fun confirmOK(title: String, message: String, runIfOk: Runnable?) {
+        runOnFxThread { if (Splash.confirmOK(title, message)) runIfOk?.run() }
+    }
+
+    override fun confirmYes(title: String, message: String, runIfYes: Runnable?) {
+        runOnFxThread { if (Splash.confirmYes(title, message)) runIfYes?.run() }
+    }
+
+    override fun getTextInput(prompt: String, callback: Consumer<String>) {
         val ob = OptionBar()
         ob.hint = prompt
 
@@ -108,5 +104,9 @@ class DataUIManager : UIManager {
         }
 
         showOptionBar(ob)
+    }
+
+    override fun createTextEditor(): TextEditor {
+        return textEditors.first().create().withDarkTheme(isDarkTheme())
     }
 }

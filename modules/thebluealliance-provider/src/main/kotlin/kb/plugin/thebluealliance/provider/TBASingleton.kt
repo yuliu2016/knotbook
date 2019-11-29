@@ -23,7 +23,7 @@ object TBASingleton {
     }
 
     fun withGetKey(func: (key: String) -> Unit) {
-        context.uiManager.getTextInput("Enter the API Key for The Blue Alliance", null) {
+        context.uiManager.getTextInput("Enter the API Key for The Blue Alliance") {
             if (it != null && it.isNotEmpty()) {
                 context.config["API Key"] = it
                 func(it)
@@ -31,16 +31,16 @@ object TBASingleton {
         }
     }
 
-    fun withTBA(func: (TBA) -> Unit) {
+    fun withTBA(forceKey: Boolean = false, func: (TBA) -> Unit) {
         val tba = tba
-        if (tba != null) {
-            executor.execute { func(tba) }
-        } else {
+        if (tba == null || forceKey) {
             withGetKey { key ->
                 val newTBA = TBA(key)
                 this.tba = newTBA
                 executor.execute { func(newTBA) }
             }
+        } else {
+            executor.execute { func(tba) }
         }
     }
 
@@ -118,6 +118,13 @@ object TBASingleton {
         }
     }
 
+    fun setKey() {
+        withTBA(forceKey = true) {
+            val season = it.getStatus().current_season
+            context.uiManager.showAlert("Success", "TBA Key is Set. The Current Season is $season")
+        }
+    }
+
     fun launch(context: ServiceContext) {
         this.context = context
         val m = context.uiManager
@@ -128,7 +135,7 @@ object TBASingleton {
         }
         m.registerCommand("tba.set_key", "The Blue Alliance: Set APIv3 Key", "mdi-key",
                 KeyCodeCombination(KeyCode.M, KeyCombination.CONTROL_DOWN, KeyCombination.ALT_DOWN)) {
-
+            setKey()
         }
         m.apply {
             register("set_year", "Set Year")

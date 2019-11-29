@@ -1,4 +1,4 @@
-package kb.plugin.appscanner
+package kb.plugin.scoutingapp.scanner
 
 import javafx.scene.control.TableCell
 import kb.core.fx.label

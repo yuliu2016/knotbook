@@ -14,10 +14,7 @@ public class UIHelper {
         return writer.toString();
     }
 
-    public static Executor createExecutor(
-            String name,
-            Consumer<Throwable> exceptionHandler
-    ) {
+    public static Executor createExecutor(String name, Consumer<Throwable> exceptionHandler) {
         return Executors.newSingleThreadExecutor(runnable -> {
             Thread thread = new Thread(runnable);
             thread.setName(name);

@@ -3,23 +3,24 @@ package kb.core.view.app
 import javafx.application.Platform
 import javafx.beans.InvalidationListener
 import javafx.scene.control.Alert
-import javafx.scene.control.ButtonType
+import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
 import javafx.stage.FileChooser
 import javafx.stage.Window
 import kb.core.fx.combo
-import kb.core.fx.runOnFxThread
+import kb.core.view.ColorScale
 import kb.core.view.DataView
-import kb.core.view.server.Server
+import kb.core.view.SortType
 import kb.core.view.splash.Splash
 import kb.service.api.ServiceContext
 import kb.service.api.application.ServiceManager
 import kb.service.api.array.TableArray
+import kb.service.api.json.JSONArrayWrapper
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
+import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
 import kotlin.concurrent.thread
-import kotlin.system.exitProcess
 
 /**
  * Singleton object representing the application
@@ -36,17 +37,17 @@ internal object Singleton {
     val dataServer = Server()
     val uiManager = DataUIManager()
     val dataSpace = TableSpace()
+    val appIcon = Image(DataView::class.java.getResourceAsStream("/icon.png"))
 
     fun editAppProperties() {
-        context.createTextEditor()
+        uiManager.createTextEditor()
                 .editable()
                 .withSyntax("text/json")
-                .withTitle(manager.props.path.toString())
-                .withInitialText(manager.props.joinedText)
-                .withDarkTheme(uiManager.isDarkTheme())
+                .withTitle("Settings")
+                .withInitialText(manager.jsonConfig)
                 .addAction("Save Changes") { changed, finalText ->
                     if (changed) {
-                        manager.props.setInputText(finalText)
+                        manager.jsonConfig = finalText
                     }
                 }
                 .show()
@@ -66,33 +67,29 @@ internal object Singleton {
                     }
                     "${it.key}=$value"
                 }
-        context.createTextEditor()
+        uiManager.createTextEditor()
                 .withTitle("JVM Properties (Read-Only)")
                 .withSyntax("text/properties")
                 .withInitialText(properties)
-                .withDarkTheme(uiManager.isDarkTheme())
                 .show()
     }
 
     fun viewPlugins() {
-        val t = manager.services.joinToString("\n") {
-            it.metadata.run { "$packageName => $packageVersion" }
-        }
-        context.createTextEditor()
-                .withTitle("Plugins and Services")
-                .withInitialText(t)
-                .withDarkTheme(uiManager.isDarkTheme())
-                .show()
+        context.uiManager.showAlert("Plugins and Services", manager.services.joinToString("\n"))
+    }
+
+    fun viewJVMArgs() {
+        context.uiManager.showAlert("JVM Args", manager.jvmArgs.joinToString("\n"))
     }
 
     fun viewOpenSource() {
         val t = Singleton::class.java
                 .getResourceAsStream("/open_source.txt")
                 .use { it.bufferedReader().readText() }
-        context.createTextEditor()
+        uiManager.createTextEditor()
                 .withTitle("Open Source Licences")
                 .withInitialText(t)
-                .withDarkTheme(uiManager.isDarkTheme())
+                .textWrapped()
                 .show()
     }
 
@@ -134,17 +131,15 @@ internal object Singleton {
             dataServer.bindAndStart()
         } catch (e: IOException) {
             Alert(Alert.AlertType.ERROR, "Application Already Started").showAndWait()
-            exitProcess(0)
+            manager.exitError()
         }
-        launchCommands()
-        launchCommands2()
+        launchAppCommands()
+        launchDataCommands()
     }
 
     private fun closeWindow() {
         uiManager.view?.let { win ->
-            val alert = Alert(Alert.AlertType.CONFIRMATION, "Close Window?", ButtonType.YES, ButtonType.NO)
-            alert.showAndWait()
-            if (alert.result == ButtonType.YES) {
+            uiManager.confirmOK("Confirming", "Close this window?") {
                 win.stage.close()
             }
         }
@@ -159,15 +154,33 @@ internal object Singleton {
         return dv
     }
 
+    private var recent: JSONArrayWrapper? = null
+
+    fun getRecent(): JSONArrayWrapper {
+        if (recent == null) {
+            recent = context.config.getJSONArray("Recent Files")
+        }
+        return recent!!
+    }
+
     fun tableFromFile(view: DataView) {
         val fc = FileChooser()
         fc.title = "Open Table from File"
+        val recent = getRecent()
+        if (recent.isNotEmpty()) {
+            val fp = recent.getString(0)
+            fc.initialDirectory = File(fp).parentFile
+        }
+
         val f = fc.showOpenDialog(view.stage)
         if (f != null && f.extension == "csv") {
+            val p = f.absolutePath
+            recent.remove(p)
+            recent.add(0, p)
             Thread {
                 try {
                     val a = TableArray.fromCSV(FileInputStream(f), true)
-                    runOnFxThread { view.setData(f.name, a) }
+                    context.dataSpace.newData(f.name, a)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -175,13 +188,25 @@ internal object Singleton {
         }
     }
 
-    private fun launchCommands() {
+    fun getSavePath(view: DataView, ext: String): File? {
+        val fc = FileChooser()
+        fc.title = "Save File"
+        val recent = getRecent()
+        if (recent.isNotEmpty()) {
+            val fp = recent.getString(0)
+            fc.initialDirectory = File(fp).parentFile
+        }
+        fc.extensionFilters.add(FileChooser.ExtensionFilter(ext, "*.$ext"))
+        return fc.showSaveDialog(view.stage)
+    }
+
+    private fun launchAppCommands() {
         val m = context.uiManager
         m.registerCommand("app.about", "About KnotBook", MDI_INFORMATION_OUTLINE.description,
-                combo(KeyCode.F1)) { uiManager.view?.let { Splash.info(it.stage) } }
+                combo(KeyCode.F1)) { Splash.info(uiManager.view?.stage, manager.buildVersion, appIcon) }
         m.registerCommand("nav.recent", "Open Recent", MDI_HISTORY.description,
                 combo(KeyCode.R, control = true)) { }
-        m.registerCommand("nav.file", "Open File", MDI_FOLDER_OUTLINE.description,
+        m.registerCommand("file.open", "Open File", MDI_FOLDER_OUTLINE.description,
                 combo(KeyCode.O, control = true)) { uiManager.view?.let { tableFromFile(it) } }
         m.registerCommand("window.close", "Close Window", MDI_CLOSE.description,
                 combo(KeyCode.W, control = true)) { closeWindow() }
@@ -201,35 +226,68 @@ internal object Singleton {
         m.registerCommand("window.create", "New Window", null,
                 combo(KeyCode.N, control = true)) { newWindow().show() }
         m.registerCommand("test.python.editor", "Test Python Editor",
-                MDI_LANGUAGE_PYTHON.description, null
-        ) { context.createTextEditor().withSyntax("text/python").editable().show() }
+                MDI_LANGUAGE_PYTHON.description, null) {
+            uiManager.createTextEditor().withSyntax("text/python")
+                    .withTitle("Python Editor").editable().show()
+        }
         m.registerCommand("command.palette", "Command Palette", MDI_CONSOLE.description,
                 combo(KeyCode.K, control = true)) { uiManager.showCommandsPalette() }
-        m.registerCommand("app.license", "Open Source Licenses", null,
-                null) { viewOpenSource() }
-        m.registerCommand("app.exit", "Exit Application", null,
-                null) { exitOK() }
-        m.registerCommand("app.plugins", "Application Plugins", null,
-                null) { viewPlugins() }
+        m.registerCommand("app.license", "Open Source Licenses", null, null) { viewOpenSource() }
+        m.registerCommand("app.exit", "Exit Application", null, null) { exitOK() }
+        m.registerCommand("plugins.list", "Plugins and Services", null, null) { viewPlugins() }
+        m.registerCommand("jvm.args", "JVM Arguments", null, null) { viewJVMArgs() }
     }
 
-    private fun launchCommands2() {
+    private fun launchDataCommands() {
         val m = context.uiManager
         m.registerCommand("edit.copy", "Copy", MDI_CONTENT_COPY.description,
                 combo(KeyCode.C, control = true)) { uiManager.view?.copyDelimited('\t') }
+        m.registerCommand("file.save.csv", "Save as CSV", MDI_CONTENT_SAVE.description,
+                combo(KeyCode.S, control = true)) { uiManager.view?.saveCSV() }
+        m.registerCommand("file.save.zip", "Save as Native Zip", MDI_CONTENT_SAVE.description,
+                combo(KeyCode.S, control = true, shift = true)) { uiManager.view?.saveZip() }
         m.registerCommand("select.all", "Select All", null,
                 combo(KeyCode.A, control = true)) { uiManager.view?.selectAll() }
         m.registerCommand("select.none", "Select None", null,
                 combo(KeyCode.A, control = true, shift = true)) { uiManager.view?.selectNone() }
 
         m.registerCommand("view.zoom.in", "Zoom In", MDI_MAGNIFY_PLUS.description, null
-                ) { uiManager.view?.spreadsheet?.incrementZoom() }
+        ) { uiManager.view?.spreadsheet?.incrementZoom() }
         m.registerCommand("view.zoom.out", "Zoom Out", MDI_MAGNIFY_MINUS.description, null
-                ) { uiManager.view?.spreadsheet?.decrementZoom() }
+        ) { uiManager.view?.spreadsheet?.decrementZoom() }
         m.registerCommand("view.zoom.reset", "Reset Zoom", null, null
-                ) { uiManager.view?.spreadsheet?.zoomFactor = 1.0 }
-        m.registerCommand("nav.find", "Find in Cells", null,
-                combo(KeyCode.F, control = true)) {}
+        ) { uiManager.view?.spreadsheet?.zoomFactor = 1.0 }
+        m.registerCommand("data.view.find", "Find in Cells", null,
+                combo(KeyCode.F, control = true)) { uiManager.view?.startFind() }
+        m.registerCommand("cs.clear", "Clear Colour Scales",
+                null, combo(KeyCode.DIGIT0, alt = true)) { uiManager.view?.clearCS() }
+
+        m.registerCommand("cs.up.1", "Add Ascending Colour Scale: Green",
+                null, combo(KeyCode.DIGIT1, alt = true))
+        { uiManager.view?.addCS(SortType.Ascending, ColorScale.green) }
+        m.registerCommand("cs.up.2", "Add Ascending Colour Scale: Red",
+                null, combo(KeyCode.DIGIT2, alt = true))
+        { uiManager.view?.addCS(SortType.Ascending, ColorScale.red) }
+        m.registerCommand("cs.up.3", "Add Ascending Colour Scale: Orange",
+                null, combo(KeyCode.DIGIT3, alt = true))
+        { uiManager.view?.addCS(SortType.Ascending, ColorScale.orange) }
+        m.registerCommand("cs.up.4", "Add Ascending Colour Scale: Blue",
+                null, combo(KeyCode.DIGIT4, alt = true))
+        { uiManager.view?.addCS(SortType.Ascending, ColorScale.blue) }
+
+        m.registerCommand("cs.down.9", "Add Descending Colour Scale: Green",
+                null, combo(KeyCode.DIGIT9, alt = true))
+        { uiManager.view?.addCS(SortType.Descending, ColorScale.green) }
+        m.registerCommand("cs.down.8", "Add Descending Colour Scale: Red",
+                null, combo(KeyCode.DIGIT8, alt = true))
+        { uiManager.view?.addCS(SortType.Descending, ColorScale.red) }
+        m.registerCommand("cs.down.7", "Add Descending Colour Scale: Orange",
+                null, combo(KeyCode.DIGIT7, alt = true))
+        { uiManager.view?.addCS(SortType.Descending, ColorScale.orange) }
+        m.registerCommand("cs.down.6", "Add Ascending Colour Scale: Blue",
+                null, combo(KeyCode.DIGIT6, alt = true))
+        { uiManager.view?.addCS(SortType.Descending, ColorScale.blue) }
+        
     }
 
     fun exitOK() {

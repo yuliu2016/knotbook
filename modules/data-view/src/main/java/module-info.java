@@ -10,6 +10,8 @@ module kb.core.view {
 
     requires org.kordamp.ikonli.materialdesign;
 
+    uses kb.service.api.ui.TextEditorService;
+
     provides kb.service.api.application.ApplicationService
             with kb.core.view.app.Application;
 }

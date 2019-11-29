@@ -67,34 +67,34 @@ jobs:
         inputs:
           path: "$(System.DefaultWorkingDirectory)/build/abc/collected/"
           artifact: "ubuntu-$(Build.BuildNumber)"
-  - job: macOS
-    pool:
-      vmImage: "macOS-latest"
-    steps:
-      - task: Gradle@2
-        displayName: "Gradle Assemble"
-        inputs:
-          workingDirectory: ""
-          gradleWrapperFile: "gradlew"
-          javaHomeOption: "JDKVersion"
-          jdkVersionOption: "1.11"
-          jdkArchitectureOption: "x64"
-          publishJUnitResults: false
-          testResultsFiles: "**/TEST-*.xml"
-          tasks: "assemble"
-      - task: Gradle@2
-        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-        displayName: "Collect Jars"
-        inputs:
-          workingDirectory: ""
-          gradleWrapperFile: "gradlew"
-          javaHomeOption: "JDKVersion"
-          jdkVersionOption: "1.11"
-          jdkArchitectureOption: "x64"
-          publishJUnitResults: false
-          tasks: "collectJars"
-      - task: PublishPipelineArtifact@1
-        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-        inputs:
-          path: "$(System.DefaultWorkingDirectory)/build/abc/collected/"
-          artifact: "macOS-$(Build.BuildNumber)"
+#  - job: macOS
+#    pool:
+#      vmImage: "macOS-latest"
+#    steps:
+#      - task: Gradle@2
+#        displayName: "Gradle Assemble"
+#        inputs:
+#          workingDirectory: ""
+#          gradleWrapperFile: "gradlew"
+#          javaHomeOption: "JDKVersion"
+#          jdkVersionOption: "1.11"
+#          jdkArchitectureOption: "x64"
+#          publishJUnitResults: false
+#          testResultsFiles: "**/TEST-*.xml"
+#          tasks: "assemble"
+#      - task: Gradle@2
+#        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+#        displayName: "Collect Jars"
+#        inputs:
+#          workingDirectory: ""
+#          gradleWrapperFile: "gradlew"
+#          javaHomeOption: "JDKVersion"
+#          jdkVersionOption: "1.11"
+#          jdkArchitectureOption: "x64"
+#          publishJUnitResults: false
+#          tasks: "collectJars"
+#      - task: PublishPipelineArtifact@1
+#        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+#        inputs:
+#          path: "$(System.DefaultWorkingDirectory)/build/abc/collected/"
+#          artifact: "macOS-$(Build.BuildNumber)"

@@ -4,13 +4,22 @@ import kb.service.api.Service;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public interface ServiceManager {
 
-    ApplicationProps getProps();
+    String getJSONConfig();
+
+    void setJSONConfig(String json);
 
     List<Service> getServices();
 
-    String getVersion();
+    String getBuildVersion();
+
+    String getImageVersion();
 
     void exitOK();
+
+    void exitError();
+
+    List<String> getJVMArgs();
 }
