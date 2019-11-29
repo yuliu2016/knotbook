@@ -5,211 +5,15 @@ import kb.service.api.Service;
 import kb.service.api.ServiceContext;
 import kb.service.api.ServiceMetadata;
 import kb.service.api.application.ApplicationService;
-import kb.service.api.application.ServiceManager;
-import kb.service.api.data.DataSpace;
-import kb.service.api.json.JSONObjectWrapper;
-import kb.service.api.ui.UIManager;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
 @SuppressWarnings("unused")
 class KnotBook {
-
-    public interface ConfigHandle {
-        String read();
-
-        void write(String s);
-    }
-
-    public static class Config {
-        private JSONObject object;
-        private ConfigHandle handle;
-
-        Config(ConfigHandle handle) {
-            this.handle = handle;
-            try {
-                object = new JSONObject(handle.read());
-            } catch (JSONException e) {
-                object = new JSONObject();
-            }
-        }
-
-        void save() {
-            handle.write(getJoinedText());
-        }
-
-        JSONObjectWrapper createConfig(Service service) {
-            String key = service.getMetadata().getPackageName();
-            JSONObject savedConfig = object.optJSONObject(key);
-            JSONObjectWrapper newWrapper;
-            if (savedConfig != null) {
-                newWrapper = new JSONObjectWrapper(savedConfig);
-            } else {
-                JSONObject newObject = new JSONObject();
-                object.put(key, newObject);
-                newWrapper = new JSONObjectWrapper(newObject);
-            }
-            return newWrapper;
-        }
-
-        public String getJoinedText() {
-            return object.toString(2);
-        }
-
-        public void setInputText(String inputText) {
-            try {
-                object = new JSONObject(inputText);
-            } catch (JSONException e) {
-                object = new JSONObject();
-            }
-        }
-    }
-
-    private static class FileConfigHandle implements ConfigHandle {
-        Path path;
-
-        FileConfigHandle(Path path) {
-            this.path = path;
-        }
-
-        @Override
-        public String read() {
-            try {
-                return Files.readString(path);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return "{}";
-            }
-        }
-
-        @Override
-        public void write(String s) {
-            try {
-                Files.writeString(path, s);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private static class ResolvedServices<T extends MetaService> {
-        Class<T> theClass;
-        List<T> services;
-
-        ResolvedServices(Class<T> theClass, List<T> services) {
-            this.theClass = theClass;
-            this.services = services;
-        }
-
-        void print() {
-            System.out.println("\nListing " + services.size() +
-                    " package(s) for " + theClass.getSimpleName() + ":");
-            for (T s : services) {
-                System.out.println(s.getMetadata());
-            }
-        }
-    }
-
-    private static class MetadataServiceWrapper implements Service {
-        private ServiceMetadata metadata;
-
-        MetadataServiceWrapper(ServiceMetadata metadata) {
-            this.metadata = metadata;
-        }
-
-        @Override
-        public void launch(ServiceContext context) {
-        }
-
-        @Override
-        public ServiceMetadata getMetadata() {
-            return metadata;
-        }
-    }
-
-    private static class ContextImpl implements ServiceContext {
-
-        Service service;
-        ApplicationService app;
-        JSONObjectWrapper configCache;
-
-        ContextImpl(Service service, ApplicationService app) {
-            this.service = service;
-            this.app = app;
-        }
-
-        @Override
-        public Service getService() {
-            return service;
-        }
-
-        @Override
-        public JSONObjectWrapper getConfig() {
-            if (configCache == null) {
-                configCache = getKnotBook().config.createConfig(service);
-            }
-            return configCache;
-        }
-
-        @Override
-        public UIManager getUIManager() {
-            return app.getUIManager();
-        }
-
-        @Override
-        public DataSpace getDataSpace() {
-            return app.getDataSpace();
-        }
-    }
-
-    private static class Manager implements ServiceManager {
-
-        @Override
-        public String getJSONConfig() {
-            return getKnotBook().config.getJoinedText();
-        }
-
-        @Override
-        public void setJSONConfig(String json) {
-            getKnotBook().config.setInputText(json);
-        }
-
-        @Override
-        public List<Service> getServices() {
-            return getKnotBook().extensions.services;
-        }
-
-        @Override
-        public String getBuildVersion() {
-            return getKnotBook().getBuildVersion();
-        }
-
-        @Override
-        public String getImageVersion() {
-            return getKnotBook().getImageVersion();
-        }
-
-        @Override
-        public void exitOK() {
-            getKnotBook().exit();
-        }
-
-        @Override
-        public void exitError() {
-            System.exit(1);
-        }
-
-        @Override
-        public List<String> getJVMArgs() {
-            return getKnotBook().args;
-        }
-    }
 
     private static <T extends MetaService> ResolvedServices<T> loadServices(
             ServiceLoader<T> loader, Class<T> theClass) {
@@ -236,6 +40,16 @@ class KnotBook {
                 app.getUIManager().showException(e);
             }
         }
+    }
+
+    private static String getBuildVersion(int year, int month, int day) {
+        int minor;
+        if (year == 2019) {
+            minor = month - 8;
+        } else {
+            minor = 4 + month + (year - 2020) * 12;
+        }
+        return "3." + minor + "." + day;
     }
 
     private KnotBook() {
@@ -268,7 +82,7 @@ class KnotBook {
             loadServices(ServiceLoader.load(Service.class), Service.class);
 
     private Config config;
-    private Manager manager;
+    private ManagerImpl manager;
     private ApplicationService app;
     private String buildVersion;
     private String imageVersion;
@@ -276,7 +90,7 @@ class KnotBook {
     void launch(List<String> args) {
         this.args = args;
         config = new Config(getHandle());
-        manager = new Manager();
+        manager = new ManagerImpl(this);
         if (!applications.services.isEmpty()) {
             app = applications.services.get(0);
             launchApplication();
@@ -295,14 +109,26 @@ class KnotBook {
         }
     }
 
-    private String getBuildVersion() {
+    Config getConfig() {
+        return config;
+    }
+
+    List<String> getJVMArgs() {
+        return args;
+    }
+
+    List<Service> getServices() {
+        return extensions.services;
+    }
+
+    String getBuildVersion() {
         if (buildVersion == null) {
             updateVersion();
         }
         return buildVersion;
     }
 
-    private String getImageVersion() {
+    String getImageVersion() {
         if (imageVersion == null) {
             updateVersion();
         }
@@ -317,7 +143,7 @@ class KnotBook {
             int year = cal.get(Calendar.YEAR);
             int month = cal.get(Calendar.MONTH) + 1;
             int day = cal.get(Calendar.DAY_OF_MONTH);
-            updateBuildVersion(year, month, day);
+            buildVersion = getBuildVersion(year, month, day) + "-dev";
             buildVersion += "-dev";
         } else {
             try {
@@ -328,24 +154,14 @@ class KnotBook {
                 int year = Integer.parseInt(build.substring(0, 4));
                 int month = Integer.parseInt(build.substring(4, 6));
                 int day = Integer.parseInt(build.substring(6, 8));
-                updateBuildVersion(year, month, day);
+                buildVersion = getBuildVersion(year, month, day);
                 imageVersion = object.getString("image");
             } catch (IOException ignored) {
             }
         }
     }
 
-    private void updateBuildVersion(int year, int month, int day) {
-        int minor;
-        if (year == 2019) {
-            minor = month - 8;
-        } else {
-            minor = 4 + month + (year - 2020) * 12;
-        }
-        buildVersion = "3." + minor + "." + day;
-    }
-
-    private void exit() {
+    void exit() {
         for (Service service : extensions.services) {
             service.terminate();
         }
