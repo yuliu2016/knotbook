@@ -1,7 +1,7 @@
-package kb.plugin.appscanner
+package kb.plugin.scoutingapp.scanner
 
-import kb.plugin.appscanner.Alliance.Blue
-import kb.plugin.appscanner.Alliance.Red
+import kb.plugin.scoutingapp.scanner.Alliance.Blue
+import kb.plugin.scoutingapp.scanner.Alliance.Red
 
 interface V5Entry {
     val match: String

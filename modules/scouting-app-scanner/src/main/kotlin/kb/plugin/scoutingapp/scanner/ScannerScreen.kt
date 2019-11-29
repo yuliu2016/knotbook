@@ -1,4 +1,4 @@
-package kb.plugin.appscanner
+package kb.plugin.scoutingapp.scanner
 
 import javafx.application.Platform
 import javafx.beans.property.SimpleStringProperty
