@@ -15,7 +15,9 @@ import kb.core.view.splash.Splash
 import kb.service.api.ServiceContext
 import kb.service.api.application.ServiceManager
 import kb.service.api.array.TableArray
+import kb.service.api.json.JSONArrayWrapper
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
+import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
 import kotlin.concurrent.thread
@@ -152,11 +154,29 @@ internal object Singleton {
         return dv
     }
 
+    private var recent: JSONArrayWrapper? = null
+
+    fun getRecent(): JSONArrayWrapper {
+        if (recent == null) {
+            recent = context.config.getJSONArray("Recent Files")
+        }
+        return recent!!
+    }
+
     fun tableFromFile(view: DataView) {
         val fc = FileChooser()
         fc.title = "Open Table from File"
+        val recent = getRecent()
+        if (recent.isNotEmpty()) {
+            val fp = recent.getString(0)
+            fc.initialDirectory = File(fp).parentFile
+        }
+
         val f = fc.showOpenDialog(view.stage)
         if (f != null && f.extension == "csv") {
+            val p = f.absolutePath
+            recent.remove(p)
+            recent.add(0, p)
             Thread {
                 try {
                     val a = TableArray.fromCSV(FileInputStream(f), true)
@@ -166,6 +186,18 @@ internal object Singleton {
                 }
             }.start()
         }
+    }
+
+    fun getSavePath(view: DataView, ext: String): File? {
+        val fc = FileChooser()
+        fc.title = "Save File"
+        val recent = getRecent()
+        if (recent.isNotEmpty()) {
+            val fp = recent.getString(0)
+            fc.initialDirectory = File(fp).parentFile
+        }
+        fc.extensionFilters.add(FileChooser.ExtensionFilter(ext, "*.$ext"))
+        return fc.showSaveDialog(view.stage)
     }
 
     private fun launchAppCommands() {
@@ -210,6 +242,10 @@ internal object Singleton {
         val m = context.uiManager
         m.registerCommand("edit.copy", "Copy", MDI_CONTENT_COPY.description,
                 combo(KeyCode.C, control = true)) { uiManager.view?.copyDelimited('\t') }
+        m.registerCommand("file.save.csv", "Save as CSV", MDI_CONTENT_SAVE.description,
+                combo(KeyCode.S, control = true)) { uiManager.view?.saveCSV() }
+        m.registerCommand("file.save.zip", "Save as Native Zip", MDI_CONTENT_SAVE.description,
+                combo(KeyCode.S, control = true, shift = true)) { uiManager.view?.saveZip() }
         m.registerCommand("select.all", "Select All", null,
                 combo(KeyCode.A, control = true)) { uiManager.view?.selectAll() }
         m.registerCommand("select.none", "Select None", null,
@@ -221,8 +257,8 @@ internal object Singleton {
         ) { uiManager.view?.spreadsheet?.decrementZoom() }
         m.registerCommand("view.zoom.reset", "Reset Zoom", null, null
         ) { uiManager.view?.spreadsheet?.zoomFactor = 1.0 }
-        m.registerCommand("table.find", "Find in Cells", null,
-                combo(KeyCode.F, control = true)) {}
+        m.registerCommand("data.view.find", "Find in Cells", null,
+                combo(KeyCode.F, control = true)) { uiManager.view?.startFind() }
         m.registerCommand("cs.clear", "Clear Colour Scales",
                 null, combo(KeyCode.DIGIT0, alt = true)) { uiManager.view?.clearCS() }
 

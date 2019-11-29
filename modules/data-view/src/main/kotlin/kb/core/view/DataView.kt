@@ -16,6 +16,8 @@ import kb.core.fx.*
 import kb.core.view.app.Singleton
 import kb.service.api.array.TableArray
 import kb.service.api.array.TableUtil
+import kb.service.api.ui.OptionBar
+import kb.service.api.ui.OptionItem
 import org.controlsfx.control.spreadsheet.SpreadsheetCell
 import org.controlsfx.control.spreadsheet.SpreadsheetView
 
@@ -221,6 +223,59 @@ class DataView {
             }
             builder.toString()
         }
+    }
+
+    fun saveCSV() {
+        val array = array ?: return
+        val fp = Singleton.getSavePath(this, "csv")
+        if (fp != null) {
+            array.delimitToStream(fp.outputStream(), ',', false)
+        }
+    }
+
+    fun saveZip() {
+        val array = array ?: return
+        val fp = Singleton.getSavePath(this, "kbt")
+        if (fp != null) {
+            array.toZipFormat(fp.outputStream())
+        }
+    }
+
+    fun startFind() {
+        val ob = OptionBar()
+        ob.hint = "Enter Something to search for"
+
+        ob.setOnEnterPressed {
+            ob.isShowing = false
+        }
+
+        ob.textProperty().addListener(InvalidationListener {
+            val t = ob.text.trim()
+            if (t.isEmpty()) {
+                ob.items.clear()
+                return@InvalidationListener
+            }
+            try {
+                val num = t.toDouble()
+                val array = array ?: return@InvalidationListener
+                val rows = array.rows
+                var count = 0
+                for (i in 0 until rows) {
+                    for (j in 0 until array.cols) {
+                        if (array[i, j] == num) {
+                            count++
+                        }
+                    }
+                }
+                ob.items.setAll(
+                        OptionItem("Results in Table", null, "$count Found", null, null)
+                )
+            } catch (e: Exception) {
+            }
+        })
+
+
+        Singleton.uiManager.showOptionBar(ob)
     }
 
     private fun onSelectionChanged() {

@@ -3,7 +3,6 @@ package kb.service.api.ui;
 import javafx.scene.input.KeyCombination;
 
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 @SuppressWarnings("unused")
 public interface UIManager {
@@ -24,7 +23,7 @@ public interface UIManager {
 
     void showException(Throwable e);
 
-    void getTextInput(String prompt, Function<String, Boolean> validator, Consumer<String> callback);
+    void getTextInput(String prompt, Consumer<String> callback);
 
     TextEditor createTextEditor();
 

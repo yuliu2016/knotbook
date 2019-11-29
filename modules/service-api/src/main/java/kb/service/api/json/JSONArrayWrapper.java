@@ -10,9 +10,18 @@ import java.util.*;
 @SuppressWarnings({"NullableProblems", "unused", "WeakerAccess"})
 public class JSONArrayWrapper implements List<Object> {
     private JSONArray array;
+    private ArrayList<Object> list;
 
+    @SuppressWarnings("unchecked")
     public JSONArrayWrapper(JSONArray array) {
         this.array = array;
+        try {
+            var listField = JSONArray.class.getDeclaredField("myArrayList");
+            listField.setAccessible(true);
+            list = (ArrayList<Object>) listField.get(array);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     public JSONArray getArray() {
@@ -247,7 +256,7 @@ public class JSONArrayWrapper implements List<Object> {
 
     @Override
     public boolean contains(Object o) {
-        throw new UnsupportedOperationException("contains() is unsupported");
+        return list.contains(o);
     }
 
     @Override
@@ -285,7 +294,7 @@ public class JSONArrayWrapper implements List<Object> {
 
     @Override
     public boolean remove(Object o) {
-        throw new UnsupportedOperationException("remove() is unsupported");
+        return list.remove(o);
     }
 
     @Override
@@ -318,7 +327,7 @@ public class JSONArrayWrapper implements List<Object> {
 
     @Override
     public void clear() {
-        throw new UnsupportedOperationException("clear() is unsupported");
+        list.clear();
     }
 
     @Override
@@ -333,7 +342,7 @@ public class JSONArrayWrapper implements List<Object> {
 
     @Override
     public void add(int index, Object element) {
-        throw new UnsupportedOperationException("add() is unsupported");
+        list.add(index, element);
     }
 
     @Override

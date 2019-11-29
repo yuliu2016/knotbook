@@ -9,7 +9,6 @@ import kb.core.view.splash.Splash
 import kb.service.api.ui.*
 import java.util.*
 import java.util.function.Consumer
-import java.util.function.Function
 
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -95,7 +94,7 @@ class DataUIManager : UIManager {
         runOnFxThread { if (Splash.confirmYes(title, message)) runIfYes?.run() }
     }
 
-    override fun getTextInput(prompt: String, validator: Function<String, Boolean>?, callback: Consumer<String>) {
+    override fun getTextInput(prompt: String, callback: Consumer<String>) {
         val ob = OptionBar()
         ob.hint = prompt
 

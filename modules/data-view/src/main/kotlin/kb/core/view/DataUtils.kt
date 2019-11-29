@@ -3,6 +3,7 @@
 package kb.core.view
 
 import kb.core.fx.observable
+import kb.core.view.util.CellBase2
 import kb.service.api.array.TableArray
 import org.controlsfx.control.spreadsheet.GridBase
 import org.controlsfx.control.spreadsheet.SpreadsheetCellType
@@ -57,8 +58,8 @@ fun TableArray.toGrid(): GridBase {
     grid.setResizableRows(BitSet())
     grid.rows.addAll((0 until rows).map { row ->
         (0 until cols).map { col ->
-            val cell = SpreadsheetCellType.STRING.createCell(row, col, 1, 1, getString(row, col))
-            if (this.isNumber(row, col)) {
+            val cell = CellBase2(row, col, getString(row, col))
+            if (this.isNumber(row, col) && rows < 1000) {
                 cell.styleClass.add("num-cell")
             }
             cell

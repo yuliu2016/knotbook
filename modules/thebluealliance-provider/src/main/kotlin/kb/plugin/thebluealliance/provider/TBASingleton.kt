@@ -23,7 +23,7 @@ object TBASingleton {
     }
 
     fun withGetKey(func: (key: String) -> Unit) {
-        context.uiManager.getTextInput("Enter the API Key for The Blue Alliance", null) {
+        context.uiManager.getTextInput("Enter the API Key for The Blue Alliance") {
             if (it != null && it.isNotEmpty()) {
                 context.config["API Key"] = it
                 func(it)

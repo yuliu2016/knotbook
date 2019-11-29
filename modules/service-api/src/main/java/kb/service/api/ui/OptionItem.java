@@ -3,6 +3,7 @@ package kb.service.api.ui;
 import javafx.scene.Node;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 @SuppressWarnings("DuplicatedCode")
 public class OptionItem {
@@ -50,6 +51,23 @@ public class OptionItem {
 
     public void setHighlight(boolean[] highlight) {
         this.highlight = highlight;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OptionItem that = (OptionItem) o;
+        return name.equals(that.name) &&
+                Objects.equals(info1, that.info1) &&
+                Objects.equals(info2, that.info2) &&
+                Objects.equals(graphic, that.graphic) &&
+                highlight == that.highlight;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, info1, info2, graphic);
     }
 
     /**

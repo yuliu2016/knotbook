@@ -380,16 +380,23 @@ public class TableArray {
             for (int i = 0; i < len; i++) {
                 int m = mode.value[i];
                 float v = num.value[i];
-                if (m == MODE_INT || m == MODE_FLOAT) {
-                    if (m == MODE_FLOAT) {
-                        numStream.writeFloat(v);
-                    } else {
-                        numStream.writeShort((int) v);
-                    }
+                if (m == MODE_FLOAT) {
+                    numStream.writeFloat(v);
                 }
             }
             numStream.flush();
+
+            ZipEntry num2Entry = new ZipEntry("array/ints");
+            out.putNextEntry(num2Entry);
+            for (int i = 0; i < len; i++) {
+                int m = mode.value[i];
+                float v = num.value[i];
+                if (m == MODE_INT) {
+                    out.write((int) v);
+                }
+            }
             out.closeEntry();
+
             ZipEntry strEntry = new ZipEntry("array/str.txt");
             out.putNextEntry(strEntry);
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out), 64);

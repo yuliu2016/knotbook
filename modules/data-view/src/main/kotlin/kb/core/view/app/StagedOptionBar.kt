@@ -1,6 +1,7 @@
 package kb.core.view.app
 
 import javafx.beans.InvalidationListener
+import javafx.collections.ListChangeListener
 import javafx.event.ActionEvent
 import javafx.geometry.Insets
 import javafx.geometry.Pos
@@ -136,7 +137,12 @@ class StagedOptionBar {
     private fun bindAll(ob: OptionBar) {
         optionBar = ob
         lv.items = ob.items
-        ob.items.addListener(InvalidationListener { updateListHeight() })
+        ob.items.addListener(ListChangeListener {
+            updateListHeight()
+            if (ob.items.isNotEmpty()) {
+                lv.selectionModel.select(0)
+            }
+        })
         updateListHeight()
         if (lv.items.isNotEmpty()) {
             lv.selectionModel.select(0)
