@@ -52,6 +52,11 @@ class KnotBook {
         return "3." + minor + "." + day;
     }
 
+    private static ConfigHandle getHandle(boolean debug, String home) {
+        return new FileConfigHandle(Paths.get(home, ".knotbook",
+                debug ? "knotbook-config-debug.json" : "knotbook-config-release.json"));
+    }
+
     private KnotBook() {
     }
 
@@ -68,13 +73,6 @@ class KnotBook {
         return args != null && args.contains("debug");
     }
 
-    private ConfigHandle getHandle() {
-        if (isDebug()) {
-            return new FileConfigHandle(Paths.get(home, ".knotbook", "knotbook-config-debug.json"));
-        }
-        return new FileConfigHandle(Paths.get(home, ".knotbook", "knotbook-config-release.json"));
-    }
-
     private final ResolvedServices<ApplicationService> applications =
             loadServices(ServiceLoader.load(ApplicationService.class), ApplicationService.class);
 
@@ -89,7 +87,7 @@ class KnotBook {
 
     void launch(List<String> args) {
         this.args = args;
-        config = new Config(getHandle());
+        config = new Config(getHandle(isDebug(), home));
         manager = new ManagerImpl(this);
         if (!applications.services.isEmpty()) {
             app = applications.services.get(0);
@@ -137,13 +135,7 @@ class KnotBook {
 
     private void updateVersion() {
         if (isDebug()) {
-            Date date = new Date();
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
-            int year = cal.get(Calendar.YEAR);
-            int month = cal.get(Calendar.MONTH) + 1;
-            int day = cal.get(Calendar.DAY_OF_MONTH);
-            buildVersion = getBuildVersion(year, month, day) + "-dev";
+            updateDebugVersion();
         } else {
             try {
                 String json = Files.readString(Paths.get(getKnotBook().home, ".knotbook",
@@ -156,8 +148,19 @@ class KnotBook {
                 buildVersion = getBuildVersion(year, month, day);
                 imageVersion = object.getString("image");
             } catch (IOException ignored) {
+                updateDebugVersion();
             }
         }
+    }
+
+    private void updateDebugVersion() {
+        Date date = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH) + 1;
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        buildVersion = getBuildVersion(year, month, day) + "-dev";
     }
 
     void exit() {

@@ -1,5 +1,5 @@
 """
-KnotBook Installer Script Version 3 for Python 3.6+
+KnotBook Installer Script Version 3 for Python 3.7+
 
 v3.0:
   - Using 2 repositories for separate part of the app
@@ -16,12 +16,16 @@ v3.2:
   - More helpful prints
   - Version store now excludes build number
   - Remove parse_build_id
-  
+
 v3.3:
   - Remove shebang so that script is launchable
   - Improve version parsing
   - Improve extraction message
   - Fix image updating not triggering build update
+
+v3.4:
+  - Change the default installation folder
+  - Renamed some variables
 """
 
 from urllib.request import urlopen, urlretrieve
@@ -35,7 +39,8 @@ import tarfile
 import zipfile
 import os
 import shutil
-    
+import pathlib
+
 def get_version_data():
     try:
         with open("KnotBook/app/version-info.json", "r") as f:
@@ -188,7 +193,7 @@ def download_build(target: str, version_data):
     shutil.rmtree(f"{target}-{build_number}/")
 
 
-def main():
+def install_knotbook():
     system = platform.system()
     if system == "Windows":
         target = "windows"
@@ -199,6 +204,11 @@ def main():
     else:
         print(f"The system {system} is unsupported")
         exit_error()
+    home = str(pathlib.Path.home())
+    sys_path = os.path.join(home, ".knotbook")
+    if not os.path.isdir(sys_path):
+        os.makedirs(sys_path)
+    os.chdir(sys_path)
     version_data = get_version_data()
     if not "image" in version_data:
         version_data["image"] = "None"
@@ -210,5 +220,6 @@ def main():
         json.dump(version_data, f)
     print("Done")
 
-if __name__ == '__main__':
-    main()
+
+if __name__ == "__main__":
+    install_knotbook()
