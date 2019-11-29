@@ -45,6 +45,7 @@ class DataView {
     fun updateTheme() {
         val theme = Singleton.uiManager.themeProperty.get()
         layout.stylesheets.setAll("/knotbook.css", theme.viewStyle)
+        updateCS()
     }
 
     val calculations = Label()
@@ -119,8 +120,12 @@ class DataView {
         stage.icons.add(Singleton.appIcon)
         stage.scene = scene
         stage.focusedProperty().addListener { _, _, focused ->
-            if (focused) Singleton.uiManager.view = this
-            else if (Singleton.uiManager.view === this) Singleton.uiManager.view = null
+            val m = Singleton.uiManager
+            if (focused) {
+                m.view = this
+            } else if (m.view === this) {
+                m.view = null
+            }
         }
         stage.setOnCloseRequest { Singleton.uiManager.themeProperty.removeListener(themeListener) }
         stage.show()
@@ -131,14 +136,67 @@ class DataView {
 
     private val sortColumns = ArrayList<SortColumn>()
     private val colourScales = ArrayList<ColorScale>()
-    private var referenceOrder = ArrayList<ObservableList<SpreadsheetCell>>()
+    private var referenceOrder: List<ObservableList<SpreadsheetCell>> = ArrayList()
 
     fun setData(title: String, data: TableArray) {
         stage.title = title
         array = data
         grid = data.toGrid()
         this.spreadsheet.grid = grid
+        referenceOrder = grid.rows.toList()
         spreadsheet.fixedRows.setAll(0)
+    }
+
+    fun getSelectedColumns(): Set<Int> {
+        return spreadsheet.selectionModel.selectedCells.mapTo(HashSet()) { it.column }
+    }
+
+    fun addCS(type: SortType, rgb: RGB) {
+        getSelectedColumns().forEach {
+            val cs = ColorScale(it, type, rgb)
+            colourScales.remove(cs)
+            colourScales.add(cs)
+        }
+        updateCS()
+    }
+
+    fun clearCS() {
+        val array = array ?: return
+        val rows = array.rows
+        getSelectedColumns().forEach {
+            val cs = ColorScale(it, SortType.Descending, ColorScale.green)
+            colourScales.remove(cs)
+            for (row in 0 until rows) {
+                referenceOrder[row][it].style = null
+            }
+        }
+    }
+
+    fun updateCS() {
+        val array = array ?: return
+        val rows = array.rows
+        val bg = if (Singleton.uiManager.isDarkTheme()) 0 else 255
+        for (colourScale in colourScales) {
+            val desc = colourScale.sortType == SortType.Descending
+            val col = colourScale.index
+            val values = (0 until rows).map { array[it, col] }
+
+            var min = Double.MAX_VALUE
+            var max = Double.MIN_VALUE
+            for (v in values) {
+                if (v.isFinite()) {
+                    if (v < min) min = v
+                    if (v > max) max = v
+                }
+            }
+
+            for (row in 0 until rows) {
+                val v = values[row]
+                if (v.isInfinite() || v.isNaN()) continue
+                val x = if (desc) (max - v) / (max - min) else (v - min) / (max - min)
+                referenceOrder[row][col].style = colourScale.rgb.blendStyle(x, bg)
+            }
+        }
     }
 
     private inline fun copyWithMinMax(block: (minRow: Int, maxRow: Int, minCol: Int, maxCol: Int) -> String) {

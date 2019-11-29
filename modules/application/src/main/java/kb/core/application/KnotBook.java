@@ -144,7 +144,6 @@ class KnotBook {
             int month = cal.get(Calendar.MONTH) + 1;
             int day = cal.get(Calendar.DAY_OF_MONTH);
             buildVersion = getBuildVersion(year, month, day) + "-dev";
-            buildVersion += "-dev";
         } else {
             try {
                 String json = Files.readString(Paths.get(getKnotBook().home, ".knotbook",

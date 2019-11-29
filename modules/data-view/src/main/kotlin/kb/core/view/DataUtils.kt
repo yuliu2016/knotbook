@@ -23,7 +23,9 @@ enum class SortType {
     Ascending, Descending
 }
 
-data class ColorScale(val index: Int, val sortType: SortType, val r: Int, val g: Int, val b: Int) {
+data class RGB(val r: Int, val g: Int, val b: Int)
+
+data class ColorScale(val index: Int, val sortType: SortType, val rgb: RGB) {
     override fun equals(other: Any?): Boolean {
         return other is ColorScale && other.index == index
     }
@@ -33,11 +35,18 @@ data class ColorScale(val index: Int, val sortType: SortType, val r: Int, val g:
     }
 
     companion object {
-        val green = ColorScale(0, SortType.Ascending, 96, 192, 144)
-        val orange = ColorScale(0, SortType.Ascending, 255, 144, 0)
-        val blue = ColorScale(0, SortType.Ascending, 100, 170, 255)
-        val read = ColorScale(0, SortType.Ascending, 255, 108, 108)
+        val green = RGB(96, 192, 144)
+        val orange = RGB(255, 144, 0)
+        val blue = RGB(100, 170, 255)
+        val red = RGB(255, 108, 108)
     }
+}
+
+fun RGB.blendStyle(alpha: Double, bg: Int): String {
+    val r2 = (alpha * r + (1 - alpha) * bg).toInt()
+    val g2 = (alpha * g + (1 - alpha) * bg).toInt()
+    val b2 = (alpha * b + (1 - alpha) * bg).toInt()
+    return "-fx-background-color: rgb($r2,$g2,$b2)"
 }
 
 fun TableArray.toGrid(): GridBase {
@@ -50,7 +59,7 @@ fun TableArray.toGrid(): GridBase {
         (0 until cols).map { col ->
             val cell = SpreadsheetCellType.STRING.createCell(row, col, 1, 1, getString(row, col))
             if (this.isNumber(row, col)) {
-                cell.style = "-fx-alignment: CENTER-RIGHT"
+                cell.styleClass.add("num-cell")
             }
             cell
         }.observable()

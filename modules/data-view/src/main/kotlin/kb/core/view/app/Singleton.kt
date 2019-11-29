@@ -8,8 +8,9 @@ import javafx.scene.input.KeyCode
 import javafx.stage.FileChooser
 import javafx.stage.Window
 import kb.core.fx.combo
+import kb.core.view.ColorScale
 import kb.core.view.DataView
-import kb.core.view.server.Server
+import kb.core.view.SortType
 import kb.core.view.splash.Splash
 import kb.service.api.ServiceContext
 import kb.service.api.application.ServiceManager
@@ -130,8 +131,8 @@ internal object Singleton {
             Alert(Alert.AlertType.ERROR, "Application Already Started").showAndWait()
             manager.exitError()
         }
-        launchCommands()
-        launchCommands2()
+        launchAppCommands()
+        launchDataCommands()
     }
 
     private fun closeWindow() {
@@ -167,7 +168,7 @@ internal object Singleton {
         }
     }
 
-    private fun launchCommands() {
+    private fun launchAppCommands() {
         val m = context.uiManager
         m.registerCommand("app.about", "About KnotBook", MDI_INFORMATION_OUTLINE.description,
                 combo(KeyCode.F1)) { Splash.info(uiManager.view?.stage, manager.buildVersion, appIcon) }
@@ -202,10 +203,10 @@ internal object Singleton {
         m.registerCommand("app.license", "Open Source Licenses", null, null) { viewOpenSource() }
         m.registerCommand("app.exit", "Exit Application", null, null) { exitOK() }
         m.registerCommand("plugins.list", "Plugins and Services", null, null) { viewPlugins() }
-        m.registerCommand("jvm.args", "JVM Arguments", null, null) { viewJVMArgs()}
+        m.registerCommand("jvm.args", "JVM Arguments", null, null) { viewJVMArgs() }
     }
 
-    private fun launchCommands2() {
+    private fun launchDataCommands() {
         val m = context.uiManager
         m.registerCommand("edit.copy", "Copy", MDI_CONTENT_COPY.description,
                 combo(KeyCode.C, control = true)) { uiManager.view?.copyDelimited('\t') }
@@ -222,6 +223,35 @@ internal object Singleton {
         ) { uiManager.view?.spreadsheet?.zoomFactor = 1.0 }
         m.registerCommand("table.find", "Find in Cells", null,
                 combo(KeyCode.F, control = true)) {}
+        m.registerCommand("cs.clear", "Clear Colour Scales",
+                null, combo(KeyCode.DIGIT0, alt = true)) { uiManager.view?.clearCS() }
+
+        m.registerCommand("cs.up.1", "Add Ascending Colour Scale: Green",
+                null, combo(KeyCode.DIGIT1, alt = true))
+        { uiManager.view?.addCS(SortType.Ascending, ColorScale.green) }
+        m.registerCommand("cs.up.2", "Add Ascending Colour Scale: Red",
+                null, combo(KeyCode.DIGIT2, alt = true))
+        { uiManager.view?.addCS(SortType.Ascending, ColorScale.red) }
+        m.registerCommand("cs.up.3", "Add Ascending Colour Scale: Orange",
+                null, combo(KeyCode.DIGIT3, alt = true))
+        { uiManager.view?.addCS(SortType.Ascending, ColorScale.orange) }
+        m.registerCommand("cs.up.4", "Add Ascending Colour Scale: Blue",
+                null, combo(KeyCode.DIGIT4, alt = true))
+        { uiManager.view?.addCS(SortType.Ascending, ColorScale.blue) }
+
+        m.registerCommand("cs.down.9", "Add Descending Colour Scale: Green",
+                null, combo(KeyCode.DIGIT9, alt = true))
+        { uiManager.view?.addCS(SortType.Descending, ColorScale.green) }
+        m.registerCommand("cs.down.8", "Add Descending Colour Scale: Red",
+                null, combo(KeyCode.DIGIT8, alt = true))
+        { uiManager.view?.addCS(SortType.Descending, ColorScale.red) }
+        m.registerCommand("cs.down.7", "Add Descending Colour Scale: Orange",
+                null, combo(KeyCode.DIGIT7, alt = true))
+        { uiManager.view?.addCS(SortType.Descending, ColorScale.orange) }
+        m.registerCommand("cs.down.6", "Add Ascending Colour Scale: Blue",
+                null, combo(KeyCode.DIGIT6, alt = true))
+        { uiManager.view?.addCS(SortType.Descending, ColorScale.blue) }
+        
     }
 
     fun exitOK() {

@@ -1,4 +1,4 @@
-module kb.plugin.scoutingapp {
+module kb.plugin.scoutingapp.scanner {
     requires kb.service.api;
     requires kb.core.camera.fx;
     requires kotlin.stdlib;
