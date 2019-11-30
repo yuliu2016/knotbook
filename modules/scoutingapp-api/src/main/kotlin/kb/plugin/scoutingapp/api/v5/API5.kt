@@ -41,7 +41,7 @@ interface V5Entry {
      * Get the data in an encoded string
      */
     val encoded: String
-    val dataPoints: List<DataPoint>
+    val dataPoints: List<V5DataPoint>
     val comments: String
     val undone: Int
 
@@ -53,7 +53,7 @@ interface V5Entry {
     /**
      * Gets the last recorded of a specific data type, excluding undo
      */
-    fun lastValue(type: Int): DataPoint?
+    fun lastValue(type: Int): V5DataPoint?
 
     /**
      * Check if a type should focus according to the current time
@@ -65,7 +65,7 @@ interface MutableEntry : V5Entry {
     /**
      * Adds a data point to the entry
      */
-    fun add(dataPoint: DataPoint)
+    fun add(dataPoint: V5DataPoint)
 
     /**
      * Performs an undo action on the data stack
@@ -73,7 +73,7 @@ interface MutableEntry : V5Entry {
      * @return the data constant(metrics) of the datum being undone, or null
      * if nothing can be undone
      */
-    fun undo(): DataPoint?
+    fun undo(): V5DataPoint?
 
     override var undone: Int
     override var comments: String
@@ -84,6 +84,6 @@ interface MutableEntry : V5Entry {
 
 fun String.toBoard() = Board.values().firstOrNull { it.name == this }
 
-data class DataPoint(val type: Int, val value: Int, val time: Int) : Iterable<Byte> {
+data class V5DataPoint(val type: Int, val value: Int, val time: Int) : Iterable<Byte> {
     override fun iterator() = byteArrayOf(type.toByte(), value.toByte(), time.toByte()).iterator()
 }
