@@ -1,12 +1,14 @@
 package kb.service.api.ui;
 
+import javafx.application.Platform;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
-public class UIHelper {
+public abstract class UIHelper {
     public static String getStackTrace(Throwable e) {
         StringWriter writer = new StringWriter();
         PrintWriter printWriter = new PrintWriter(writer);
@@ -25,5 +27,13 @@ public class UIHelper {
             });
             return thread;
         });
+    }
+
+    public static void run(Runnable func) {
+        if (Platform.isFxApplicationThread()) {
+            func.run();
+        } else {
+            Platform.runLater(func);
+        }
     }
 }

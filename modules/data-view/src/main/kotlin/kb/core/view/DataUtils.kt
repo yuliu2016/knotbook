@@ -5,6 +5,7 @@ package kb.core.view
 import kb.core.fx.observable
 import kb.core.view.util.CellBase2
 import kb.service.api.array.TableArray
+import kb.service.api.ui.RGB
 import org.controlsfx.control.spreadsheet.GridBase
 import org.controlsfx.control.spreadsheet.SpreadsheetCellType
 import org.controlsfx.control.spreadsheet.SpreadsheetView
@@ -24,8 +25,6 @@ enum class SortType {
     Ascending, Descending
 }
 
-data class RGB(val r: Int, val g: Int, val b: Int)
-
 data class ColorScale(val index: Int, val sortType: SortType, val rgb: RGB) {
     override fun equals(other: Any?): Boolean {
         return other is ColorScale && other.index == index
@@ -35,12 +34,13 @@ data class ColorScale(val index: Int, val sortType: SortType, val rgb: RGB) {
         return index
     }
 
-    companion object {
-        val green = RGB(96, 192, 144)
-        val orange = RGB(255, 144, 0)
-        val blue = RGB(100, 170, 255)
-        val red = RGB(255, 108, 108)
-    }
+}
+
+object PresetCS{
+    val green = RGB(96, 192, 144)
+    val orange = RGB(255, 144, 0)
+    val blue = RGB(100, 170, 255)
+    val red = RGB(255, 108, 108)
 }
 
 fun RGB.blendStyle(alpha: Double, bg: Int): String {
@@ -59,7 +59,7 @@ fun TableArray.toGrid(): GridBase {
     grid.rows.addAll((0 until rows).map { row ->
         (0 until cols).map { col ->
             val cell = CellBase2(row, col, getString(row, col))
-            if (this.isNumber(row, col) && rows < 1000) {
+            if (this.isNumber(row, col)) {
                 cell.styleClass.add("num-cell")
             }
             cell

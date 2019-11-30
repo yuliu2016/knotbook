@@ -18,6 +18,7 @@ import kb.service.api.array.TableArray
 import kb.service.api.array.TableUtil
 import kb.service.api.ui.OptionBar
 import kb.service.api.ui.OptionItem
+import kb.service.api.ui.RGB
 import org.controlsfx.control.spreadsheet.SpreadsheetCell
 import org.controlsfx.control.spreadsheet.SpreadsheetView
 
@@ -166,7 +167,7 @@ class DataView {
         val array = array ?: return
         val rows = array.rows
         getSelectedColumns().forEach {
-            val cs = ColorScale(it, SortType.Descending, ColorScale.green)
+            val cs = ColorScale(it, SortType.Descending, PresetCS.green)
             colourScales.remove(cs)
             for (row in 0 until rows) {
                 referenceOrder[row][it].style = null

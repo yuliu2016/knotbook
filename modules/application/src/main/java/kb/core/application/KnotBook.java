@@ -96,7 +96,6 @@ class KnotBook {
     }
 
     private void launchApplication() {
-        extensions.print();
         ServiceContext context = contextForService(serviceForApplication(app.getMetadata()), app);
         app.launch(manager, context, this::launchServices);
     }

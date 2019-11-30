@@ -6,7 +6,7 @@ import kb.service.api.ui.TextEditorService;
 
 public class ProviderImpl implements TextEditorService {
 
-    private ServiceMetadata metadata = new ServiceMetadata("Syntax Editor", "1.0");
+    private ServiceMetadata metadata = new ServiceMetadata("Syntax Editor", "Test Plugin");
 
     @Override
     public ServiceMetadata getMetadata() {

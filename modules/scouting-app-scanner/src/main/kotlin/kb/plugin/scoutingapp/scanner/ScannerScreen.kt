@@ -13,6 +13,8 @@ import javafx.stage.FileChooser
 import javafx.stage.Stage
 import kb.core.camera.fx.FXCamera
 import kb.core.fx.*
+import kb.plugin.scoutingapp.api.Board
+import kb.plugin.scoutingapp.api.v5.V5Entry
 import kb.service.api.array.NaturalOrderComparator
 import java.io.File
 import java.nio.file.Files
@@ -38,12 +40,12 @@ class ScannerScreen {
     val comparator = NaturalOrderComparator()
 
 
-    fun alert(s: String) {
+    fun alert(t: String, s: String) {
         val dialog = Dialog<ButtonType>()
         val pane = dialog.dialogPane
         pane.buttonTypes.addAll(ButtonType.OK)
         dialog.dialogPane.content = label(s)
-        dialog.title = "Info"
+        dialog.title = t
         dialog.showAndWait()
     }
 
@@ -123,7 +125,7 @@ class ScannerScreen {
                 unsortedEntries.addAll(items)
                 updateSorted(sortByMatch.isSelected)
                 saveState.text = "Save File Loaded"
-                alert("Loaded $i entries out of ${data.size} lines")
+                alert("Info", "Loaded $i entries out of ${data.size} lines")
             }
         }
     }
@@ -149,7 +151,8 @@ class ScannerScreen {
     fun showComment() {
         val i = tv.selectionModel.selectedIndex
         if (i != -1) {
-            alert(tv.items[i].comments)
+            val it = tv.items[i]
+            alert(it.scout, it.comments)
         }
     }
 
@@ -170,7 +173,7 @@ class ScannerScreen {
             val sizeStr = if (size == 1) "1 total match" else "$size total matches"
             "${it.key}: $sizeStr. Last: ${it.value.last()}"
         }
-        alert(s)
+        alert("Scout Stats", s)
     }
 
     fun showWarnings() {
@@ -199,7 +202,7 @@ class ScannerScreen {
                 w.append(missing.last()).append("\n")
             }
         }
-        alert(w.toString())
+        alert("Warnings", w.toString())
     }
 
     fun updateSorted(sorted: Boolean) {

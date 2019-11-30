@@ -8,8 +8,8 @@ import javafx.scene.input.KeyCode
 import javafx.stage.FileChooser
 import javafx.stage.Window
 import kb.core.fx.combo
-import kb.core.view.ColorScale
 import kb.core.view.DataView
+import kb.core.view.PresetCS
 import kb.core.view.SortType
 import kb.core.view.splash.Splash
 import kb.service.api.ServiceContext
@@ -75,7 +75,8 @@ internal object Singleton {
     }
 
     fun viewPlugins() {
-        context.uiManager.showAlert("Plugins and Services", manager.services.joinToString("\n"))
+        context.uiManager.showAlert("Plugins and Services",
+                manager.services.joinToString("\n") { it.metadata.toString() })
     }
 
     fun viewJVMArgs() {
@@ -264,30 +265,30 @@ internal object Singleton {
 
         m.registerCommand("cs.up.1", "Add Ascending Colour Scale: Green",
                 null, combo(KeyCode.DIGIT1, alt = true))
-        { uiManager.view?.addCS(SortType.Ascending, ColorScale.green) }
+        { uiManager.view?.addCS(SortType.Ascending, PresetCS.green) }
         m.registerCommand("cs.up.2", "Add Ascending Colour Scale: Red",
                 null, combo(KeyCode.DIGIT2, alt = true))
-        { uiManager.view?.addCS(SortType.Ascending, ColorScale.red) }
+        { uiManager.view?.addCS(SortType.Ascending, PresetCS.red) }
         m.registerCommand("cs.up.3", "Add Ascending Colour Scale: Orange",
                 null, combo(KeyCode.DIGIT3, alt = true))
-        { uiManager.view?.addCS(SortType.Ascending, ColorScale.orange) }
+        { uiManager.view?.addCS(SortType.Ascending, PresetCS.orange) }
         m.registerCommand("cs.up.4", "Add Ascending Colour Scale: Blue",
                 null, combo(KeyCode.DIGIT4, alt = true))
-        { uiManager.view?.addCS(SortType.Ascending, ColorScale.blue) }
+        { uiManager.view?.addCS(SortType.Ascending, PresetCS.blue) }
 
         m.registerCommand("cs.down.9", "Add Descending Colour Scale: Green",
                 null, combo(KeyCode.DIGIT9, alt = true))
-        { uiManager.view?.addCS(SortType.Descending, ColorScale.green) }
+        { uiManager.view?.addCS(SortType.Descending, PresetCS.green) }
         m.registerCommand("cs.down.8", "Add Descending Colour Scale: Red",
                 null, combo(KeyCode.DIGIT8, alt = true))
-        { uiManager.view?.addCS(SortType.Descending, ColorScale.red) }
+        { uiManager.view?.addCS(SortType.Descending, PresetCS.red) }
         m.registerCommand("cs.down.7", "Add Descending Colour Scale: Orange",
                 null, combo(KeyCode.DIGIT7, alt = true))
-        { uiManager.view?.addCS(SortType.Descending, ColorScale.orange) }
+        { uiManager.view?.addCS(SortType.Descending, PresetCS.orange) }
         m.registerCommand("cs.down.6", "Add Ascending Colour Scale: Blue",
                 null, combo(KeyCode.DIGIT6, alt = true))
-        { uiManager.view?.addCS(SortType.Descending, ColorScale.blue) }
-        
+        { uiManager.view?.addCS(SortType.Descending, PresetCS.blue) }
+
     }
 
     fun exitOK() {

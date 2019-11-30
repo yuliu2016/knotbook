@@ -1,31 +1,31 @@
 package kb.service.api;
 
 public class ServiceMetadata {
-    private String packageName;
-    private String packageVersion;
+    private String name;
+    private String description;
 
-    public ServiceMetadata(String packageName, String packageVersion) {
-        this.packageName = packageName;
-        this.packageVersion = packageVersion;
+    public ServiceMetadata(String name, String description) {
+        this.name = name;
+        this.description = description;
     }
 
     /**
      * @return The name of the package. This should be unique and case-insensitive.
      * Format it like a java package
      */
-    public String getPackageName() {
-        return packageName;
+    public String getName() {
+        return name;
     }
 
     /**
-     * @return the version of the service
+     * @return the description of the package
      */
-    public String getPackageVersion() {
-        return packageVersion;
+    public String getDescription() {
+        return description;
     }
 
     @Override
     public String toString() {
-        return packageName + " => " + packageVersion;
+        return getName() + " => " + getDescription();
     }
 }

@@ -8,7 +8,10 @@ import kb.service.api.ServiceMetadata
 
 class AppScannerPlugin : Service {
 
-    private val metadata = ServiceMetadata("Scouting App Scanner", "1.0")
+    private val metadata = ServiceMetadata(
+            "Scouting App Scanner",
+            "Scans QR Codes with the WebCam"
+    )
 
     override fun getMetadata(): ServiceMetadata {
         return metadata

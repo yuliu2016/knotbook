@@ -23,7 +23,7 @@ public class Config {
     }
 
     JSONObjectWrapper createConfig(Service service) {
-        String key = service.getMetadata().getPackageName();
+        String key = service.getMetadata().getName();
         JSONObject savedConfig = object.optJSONObject(key);
         JSONObjectWrapper newWrapper;
         if (savedConfig != null) {
