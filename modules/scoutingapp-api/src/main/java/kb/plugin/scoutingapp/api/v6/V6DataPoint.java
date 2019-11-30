@@ -66,12 +66,20 @@ public class V6DataPoint {
      * bit 11-24: time
      */
     public static void appendEncode(V6DataPoint dp, StringBuilder b) {
+        if (dp == null) {
+            throw new IllegalArgumentException("DataPoint cannot be null");
+        }
         b.append(toBase64(dp.type));
         b.append(toBase64(dp.value << 2 | (dp.time & 0b11 << 12) >> 12));
         b.append(toBase64((dp.time & 0b111111 << 6) >> 6));
         b.append(toBase64(dp.time & 0b111111));
     }
 
+    public static String encode(V6DataPoint dp) {
+        StringBuilder builder = new StringBuilder();
+        appendEncode(dp, builder);
+        return builder.toString();
+    }
 
     public static List<V6DataPoint> decode(String s) {
         if (s == null || s.length() % 4 != 0) {
@@ -79,16 +87,20 @@ public class V6DataPoint {
         }
         List<V6DataPoint> dp = new ArrayList<>();
         for (int i = 0; i < s.length(); i += 4) {
-            int a = fromBase64(s.charAt(i));
-            int b = fromBase64(s.charAt(i + 1));
-            int c = fromBase64(s.charAt(i + 2));
-            int d = fromBase64(s.charAt(i + 3));
-            dp.add(new V6DataPoint(a, (b & 0b111100) >> 2, (b & 0b11) << 12 | c << 6 | d));
+            dp.add(decode(s, i));
         }
         return dp;
     }
 
-    private static int fromBase64(int ch) {
+    public static V6DataPoint decode(String s, int i) {
+        int a = fromBase64(s.charAt(i));
+        int b = fromBase64(s.charAt(i + 1));
+        int c = fromBase64(s.charAt(i + 2));
+        int d = fromBase64(s.charAt(i + 3));
+        return new V6DataPoint(a, (b & 0b111100) >> 2, (b & 0b11) << 12 | c << 6 | d);
+    }
+
+    static int fromBase64(int ch) {
         if (ch == '/') return 63;
         if (ch == '+') return 62;
         if (ch >= 48 && ch < 58) return ch + 4;
@@ -97,8 +109,10 @@ public class V6DataPoint {
         throw new IllegalArgumentException("Invalid Base64 Input");
     }
 
-    private static char toBase64(int i) {
-        assert i > -1 && i < 64;
+    static char toBase64(int i) {
+        if (i < 0 || i > 63) {
+            throw new IllegalArgumentException("Invalid Integer Input");
+        }
         return i < 26 ? (char) (i + 65)
                 : i < 52 ? (char) (i + 71)
                 : i < 62 ? (char) (i - 4)

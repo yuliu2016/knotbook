@@ -5,13 +5,11 @@ plugins {
     id("org.openjfx.javafxplugin")
 }
 
-tasks {
-    test {
-        extensions.configure(TestModuleOptions::class.java) {
-            runOnClasspath = true
-        }
-        useJUnitPlatform {
-        }
+tasks.test {
+    extensions.configure(TestModuleOptions::class.java) {
+        runOnClasspath = true
+    }
+    useJUnitPlatform {
     }
 }
 
