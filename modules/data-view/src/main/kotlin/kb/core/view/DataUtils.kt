@@ -11,7 +11,7 @@ import org.controlsfx.control.spreadsheet.SpreadsheetCellType
 import org.controlsfx.control.spreadsheet.SpreadsheetView
 import java.util.*
 
-data class SortColumn(val sortType: SortType, val index: Int) {
+data class SortColumn(val index: Int, val sortType: SortType) {
     override fun equals(other: Any?): Boolean {
         return other is SortColumn && other.index == index
     }

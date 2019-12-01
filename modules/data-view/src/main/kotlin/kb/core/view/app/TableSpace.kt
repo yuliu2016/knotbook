@@ -7,9 +7,14 @@ import kb.service.api.ui.UIHelper
 class TableSpace : DataSpace {
     override fun newData(title: String, data: TableArray) {
         UIHelper.run {
-            val dv = Singleton.newWindow()
-            dv.setData(title, data)
-            dv.show()
+            val view = Singleton.uiManager.view
+            if (view == null || view.array != null) {
+                val dv = Singleton.newWindow()
+                dv.setData(title, data)
+                dv.show()
+            } else {
+                view.setData(title, data)
+            }
         }
     }
 }

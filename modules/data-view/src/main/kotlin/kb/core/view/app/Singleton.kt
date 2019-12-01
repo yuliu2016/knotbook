@@ -121,6 +121,7 @@ internal object Singleton {
         launchImpl()
         serviceLauncher.run()
         DataView().show()
+        uiManager.showCommandsPalette()
     }
 
     private fun launchImpl() {
@@ -288,6 +289,24 @@ internal object Singleton {
         m.registerCommand("cs.down.6", "Add Ascending Colour Scale: Blue",
                 null, combo(KeyCode.DIGIT6, alt = true))
         { uiManager.view?.addCS(SortType.Descending, PresetCS.blue) }
+
+        m.registerCommand("sort.ascending", "Set Ascending Sort",
+                MDI_SORT_ASCENDING.description, combo(KeyCode.OPEN_BRACKET, control = true))
+        { uiManager.view?.setSort(SortType.Ascending) }
+        m.registerCommand("sort.descending", "Set Descending Sort",
+                MDI_SORT_DESCENDING.description, combo(KeyCode.CLOSE_BRACKET, control = true))
+        { uiManager.view?.setSort(SortType.Descending) }
+
+        m.registerCommand("sort.ascending.add", "Add Ascending Sort",
+                MDI_SORT_ASCENDING.description, combo(KeyCode.OPEN_BRACKET, control = true, shift = true))
+        { uiManager.view?.addSort(SortType.Ascending) }
+        m.registerCommand("sort.descending.add", "Add Descending Sort",
+                MDI_SORT_DESCENDING.description, combo(KeyCode.CLOSE_BRACKET, control = true, shift = true))
+        { uiManager.view?.addSort(SortType.Descending) }
+
+        m.registerCommand("sort.clear", "Clear Sort",
+                null, combo(KeyCode.BACK_SLASH, control = true))
+        { uiManager.view?.clearSort() }
 
     }
 

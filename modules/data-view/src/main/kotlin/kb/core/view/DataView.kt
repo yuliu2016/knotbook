@@ -133,7 +133,6 @@ class DataView {
         }
         stage.setOnCloseRequest { Singleton.uiManager.themeProperty.removeListener(themeListener) }
         stage.show()
-        Singleton.uiManager.showCommandsPalette()
     }
 
     var array: TableArray? = null
@@ -153,6 +152,43 @@ class DataView {
 
     fun getSelectedColumns(): Set<Int> {
         return spreadsheet.selectionModel.selectedCells.mapTo(HashSet()) { it.column }
+    }
+
+    fun addSort(type: SortType) {
+        getSelectedColumns().forEach {
+            val sc = SortColumn(it, type)
+            sortColumns.remove(sc)
+            sortColumns.add(sc)
+        }
+        updateSort()
+    }
+
+    fun setSort(type: SortType) {
+        sortColumns.clear()
+        getSelectedColumns().forEach {
+            val sc = SortColumn(it, type)
+            sortColumns.add(sc)
+        }
+        updateSort()
+    }
+
+    fun clearSort() {
+        sortColumns.clear()
+        grid.rows.setAll(referenceOrder)
+    }
+
+    fun updateSort() {
+        val array = array ?: return
+        if (referenceOrder.isEmpty()) return
+        val comparator = sortColumns.map {
+            when (it.sortType) {
+                SortType.Ascending -> array.ascendingComparator(it.index)
+                SortType.Descending -> array.descendingComparator(it.index)
+            }
+        }.reduce { a, b -> a.then(b) }
+        val order = (1 until referenceOrder.size).sortedWith(comparator)
+        grid.rows.setAll(referenceOrder[0])
+        grid.rows.addAll(order.map { referenceOrder[it] })
     }
 
     fun addCS(type: SortType, rgb: RGB) {
@@ -198,7 +234,9 @@ class DataView {
                 val v = values[row]
                 if (v.isInfinite() || v.isNaN()) continue
                 val x = if (desc) (max - v) / (max - min) else (v - min) / (max - min)
-                referenceOrder[row][col].style = colourScale.rgb.blendStyle(x, bg)
+                // Square the output so that the comparison is more obvious
+                val y = if (desc) x * x else 1 - (1 - x) * (1 - x)
+                referenceOrder[row][col].style = colourScale.rgb.blendStyle(y, bg)
             }
         }
     }
