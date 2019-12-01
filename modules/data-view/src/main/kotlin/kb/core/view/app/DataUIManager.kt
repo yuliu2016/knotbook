@@ -77,20 +77,24 @@ class DataUIManager : UIManager {
     }
 
     override fun showAlert(title: String, message: String) {
-        UIHelper.run { Splash.alert(title, message) }
+        UIHelper.run { Splash.alert(view?.stage, title, message, false) }
+    }
+
+    fun showAlertMonospace(title: String, message: String) {
+        UIHelper.run { Splash.alert(view?.stage, title, message, true) }
     }
 
     override fun showException(e: Throwable?) {
         val thread = Thread.currentThread()
-        UIHelper.run { Splash.error(thread, e) }
+        UIHelper.run { Splash.error(view?.stage, thread, e) }
     }
 
     override fun confirmOK(title: String, message: String, runIfOk: Runnable?) {
-        UIHelper.run { if (Splash.confirmOK(title, message)) runIfOk?.run() }
+        UIHelper.run { if (Splash.confirmOK(view?.stage, title, message)) runIfOk?.run() }
     }
 
     override fun confirmYes(title: String, message: String, runIfYes: Runnable?) {
-        UIHelper.run { if (Splash.confirmYes(title, message)) runIfYes?.run() }
+        UIHelper.run { if (Splash.confirmYes(view?.stage, title, message)) runIfYes?.run() }
     }
 
     override fun getTextInput(prompt: String, callback: Consumer<String>) {

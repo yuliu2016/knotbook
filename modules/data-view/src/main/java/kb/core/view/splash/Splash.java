@@ -14,6 +14,8 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Popup;
 import javafx.stage.Window;
 import kb.service.api.ui.UIHelper;
@@ -81,7 +83,7 @@ public class Splash {
         popup.show(owner);
     }
 
-    public static void gc() {
+    public static void gc(Window owner) {
         Thread thread = new Thread(() -> {
             final Runtime runtime = Runtime.getRuntime();
             final long before = (runtime.totalMemory() - runtime.freeMemory());
@@ -94,12 +96,12 @@ public class Splash {
             String mem = String.format("Currently Used Memory: %.3f MB", now / 1024.0 / 1024.0);
             String freed = String.format("GC Freed Memory: %.3f MB", (before - now) / 1024.0 / 1024.0);
             String msg = mem + "\n" + freed;
-            Platform.runLater(() -> alert("JVM", msg));
+            Platform.runLater(() -> alert(owner,"JVM", msg, false));
         });
         thread.start();
     }
 
-    public static void error(Thread t, Throwable e) {
+    public static void error(Window owner, Thread t, Throwable e) {
         if (e == null) return;
         String trace = UIHelper.getStackTrace(e);
         Dialog<ButtonType> dialog = new Dialog<>();
@@ -111,6 +113,7 @@ public class Splash {
 
         pane.setContent(errorLabel);
 
+        dialog.initOwner(owner);
         dialog.setTitle("Exception in thread \"" + t.getName() + "\"");
 
         ClipboardContent content = new ClipboardContent();
@@ -120,36 +123,40 @@ public class Splash {
         dialog.showAndWait();
     }
 
-    public static void alert(String title, String message) {
+    public static void alert(Window owner, String title, String message, boolean monospace) {
         Dialog<ButtonType> dialog = new Dialog<>();
         DialogPane pane = dialog.getDialogPane();
         pane.getButtonTypes().addAll(ButtonType.OK);
 
         Label label = new Label(message);
+        if (monospace) label.setFont(Font.font("monospace", FontWeight.BOLD, 12));
         pane.setContent(label);
 
+        dialog.initOwner(owner);
         dialog.setTitle(title);
         dialog.showAndWait();
     }
 
-    public static boolean confirmOK(String title, String message) {
+    public static boolean confirmOK(Window owner, String title, String message) {
         Dialog<ButtonType> dialog = new Dialog<>();
         DialogPane pane = dialog.getDialogPane();
         pane.getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
         Label label = new Label(message);
         pane.setContent(label);
 
+        dialog.initOwner(owner);
         dialog.setTitle(title);
         return dialog.showAndWait().orElse(ButtonType.CANCEL).equals(ButtonType.OK);
     }
 
-    public static boolean confirmYes(String title, String message) {
+    public static boolean confirmYes(Window owner, String title, String message) {
         Dialog<ButtonType> dialog = new Dialog<>();
         DialogPane pane = dialog.getDialogPane();
         pane.getButtonTypes().addAll(ButtonType.NO, ButtonType.YES);
         Label label = new Label(message);
         pane.setContent(label);
 
+        dialog.initOwner(owner);
         dialog.setTitle(title);
         return dialog.showAndWait().orElse(ButtonType.NO).equals(ButtonType.YES);
     }

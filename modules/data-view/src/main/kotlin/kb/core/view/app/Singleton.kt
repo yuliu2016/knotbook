@@ -94,6 +94,15 @@ internal object Singleton {
                 .show()
     }
 
+    fun viewThreads() {
+        val t = Thread.getAllStackTraces().keys
+                .sortedByDescending { it.priority }.joinToString("\n") {
+            val name = it.name + " ".repeat(26 - it.name.length)
+            "$name Priority:${it.priority}  Daemon:${it.isDaemon}  Group:${it.threadGroup.name}"
+        }
+        uiManager.showAlertMonospace("Threads", t)
+    }
+
     fun startMemoryObserver() {
         thread(isDaemon = true, name = "MemoryObserver") {
             var lastMemoryUsed = -1
@@ -144,7 +153,7 @@ internal object Singleton {
 
     private fun closeWindow() {
         uiManager.view?.let { win ->
-            uiManager.confirmOK("Confirming", "Close this window?") {
+            uiManager.confirmOK("KnotBook DataView", "Are you sure you want to close this window?") {
                 win.stage.close()
             }
         }
@@ -215,10 +224,12 @@ internal object Singleton {
                 combo(KeyCode.O, control = true)) { uiManager.view?.let { tableFromFile(it) } }
         m.registerCommand("window.close", "Close Window", MDI_CLOSE.description,
                 combo(KeyCode.W, control = true)) { closeWindow() }
-        m.registerCommand("jvm.properties", "JVM Properties",
+        m.registerCommand("jvm.properties", "JVM: System Properties",
                 MDI_COFFEE.description, null) { viewJVMProperties() }
+        m.registerCommand("jvm.threads", "JVM: Show All Threads",
+                null, combo(KeyCode.B, control = true, shift = true)) { viewThreads() }
         m.registerCommand("jvm.gc", "JVM: Run Memory Garbage Collection",
-                MDI_DELETE_SWEEP.description, combo(KeyCode.B, control = true)) { Splash.gc() }
+                MDI_DELETE_SWEEP.description, combo(KeyCode.B, control = true)) { Splash.gc(uiManager.view?.stage) }
         m.registerCommand("app.config", "Settings",
                 MDI_TUNE.description, combo(KeyCode.COMMA, control = true)) { editAppProperties() }
         m.registerCommand("theme.toggle", "Toggle Colour Scheme",
