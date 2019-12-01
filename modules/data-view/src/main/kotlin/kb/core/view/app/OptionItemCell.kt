@@ -54,7 +54,7 @@ class OptionItemCell : ListCell<OptionItem>() {
 
     override fun updateItem(item: OptionItem?, empty: Boolean) {
         super.updateItem(item, empty)
-        prefHeight = 24.0
+        prefHeight = 22.0
         if (item == null || empty) {
             graphic = null
             return

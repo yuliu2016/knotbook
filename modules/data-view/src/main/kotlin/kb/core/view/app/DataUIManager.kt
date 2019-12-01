@@ -19,7 +19,7 @@ class DataUIManager : UIManager {
     }
 
     val memoryUsed = SimpleStringProperty()
-    val themeProperty = SimpleObjectProperty(Theme.Light)
+    val themeProperty = SimpleObjectProperty(Theme.Dark)
 
     val commandManager = CommandManager()
     val stagedOptionBar = StagedOptionBar()
@@ -36,7 +36,7 @@ class DataUIManager : UIManager {
 
     fun toggleTheme() {
         themeProperty.set(when (themeProperty.get()) {
-            null -> Theme.Light
+            null -> Theme.Dark
             Theme.Light -> Theme.Dark
             Theme.Dark -> Theme.Light
         })

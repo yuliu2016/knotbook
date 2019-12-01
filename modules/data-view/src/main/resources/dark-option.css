@@ -3,7 +3,9 @@
     -fx-text-fill: white;
 }
 
-.option-bar {
+BorderPane.option-bar {
+    -fx-border-color: gray;
+    -fx-border-width: 1;
     -fx-background-color: #333;
 }
 
@@ -17,6 +19,10 @@
 
 
 /*==========LIST VIEW==========*/
+
+.list-view {
+    -fx-background-color: #333;
+}
 
 .list-cell {
     -fx-background-color: #333;
@@ -43,7 +49,7 @@
 .list-info {
     -fx-background-color: #cdf;
     -fx-text-fill: black;
-    -fx-background-insets: -2 -8 -2 -8;
+    -fx-background-insets: 0 -8 0 -8;
     -fx-background-radius: 4;
 }
 

@@ -25,6 +25,7 @@ public class SearchBar {
         optionBar.setOnEnterPressed(e -> {
             if (handler != null) {
                 int i = filteredIndices.get(optionBar.getSelectedItem());
+                optionBar.setShowing(false);
                 handler.accept(i);
             }
         });

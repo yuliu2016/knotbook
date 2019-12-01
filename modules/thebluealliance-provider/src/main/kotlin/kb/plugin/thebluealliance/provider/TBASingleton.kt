@@ -10,7 +10,6 @@ import kb.service.api.array.TableArray
 import kb.service.api.ui.OptionItem
 import kb.service.api.ui.SearchBar
 import kb.service.api.ui.UIHelper
-import kb.service.api.ui.UIManager
 import java.util.concurrent.Executor
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -18,15 +17,15 @@ object TBASingleton {
     lateinit var context: ServiceContext
     var tba: TBA? = null
 
-    val executor: Executor = UIHelper.createExecutor("TBA API Executor") {
-        context.uiManager.showException(it)
+    val executor: Executor = UIHelper.createExecutor("TBA API Executor") { e ->
+        context.uiManager.showException(e)
     }
 
     fun withGetKey(func: (key: String) -> Unit) {
-        context.uiManager.getTextInput("Enter the API Key for The Blue Alliance") {
-            if (it != null && it.isNotEmpty()) {
-                context.config["API Key"] = it
-                func(it)
+        context.uiManager.getTextInput("Enter the API Key for The Blue Alliance") { key ->
+            if (key != null && key.isNotEmpty()) {
+                context.config["API Key"] = key
+                func(key)
             }
         }
     }
@@ -75,6 +74,7 @@ object TBASingleton {
     }
 
     fun showEventsBar() {
+        eventBar.setHint("Search ${items.size} Events")
         eventBar.setItems(items)
         eventBar.setHandler { getData(data[it]) }
         context.uiManager.showOptionBar(eventBar.toOptionBar())
@@ -137,18 +137,6 @@ object TBASingleton {
                 KeyCodeCombination(KeyCode.M, KeyCombination.CONTROL_DOWN, KeyCombination.ALT_DOWN)) {
             setKey()
         }
-        m.apply {
-            register("set_year", "Set Year")
-            register("set_district", "Set Primary District")
-            register("get_event_rankings", "Get Event Rankings")
-            register("get_team_data", "Get Team Data")
-            register("get_opr", "Get Event OPRs")
-            register("get_teams", "Get Team List")
-            register("get_district_rankings", "Get District Rankings")
-            register("set_cache", "Data Caching")
-            register("event_list", "Get Event List")
-            register("event_predictions", "Get Event Predictions")
-        }
         val config = context.config
         if (config.containsKey("API Key")) {
             tba = TBA(config.getString("API Key"))
@@ -158,9 +146,5 @@ object TBASingleton {
         config["Cache First"] = false
         config["Primary District"] = "Ontario"
         config["Year"] = 2019
-    }
-
-    private fun UIManager.register(id: String, name: String) {
-        registerCommand("tba.$id", "The Blue Alliance: $name", null, null, null)
     }
 }

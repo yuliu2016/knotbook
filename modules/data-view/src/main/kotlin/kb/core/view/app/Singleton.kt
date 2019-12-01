@@ -135,6 +135,9 @@ internal object Singleton {
             Alert(Alert.AlertType.ERROR, "Application Already Started").showAndWait()
             manager.exitError()
         }
+        if (context.config.optString("Theme") == "Light") {
+            uiManager.themeProperty.set(DataUIManager.Theme.Light)
+        }
         launchAppCommands()
         launchDataCommands()
     }
@@ -219,7 +222,10 @@ internal object Singleton {
         m.registerCommand("app.config", "Settings",
                 MDI_TUNE.description, combo(KeyCode.COMMA, control = true)) { editAppProperties() }
         m.registerCommand("theme.toggle", "Toggle Colour Scheme",
-                MDI_COMPARE.description, combo(KeyCode.F3)) { uiManager.toggleTheme() }
+                MDI_COMPARE.description, combo(KeyCode.F3)) {
+            uiManager.toggleTheme()
+            context.config["Theme"] = uiManager.themeProperty.get().name
+        }
         m.registerCommand("fullscreen.toggle", "Toggle Full Screen",
                 MDI_ARROW_EXPAND.description, combo(KeyCode.F11)
         ) { uiManager.view?.toggleFullScreen() }

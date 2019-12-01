@@ -5,10 +5,7 @@ import javafx.collections.ListChangeListener
 import javafx.event.ActionEvent
 import javafx.geometry.Insets
 import javafx.geometry.Pos
-import javafx.scene.effect.BlurType
-import javafx.scene.effect.DropShadow
 import javafx.scene.input.KeyCode
-import javafx.scene.paint.Color
 import javafx.stage.Popup
 import javafx.stage.Stage
 import kb.core.fx.*
@@ -85,22 +82,13 @@ class StagedOptionBar {
 
     val topBox = hbox {
         align(Pos.CENTER)
-        padding = Insets(6.0)
-        spacing = 6.0
+        padding = Insets(5.0)
         add(tf.hgrow())
     }
 
     val container = borderPane {
-        effect = DropShadow().apply {
-            color = Color.rgb(64, 64, 64)
-            blurType = BlurType.GAUSSIAN
-            height = 10.0
-            width = 10.0
-            radius = 10.0
-            offsetY = 5.0
-        }
         styleClass("option-bar")
-        prefWidth = 560.0
+        prefWidth = 580.0
         top = topBox
         bottom = lv
     }
@@ -156,7 +144,11 @@ class StagedOptionBar {
         ob.selectedItemProperty().bind(lv.selectionModel.selectedIndexProperty())
         lv.placeholderProperty().bind(ob.placeholderProperty())
 
-        ob.showingProperty().addListener(InvalidationListener { if (!ob.isShowing) { cancel() } })
+        ob.showingProperty().addListener(InvalidationListener {
+            if (!ob.isShowing) {
+                cancel()
+            }
+        })
     }
 
     fun show(ob: OptionBar, stage: Stage) {
@@ -167,7 +159,7 @@ class StagedOptionBar {
         bindAll(ob)
         ob.isShowing = true
         popup.x = stage.x + stage.width / 2.0 - container.prefWidth / 2.0 - 10.0
-        popup.y = stage.y + stage.scene.y - 5.0
+        popup.y = stage.y + stage.scene.y
         popup.show(stage)
     }
 
