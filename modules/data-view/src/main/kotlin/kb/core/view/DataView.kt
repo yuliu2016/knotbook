@@ -19,6 +19,7 @@ import kb.service.api.array.TableUtil
 import kb.service.api.ui.OptionBar
 import kb.service.api.ui.OptionItem
 import kb.service.api.ui.RGB
+import org.controlsfx.control.spreadsheet.GridBase
 import org.controlsfx.control.spreadsheet.SpreadsheetCell
 import org.controlsfx.control.spreadsheet.SpreadsheetView
 
@@ -29,7 +30,7 @@ class DataView {
     val stage = Stage()
     val themeListener = InvalidationListener { updateTheme() }
     private var isFullScreen = false
-    private var grid = emptyGrid()
+    private var grid = GridBase(0, 0)
 
     init {
         stage.title = "KnotBook"
@@ -132,7 +133,7 @@ class DataView {
         }
         stage.setOnCloseRequest { Singleton.uiManager.themeProperty.removeListener(themeListener) }
         stage.show()
-        stage.requestFocus()
+        Singleton.uiManager.showCommandsPalette()
     }
 
     var array: TableArray? = null
