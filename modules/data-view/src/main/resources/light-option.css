@@ -98,7 +98,7 @@ BorderPane.option-bar {
     -fx-border-color: #888;
     -fx-border-radius: 0;
     -fx-border-width: 1;
-    -fx-prompt-text-fill: #888;
+    -fx-prompt-text-fill: #666;
     -fx-text-fill: black;
     -fx-border-insets: 0;
     -fx-background-insets: 0;

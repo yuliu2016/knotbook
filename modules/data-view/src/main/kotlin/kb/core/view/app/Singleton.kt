@@ -5,6 +5,7 @@ import javafx.beans.InvalidationListener
 import javafx.scene.control.Alert
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyCombination
 import javafx.stage.FileChooser
 import javafx.stage.Window
 import kb.core.fx.combo
@@ -18,6 +19,7 @@ import kb.service.api.array.Tables
 import kb.service.api.json.JSONArrayWrapper
 import kb.service.api.ui.OptionItem
 import kb.service.api.ui.SearchBar
+import org.kordamp.ikonli.Ikon
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 import java.io.File
 import java.io.FileInputStream
@@ -73,6 +75,7 @@ internal object Singleton {
                 .withTitle("JVM Properties (Read-Only)")
                 .withSyntax("text/properties")
                 .withInitialText(properties)
+                .textWrapped()
                 .show()
     }
 
@@ -132,7 +135,7 @@ internal object Singleton {
         launchDataCommands()
     }
 
-    private fun closeWindow() {
+    fun closeWindow() {
         uiManager.view?.let { win ->
             uiManager.confirmOK("KnotBook DataView", "Are you sure you want to close this window?") {
                 win.stage.close()
@@ -213,6 +216,12 @@ internal object Singleton {
         uiManager.showOptionBar(recentSearchBar.toOptionBar())
     }
 
+    fun showUpdates() {
+        thread(name = "KnotBook Update Checker") {
+            uiManager.showAlert("Check for Updates", manager.fetchUpdatedVersion())
+        }
+    }
+
     private fun launchAppCommands() {
         val m = context.uiManager
         m.registerCommand("app.about", "About KnotBook", MDI_INFORMATION_OUTLINE.description,
@@ -223,12 +232,6 @@ internal object Singleton {
                 combo(KeyCode.O, control = true)) { uiManager.view?.let { tableFromFile(it) } }
         m.registerCommand("window.close", "Close Window", MDI_CLOSE.description,
                 combo(KeyCode.W, control = true)) { closeWindow() }
-        m.registerCommand("jvm.properties", "JVM: System Properties",
-                MDI_COFFEE.description, null) { viewJVMProperties() }
-        m.registerCommand("jvm.threads", "JVM: Show All Threads",
-                null, combo(KeyCode.B, control = true, shift = true)) { viewThreads() }
-        m.registerCommand("jvm.gc", "JVM: Run Memory Garbage Collection",
-                MDI_DELETE_SWEEP.description, combo(KeyCode.B, control = true)) { Splash.gc(uiManager.view?.stage) }
         m.registerCommand("app.config", "Settings",
                 MDI_TUNE.description, combo(KeyCode.COMMA, control = true)) { editAppProperties() }
         m.registerCommand("theme.toggle", "Toggle Colour Scheme",
@@ -239,8 +242,6 @@ internal object Singleton {
         m.registerCommand("fullscreen.toggle", "Toggle Full Screen",
                 MDI_ARROW_EXPAND.description, combo(KeyCode.F11)
         ) { uiManager.view?.toggleFullScreen() }
-        m.registerCommand("status.toggle", "Toggle Status Bar",
-                null, combo(KeyCode.F10)) { uiManager.view?.toggleStatusBar() }
         m.registerCommand("window.create", "New Window", null,
                 combo(KeyCode.N, control = true)) { newWindow().show() }
         m.registerCommand("test.python.editor", "Test Python Editor",
@@ -250,84 +251,102 @@ internal object Singleton {
         }
         m.registerCommand("command.palette", "Command Palette", MDI_CONSOLE.description,
                 combo(KeyCode.K, control = true)) { uiManager.showCommandsPalette() }
+        m.registerCommand("app.updates", "Check For Updates", MDI_UPDATE.description, null) {
+            showUpdates()
+        }
         m.registerCommand("app.license", "Open Source Licenses", null, null) { viewOpenSource() }
-        m.registerCommand("app.exit", "Exit Application", null, null) { exitOK() }
         m.registerCommand("plugins.list", "Plugins and Services", null, null) { viewPlugins() }
-        m.registerCommand("jvm.args", "JVM Arguments", null, null) { viewJVMArgs() }
+        m.registerCommand("app.exit", "JVM: Exit Application", null, null) { exitOK() }
+        m.registerCommand("jvm.properties", "JVM: System Properties",
+                MDI_COFFEE.description, null) { viewJVMProperties() }
+        m.registerCommand("jvm.threads", "JVM: Show All Threads",
+                null, combo(KeyCode.B, control = true, shift = true)) { viewThreads() }
+        m.registerCommand("jvm.gc", "JVM: Run Memory Garbage Collection",
+                MDI_DELETE_SWEEP.description, combo(KeyCode.B, control = true)) { Splash.gc(uiManager.view?.stage) }
+        m.registerCommand("jvm.args", "JVM: Arguments", null, null) { viewJVMArgs() }
     }
 
     private fun launchDataCommands() {
-        val m = context.uiManager
-        m.registerCommand("edit.copy", "Copy", MDI_CONTENT_COPY.description,
-                combo(KeyCode.C, control = true)) { uiManager.view?.copyDelimited('\t') }
-        m.registerCommand("file.save.csv", "Save as CSV", MDI_CONTENT_SAVE.description,
-                combo(KeyCode.S, control = true)) { uiManager.view?.saveCSV() }
-        m.registerCommand("file.save.zip", "Save as Native Zip", MDI_CONTENT_SAVE.description,
-                combo(KeyCode.S, control = true, shift = true)) { uiManager.view?.saveZip() }
-        m.registerCommand("select.all", "Select All", null,
-                combo(KeyCode.A, control = true)) { uiManager.view?.selectAll() }
-        m.registerCommand("select.none", "Select None", null,
-                combo(KeyCode.A, control = true, shift = true)) { uiManager.view?.selectNone() }
+        registerForView("status.toggle", "Toggle Status Bar",
+                null, combo(KeyCode.F10)) { it.toggleStatusBar() }
+        registerForView("edit.copy", "Copy", MDI_CONTENT_COPY,
+                combo(KeyCode.C, control = true)) { it.copyDelimited('\t') }
+        registerForView("file.save.csv", "Save as CSV", MDI_CONTENT_SAVE,
+                combo(KeyCode.S, control = true)) { it.saveCSV() }
+        registerForView("file.save.zip", "Save as Native Zip", MDI_CONTENT_SAVE,
+                combo(KeyCode.S, control = true, shift = true)) { it.saveZip() }
+        registerForView("select.all", "Select All", null,
+                combo(KeyCode.A, control = true)) { it.selectAll() }
+        registerForView("select.none", "Select None", null,
+                combo(KeyCode.A, control = true, shift = true)) { it.selectNone() }
 
-        m.registerCommand("view.zoom.in", "Zoom In", MDI_MAGNIFY_PLUS.description, null
-        ) { uiManager.view?.spreadsheet?.incrementZoom() }
-        m.registerCommand("view.zoom.out", "Zoom Out", MDI_MAGNIFY_MINUS.description, null
-        ) { uiManager.view?.spreadsheet?.decrementZoom() }
-        m.registerCommand("view.zoom.reset", "Reset Zoom", null, null
-        ) { uiManager.view?.spreadsheet?.zoomFactor = 1.0 }
-        m.registerCommand("data.view.find", "Find in Cells", null,
-                combo(KeyCode.F, control = true)) { uiManager.view?.startFind() }
-        m.registerCommand("cs.clear", "Clear Colour Scales",
-                null, combo(KeyCode.DIGIT0, alt = true)) { uiManager.view?.clearCS() }
+        registerForView("view.zoom.in", "Zoom In", MDI_MAGNIFY_PLUS, null
+        ) { it.spreadsheet.incrementZoom() }
+        registerForView("view.zoom.out", "Zoom Out", MDI_MAGNIFY_MINUS, null
+        ) { it.spreadsheet.decrementZoom() }
+        registerForView("view.zoom.reset", "Reset Zoom", null, null
+        ) { it.spreadsheet.zoomFactor = 1.0 }
+        registerForView("data.view.find", "Find in Cells", null,
+                combo(KeyCode.F, control = true)) { it.startFind() }
+        registerForView("cs.clear", "Clear Colour Scales",
+                null, combo(KeyCode.DIGIT0, alt = true)) { it.clearCS() }
 
-        m.registerCommand("cs.up.1", "Add Ascending Colour Scale: Green",
+        registerForView("cs.up.1", "Add Ascending Colour Scale: Green",
                 null, combo(KeyCode.DIGIT1, alt = true))
-        { uiManager.view?.addCS(SortType.Ascending, PresetCS.green) }
-        m.registerCommand("cs.up.2", "Add Ascending Colour Scale: Red",
+        { it.addCS(SortType.Ascending, PresetCS.green) }
+        registerForView("cs.up.2", "Add Ascending Colour Scale: Red",
                 null, combo(KeyCode.DIGIT2, alt = true))
-        { uiManager.view?.addCS(SortType.Ascending, PresetCS.red) }
-        m.registerCommand("cs.up.3", "Add Ascending Colour Scale: Orange",
+        { it.addCS(SortType.Ascending, PresetCS.red) }
+        registerForView("cs.up.3", "Add Ascending Colour Scale: Orange",
                 null, combo(KeyCode.DIGIT3, alt = true))
-        { uiManager.view?.addCS(SortType.Ascending, PresetCS.orange) }
-        m.registerCommand("cs.up.4", "Add Ascending Colour Scale: Blue",
+        { it.addCS(SortType.Ascending, PresetCS.orange) }
+        registerForView("cs.up.4", "Add Ascending Colour Scale: Blue",
                 null, combo(KeyCode.DIGIT4, alt = true))
-        { uiManager.view?.addCS(SortType.Ascending, PresetCS.blue) }
+        { it.addCS(SortType.Ascending, PresetCS.blue) }
 
-        m.registerCommand("cs.down.9", "Add Descending Colour Scale: Green",
+        registerForView("cs.down.9", "Add Descending Colour Scale: Green",
                 null, combo(KeyCode.DIGIT9, alt = true))
-        { uiManager.view?.addCS(SortType.Descending, PresetCS.green) }
-        m.registerCommand("cs.down.8", "Add Descending Colour Scale: Red",
+        { it.addCS(SortType.Descending, PresetCS.green) }
+        registerForView("cs.down.8", "Add Descending Colour Scale: Red",
                 null, combo(KeyCode.DIGIT8, alt = true))
-        { uiManager.view?.addCS(SortType.Descending, PresetCS.red) }
-        m.registerCommand("cs.down.7", "Add Descending Colour Scale: Orange",
+        { it.addCS(SortType.Descending, PresetCS.red) }
+        registerForView("cs.down.7", "Add Descending Colour Scale: Orange",
                 null, combo(KeyCode.DIGIT7, alt = true))
-        { uiManager.view?.addCS(SortType.Descending, PresetCS.orange) }
-        m.registerCommand("cs.down.6", "Add Ascending Colour Scale: Blue",
+        { it.addCS(SortType.Descending, PresetCS.orange) }
+        registerForView("cs.down.6", "Add Ascending Colour Scale: Blue",
                 null, combo(KeyCode.DIGIT6, alt = true))
-        { uiManager.view?.addCS(SortType.Descending, PresetCS.blue) }
+        { it.addCS(SortType.Descending, PresetCS.blue) }
 
-        m.registerCommand("sort.ascending", "Set Ascending Sort",
-                MDI_SORT_ASCENDING.description, combo(KeyCode.OPEN_BRACKET, control = true))
-        { uiManager.view?.setSort(SortType.Ascending) }
-        m.registerCommand("sort.descending", "Set Descending Sort",
-                MDI_SORT_DESCENDING.description, combo(KeyCode.CLOSE_BRACKET, control = true))
-        { uiManager.view?.setSort(SortType.Descending) }
+        registerForView("sort.ascending", "Set Ascending Sort",
+                MDI_SORT_ASCENDING, combo(KeyCode.OPEN_BRACKET, control = true))
+        { it.setSort(SortType.Ascending) }
+        registerForView("sort.descending", "Set Descending Sort",
+                MDI_SORT_DESCENDING, combo(KeyCode.CLOSE_BRACKET, control = true))
+        { it.setSort(SortType.Descending) }
 
-        m.registerCommand("sort.ascending.add", "Add Ascending Sort",
-                MDI_SORT_ASCENDING.description, combo(KeyCode.OPEN_BRACKET, control = true, shift = true))
-        { uiManager.view?.addSort(SortType.Ascending) }
-        m.registerCommand("sort.descending.add", "Add Descending Sort",
-                MDI_SORT_DESCENDING.description, combo(KeyCode.CLOSE_BRACKET, control = true, shift = true))
-        { uiManager.view?.addSort(SortType.Descending) }
+        registerForView("sort.ascending.add", "Add Ascending Sort",
+                MDI_SORT_ASCENDING, combo(KeyCode.OPEN_BRACKET, control = true, shift = true))
+        { it.addSort(SortType.Ascending) }
+        registerForView("sort.descending.add", "Add Descending Sort",
+                MDI_SORT_DESCENDING, combo(KeyCode.CLOSE_BRACKET, control = true, shift = true))
+        { it.addSort(SortType.Descending) }
 
-        m.registerCommand("sort.clear", "Clear Sort",
-                null, combo(KeyCode.BACK_SLASH, control = true))
-        { uiManager.view?.clearSort() }
+        registerForView("sort.clear", "Clear Sort", null, combo(KeyCode.BACK_SLASH, control = true))
+        { it.clearSort() }
 
-        m.registerCommand("table.print", "Print Table to Standard Output",
-                null, null)
-        { uiManager.view?.array?.let { println(it) } }
+        registerForView("table.print", "Print Table to Standard Output", null, null)
+        { it.array?.let { data -> println(data) } }
 
+        registerForView("columns.hide", "Hide Columns", MDI_TABLE_COLUMN_REMOVE, combo(KeyCode.H, control = true)) {
+        }
+
+        registerForView("columns.show.all", "Un-hide All Columns", MDI_TABLE_COLUMN_PLUS_AFTER,
+                combo(KeyCode.H, control = true, shift = true)) {
+        }
+    }
+
+    fun registerForView(id: String, name: String, icon: Ikon?, combo: KeyCombination?, func: (DataView) -> Unit) {
+        uiManager.registerCommand(id, name, icon?.description, combo) { uiManager.view?.let(func) }
     }
 
     fun exitOK() {

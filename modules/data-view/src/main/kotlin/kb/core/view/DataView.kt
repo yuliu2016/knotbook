@@ -241,6 +241,7 @@ class DataView {
         }
     }
 
+
     private inline fun copyWithMinMax(block: (minRow: Int, maxRow: Int, minCol: Int, maxCol: Int) -> String) {
         val se = spreadsheet.getSelection()
         val content = ClipboardContent()
@@ -283,7 +284,7 @@ class DataView {
 
     fun startFind() {
         val ob = OptionBar()
-        ob.hint = "Enter Something to search for"
+        ob.hint = "Enter something to search for"
 
         ob.setOnEnterPressed {
             ob.isShowing = false

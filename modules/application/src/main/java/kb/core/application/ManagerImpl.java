@@ -34,6 +34,11 @@ class ManagerImpl implements ServiceManager {
     }
 
     @Override
+    public String fetchUpdatedVersion() {
+        return kb.fetchUpdatedVersion();
+    }
+
+    @Override
     public String getImageVersion() {
         return kb.getImageVersion();
     }
