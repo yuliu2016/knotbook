@@ -12,8 +12,8 @@ public class ComparisonHelper {
         return (a, b) -> {
             int ai = a * array.cols + col;
             int bi = b * array.cols + col;
-            int av = array.mode.value[ai];
-            int bv = array.mode.value[bi];
+            int av = array.mode[ai];
+            int bv = array.mode[bi];
             if (av == MODE_NULL) {
                 return bv == MODE_NULL ? 0 : 1;
             } else {
@@ -22,7 +22,7 @@ public class ComparisonHelper {
                 } else {
                     if (av == MODE_INT || av == MODE_FLOAT) {
                         return bv == MODE_INT || bv == MODE_FLOAT ? Float
-                                .compare(array.num.value[ai], array.num.value[bi]) : 1;
+                                .compare(array.num[ai], array.num[bi]) : 1;
                     } else {
                         return bv == MODE_INT || bv == MODE_FLOAT ? -1 : NaturalOrderComparator
                                 .compareNaturally(array.str.get(ai), array.str.get(bi));
@@ -39,8 +39,8 @@ public class ComparisonHelper {
         return (a, b) -> {
             int ai = a * array.cols + col;
             int bi = b * array.cols + col;
-            int av = array.mode.value[ai];
-            int bv = array.mode.value[bi];
+            int av = array.mode[ai];
+            int bv = array.mode[bi];
             if (av == MODE_NULL) {
                 return bv == MODE_NULL ? 0 : 1;
             } else {
@@ -49,7 +49,7 @@ public class ComparisonHelper {
                 } else {
                     if (av == MODE_INT || av == MODE_FLOAT) {
                         return bv == MODE_INT || bv == MODE_FLOAT ? Float
-                                .compare(array.num.value[bi], array.num.value[ai]) : -1;
+                                .compare(array.num[bi], array.num[ai]) : -1;
                     } else {
                         return bv == MODE_INT || bv == MODE_FLOAT ? 1 : NaturalOrderComparator
                                 .compareNaturally(array.str.get(bi), array.str.get(ai));

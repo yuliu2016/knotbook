@@ -3,25 +3,29 @@ package kb.service.api.array;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 public class Tables {
     /**
      * Create a new TableArray without anything in it
      */
     public static TableArray emptyArray() {
-        return new TableArray();
+        return ofSize(0, 0);
     }
 
     /**
      * Create a new TableArray with a fixed size
      */
     public static TableArray ofSize(int rows, int cols) {
-        TableArray array = emptyArray();
-        array.cols = cols;
-        array.ensureSizeFromRowSize(rows);
-        return array;
+        int len = rows * cols;
+        List<String> str = new ArrayList<>();
+        for (int i = 0; i < len; i++) {
+            str.add(null);
+        }
+        return new BaseTableArray(cols, len, new byte[len], new float[len], str);
     }
 
     /**

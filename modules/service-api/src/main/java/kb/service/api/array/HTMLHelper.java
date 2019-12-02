@@ -7,7 +7,7 @@ class HTMLHelper {
         }
         StringBuilder html = new StringBuilder("<table style='width:100%'><tr>");
         int start = 0;
-        if (array.isPrettyHeaders()) {
+        if (array.pretty_headers) {
             start = 1;
             for (int i = 0; i < array.cols; i++) {
                 html.append("<th>").append(array.getString(0, i)).append("</th>");

@@ -1,17 +1,13 @@
 package kb.service.api.array;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
- * Table implementation. Row major. Expandable. Mutable
- * Designed for table UI. Basic processing.
+ * Table implementation.
  */
 @SuppressWarnings({"unused", "WeakerAccess", "DuplicatedCode"})
-public class TableArray {
+public abstract class TableArray {
 
     public static final byte MODE_NULL = 0;
     public static final byte MODE_INT = 1;
@@ -20,27 +16,23 @@ public class TableArray {
 
     public static final DecimalFormat DEFAULT_FORMAT = new DecimalFormat("####0.000");
 
-    public int cols;
-    public int len;
+    public final int cols;
+    public final int len;
 
     // Cell-wise modes
-    public ByteArrayList mode = new ByteArrayList();
+    public final byte[] mode;
 
     // Numbers
     // This uses floats instead of doubles to save memory space
     // for large tables
-    public FloatArrayList num = new FloatArrayList();
+    public final float[] num;
 
     // Representation of values
     // Also values itself when the type is a string
-    public List<String> str = new ArrayList<>();
-
-    // Headers for this table that can be used to store
-    // more information
-    public Map<String, String> header = new HashMap<>();
+    public final List<String> str;
 
     // The character-width of each column (for pretty-printing)
-    public IntArrayList pretty_col_size = new IntArrayList();
+    public int[] pretty_col_size;
 
     // A formatter used to create float strings
     public DecimalFormat decimalFormat = DEFAULT_FORMAT;
@@ -48,22 +40,13 @@ public class TableArray {
     // Whether the table has headers (for pretty-printing)
     public boolean pretty_headers = false;
 
-
-    TableArray() {
-    }
-
-    void ensureSizeFromRowSize(int rows) {
-        len = rows * cols;
-        mode.resize(len);
-        num.resize(len);
-        pretty_col_size.resize(cols);
-        for (int i = str.size(); i < len; i++) {
-            str.add(null);
-        }
-    }
-
-    public boolean isPrettyHeaders() {
-        return pretty_headers;
+    public TableArray(int cols, int len, byte[] mode, float[] num, List<String> str) {
+        this.cols = cols;
+        this.len = len;
+        this.mode = mode;
+        this.num = num;
+        this.str = str;
+        pretty_col_size = new int[cols];
     }
 
     public int getRows() {
@@ -72,13 +55,13 @@ public class TableArray {
 
     public String getString(int row, int col) {
         int i = row * cols + col;
-        int m = mode.value[i];
+        int m = mode[i];
         if (m == MODE_NULL) {
             return null;
         } else if (m == MODE_FLOAT) {
-            return decimalFormat.format(num.value[i]);
+            return decimalFormat.format(num[i]);
         } else if (m == MODE_INT) {
-            return Integer.toString((int) num.value[i]);
+            return Integer.toString((int) num[i]);
         } else {
             return str.get(i);
         }
@@ -86,9 +69,9 @@ public class TableArray {
 
     public double get(int row, int col) {
         int i = row * cols + col;
-        int m = mode.value[i];
+        int m = mode[i];
         if (m == MODE_FLOAT || m == MODE_INT) {
-            return num.value[i];
+            return num[i];
         } else {
             return Double.NaN;
         }
@@ -96,25 +79,25 @@ public class TableArray {
 
     public void set(int row, int col, String s) {
         int i = row * cols + col;
-        mode.value[i] = MODE_STR;
+        mode[i] = MODE_STR;
         str.set(i, s);
     }
 
     public void set(int row, int col, int s) {
         int i = row * cols + col;
-        mode.value[i] = MODE_INT;
-        num.value[i] = s;
+        mode[i] = MODE_INT;
+        num[i] = s;
     }
 
     public void set(int row, int col, double s) {
         int i = row * cols + col;
-        mode.value[i] = MODE_FLOAT;
-        num.value[i] = (float) s;
+        mode[i] = MODE_FLOAT;
+        num[i] = (float) s;
     }
 
     public boolean isNumber(int row, int col) {
         int i = row * cols + col;
-        int m = mode.value[i];
+        int m = mode[i];
         return m == MODE_INT || m == MODE_FLOAT;
     }
 

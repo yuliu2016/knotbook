@@ -63,21 +63,19 @@ class DelimitedHelper {
 
     static TableArray fromCSV(InputStream stream, boolean headers) {
         List<String[]> data = fromCSVStream(stream);
-        TableArray array = Tables.emptyArray();
         if (data.isEmpty()) {
-            return array;
+            return Tables.emptyArray();
         }
         int cols = data.get(0).length;
-        array.cols = cols;
-        array.ensureSizeFromRowSize(data.size());
+        TableArray array = Tables.ofSize(data.size(), cols);
 
         int startIndex = 0;
 
         if (headers) {
             String[] titles = data.get(0);
             for (int i = 0; i < cols; i++) {
-                array.mode.value[i] = MODE_STR;
-                array.pretty_col_size.value[i] = widthForSplitHeader(titles[i]);
+                array.mode[i] = MODE_STR;
+                array.pretty_col_size[i] = widthForSplitHeader(titles[i]);
                 array.str.set(i, titles[i]);
             }
             array.pretty_headers = true;
@@ -89,31 +87,31 @@ class DelimitedHelper {
             for (int j = 0; j < array.cols; j++) {
                 int ai = i * array.cols + j;
                 if (j >= row.length) {
-                    array.mode.value[ai] = 0;
+                    array.mode[ai] = 0;
                     continue;
                 }
                 String v = row[j].strip();
                 if (v.isEmpty()) {
-                    array.mode.value[ai] = 0;
+                    array.mode[ai] = 0;
                 } else {
                     try {
                         float fv = Float.parseFloat(v);
-                        array.num.value[ai] = fv;
+                        array.num[ai] = fv;
                         // check for integer state
                         String f;
                         if (fv % 1 == 0 && fv >= 0 && fv < 65536) {
-                            array.mode.value[ai] = MODE_INT;
+                            array.mode[ai] = MODE_INT;
                             f = Integer.toString((int) fv);
                         } else {
-                            array.mode.value[ai] = MODE_FLOAT;
+                            array.mode[ai] = MODE_FLOAT;
                             f = Float.toString(fv);
                         }
-                        array.pretty_col_size.value[j] = Math
-                                .max(array.pretty_col_size.value[j], f.length());
+                        array.pretty_col_size[j] = Math
+                                .max(array.pretty_col_size[j], f.length());
                     } catch (NumberFormatException e) {
-                        array.mode.value[ai] = MODE_STR;
-                        array.pretty_col_size.value[j] = Math
-                                .max(array.pretty_col_size.value[j], v.length());
+                        array.mode[ai] = MODE_STR;
+                        array.pretty_col_size[j] = Math
+                                .max(array.pretty_col_size[j], v.length());
                         array.str.set(ai, v);
                     }
                 }
@@ -129,7 +127,7 @@ class DelimitedHelper {
         assert array != null;
         boolean isNum = false;
         int startRow;
-        if (array.pretty_headers) {
+        if (prettyPrint && array.pretty_headers) {
             startRow = 1;
         } else {
             startRow = 0;
@@ -144,11 +142,11 @@ class DelimitedHelper {
                 }
                 for (int j = 0; j < array.cols; j++) {
                     int ai = i * array.cols + j;
-                    int m = array.mode.value[ai];
-                    int padding = array.pretty_col_size.value[j];
+                    int m = array.mode[ai];
+                    int padding = array.pretty_col_size[j];
                     if (m != MODE_NULL) {
                         if (m == MODE_INT || m == MODE_FLOAT) {
-                            float f = array.num.value[ai];
+                            float f = array.num[ai];
                             if (prettyPrint) {
                                 isNum = true;
                                 w.write("\033[34m");
@@ -178,7 +176,9 @@ class DelimitedHelper {
                         }
                         w.write(" ".repeat(padding));
                     }
-                    w.write(delimiter);
+                    if (j < array.cols - 1) {
+                        w.write(delimiter);
+                    }
                 }
                 w.newLine();
             }
@@ -193,7 +193,7 @@ class DelimitedHelper {
         b.append("\033[0m");
         b.append("    \t");
         for (int i = 0; i < array.cols; i++) {
-            int colSize = array.pretty_col_size.value[i];
+            int colSize = array.pretty_col_size[i];
             b.append("=".repeat(colSize));
             b.append("\t");
         }
@@ -209,7 +209,7 @@ class DelimitedHelper {
         for (int i = 0; i < maxHeight; i++) {
             b.append("    \t");
             for (int j = 0; j < headers.size(); j++) {
-                int w = array.pretty_col_size.value[j];
+                int w = array.pretty_col_size[j];
                 String[] sp = headers.get(j);
                 int e = i - (maxHeight - sp.length);
                 if (e < 0) {
@@ -224,7 +224,7 @@ class DelimitedHelper {
         b.append("\033[0m");
         b.append("    \t");
         for (int i = 0; i < array.cols; i++) {
-            int colSize = array.pretty_col_size.value[i];
+            int colSize = array.pretty_col_size[i];
             b.append("=".repeat(colSize));
             b.append("\t");
         }
