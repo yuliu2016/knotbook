@@ -1,5 +1,6 @@
 package kb.core.view.app
 
+import javafx.application.Platform
 import javafx.beans.InvalidationListener
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
@@ -8,6 +9,7 @@ import kb.core.view.splash.Splash
 import kb.service.api.ui.*
 import java.util.*
 import java.util.function.Consumer
+import kotlin.concurrent.thread
 
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -111,5 +113,26 @@ class DataUIManager : UIManager {
 
     override fun createTextEditor(): TextEditor {
         return textEditors.first().create().withDarkTheme(isDarkTheme())
+    }
+
+    fun startMemoryObserver() {
+        thread(isDaemon = true, name = "KnotBook Memory Observer") {
+            var lastMemoryUsed = -1
+            while (true) {
+                val memoryUsed = ((Runtime.getRuntime().totalMemory() -
+                        Runtime.getRuntime().freeMemory()) / 1024.0 / 1024.0).toInt() + 1
+                if (memoryUsed != lastMemoryUsed) {
+                    Platform.runLater {
+                        this.memoryUsed.value = "${memoryUsed}M"
+                    }
+                    lastMemoryUsed = memoryUsed
+                }
+                try {
+                    Thread.sleep(5000)
+                } catch (e: InterruptedException) {
+                    break
+                }
+            }
+        }
     }
 }

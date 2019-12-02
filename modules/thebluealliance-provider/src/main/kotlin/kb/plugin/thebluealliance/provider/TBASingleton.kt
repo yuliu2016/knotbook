@@ -6,7 +6,7 @@ import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
 import kb.plugin.thebluealliance.api.*
 import kb.service.api.ServiceContext
-import kb.service.api.array.TableArray
+import kb.service.api.array.Tables
 import kb.service.api.ui.OptionItem
 import kb.service.api.ui.SearchBar
 import kb.service.api.ui.UIHelper
@@ -102,7 +102,7 @@ object TBASingleton {
         withTBA { tba ->
             val m = tba.getEventMatchesSimple("${event.year}${event.event_code}")
                     .filter { it.comp_level == "qm" }.sortedBy { it.match_number }
-            val a = TableArray.ofSize(m.size + 1, 6)
+            val a = Tables.ofSize(m.size + 1, 6)
             a[0, 0] = "Red 1"
             a[0, 1] = "Red 2"
             a[0, 2] = "Red 3"

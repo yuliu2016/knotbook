@@ -47,7 +47,7 @@ public class Splash {
         top.setPadding(new Insets(16.0, 32.0, 0.0, 32.0));
         top.setAlignment(Pos.BASELINE_LEFT);
         top.setPrefHeight(72.0);
-        top.setStyle("-fx-background-color:rgba(96,96,96,0.9)");
+        top.setStyle("-fx-background-color:rgb(96,96,96)");
 
         ImageView icon = new ImageView(iconImage);
         icon.setPreserveRatio(true);
@@ -58,7 +58,7 @@ public class Splash {
         top.getChildren().addAll(icon, label);
 
         VBox bottom = new VBox();
-        bottom.setStyle("-fx-background-color:rgba(0,0,0,0.9)");
+        bottom.setStyle("-fx-background-color:rgba(64,64,64)");
         VBox.setVgrow(bottom, Priority.ALWAYS);
         bottom.setPadding(new Insets(8.0, 32.0, 8.0, 32.0));
 
@@ -78,7 +78,6 @@ public class Splash {
 
         popup.getContent().add(root);
 
-        popup.centerOnScreen();
         popup.setAutoHide(true);
         popup.show(owner);
     }

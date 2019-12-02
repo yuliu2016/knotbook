@@ -14,8 +14,10 @@ import kb.core.view.SortType
 import kb.core.view.splash.Splash
 import kb.service.api.ServiceContext
 import kb.service.api.application.ServiceManager
-import kb.service.api.array.TableArray
+import kb.service.api.array.Tables
 import kb.service.api.json.JSONArrayWrapper
+import kb.service.api.ui.OptionItem
+import kb.service.api.ui.SearchBar
 import org.kordamp.ikonli.materialdesign.MaterialDesign.*
 import java.io.File
 import java.io.FileInputStream
@@ -95,33 +97,12 @@ internal object Singleton {
     }
 
     fun viewThreads() {
-        val t = Thread.getAllStackTraces().keys
-                .sortedByDescending { it.priority }.joinToString("\n") {
+        val traces = Thread.getAllStackTraces()
+        val t = traces.keys.sortedByDescending { it.priority }.joinToString("\n") {
             val name = it.name + " ".repeat(26 - it.name.length)
             "$name Priority:${it.priority}  Daemon:${it.isDaemon}  Group:${it.threadGroup.name}"
         }
         uiManager.showAlertMonospace("Threads", t)
-    }
-
-    fun startMemoryObserver() {
-        thread(isDaemon = true, name = "MemoryObserver") {
-            var lastMemoryUsed = -1
-            while (true) {
-                val memoryUsed = ((Runtime.getRuntime().totalMemory() -
-                        Runtime.getRuntime().freeMemory()) / 1024.0 / 1024.0).toInt() + 1
-                if (memoryUsed != lastMemoryUsed) {
-                    Platform.runLater {
-                        uiManager.memoryUsed.value = "${memoryUsed}M"
-                    }
-                    lastMemoryUsed = memoryUsed
-                }
-                try {
-                    Thread.sleep(5000)
-                } catch (e: InterruptedException) {
-                    break
-                }
-            }
-        }
     }
 
     fun launch(manager: ServiceManager, context: ServiceContext, serviceLauncher: Runnable) {
@@ -134,10 +115,10 @@ internal object Singleton {
     }
 
     private fun launchImpl() {
-        startMemoryObserver()
         Platform.setImplicitExit(false)
         val windows = Window.getWindows()
         windows.addListener(InvalidationListener { if (windows.isEmpty()) exitOK() })
+        uiManager.startMemoryObserver()
         try {
             dataServer.bindAndStart()
         } catch (e: IOException) {
@@ -177,6 +158,14 @@ internal object Singleton {
         return recent!!
     }
 
+    fun JSONArrayWrapper.toList1(): List<String> {
+        val li = mutableListOf<String>()
+        for (i in 0 until size) {
+            li.add(get(i).toString())
+        }
+        return li
+    }
+
     fun tableFromFile(view: DataView) {
         val fc = FileChooser()
         fc.title = "Open Table from File"
@@ -191,14 +180,14 @@ internal object Singleton {
             val p = f.absolutePath
             recent.remove(p)
             recent.add(0, p)
-            Thread {
+            thread(name = "CSV Loader") {
                 try {
-                    val a = TableArray.fromCSV(FileInputStream(f), true)
+                    val a = Tables.fromCSV(FileInputStream(f), true)
                     context.dataSpace.newData(f.name, a)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-            }.start()
+            }
         }
     }
 
@@ -214,12 +203,22 @@ internal object Singleton {
         return fc.showSaveDialog(view.stage)
     }
 
+    val recentSearchBar = SearchBar()
+
+    fun showRecent() {
+        val recent = getRecent()
+        val list1 = recent.toList1()
+        recentSearchBar.setItems(list1.map { OptionItem(it, null, null, null, null) })
+
+        uiManager.showOptionBar(recentSearchBar.toOptionBar())
+    }
+
     private fun launchAppCommands() {
         val m = context.uiManager
         m.registerCommand("app.about", "About KnotBook", MDI_INFORMATION_OUTLINE.description,
                 combo(KeyCode.F1)) { Splash.info(uiManager.view?.stage, manager.buildVersion, appIcon) }
         m.registerCommand("nav.recent", "Open Recent", MDI_HISTORY.description,
-                combo(KeyCode.R, control = true)) { }
+                combo(KeyCode.R, control = true)) { showRecent() }
         m.registerCommand("file.open", "Open File", MDI_FOLDER_OUTLINE.description,
                 combo(KeyCode.O, control = true)) { uiManager.view?.let { tableFromFile(it) } }
         m.registerCommand("window.close", "Close Window", MDI_CLOSE.description,

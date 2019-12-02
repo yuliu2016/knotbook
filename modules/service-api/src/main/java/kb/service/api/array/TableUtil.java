@@ -1,12 +1,6 @@
 package kb.service.api.array;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class TableUtil {
@@ -25,11 +19,6 @@ public class TableUtil {
         }
         b.insert(0, (char) (64 + n));
         return b.toString();
-    }
-
-
-    public static boolean isFormula(String s) {
-        return !s.isEmpty() && s.charAt(0) == '=';
     }
 
     public static Reference arrayReference(Reference... references) {
@@ -58,108 +47,4 @@ public class TableUtil {
         return Arrays.equals(aa, ba);
     }
 
-    public static String formatString(String s, int p) {
-        return s + " ".repeat(Math.max(0, p - s.length()));
-    }
-
-    public static String formatRight(String n, int p) {
-        return " ".repeat(Math.max(0, p - n.length())) + n;
-    }
-
-    public static String formatInt(float f, int p) {
-        return formatRight(Integer.toString((int) f), p);
-    }
-
-    public static String formatFloat(float f, int p) {
-        return formatRight(Float.toString(f), p);
-    }
-
-    public static int widthForSplitHeader(String s) {
-        String[] words = s.split(" ");
-        int max = 0;
-        for (String word : words) {
-            if (word.length() > max) {
-                max = word.length();
-            }
-        }
-        return max;
-    }
-
-    public static String[] split(String s) {
-        List<String> sp = new ArrayList<>();
-        int i = 0;
-        boolean quotes = false;
-        while (i < s.length()) {
-            int j = i;
-            while (j < s.length()) {
-                char ch = s.charAt(j);
-                if (ch == '\"') {
-                    quotes = !quotes;
-                }
-                if (ch == ',' && !quotes) {
-                    break;
-                }
-                j++;
-            }
-
-            String sub = s.substring(i, j);
-            if (sub.startsWith("\"")) {
-                sub = sub.substring(1);
-            }
-            if (sub.endsWith("\"")) {
-                sub = sub.substring(0, sub.length() - 1);
-            }
-            sp.add(sub);
-            i = j + 1;
-        }
-        return sp.toArray(new String[0]);
-    }
-
-    public static List<String[]> fromCSV(InputStream stream) {
-        List<String[]> data = new ArrayList<>();
-        try (BufferedReader r = new BufferedReader(new InputStreamReader(stream))) {
-            int cols = -1;
-            while (true) {
-                String line = r.readLine();
-                if (line == null) {
-                    break;
-                }
-                String[] sp = split(line);
-                if (cols == -1) {
-                    cols = sp.length;
-                } else if (sp.length > cols) {
-                    throw new IllegalStateException("More value than headers");
-                }
-                data.add(sp);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return data;
-    }
-
-    public static String toHTML(TableArray array) {
-        if (array == null) {
-            return "";
-        }
-        StringBuilder html = new StringBuilder("<table style='width:100%'><tr>");
-        int start = 0;
-        if (array.isPrettyHeaders()) {
-            start = 1;
-            for (int i = 0; i < array.getCols(); i++) {
-                html.append("<th>").append(array.getString(0, i)).append("</th>");
-            }
-            html.append("\n");
-        }
-        html.append("</tr>");
-        for (int i = start; i < array.getRows(); i++) {
-            html.append("<tr>");
-            for (int j = 0; j < array.getCols(); j++) {
-                html.append("<td>").append(array.getString(i, j)).append("</td>");
-            }
-            html.append("</tr>\n");
-        }
-        html.append("</table>");
-        return html.toString();
-    }
 }

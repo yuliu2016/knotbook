@@ -16,6 +16,7 @@ import kb.core.fx.*
 import kb.core.view.app.Singleton
 import kb.service.api.array.TableArray
 import kb.service.api.array.TableUtil
+import kb.service.api.array.Tables
 import kb.service.api.ui.OptionBar
 import kb.service.api.ui.OptionItem
 import kb.service.api.ui.RGB
@@ -182,8 +183,8 @@ class DataView {
         if (referenceOrder.isEmpty()) return
         val comparator = sortColumns.map {
             when (it.sortType) {
-                SortType.Ascending -> array.ascendingComparator(it.index)
-                SortType.Descending -> array.descendingComparator(it.index)
+                SortType.Ascending -> Tables.ascendingComparator(array, it.index)
+                SortType.Descending -> Tables.descendingComparator(array, it.index)
             }
         }.reduce { a, b -> a.then(b) }
         val order = (1 until referenceOrder.size).sortedWith(comparator)
@@ -269,7 +270,7 @@ class DataView {
         val array = array ?: return
         val fp = Singleton.getSavePath(this, "csv")
         if (fp != null) {
-            array.delimitToStream(fp.outputStream(), ',', false)
+            Tables.toCSV(array, fp.outputStream(), ',')
         }
     }
 
@@ -277,7 +278,7 @@ class DataView {
         val array = array ?: return
         val fp = Singleton.getSavePath(this, "kbt")
         if (fp != null) {
-            array.toZipFormat(fp.outputStream())
+            Tables.toZip(array, fp.outputStream())
         }
     }
 
