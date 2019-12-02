@@ -1,8 +1,10 @@
 package kb.service.api.array;
 
-import java.io.ByteArrayOutputStream;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Table implementation. Row major. Expandable. Mutable
@@ -15,6 +17,8 @@ public class TableArray {
     public static final byte MODE_INT = 1;
     public static final byte MODE_FLOAT = 2;
     public static final byte MODE_STR = 3;
+
+    public static final DecimalFormat DEFAULT_FORMAT = new DecimalFormat("####0.000");
 
     public int cols;
     public int len;
@@ -38,10 +42,12 @@ public class TableArray {
     // The character-width of each column (for pretty-printing)
     public IntArrayList pretty_col_size = new IntArrayList();
 
+    // A formatter used to create float strings
+    public DecimalFormat decimalFormat = DEFAULT_FORMAT;
+
     // Whether the table has headers (for pretty-printing)
     public boolean pretty_headers = false;
 
-    public static final DecimalFormat floatFormat = new DecimalFormat("####0.000");
 
     TableArray() {
     }
@@ -60,18 +66,6 @@ public class TableArray {
         return pretty_headers;
     }
 
-    public int getCols() {
-        return cols;
-    }
-
-    public void setCols(int cols) {
-        this.cols = cols;
-    }
-
-    public int getSize() {
-        return len;
-    }
-
     public int getRows() {
         return (len % cols) == 0 ? len / cols : len / cols + 1;
     }
@@ -82,7 +76,7 @@ public class TableArray {
         if (m == MODE_NULL) {
             return null;
         } else if (m == MODE_FLOAT) {
-            return floatFormat.format(num.value[i]);
+            return decimalFormat.format(num.value[i]);
         } else if (m == MODE_INT) {
             return Integer.toString((int) num.value[i]);
         } else {
@@ -126,22 +120,6 @@ public class TableArray {
 
     @Override
     public String toString() {
-        ByteArrayOutputStream o = new ByteArrayOutputStream();
-        DelimitedHelper.toStream(this, o, '\t', true);
-        return o.toString();
-    }
-
-
-    public void debug() {
-        System.out.println(str);
-        System.out.println(Arrays.toString(num.value));
-        StringBuilder b = new StringBuilder();
-        for (int i = 0; i < mode.length; i++) {
-            b.append(i);
-            b.append("\t");
-            b.append(String.format("%8s", Integer.toBinaryString(mode.value[i])));
-            b.append("\n");
-        }
-        System.out.println(b);
+        return DelimitedHelper.toPrintableString(this);
     }
 }

@@ -324,6 +324,10 @@ internal object Singleton {
                 null, combo(KeyCode.BACK_SLASH, control = true))
         { uiManager.view?.clearSort() }
 
+        m.registerCommand("table.print", "Print Table to Standard Output",
+                null, null)
+        { uiManager.view?.array?.let { println(it) } }
+
     }
 
     fun exitOK() {

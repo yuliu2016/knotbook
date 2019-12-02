@@ -9,7 +9,7 @@ class HTMLHelper {
         int start = 0;
         if (array.isPrettyHeaders()) {
             start = 1;
-            for (int i = 0; i < array.getCols(); i++) {
+            for (int i = 0; i < array.cols; i++) {
                 html.append("<th>").append(array.getString(0, i)).append("</th>");
             }
             html.append("\n");
@@ -17,7 +17,7 @@ class HTMLHelper {
         html.append("</tr>");
         for (int i = start; i < array.getRows(); i++) {
             html.append("<tr>");
-            for (int j = 0; j < array.getCols(); j++) {
+            for (int j = 0; j < array.cols; j++) {
                 html.append("<td>").append(array.getString(i, j)).append("</td>");
             }
             html.append("</tr>\n");

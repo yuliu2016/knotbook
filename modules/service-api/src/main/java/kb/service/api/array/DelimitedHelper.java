@@ -154,7 +154,8 @@ class DelimitedHelper {
                                 w.write("\033[34m");
                             }
                             if (m == MODE_FLOAT) {
-                                w.write(prettyPrint ? formatRight(floatFormat.format(f), padding) : floatFormat.format(f));
+                                w.write(prettyPrint ? formatRight(array.decimalFormat.format(f), padding) :
+                                        array.decimalFormat.format(f));
                             } else {
                                 w.write(prettyPrint ? formatInt(f, padding) : Integer.toString((int) f));
                             }
@@ -229,6 +230,12 @@ class DelimitedHelper {
         }
         b.append("\n");
         return b.toString();
+    }
+
+    public static String toPrintableString(TableArray array) {
+        ByteArrayOutputStream o = new ByteArrayOutputStream();
+        toStream(array, o, '\t', true);
+        return o.toString();
     }
 
     public static String formatString(String s, int p) {

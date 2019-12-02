@@ -15,7 +15,6 @@ import javafx.stage.Stage
 import kb.core.fx.*
 import kb.core.view.app.Singleton
 import kb.service.api.array.TableArray
-import kb.service.api.array.TableUtil
 import kb.service.api.array.Tables
 import kb.service.api.ui.OptionBar
 import kb.service.api.ui.OptionItem
@@ -355,8 +354,8 @@ class DataView {
         val cols = a.map { it.column }
         val w = rows.min()!! + 1
         val x = rows.max()!! + 1
-        val y = TableUtil.columnIndexToString(cols.min()!!)
-        val z = TableUtil.columnIndexToString(cols.max()!!)
+        val y = Tables.columnIndexToString(cols.min()!!)
+        val z = Tables.columnIndexToString(cols.max()!!)
         return if (a.size == 1) "$y$w" else "$y$w:$z$x"
     }
 }
