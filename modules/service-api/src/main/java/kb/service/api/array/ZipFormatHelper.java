@@ -40,7 +40,7 @@ class ZipFormatHelper {
             for (int m : mode) {
                 str.add(m == MODE_STR ? strIn.readLine() : null);
             }
-            return new BaseTableArray(1, mode.length, mode, num, str);
+            return new SimpleTableArray(1, mode.length, mode, num, str);
         } catch (IOException e) {
             e.printStackTrace();
             return Tables.emptyArray();

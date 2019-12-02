@@ -13,19 +13,20 @@ public class Tables {
      * Create a new TableArray without anything in it
      */
     public static TableArray emptyArray() {
-        return ofSize(0, 0);
+        return ofSize(0, 0, false);
     }
 
     /**
      * Create a new TableArray with a fixed size
      */
-    public static TableArray ofSize(int rows, int cols) {
+    public static TableArray ofSize(int rows, int cols, boolean headers) {
         int len = rows * cols;
         List<String> str = new ArrayList<>();
         for (int i = 0; i < len; i++) {
             str.add(null);
         }
-        return new BaseTableArray(cols, len, new byte[len], new float[len], str);
+        return headers ? new HeaderTableArray(cols, len, new byte[len], new float[len], str) :
+                new SimpleTableArray(cols, len, new byte[len], new float[len], str);
     }
 
     /**

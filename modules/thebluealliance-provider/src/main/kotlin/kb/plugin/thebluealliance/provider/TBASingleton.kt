@@ -102,7 +102,7 @@ object TBASingleton {
         withTBA { tba ->
             val m = tba.getEventMatchesSimple("${event.year}${event.event_code}")
                     .filter { it.comp_level == "qm" }.sortedBy { it.match_number }
-            val a = Tables.ofSize(m.size + 1, 6)
+            val a = Tables.ofSize(m.size + 1, 6, true)
             a[0, 0] = "Red 1"
             a[0, 1] = "Red 2"
             a[0, 2] = "Red 3"

@@ -31,14 +31,8 @@ public abstract class TableArray {
     // Also values itself when the type is a string
     public final List<String> str;
 
-    // The character-width of each column (for pretty-printing)
-    public int[] pretty_col_size;
-
     // A formatter used to create float strings
     public DecimalFormat decimalFormat = DEFAULT_FORMAT;
-
-    // Whether the table has headers (for pretty-printing)
-    public boolean pretty_headers = false;
 
     public TableArray(int cols, int len, byte[] mode, float[] num, List<String> str) {
         this.cols = cols;
@@ -46,7 +40,6 @@ public abstract class TableArray {
         this.mode = mode;
         this.num = num;
         this.str = str;
-        pretty_col_size = new int[cols];
     }
 
     public int getRows() {

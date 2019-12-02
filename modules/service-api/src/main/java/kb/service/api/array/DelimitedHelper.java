@@ -62,25 +62,25 @@ class DelimitedHelper {
     }
 
     static TableArray fromCSV(InputStream stream, boolean headers) {
+        if (!headers) {
+            throw new UnsupportedOperationException("No header is currently unsupported");
+        }
         List<String[]> data = fromCSVStream(stream);
         if (data.isEmpty()) {
             return Tables.emptyArray();
         }
         int cols = data.get(0).length;
-        TableArray array = Tables.ofSize(data.size(), cols);
+        HeaderTableArray array = (HeaderTableArray) Tables.ofSize(data.size(), cols, true);
 
-        int startIndex = 0;
+        int startIndex;
 
-        if (headers) {
-            String[] titles = data.get(0);
-            for (int i = 0; i < cols; i++) {
-                array.mode[i] = MODE_STR;
-                array.pretty_col_size[i] = widthForSplitHeader(titles[i]);
-                array.str.set(i, titles[i]);
-            }
-            array.pretty_headers = true;
-            startIndex = 1;
+        String[] titles = data.get(0);
+        for (int i = 0; i < cols; i++) {
+            array.mode[i] = MODE_STR;
+            array.pretty_col_size[i] = widthForSplitHeader(titles[i]);
+            array.str.set(i, titles[i]);
         }
+        startIndex = 1;
 
         for (int i = startIndex; i < data.size(); i++) {
             String[] row = data.get(i);
@@ -127,7 +127,8 @@ class DelimitedHelper {
         assert array != null;
         boolean isNum = false;
         int startRow;
-        if (prettyPrint && array.pretty_headers) {
+        boolean hasHeaders = array instanceof HeaderTableArray;
+        if (prettyPrint && hasHeaders) {
             startRow = 1;
         } else {
             startRow = 0;
@@ -135,15 +136,15 @@ class DelimitedHelper {
         try (BufferedWriter w = new BufferedWriter(new OutputStreamWriter(stream))) {
             for (int i = startRow; i < (array.len / array.cols); i++) {
                 if (prettyPrint) {
-                    if (array.pretty_headers && (i - startRow) % 100 == 0) {
-                        w.write(getPrettyHeaders(array));
+                    if (hasHeaders && (i - startRow) % 100 == 0) {
+                        w.write(getPrettyHeaders((HeaderTableArray) array));
                     }
                     w.write("\033[37m" + formatInt(i, 4) + "\033[0m\t");
                 }
                 for (int j = 0; j < array.cols; j++) {
                     int ai = i * array.cols + j;
                     int m = array.mode[ai];
-                    int padding = array.pretty_col_size[j];
+                    int padding = hasHeaders? ((HeaderTableArray) array).pretty_col_size[j] : 0;
                     if (m != MODE_NULL) {
                         if (m == MODE_INT || m == MODE_FLOAT) {
                             float f = array.num[ai];
@@ -188,7 +189,7 @@ class DelimitedHelper {
         }
     }
 
-    static String getPrettyHeaders(TableArray array) {
+    static String getPrettyHeaders(HeaderTableArray array) {
         StringBuilder b = new StringBuilder();
         b.append("\033[0m");
         b.append("    \t");

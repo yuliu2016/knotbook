@@ -261,19 +261,7 @@ public class JSONArrayWrapper implements List<Object> {
 
     @Override
     public Iterator<Object> iterator() {
-        return new Iterator<>() {
-            int i = 0;
-
-            @Override
-            public boolean hasNext() {
-                return i == size() - 1;
-            }
-
-            @Override
-            public Object next() {
-                return get(i++);
-            }
-        };
+        return list.iterator();
     }
 
     @Override
