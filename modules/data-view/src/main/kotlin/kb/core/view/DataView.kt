@@ -8,11 +8,13 @@ import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Scene
 import javafx.scene.control.Label
+import javafx.scene.control.ScrollPane
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
 import javafx.stage.Screen
 import javafx.stage.Stage
 import kb.core.fx.*
+import kb.core.icon.fontIcon
 import kb.core.view.app.Singleton
 import kb.service.api.array.TableArray
 import kb.service.api.array.Tables
@@ -22,6 +24,7 @@ import kb.service.api.ui.RGB
 import org.controlsfx.control.spreadsheet.GridBase
 import org.controlsfx.control.spreadsheet.SpreadsheetCell
 import org.controlsfx.control.spreadsheet.SpreadsheetView
+import org.kordamp.ikonli.materialdesign.MaterialDesign
 
 
 @Suppress("MemberVisibilityCanBePrivate", "DuplicatedCode", "unused")
@@ -31,6 +34,8 @@ class DataView {
     val themeListener = InvalidationListener { updateTheme() }
     private var isFullScreen = false
     private var grid = GridBase(0, 0)
+    val calculations = Label()
+    val tabs = mutableListOf<Tab>()
 
     init {
         stage.title = "KnotBook"
@@ -52,8 +57,6 @@ class DataView {
         updateColourScale()
     }
 
-    val calculations = Label()
-
     private val statusBar = hbox {
         align(Pos.CENTER_LEFT)
         padding = Insets(0.0, 12.0, 0.0, 12.0)
@@ -72,6 +75,23 @@ class DataView {
         isEditable = false
     }
 
+    val tabBar = hbox { }
+
+    private val tabScroller = vbox {
+        padding = Insets(0.0, 0.0, 8.0, 0.0)
+        add(scrollPane {
+            styleClass("tab-scroller")
+            content = tabBar
+            isFitToHeight = true
+            isFocusTraversable = false
+            this.hbarPolicy = ScrollPane.ScrollBarPolicy.NEVER
+            this.setOnScroll {
+                hvalue = (hvalue + (it.deltaX - it.deltaY) / tabBar.width * 3).coerceIn(0.0, 1.0)
+                it.consume()
+            }
+        })
+    }
+
     val layout = borderPane {
         prefWidth = 720.0
         prefHeight = 480.0
@@ -80,13 +100,39 @@ class DataView {
     }
 
     val scene = Scene(layout)
-
     var showing = false
 
     fun addStatus(prop: StringProperty) {
         statusBar.add(label {
             textProperty().bind(prop)
         })
+    }
+
+    fun addTab(tab: Tab) {
+        if (tabs.isEmpty()) layout.top = tabScroller
+        tabs.add(tab)
+        tabBar.children.add(hbox {
+            styleClass("tab-item")
+            align(Pos.CENTER_LEFT)
+            if (tab.icon != null) {
+                add(fontIcon(tab.icon, 14).apply {
+                    iconColor = tab.iconColor
+                })
+            }
+            add(label(tab.title).apply {
+                this.maxWidth= 160.0
+            })
+            add(fontIcon(MaterialDesign.MDI_CLOSE, 14).apply {
+                styleClass("tab-close-button")
+            })
+        })
+    }
+
+    fun selectTab(i: Int) {
+        tabBar.children.forEach {
+            it.styleClass.remove("tab-item-selected")
+        }
+        tabBar.children[i].styleClass.add("tab-item-selected")
     }
 
     fun selectAll() {

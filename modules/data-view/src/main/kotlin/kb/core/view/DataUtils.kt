@@ -2,12 +2,15 @@
 
 package kb.core.view
 
+import javafx.scene.Node
+import javafx.scene.paint.Color
 import kb.core.fx.observable
 import kb.core.view.util.CellBase2
 import kb.service.api.array.TableArray
 import kb.service.api.ui.RGB
 import org.controlsfx.control.spreadsheet.GridBase
 import org.controlsfx.control.spreadsheet.SpreadsheetView
+import org.kordamp.ikonli.Ikon
 import java.util.*
 
 data class SortColumn(val index: Int, val sortType: SortType) {
@@ -19,6 +22,14 @@ data class SortColumn(val index: Int, val sortType: SortType) {
         return index
     }
 }
+
+data class Tab(
+        val title: String,
+        val icon: Ikon?=null,
+        val iconColor: Color = Color.GRAY,
+        val data: TableArray?=null,
+        val placeholder: Node?=null
+)
 
 enum class SortType {
     Ascending, Descending

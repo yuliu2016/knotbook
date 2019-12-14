@@ -151,3 +151,37 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 .button:hover {
     -fx-background-color: #ddd;
 }
+
+.tab-scroller {
+    -fx-background-color: #eee;
+    -fx-background-insets: 0 0 1 0;
+}
+
+.tab-scroller:focused {
+    -fx-background-color: #eee;
+    -fx-background-insets: 0 0 1 0;
+}
+
+.tab-item {
+    -fx-border-width: 0 1 0 0;
+    -fx-background-color: #ddd;
+    -fx-border-color: #ccc;
+    -fx-padding: 8;
+    -fx-spacing: 4;
+}
+
+.tab-item-selected {
+    -fx-background-color: white;
+}
+
+.tab-close-button {
+    -fx-icon-color: #ddd
+}
+
+.tab-item-selected .tab-close-button {
+    -fx-icon-color: black
+}
+
+.tab-item:hover .tab-close-button {
+    -fx-icon-color: black
+}

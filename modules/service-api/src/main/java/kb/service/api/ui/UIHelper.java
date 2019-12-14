@@ -19,7 +19,7 @@ public abstract class UIHelper {
     public static Executor createExecutor(String name, Consumer<Throwable> exceptionHandler) {
         return Executors.newSingleThreadExecutor(runnable -> {
             Thread thread = new Thread(runnable);
-            thread.setName(name);
+            thread.setName("KnotBook " + name);
             thread.setUncaughtExceptionHandler((t, e) -> {
                 if (exceptionHandler != null) {
                     exceptionHandler.accept(e);

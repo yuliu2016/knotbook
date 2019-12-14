@@ -101,7 +101,7 @@ internal object Singleton {
 
     fun viewThreads() {
         val traces = Thread.getAllStackTraces()
-        val t = traces.keys.sortedByDescending { it.priority }.joinToString("\n") {
+        val t = traces.keys.sortedBy { it.name }.joinToString("\n") {
             val name = it.name + " ".repeat(26 - it.name.length)
             "$name Priority:${it.priority}  Daemon:${it.isDaemon}  Group:${it.threadGroup.name}"
         }
