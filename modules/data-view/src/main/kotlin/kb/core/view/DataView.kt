@@ -49,7 +49,7 @@ class DataView {
     fun updateTheme() {
         val theme = Singleton.uiManager.themeProperty.get()
         layout.stylesheets.setAll("/knotbook.css", theme.viewStyle)
-        updateCS()
+        updateColourScale()
     }
 
     val calculations = Label()
@@ -191,16 +191,16 @@ class DataView {
         grid.rows.addAll(order.map { referenceOrder[it] })
     }
 
-    fun addCS(type: SortType, rgb: RGB) {
+    fun addColourScale(type: SortType, rgb: RGB) {
         getSelectedColumns().forEach {
             val cs = ColorScale(it, type, rgb)
             colourScales.remove(cs)
             colourScales.add(cs)
         }
-        updateCS()
+        updateColourScale()
     }
 
-    fun clearCS() {
+    fun clearColourScale() {
         val array = array ?: return
         val rows = array.rows
         getSelectedColumns().forEach {
@@ -212,7 +212,7 @@ class DataView {
         }
     }
 
-    fun updateCS() {
+    fun updateColourScale() {
         val array = array ?: return
         val rows = array.rows
         val bg = if (Singleton.uiManager.isDarkTheme()) 0 else 255
@@ -241,6 +241,25 @@ class DataView {
         }
     }
 
+    fun hideColumns() {
+        Singleton.uiManager.showAlert("", "Hide Columns is unsupported by the spreadsheet view")
+    }
+
+    fun showAllColumns() {
+        Singleton.uiManager.showAlert("", "Show All Columns is unsupported by the spreadsheet view")
+    }
+
+    fun filterIn() {
+
+    }
+
+    fun filterOut() {
+
+    }
+
+    fun clearFilters() {
+
+    }
 
     private inline fun copyWithMinMax(block: (minRow: Int, maxRow: Int, minCol: Int, maxCol: Int) -> String) {
         val se = spreadsheet.getSelection()

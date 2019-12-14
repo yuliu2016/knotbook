@@ -111,6 +111,8 @@ internal object Singleton {
     fun launch(manager: ServiceManager, context: ServiceContext, serviceLauncher: Runnable) {
         this.manager = manager
         this.context = context
+        context.config["Build Version"] = manager.buildVersion
+        context.config["Image Version"] = manager.imageVersion
         launchImpl()
         serviceLauncher.run()
         DataView().show()
@@ -289,33 +291,33 @@ internal object Singleton {
         registerForView("data.view.find", "Find in Cells", null,
                 combo(KeyCode.F, control = true)) { it.startFind() }
         registerForView("cs.clear", "Clear Colour Scales",
-                null, combo(KeyCode.DIGIT0, alt = true)) { it.clearCS() }
+                null, combo(KeyCode.DIGIT0, alt = true)) { it.clearColourScale() }
 
         registerForView("cs.up.1", "Add Ascending Colour Scale: Green",
                 null, combo(KeyCode.DIGIT1, alt = true))
-        { it.addCS(SortType.Ascending, PresetCS.green) }
+        { it.addColourScale(SortType.Ascending, PresetCS.green) }
         registerForView("cs.up.2", "Add Ascending Colour Scale: Red",
                 null, combo(KeyCode.DIGIT2, alt = true))
-        { it.addCS(SortType.Ascending, PresetCS.red) }
+        { it.addColourScale(SortType.Ascending, PresetCS.red) }
         registerForView("cs.up.3", "Add Ascending Colour Scale: Orange",
                 null, combo(KeyCode.DIGIT3, alt = true))
-        { it.addCS(SortType.Ascending, PresetCS.orange) }
+        { it.addColourScale(SortType.Ascending, PresetCS.orange) }
         registerForView("cs.up.4", "Add Ascending Colour Scale: Blue",
                 null, combo(KeyCode.DIGIT4, alt = true))
-        { it.addCS(SortType.Ascending, PresetCS.blue) }
+        { it.addColourScale(SortType.Ascending, PresetCS.blue) }
 
         registerForView("cs.down.9", "Add Descending Colour Scale: Green",
                 null, combo(KeyCode.DIGIT9, alt = true))
-        { it.addCS(SortType.Descending, PresetCS.green) }
+        { it.addColourScale(SortType.Descending, PresetCS.green) }
         registerForView("cs.down.8", "Add Descending Colour Scale: Red",
                 null, combo(KeyCode.DIGIT8, alt = true))
-        { it.addCS(SortType.Descending, PresetCS.red) }
+        { it.addColourScale(SortType.Descending, PresetCS.red) }
         registerForView("cs.down.7", "Add Descending Colour Scale: Orange",
                 null, combo(KeyCode.DIGIT7, alt = true))
-        { it.addCS(SortType.Descending, PresetCS.orange) }
+        { it.addColourScale(SortType.Descending, PresetCS.orange) }
         registerForView("cs.down.6", "Add Ascending Colour Scale: Blue",
                 null, combo(KeyCode.DIGIT6, alt = true))
-        { it.addCS(SortType.Descending, PresetCS.blue) }
+        { it.addColourScale(SortType.Descending, PresetCS.blue) }
 
         registerForView("sort.ascending", "Set Ascending Sort",
                 MDI_SORT_ASCENDING, combo(KeyCode.OPEN_BRACKET, control = true))
@@ -337,12 +339,17 @@ internal object Singleton {
         registerForView("table.print", "Print Table to Standard Output", null, null)
         { it.array?.let { data -> println(data) } }
 
-        registerForView("columns.hide", "Hide Columns", MDI_TABLE_COLUMN_REMOVE, combo(KeyCode.H, control = true)) {
-        }
-
+        registerForView("columns.hide", "Hide Columns", MDI_TABLE_COLUMN_REMOVE,
+                combo(KeyCode.H, control = true)) { it.hideColumns() }
         registerForView("columns.show.all", "Un-hide All Columns", MDI_TABLE_COLUMN_PLUS_AFTER,
-                combo(KeyCode.H, control = true, shift = true)) {
-        }
+                combo(KeyCode.H, control = true, shift = true)) { it.showAllColumns() }
+
+        registerForView("filter.in", "Filter By", MDI_FILTER,
+                combo(KeyCode.Y, control = true)) { it.filterIn() }
+        registerForView("filter.out", "Filter Out", MDI_FILTER_OUTLINE,
+                combo(KeyCode.U, control = true)) { it.filterOut() }
+        registerForView("filter.clear", "Clear Filter", MDI_FILTER_REMOVE,
+                combo(KeyCode.I, control = true)) { it.clearFilters() }
     }
 
     fun registerForView(id: String, name: String, icon: Ikon?, combo: KeyCombination?, func: (DataView) -> Unit) {

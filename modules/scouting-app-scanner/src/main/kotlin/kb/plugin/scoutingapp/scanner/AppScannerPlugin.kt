@@ -20,7 +20,7 @@ class AppScannerPlugin : Service {
     override fun launch(context: ServiceContext) {
 
         context.uiManager.registerCommand("scouting.scanner", "Scouting App: Launch Scanner",
-                "mdi-qrcode", combo(KeyCode.I, control = true, shift = true)) {
+                "mdi-qrcode", combo(KeyCode.S, control = true, alt = true)) {
             ScannerScreen().show()
         }
     }

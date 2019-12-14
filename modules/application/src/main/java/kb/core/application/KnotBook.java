@@ -18,7 +18,6 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("unused")
 class KnotBook {
 
     private static <T extends MetaService> ResolvedServices<T> loadServices(
@@ -56,6 +55,13 @@ class KnotBook {
             minor = 4 + month + (year - 2020) * 12;
         }
         return "3." + minor + "." + day;
+    }
+
+    private static String getBuildVersion(String build) {
+        int year = Integer.parseInt(build.substring(0, 4));
+        int month = Integer.parseInt(build.substring(4, 6));
+        int day = Integer.parseInt(build.substring(6, 8));
+        return getBuildVersion(year, month, day);
     }
 
     private static ConfigHandle getHandle(boolean debug, String home) {
@@ -152,10 +158,7 @@ class KnotBook {
                     .lines().collect(Collectors.joining("\n"));
             JSONObject object = new JSONObject(result).getJSONArray("value").getJSONObject(0);
             String build = object.getString("buildNumber");
-            int year = Integer.parseInt(build.substring(0, 4));
-            int month = Integer.parseInt(build.substring(4, 6));
-            int day = Integer.parseInt(build.substring(6, 8));
-            v = getBuildVersion(year, month, day);
+            v = getBuildVersion(build);
         } catch (Exception e) {
             e.printStackTrace();
             v = null;
@@ -165,7 +168,7 @@ class KnotBook {
             if (v.equals(getBuildVersion())) {
                 s += "This version is up-to-date";
             } else {
-                s += "The latest version is available: " + v;
+                s += "The latest version available: " + v;
             }
         } else {
             s += "Cannot Check for Update";
@@ -182,10 +185,7 @@ class KnotBook {
                         "KnotBook", "app", "version-info.json"));
                 JSONObject object = new JSONObject(json);
                 String build = object.getString("build");
-                int year = Integer.parseInt(build.substring(0, 4));
-                int month = Integer.parseInt(build.substring(4, 6));
-                int day = Integer.parseInt(build.substring(6, 8));
-                buildVersion = getBuildVersion(year, month, day);
+                buildVersion = getBuildVersion(build);
                 imageVersion = object.getString("image");
             } catch (IOException ignored) {
                 updateDebugVersion();

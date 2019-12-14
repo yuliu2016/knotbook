@@ -84,7 +84,7 @@ class CommandManager {
     private fun hasShortcut(shortcut: KeyCombination?): Boolean {
         val sc = shortcut ?: return false
         for (value in values) {
-            if (sc == value.callback) {
+            if (sc == value.shortcut) {
                 return true
             }
         }
