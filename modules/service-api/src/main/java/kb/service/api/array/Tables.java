@@ -3,7 +3,8 @@ package kb.service.api.array;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
 
 public class Tables {
     /**
@@ -17,13 +18,18 @@ public class Tables {
      * Create a new TableArray with a fixed size
      */
     public static TableArray ofSize(int rows, int cols, boolean headers) {
-        int len = rows * cols;
-        List<String> str = new ArrayList<>();
-        for (int i = 0; i < len; i++) {
-            str.add(null);
-        }
-        return headers ? new HeaderTableArray(cols, len, new byte[len], new float[len], str) :
-                new SimpleTableArray(cols, len, new byte[len], new float[len], str);
+        return ReshapeHelper.ofSize(rows, cols, headers);
+    }
+
+    /**
+     * Select some columns from a table
+     *
+     * @param array the array
+     * @param columns columns to select
+     * @return the selected data
+     */
+    public static TableArray selectColumns(TableArray array, List<Integer> columns) {
+        return ReshapeHelper.selectColumns(array, columns);
     }
 
     /**
@@ -34,9 +40,6 @@ public class Tables {
      * @return the data
      */
     public static TableArray fromCSV(InputStream stream, boolean headers) {
-        if (stream == null) {
-            throw new NullPointerException("No InputStream");
-        }
         return DelimitedHelper.fromCSV(stream, headers);
     }
 
@@ -46,7 +49,6 @@ public class Tables {
     public static void toCSV(TableArray array, OutputStream stream, char delimiter) {
         DelimitedHelper.toStream(array, stream, delimiter, false);
     }
-
 
     /**
      * Reads data from a zip file
@@ -67,7 +69,7 @@ public class Tables {
      * Write data to a HTML string
      */
     public static String toHTML(TableArray array) {
-        return HTMLHelper.toHTML(array);
+        return StringHelper.toHTML(array);
     }
 
     /**
@@ -88,46 +90,7 @@ public class Tables {
      * Converts a column index to a string
      */
     public static String columnIndexToString(int col) {
-        if (col < 0) {
-            throw new IllegalArgumentException("Column cannot be negative");
-        }
-        if (col < 26) {
-            return String.valueOf((char) (65 + col));
-        }
-        StringBuilder b = new StringBuilder();
-        var n = col;
-        while (n >= 26) {
-            b.insert(0, (char) (65 + n % 26));
-            n /= 26;
-        }
-        b.insert(0, (char) (64 + n));
-        return b.toString();
+        return StringHelper.columnIndexToString(col);
     }
 
-    public static Reference arrayReference(Reference... references) {
-        Set<Integer> set = new HashSet<>();
-        for (Reference reference : references) {
-            for (int i = 0; i < reference.getSize(); i++) {
-                set.add(reference.getIndex(i));
-            }
-        }
-        int[] arr = new int[set.size()];
-        int i = 0;
-        for (int ref : set) {
-            arr[i++] = ref;
-        }
-        return new MultiCellReference(arr);
-    }
-
-    public static boolean referenceEquals(Reference a, Reference b) {
-        if (a == null || b == null || a.getSize() != b.getSize()) {
-            return false;
-        }
-        for (int i = 0; i < a.getSize(); i++) {
-            if (a.getIndex(i) != b.getIndex(i)) {
-                return false;
-            }
-        }
-        return true;
-    }
 }

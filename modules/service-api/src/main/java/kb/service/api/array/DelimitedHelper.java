@@ -62,6 +62,9 @@ class DelimitedHelper {
     }
 
     static TableArray fromCSV(InputStream stream, boolean headers) {
+        if (stream == null) {
+            throw new NullPointerException("No InputStream");
+        }
         if (!headers) {
             throw new UnsupportedOperationException("No header is currently unsupported");
         }
@@ -191,14 +194,7 @@ class DelimitedHelper {
 
     static String getPrettyHeaders(HeaderTableArray array) {
         StringBuilder b = new StringBuilder();
-        b.append("\033[0m");
-        b.append("    \t");
-        for (int i = 0; i < array.cols; i++) {
-            int colSize = array.pretty_col_size[i];
-            b.append("=".repeat(colSize));
-            b.append("\t");
-        }
-        b.append("\n");
+        addPrettyBorder(array, b);
         b.append("\033[35m");
         int maxHeight = 1;
         List<String[]> headers = new ArrayList<>();
@@ -222,6 +218,11 @@ class DelimitedHelper {
             }
             b.append("\n");
         }
+        addPrettyBorder(array, b);
+        return b.toString();
+    }
+
+    private static void addPrettyBorder(HeaderTableArray array, StringBuilder b) {
         b.append("\033[0m");
         b.append("    \t");
         for (int i = 0; i < array.cols; i++) {
@@ -230,7 +231,6 @@ class DelimitedHelper {
             b.append("\t");
         }
         b.append("\n");
-        return b.toString();
     }
 
     public static String toPrintableString(TableArray array) {

@@ -1,6 +1,6 @@
 package kb.service.api.array;
 
-class HTMLHelper {
+class StringHelper {
     public static String toHTML(TableArray array) {
         if (array == null) {
             return "";
@@ -24,5 +24,22 @@ class HTMLHelper {
         }
         html.append("</table>");
         return html.toString();
+    }
+
+    public static String columnIndexToString(int col) {
+        if (col < 0) {
+            throw new IllegalArgumentException("Column cannot be negative");
+        }
+        if (col < 26) {
+            return String.valueOf((char) (65 + col));
+        }
+        StringBuilder b = new StringBuilder();
+        var n = col;
+        while (n >= 26) {
+            b.insert(0, (char) (65 + n % 26));
+            n /= 26;
+        }
+        b.insert(0, (char) (64 + n));
+        return b.toString();
     }
 }

@@ -19,9 +19,9 @@ class TableUtilTest {
     void arrayReferenceAndEqualTest() {
         Reference r1 = new RangeReference(20, 1, 3, 2, 2);
         Reference r2 = new MultiCellReference(17);
-        Reference result = Tables.arrayReference(r1, r2);
+        Reference result = Reference.arrayReference(r1, r2);
         MultiCellReference golden = new MultiCellReference(17, 23, 24, 43, 44);
-        assertTrue(Tables.referenceEquals(result, golden));
+        assertTrue(Reference.referenceEquals(result, golden));
     }
 
     @Test

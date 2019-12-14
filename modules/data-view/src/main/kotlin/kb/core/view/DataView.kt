@@ -246,7 +246,8 @@ class DataView {
     }
 
     fun selectColumns() {
-        Singleton.uiManager.showAlert("", "Hide Columns is unsupported by the spreadsheet view")
+        val array = array ?: return
+        Singleton.dataSpace.newData(stage.title, Tables.selectColumns(array, getSelectedColumns().toList()))
     }
 
     fun filterBy() {
