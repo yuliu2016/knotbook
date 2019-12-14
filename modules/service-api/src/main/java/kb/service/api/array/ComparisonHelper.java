@@ -4,6 +4,7 @@ import java.util.Comparator;
 
 import static kb.service.api.array.TableArray.*;
 
+@SuppressWarnings("DuplicatedCode")
 public class ComparisonHelper {
     public static Comparator<Integer> ascendingComparator(TableArray array, int col) {
         if (col < 0 || col > array.cols) {

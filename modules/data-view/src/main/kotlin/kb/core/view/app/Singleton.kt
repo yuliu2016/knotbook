@@ -339,17 +339,12 @@ internal object Singleton {
         registerForView("table.print", "Print Table to Standard Output", null, null)
         { it.array?.let { data -> println(data) } }
 
-        registerForView("columns.hide", "Hide Columns", MDI_TABLE_COLUMN_REMOVE,
-                combo(KeyCode.H, control = true)) { it.hideColumns() }
-        registerForView("columns.show.all", "Un-hide All Columns", MDI_TABLE_COLUMN_PLUS_AFTER,
-                combo(KeyCode.H, control = true, shift = true)) { it.showAllColumns() }
-
-        registerForView("filter.in", "Filter By", MDI_FILTER,
-                combo(KeyCode.Y, control = true)) { it.filterIn() }
-        registerForView("filter.out", "Filter Out", MDI_FILTER_OUTLINE,
+        registerForView("columns.hide", "Select Columns as Table", MDI_TABLE_COLUMN_WIDTH,
+                combo(KeyCode.T, control = true, shift = true)) { it.selectColumns() }
+        registerForView("filter.in", "Filter By as Table", MDI_FILTER,
+                combo(KeyCode.Y, control = true)) { it.filterBy() }
+        registerForView("filter.out", "Filter Out as Table", MDI_FILTER_OUTLINE,
                 combo(KeyCode.U, control = true)) { it.filterOut() }
-        registerForView("filter.clear", "Clear Filter", MDI_FILTER_REMOVE,
-                combo(KeyCode.I, control = true)) { it.clearFilters() }
     }
 
     fun registerForView(id: String, name: String, icon: Ikon?, combo: KeyCombination?, func: (DataView) -> Unit) {

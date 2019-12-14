@@ -1,5 +1,7 @@
 package kb.service.api.array;
 
+import java.util.Arrays;
+
 @SuppressWarnings("WeakerAccess")
 public class MultiCellReference implements Reference {
 
@@ -7,6 +9,7 @@ public class MultiCellReference implements Reference {
 
     public MultiCellReference(int... indices) {
         this.indices = indices;
+        Arrays.sort(indices);
     }
 
     @Override

@@ -154,6 +154,10 @@ class DataView {
         return spreadsheet.selectionModel.selectedCells.mapTo(HashSet()) { it.column }
     }
 
+    fun getSelectedRows(): Set<Int> {
+        return spreadsheet.selectionModel.selectedCells.mapTo(HashSet()) { it.row }
+    }
+
     fun addSort(type: SortType) {
         getSelectedColumns().forEach {
             val sc = SortColumn(it, type)
@@ -241,15 +245,11 @@ class DataView {
         }
     }
 
-    fun hideColumns() {
+    fun selectColumns() {
         Singleton.uiManager.showAlert("", "Hide Columns is unsupported by the spreadsheet view")
     }
 
-    fun showAllColumns() {
-        Singleton.uiManager.showAlert("", "Show All Columns is unsupported by the spreadsheet view")
-    }
-
-    fun filterIn() {
+    fun filterBy() {
 
     }
 

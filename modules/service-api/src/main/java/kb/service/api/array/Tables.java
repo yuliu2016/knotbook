@@ -3,10 +3,7 @@ package kb.service.api.array;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class Tables {
     /**
@@ -60,23 +57,29 @@ public class Tables {
     }
 
     /**
-     * Writes a table to a zip file
+     * Write a table to a zip file
      */
     public static void toZip(TableArray array, OutputStream stream) {
         ZipFormatHelper.toZipFormat(array, stream);
     }
 
     /**
-     * Writes data to a HTML string
+     * Write data to a HTML string
      */
     public static String toHTML(TableArray array) {
         return HTMLHelper.toHTML(array);
     }
 
+    /**
+     * Create an ascending comparator
+     */
     public static Comparator<Integer> ascendingComparator(TableArray array, int column) {
         return ComparisonHelper.ascendingComparator(array, column);
     }
 
+    /**
+     * Create an descending comparator
+     */
     public static Comparator<Integer> descendingComparator(TableArray array, int column) {
         return ComparisonHelper.descendingComparator(array, column);
     }
@@ -102,28 +105,29 @@ public class Tables {
     }
 
     public static Reference arrayReference(Reference... references) {
-        IntArrayList arr = new IntArrayList();
+        Set<Integer> set = new HashSet<>();
         for (Reference reference : references) {
             for (int i = 0; i < reference.getSize(); i++) {
-                arr.appendUnique(reference.getIndex(i));
+                set.add(reference.getIndex(i));
             }
         }
-        return new MultiCellReference(Arrays.copyOf(arr.value, arr.length));
+        int[] arr = new int[set.size()];
+        int i = 0;
+        for (int ref : set) {
+            arr[i++] = ref;
+        }
+        return new MultiCellReference(arr);
     }
 
     public static boolean referenceEquals(Reference a, Reference b) {
-        IntArrayList ar = new IntArrayList();
-        IntArrayList br = new IntArrayList();
+        if (a == null || b == null || a.getSize() != b.getSize()) {
+            return false;
+        }
         for (int i = 0; i < a.getSize(); i++) {
-            ar.append(a.getIndex(i));
+            if (a.getIndex(i) != b.getIndex(i)) {
+                return false;
+            }
         }
-        for (int i = 0; i < b.getSize(); i++) {
-            br.append(b.getIndex(i));
-        }
-        int[] aa = ar.copy();
-        int[] ba = br.copy();
-        Arrays.sort(aa);
-        Arrays.sort(ba);
-        return Arrays.equals(aa, ba);
+        return true;
     }
 }
