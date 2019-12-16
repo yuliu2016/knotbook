@@ -22,7 +22,7 @@ class Server {
             ex.responseHeaders.add("Content-type", "text/html")
             ex.responseHeaders.add("Content-Encoding", "gzip")
             ex.sendResponseHeaders(200, 0)
-            val r0 = Tables.toHTML(Singleton.uiManager.view?.array)
+            val r0 = Tables.toHTML(Singleton.uiManager.view?.activeTable?.array)
             val title = Singleton.uiManager.view?.stage?.title
             val response = "<!DOCTYPE HTML><html><head><title>$title</title></head><body>$r0</body></html>"
                     .toByteArray()

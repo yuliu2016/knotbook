@@ -3,7 +3,6 @@ package kb.core.view
 import javafx.beans.InvalidationListener
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
-import javafx.collections.ObservableList
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Scene
@@ -16,13 +15,11 @@ import javafx.stage.Stage
 import kb.core.fx.*
 import kb.core.icon.fontIcon
 import kb.core.view.app.Singleton
-import kb.service.api.array.TableArray
 import kb.service.api.array.Tables
 import kb.service.api.ui.OptionBar
 import kb.service.api.ui.OptionItem
 import kb.service.api.ui.RGB
 import org.controlsfx.control.spreadsheet.GridBase
-import org.controlsfx.control.spreadsheet.SpreadsheetCell
 import org.controlsfx.control.spreadsheet.SpreadsheetView
 import org.kordamp.ikonli.materialdesign.MaterialDesign
 
@@ -31,11 +28,12 @@ import org.kordamp.ikonli.materialdesign.MaterialDesign
 class DataView {
 
     val stage = Stage()
+    var showing = false
     val themeListener = InvalidationListener { updateTheme() }
     private var isFullScreen = false
-    private var grid = GridBase(0, 0)
     val calculations = Label()
-    val tabs = mutableListOf<Tab>()
+    val tables = mutableListOf<DataTable>()
+    var activeTable: DataTable? = null
 
     init {
         stage.title = "KnotBook"
@@ -54,10 +52,10 @@ class DataView {
     fun updateTheme() {
         val theme = Singleton.uiManager.themeProperty.get()
         layout.stylesheets.setAll("/knotbook.css", theme.viewStyle)
-        updateColourScale()
+        activeTable?.updateColourScale()
     }
 
-    private val statusBar = hbox {
+    val statusBar = hbox {
         align(Pos.CENTER_LEFT)
         padding = Insets(0.0, 12.0, 0.0, 12.0)
         prefHeight = 22.0
@@ -67,7 +65,7 @@ class DataView {
         hspace()
     }
 
-    val spreadsheet = SpreadsheetView(grid).apply {
+    val spreadsheet = SpreadsheetView(GridBase(0, 0)).apply {
         selectionModel.selectedCells.addListener(InvalidationListener { onSelectionChanged() })
         columns.forEach { it.setPrefWidth(75.0) }
         zoomFactorProperty().addListener(InvalidationListener { zoomText.value = "${(zoomFactor * 100).toInt()}%" })
@@ -100,7 +98,6 @@ class DataView {
     }
 
     val scene = Scene(layout)
-    var showing = false
 
     fun addStatus(prop: StringProperty) {
         statusBar.add(label {
@@ -108,18 +105,18 @@ class DataView {
         })
     }
 
-    fun addTab(tab: Tab) {
-        if (tabs.isEmpty()) layout.top = tabScroller
-        tabs.add(tab)
+    fun addTable(table: DataTable) {
+        if (tables.isEmpty()) layout.top = tabScroller
+        tables.add(table)
         tabBar.children.add(hbox {
             styleClass("tab-item")
             align(Pos.CENTER_LEFT)
-            if (tab.icon != null) {
-                add(fontIcon(tab.icon, 14).apply {
-                    iconColor = tab.iconColor
+            if (table.icon != null) {
+                add(fontIcon(table.icon, 14).apply {
+                    iconColor = table.iconColor
                 })
             }
-            add(label(tab.title).apply {
+            add(label(table.title).apply {
                 this.maxWidth= 160.0
             })
             add(fontIcon(MaterialDesign.MDI_CLOSE, 14).apply {
@@ -127,16 +124,23 @@ class DataView {
             })
             setOnMouseClicked {
                 val ix = tabBar.children.indexOf(this)
-                selectTab(ix)
+                selectTable(ix)
             }
         })
+        selectTable(tabBar.children.size - 1)
     }
 
-    fun selectTab(i: Int) {
+    fun selectTable(i: Int) {
         tabBar.children.forEach {
             it.styleClass.remove("tab-item-selected")
         }
         tabBar.children[i].styleClass.add("tab-item-selected")
+        val table = tables[i]
+        activeTable = table
+        stage.title = table.title
+        spreadsheet.grid = GridBase(0, 0)
+        spreadsheet.grid = table.grid
+        spreadsheet.fixedRows.setAll(1)
     }
 
     fun selectAll() {
@@ -185,21 +189,6 @@ class DataView {
         stage.show()
     }
 
-    var array: TableArray? = null
-
-    private val sortColumns = ArrayList<SortColumn>()
-    private val colourScales = ArrayList<ColorScale>()
-    private var referenceOrder: List<ObservableList<SpreadsheetCell>> = ArrayList()
-
-    fun setData(title: String, data: TableArray) {
-        stage.title = title
-        array = data
-        grid = data.toGrid()
-        this.spreadsheet.grid = grid
-        referenceOrder = grid.rows.toList()
-        spreadsheet.fixedRows.setAll(0)
-    }
-
     fun getSelectedColumns(): Set<Int> {
         return spreadsheet.selectionModel.selectedCells.mapTo(HashSet()) { it.column }
     }
@@ -209,94 +198,27 @@ class DataView {
     }
 
     fun addSort(type: SortType) {
-        getSelectedColumns().forEach {
-            val sc = SortColumn(it, type)
-            sortColumns.remove(sc)
-            sortColumns.add(sc)
-        }
-        updateSort()
+        activeTable?.addSort(getSelectedColumns(), type)
     }
 
     fun setSort(type: SortType) {
-        sortColumns.clear()
-        getSelectedColumns().forEach {
-            val sc = SortColumn(it, type)
-            sortColumns.add(sc)
-        }
-        updateSort()
+        activeTable?.setSort(getSelectedColumns(), type)
     }
 
     fun clearSort() {
-        sortColumns.clear()
-        grid.rows.setAll(referenceOrder)
-    }
-
-    fun updateSort() {
-        val array = array ?: return
-        if (referenceOrder.isEmpty()) return
-        val comparator = sortColumns.map {
-            when (it.sortType) {
-                SortType.Ascending -> Tables.ascendingComparator(array, it.index)
-                SortType.Descending -> Tables.descendingComparator(array, it.index)
-            }
-        }.reduce { a, b -> a.then(b) }
-        val order = (1 until referenceOrder.size).sortedWith(comparator)
-        grid.rows.setAll(referenceOrder[0])
-        grid.rows.addAll(order.map { referenceOrder[it] })
+        activeTable?.clearSort()
     }
 
     fun addColourScale(type: SortType, rgb: RGB) {
-        getSelectedColumns().forEach {
-            val cs = ColorScale(it, type, rgb)
-            colourScales.remove(cs)
-            colourScales.add(cs)
-        }
-        updateColourScale()
+        activeTable?.addColourScale(getSelectedColumns(), type, rgb)
     }
 
     fun clearColourScale() {
-        val array = array ?: return
-        val rows = array.rows
-        getSelectedColumns().forEach {
-            val cs = ColorScale(it, SortType.Descending, PresetCS.green)
-            colourScales.remove(cs)
-            for (row in 0 until rows) {
-                referenceOrder[row][it].style = null
-            }
-        }
-    }
-
-    fun updateColourScale() {
-        val array = array ?: return
-        val rows = array.rows
-        val bg = if (Singleton.uiManager.isDarkTheme()) 0 else 255
-        for (colourScale in colourScales) {
-            val desc = colourScale.sortType == SortType.Descending
-            val col = colourScale.index
-            val values = (0 until rows).map { array[it, col] }
-
-            var min = Double.MAX_VALUE
-            var max = Double.MIN_VALUE
-            for (v in values) {
-                if (v.isFinite()) {
-                    if (v < min) min = v
-                    if (v > max) max = v
-                }
-            }
-
-            for (row in 0 until rows) {
-                val v = values[row]
-                if (v.isInfinite() || v.isNaN()) continue
-                val x = if (desc) (max - v) / (max - min) else (v - min) / (max - min)
-                // Square the output so that the comparison is more obvious
-                val y = if (desc) x * x else 1 - (1 - x) * (1 - x)
-                referenceOrder[row][col].style = colourScale.rgb.blendStyle(y, bg)
-            }
-        }
+        activeTable?.clearColourScale(getSelectedColumns())
     }
 
     fun selectColumns() {
-        val array = array ?: return
+        val array = activeTable?.array ?: return
         Singleton.dataSpace.newData(stage.title, Tables.selectColumns(array, getSelectedColumns().toList()))
     }
 
@@ -312,15 +234,17 @@ class DataView {
 
     }
 
-    private inline fun copyWithMinMax(block: (minRow: Int, maxRow: Int, minCol: Int, maxCol: Int) -> String) {
+    private inline fun copyWithMinMax(block: (grid: GridBase, minRow: Int, maxRow: Int,
+                                              minCol: Int, maxCol: Int) -> String) {
+        val grid = activeTable?.grid ?: return
         val se = spreadsheet.getSelection()
         val content = ClipboardContent()
-        content.putString(block(se.minRow, se.maxRow, se.minCol, se.maxCol))
+        content.putString(block(grid, se.minRow, se.maxRow, se.minCol, se.maxCol))
         Clipboard.getSystemClipboard().setContent(content)
     }
 
     fun copyDelimited(delimiter: Char) {
-        copyWithMinMax { minRow, maxRow, minCol, maxCol ->
+        copyWithMinMax { grid, minRow, maxRow, minCol, maxCol ->
             val builder = StringBuilder()
             for (i in minRow..maxRow) {
                 for (j in minCol until maxCol) {
@@ -337,7 +261,7 @@ class DataView {
     }
 
     fun saveCSV() {
-        val array = array ?: return
+        val array = activeTable?.array ?: return
         val fp = Singleton.getSavePath(this, "csv")
         if (fp != null) {
             Tables.toCSV(array, fp.outputStream(), ',')
@@ -345,7 +269,7 @@ class DataView {
     }
 
     fun saveZip() {
-        val array = array ?: return
+        val array = activeTable?.array ?: return
         val fp = Singleton.getSavePath(this, "kbt")
         if (fp != null) {
             Tables.toZip(array, fp.outputStream())
@@ -368,7 +292,7 @@ class DataView {
             }
             try {
                 val num = t.toDouble()
-                val array = array ?: return@InvalidationListener
+                val array = activeTable?.array ?: return@InvalidationListener
                 val rows = array.rows
                 var count = 0
                 for (i in 0 until rows) {
@@ -396,7 +320,7 @@ class DataView {
             calculations.text = ""
             return
         }
-        val array = array ?: return
+        val array = activeTable?.array ?: return
         calculations.text = getCalculations(a, array)
     }
 }

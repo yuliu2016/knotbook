@@ -337,7 +337,7 @@ internal object Singleton {
         { it.clearSort() }
 
         registerForView("table.print", "Print Table to Standard Output", null, null)
-        { it.array?.let { data -> println(data) } }
+        { it.activeTable?.array?.let { data -> println(data) } }
 
         registerForView("columns.hide", "Select Columns as Table", MDI_TABLE_COLUMN_WIDTH,
                 combo(KeyCode.T, control = true, shift = true)) { it.selectColumns() }
