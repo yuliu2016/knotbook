@@ -125,6 +125,10 @@ class DataView {
             add(fontIcon(MaterialDesign.MDI_CLOSE, 14).apply {
                 styleClass("tab-close-button")
             })
+            setOnMouseClicked {
+                val ix = tabBar.children.indexOf(this)
+                selectTab(ix)
+            }
         })
     }
 
@@ -386,43 +390,13 @@ class DataView {
     }
 
     private fun onSelectionChanged() {
-        selectionText.value = getRangeText()
         val a = spreadsheet.selectionModel.selectedCells
+        selectionText.value = getRangeText(a)
         if (a.size < 2) {
             calculations.text = ""
             return
         }
         val array = array ?: return
-        var count = 0
-        var sum = 0.0
-        var min = Double.MAX_VALUE
-        var max = Double.MIN_VALUE
-        for (pos in a) {
-            val num = array[pos.row, pos.column]
-            if (num.isFinite()) {
-                count++
-                sum += num
-                if (num < min) min = num
-                if (num > max) max = num
-            }
-        }
-        if (count == 0) {
-            calculations.text = ""
-            return
-        }
-        val average = (sum / count).toFloat() // make it a shorter string
-        calculations.text = "Sum: $sum    Count: $count    Average: $average    Min: $min    Max: $max"
-    }
-
-    private fun getRangeText(): String {
-        val a = spreadsheet.selectionModel.selectedCells
-        if (a.isEmpty()) return "None"
-        val rows = a.map { it.row }
-        val cols = a.map { it.column }
-        val w = rows.min()!! + 1
-        val x = rows.max()!! + 1
-        val y = Tables.columnIndexToString(cols.min()!!)
-        val z = Tables.columnIndexToString(cols.max()!!)
-        return if (a.size == 1) "$y$w" else "$y$w:$z$x"
+        calculations.text = getCalculations(a, array)
     }
 }

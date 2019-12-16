@@ -2,11 +2,14 @@
 
 package kb.core.view
 
+import javafx.collections.ObservableList
 import javafx.scene.Node
+import javafx.scene.control.TablePosition
 import javafx.scene.paint.Color
 import kb.core.fx.observable
 import kb.core.view.util.CellBase2
 import kb.service.api.array.TableArray
+import kb.service.api.array.Tables
 import kb.service.api.ui.RGB
 import org.controlsfx.control.spreadsheet.GridBase
 import org.controlsfx.control.spreadsheet.SpreadsheetView
@@ -25,10 +28,10 @@ data class SortColumn(val index: Int, val sortType: SortType) {
 
 data class Tab(
         val title: String,
-        val icon: Ikon?=null,
+        val icon: Ikon? = null,
         val iconColor: Color = Color.GRAY,
-        val data: TableArray?=null,
-        val placeholder: Node?=null
+        val data: TableArray? = null,
+        val placeholder: Node? = null
 )
 
 enum class SortType {
@@ -46,7 +49,7 @@ data class ColorScale(val index: Int, val sortType: SortType, val rgb: RGB) {
 
 }
 
-object PresetCS{
+object PresetCS {
     val green = RGB(96, 192, 144)
     val orange = RGB(255, 144, 0)
     val blue = RGB(100, 170, 255)
@@ -98,4 +101,36 @@ data class Selection(
     val maxRow get() = rows.max() ?: 0
     val minCol get() = cols.min() ?: 0
     val maxCol get() = cols.max() ?: 0
+}
+
+fun getRangeText(a: ObservableList<TablePosition<Any?, Any?>>): String {
+    if (a.isEmpty()) return "None"
+    val rows = a.map { it.row }
+    val cols = a.map { it.column }
+    val w = rows.min()!! + 1
+    val x = rows.max()!! + 1
+    val y = Tables.columnIndexToString(cols.min()!!)
+    val z = Tables.columnIndexToString(cols.max()!!)
+    return if (a.size == 1) "$y$w" else "$y$w:$z$x"
+}
+
+fun getCalculations(a: ObservableList<TablePosition<Any?, Any?>>, array: TableArray): String {
+    var count = 0
+    var sum = 0.0
+    var min = Double.MAX_VALUE
+    var max = Double.MIN_VALUE
+    for (pos in a) {
+        val num = array[pos.row, pos.column]
+        if (num.isFinite()) {
+            count++
+            sum += num
+            if (num < min) min = num
+            if (num > max) max = num
+        }
+    }
+    if (count == 0) {
+        return ""
+    }
+    val average = (sum / count).toFloat() // make it a shorter string
+    return "Sum: $sum    Count: $count    Average: $average    Min: $min    Max: $max"
 }

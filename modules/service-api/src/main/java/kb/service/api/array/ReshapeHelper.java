@@ -23,7 +23,7 @@ class ReshapeHelper {
                 int from = i * array.cols + columns.get(j);
                 int to = i * cols + j;
                 copy.mode[to] = array.mode[from];
-                copy.num[to] = array.mode[from];
+                copy.num[to] = array.num[from];
                 copy.str.set(to, array.str.get(from));
             }
         }

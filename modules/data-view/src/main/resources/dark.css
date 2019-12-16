@@ -174,7 +174,7 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 .tab-item {
     -fx-border-width: 0 1 0 0;
     -fx-border-color: #222;
-    -fx-background-color: #444;
+    -fx-background-color: #333;
     -fx-padding: 8;
     -fx-spacing: 4;
 }
@@ -184,7 +184,7 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 }
 
 .tab-close-button {
-    -fx-icon-color: #444
+    -fx-icon-color: #333
 }
 
 .tab-item-selected .tab-close-button {
