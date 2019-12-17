@@ -111,25 +111,26 @@ internal object Singleton {
     fun launch(manager: ServiceManager, context: ServiceContext, serviceLauncher: Runnable) {
         this.manager = manager
         this.context = context
+        launchImpl()
         context.config["Build Version"] = manager.buildVersion
         context.config["Image Version"] = manager.imageVersion
-        launchImpl()
+
         serviceLauncher.run()
         DataView().show()
         uiManager.showCommandsPalette()
     }
 
     private fun launchImpl() {
-        Platform.setImplicitExit(false)
-        val windows = Window.getWindows()
-        windows.addListener(InvalidationListener { if (windows.isEmpty()) exitOK() })
-        uiManager.startMemoryObserver()
         try {
             dataServer.bindAndStart()
         } catch (e: IOException) {
             Alert(Alert.AlertType.ERROR, "Application Already Started").showAndWait()
             manager.exitError()
         }
+        Platform.setImplicitExit(false)
+        val windows = Window.getWindows()
+        windows.addListener(InvalidationListener { if (windows.isEmpty()) exitOK() })
+        uiManager.startMemoryObserver()
         if (context.config.optString("Theme") == "Light") {
             uiManager.themeProperty.set(DataUIManager.Theme.Light)
         }
@@ -258,7 +259,7 @@ internal object Singleton {
         }
         m.registerCommand("app.license", "Open Source Licenses", null, null) { viewOpenSource() }
         m.registerCommand("plugins.list", "Plugins and Services", null, null) { viewPlugins() }
-        m.registerCommand("app.exit", "JVM: Exit Application", null, null) { exitOK() }
+        m.registerCommand("app.exit", "JVM: Exit Application", null, null) { askExit() }
         m.registerCommand("jvm.properties", "JVM: System Properties",
                 MDI_COFFEE.description, null) { viewJVMProperties() }
         m.registerCommand("jvm.threads", "JVM: Show All Threads",
@@ -349,6 +350,12 @@ internal object Singleton {
 
     fun registerForView(id: String, name: String, icon: Ikon?, combo: KeyCombination?, func: (DataView) -> Unit) {
         uiManager.registerCommand(id, name, icon?.description, combo) { uiManager.view?.let(func) }
+    }
+
+    fun askExit() {
+        uiManager.confirmOK("KnotBook DataView", "Are you sure you want to exit the application?") {
+            exitOK()
+        }
     }
 
     fun exitOK() {

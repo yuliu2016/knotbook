@@ -1,5 +1,6 @@
 package kb.core.view
 
+import javafx.application.Platform
 import javafx.beans.InvalidationListener
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
@@ -10,6 +11,7 @@ import javafx.scene.control.Label
 import javafx.scene.control.ScrollPane
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
+import javafx.scene.input.KeyCode
 import javafx.stage.Screen
 import javafx.stage.Stage
 import kb.core.fx.*
@@ -31,7 +33,7 @@ class DataView {
     var showing = false
     val themeListener = InvalidationListener { updateTheme() }
     private var isFullScreen = false
-    val calculations = Label()
+    val calculationLabel = Label()
     val tables = mutableListOf<DataTable>()
     var activeTable: DataTable? = null
 
@@ -61,7 +63,7 @@ class DataView {
         prefHeight = 22.0
         styleClass("status-bar")
         spacing = 12.0
-        add(calculations)
+        add(calculationLabel)
         hspace()
     }
 
@@ -91,13 +93,19 @@ class DataView {
     }
 
     val layout = borderPane {
-        prefWidth = 720.0
-        prefHeight = 480.0
+        val r = 160.0 / Screen.getPrimary().dpi
+        println(r)
+        prefWidth = 576.0 * r
+        prefHeight = 328.0 * r
         center = spreadsheet
         bottom = statusBar
     }
 
     val scene = Scene(layout)
+
+    val zoomText = SimpleStringProperty("100%")
+    val themeText = SimpleStringProperty("Light")
+    val selectionText = SimpleStringProperty("None")
 
     fun addStatus(prop: StringProperty) {
         statusBar.add(label {
@@ -138,9 +146,11 @@ class DataView {
         val table = tables[i]
         activeTable = table
         stage.title = table.title
-        spreadsheet.grid = GridBase(0, 0)
-        spreadsheet.grid = table.grid
-        spreadsheet.fixedRows.setAll(1)
+        Platform.runLater {
+            spreadsheet.grid = GridBase(0, 0)
+            spreadsheet.grid = table.grid
+            spreadsheet.fixedRows.setAll(0)
+        }
     }
 
     fun selectAll() {
@@ -151,17 +161,9 @@ class DataView {
         spreadsheet.selectionModel.clearSelection()
     }
 
-    val zoomText = SimpleStringProperty("100%")
-    val themeText = SimpleStringProperty("Light")
-    val selectionText = SimpleStringProperty("None")
-
     fun show() {
         if (showing) throw IllegalStateException("DataView is already shown")
         showing = true
-
-        val area = Screen.getPrimary().visualBounds
-        layout.prefWidth = area.width / 2.0
-        layout.prefHeight = area.height / 2.0 + 32.0
 
         updateTheme()
         themeText.bind(Singleton.uiManager.themeProperty.asString())
@@ -175,6 +177,7 @@ class DataView {
             scene.accelerators[shortcut] = Runnable { Singleton.uiManager.commandManager.invokeCommand(key) }
         }
         stage.fullScreenExitHint = "Press F11 to Exit Full Screen"
+        stage.fullScreenExitKeyCombination = combo(KeyCode.F11)
         stage.icons.add(Singleton.appIcon)
         stage.scene = scene
         stage.focusedProperty().addListener { _, _, focused ->
@@ -317,10 +320,10 @@ class DataView {
         val a = spreadsheet.selectionModel.selectedCells
         selectionText.value = getRangeText(a)
         if (a.size < 2) {
-            calculations.text = ""
+            calculationLabel.text = ""
             return
         }
         val array = activeTable?.array ?: return
-        calculations.text = getCalculations(a, array)
+        calculationLabel.text = getCalculations(a, array)
     }
 }
