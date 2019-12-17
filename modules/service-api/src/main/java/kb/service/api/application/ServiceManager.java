@@ -15,6 +15,8 @@ public interface ServiceManager {
 
     String getBuildVersion();
 
+    String fetchUpdatedVersion();
+
     String getImageVersion();
 
     void exitOK();

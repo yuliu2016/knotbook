@@ -1,34 +1,42 @@
 package kb.core.view
 
+import javafx.application.Platform
 import javafx.beans.InvalidationListener
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
-import javafx.collections.ObservableList
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Scene
 import javafx.scene.control.Label
+import javafx.scene.control.ScrollPane
+import javafx.scene.control.Tooltip
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
+import javafx.scene.input.KeyCode
 import javafx.stage.Screen
 import javafx.stage.Stage
 import kb.core.fx.*
+import kb.core.icon.fontIcon
 import kb.core.view.app.Singleton
-import kb.service.api.array.TableArray
-import kb.service.api.array.TableUtil
+import kb.service.api.array.Tables
 import kb.service.api.ui.OptionBar
 import kb.service.api.ui.OptionItem
-import org.controlsfx.control.spreadsheet.SpreadsheetCell
+import kb.service.api.ui.RGB
+import org.controlsfx.control.spreadsheet.GridBase
 import org.controlsfx.control.spreadsheet.SpreadsheetView
+import org.kordamp.ikonli.materialdesign.MaterialDesign
 
 
 @Suppress("MemberVisibilityCanBePrivate", "DuplicatedCode", "unused")
 class DataView {
 
     val stage = Stage()
+    var showing = false
     val themeListener = InvalidationListener { updateTheme() }
     private var isFullScreen = false
-    private var grid = emptyGrid()
+    val calculationLabel = Label()
+    val tables = mutableListOf<DataTable>()
+    var activeTable: DataTable? = null
 
     init {
         stage.title = "KnotBook"
@@ -47,22 +55,20 @@ class DataView {
     fun updateTheme() {
         val theme = Singleton.uiManager.themeProperty.get()
         layout.stylesheets.setAll("/knotbook.css", theme.viewStyle)
-        updateCS()
+        activeTable?.updateColourScale()
     }
 
-    val calculations = Label()
-
-    private val statusBar = hbox {
+    val statusBar = hbox {
         align(Pos.CENTER_LEFT)
         padding = Insets(0.0, 12.0, 0.0, 12.0)
         prefHeight = 22.0
         styleClass("status-bar")
         spacing = 12.0
-        add(calculations)
+        add(calculationLabel)
         hspace()
     }
 
-    val spreadsheet = SpreadsheetView(grid).apply {
+    val spreadsheet = SpreadsheetView(GridBase(0, 0)).apply {
         selectionModel.selectedCells.addListener(InvalidationListener { onSelectionChanged() })
         columns.forEach { it.setPrefWidth(75.0) }
         zoomFactorProperty().addListener(InvalidationListener { zoomText.value = "${(zoomFactor * 100).toInt()}%" })
@@ -70,21 +76,82 @@ class DataView {
         isEditable = false
     }
 
+    val tabBar = hbox { }
+
+    private val tabScroller = vbox {
+        padding = Insets(0.0, 0.0, 8.0, 0.0)
+        add(scrollPane {
+            styleClass("tab-scroller")
+            content = tabBar
+            isFitToHeight = true
+            isFocusTraversable = false
+            this.hbarPolicy = ScrollPane.ScrollBarPolicy.NEVER
+            this.setOnScroll {
+                hvalue = (hvalue + (it.deltaX - it.deltaY) / tabBar.width * 3).coerceIn(0.0, 1.0)
+                it.consume()
+            }
+        })
+    }
+
     val layout = borderPane {
-        prefWidth = 720.0
-        prefHeight = 480.0
+        val r = 160.0 / Screen.getPrimary().dpi
+        println(r)
+        prefWidth = 576.0 * r
+        prefHeight = 328.0 * r
         center = spreadsheet
         bottom = statusBar
     }
 
     val scene = Scene(layout)
 
-    var showing = false
+    val zoomText = SimpleStringProperty("100%")
+    val selectionText = SimpleStringProperty("None")
 
     fun addStatus(prop: StringProperty) {
         statusBar.add(label {
             textProperty().bind(prop)
         })
+    }
+
+    fun addTable(table: DataTable) {
+        if (tables.isEmpty()) layout.top = tabScroller
+        tables.add(table)
+        tabBar.children.add(hbox {
+            styleClass("tab-item")
+            align(Pos.CENTER_LEFT)
+            if (table.icon != null) {
+                add(fontIcon(table.icon, 14).apply {
+                    iconColor = table.iconColor
+                })
+            }
+            add(label(table.title).apply {
+                tooltip = Tooltip(table.title)
+                this.maxWidth = 160.0
+            })
+            add(fontIcon(MaterialDesign.MDI_CLOSE, 14).apply {
+                styleClass("tab-close-button")
+            })
+            setOnMouseClicked {
+                val ix = tabBar.children.indexOf(this)
+                selectTable(ix)
+            }
+        })
+        selectTable(tabBar.children.size - 1)
+    }
+
+    fun selectTable(i: Int) {
+        tabBar.children.forEach {
+            it.styleClass.remove("tab-item-selected")
+        }
+        tabBar.children[i].styleClass.add("tab-item-selected")
+        val table = tables[i]
+        activeTable = table
+        stage.title = table.title
+        Platform.runLater {
+            spreadsheet.grid = GridBase(0, 0)
+            spreadsheet.grid = table.grid
+            spreadsheet.fixedRows.setAll(0)
+        }
     }
 
     fun selectAll() {
@@ -95,23 +162,13 @@ class DataView {
         spreadsheet.selectionModel.clearSelection()
     }
 
-    val zoomText = SimpleStringProperty("100%")
-    val themeText = SimpleStringProperty("Light")
-    val selectionText = SimpleStringProperty("None")
-
     fun show() {
         if (showing) throw IllegalStateException("DataView is already shown")
         showing = true
 
-        val area = Screen.getPrimary().visualBounds
-        layout.prefWidth = area.width / 2.0
-        layout.prefHeight = area.height / 2.0 + 32.0
-
         updateTheme()
-        themeText.bind(Singleton.uiManager.themeProperty.asString())
         addStatus(selectionText)
         addStatus(zoomText)
-        addStatus(themeText)
         addStatus(Singleton.uiManager.memoryUsed)
 
         Singleton.uiManager.themeProperty.addListener(themeListener)
@@ -119,6 +176,7 @@ class DataView {
             scene.accelerators[shortcut] = Runnable { Singleton.uiManager.commandManager.invokeCommand(key) }
         }
         stage.fullScreenExitHint = "Press F11 to Exit Full Screen"
+        stage.fullScreenExitKeyCombination = combo(KeyCode.F11)
         stage.icons.add(Singleton.appIcon)
         stage.scene = scene
         stage.focusedProperty().addListener { _, _, focused ->
@@ -131,85 +189,64 @@ class DataView {
         }
         stage.setOnCloseRequest { Singleton.uiManager.themeProperty.removeListener(themeListener) }
         stage.show()
-        stage.requestFocus()
-    }
-
-    var array: TableArray? = null
-
-    private val sortColumns = ArrayList<SortColumn>()
-    private val colourScales = ArrayList<ColorScale>()
-    private var referenceOrder: List<ObservableList<SpreadsheetCell>> = ArrayList()
-
-    fun setData(title: String, data: TableArray) {
-        stage.title = title
-        array = data
-        grid = data.toGrid()
-        this.spreadsheet.grid = grid
-        referenceOrder = grid.rows.toList()
-        spreadsheet.fixedRows.setAll(0)
     }
 
     fun getSelectedColumns(): Set<Int> {
         return spreadsheet.selectionModel.selectedCells.mapTo(HashSet()) { it.column }
     }
 
-    fun addCS(type: SortType, rgb: RGB) {
-        getSelectedColumns().forEach {
-            val cs = ColorScale(it, type, rgb)
-            colourScales.remove(cs)
-            colourScales.add(cs)
-        }
-        updateCS()
+    fun getSelectedRows(): Set<Int> {
+        return spreadsheet.selectionModel.selectedCells.mapTo(HashSet()) { it.row }
     }
 
-    fun clearCS() {
-        val array = array ?: return
-        val rows = array.rows
-        getSelectedColumns().forEach {
-            val cs = ColorScale(it, SortType.Descending, ColorScale.green)
-            colourScales.remove(cs)
-            for (row in 0 until rows) {
-                referenceOrder[row][it].style = null
-            }
-        }
+    fun addSort(type: SortType) {
+        activeTable?.addSort(getSelectedColumns(), type)
     }
 
-    fun updateCS() {
-        val array = array ?: return
-        val rows = array.rows
-        val bg = if (Singleton.uiManager.isDarkTheme()) 0 else 255
-        for (colourScale in colourScales) {
-            val desc = colourScale.sortType == SortType.Descending
-            val col = colourScale.index
-            val values = (0 until rows).map { array[it, col] }
-
-            var min = Double.MAX_VALUE
-            var max = Double.MIN_VALUE
-            for (v in values) {
-                if (v.isFinite()) {
-                    if (v < min) min = v
-                    if (v > max) max = v
-                }
-            }
-
-            for (row in 0 until rows) {
-                val v = values[row]
-                if (v.isInfinite() || v.isNaN()) continue
-                val x = if (desc) (max - v) / (max - min) else (v - min) / (max - min)
-                referenceOrder[row][col].style = colourScale.rgb.blendStyle(x, bg)
-            }
-        }
+    fun setSort(type: SortType) {
+        activeTable?.setSort(getSelectedColumns(), type)
     }
 
-    private inline fun copyWithMinMax(block: (minRow: Int, maxRow: Int, minCol: Int, maxCol: Int) -> String) {
+    fun clearSort() {
+        activeTable?.clearSort()
+    }
+
+    fun addColourScale(type: SortType, rgb: RGB) {
+        activeTable?.addColourScale(getSelectedColumns(), type, rgb)
+    }
+
+    fun clearColourScale() {
+        activeTable?.clearColourScale(getSelectedColumns())
+    }
+
+    fun selectColumns() {
+        val array = activeTable?.array ?: return
+        Singleton.dataSpace.newData(stage.title, Tables.selectColumns(array, getSelectedColumns().toList()))
+    }
+
+    fun filterBy() {
+
+    }
+
+    fun filterOut() {
+
+    }
+
+    fun clearFilters() {
+
+    }
+
+    private inline fun copyWithMinMax(block: (grid: GridBase, minRow: Int, maxRow: Int,
+                                              minCol: Int, maxCol: Int) -> String) {
+        val grid = activeTable?.grid ?: return
         val se = spreadsheet.getSelection()
         val content = ClipboardContent()
-        content.putString(block(se.minRow, se.maxRow, se.minCol, se.maxCol))
+        content.putString(block(grid, se.minRow, se.maxRow, se.minCol, se.maxCol))
         Clipboard.getSystemClipboard().setContent(content)
     }
 
     fun copyDelimited(delimiter: Char) {
-        copyWithMinMax { minRow, maxRow, minCol, maxCol ->
+        copyWithMinMax { grid, minRow, maxRow, minCol, maxCol ->
             val builder = StringBuilder()
             for (i in minRow..maxRow) {
                 for (j in minCol until maxCol) {
@@ -226,24 +263,24 @@ class DataView {
     }
 
     fun saveCSV() {
-        val array = array ?: return
+        val array = activeTable?.array ?: return
         val fp = Singleton.getSavePath(this, "csv")
         if (fp != null) {
-            array.delimitToStream(fp.outputStream(), ',', false)
+            Tables.toCSV(array, fp.outputStream(), ',')
         }
     }
 
     fun saveZip() {
-        val array = array ?: return
+        val array = activeTable?.array ?: return
         val fp = Singleton.getSavePath(this, "kbt")
         if (fp != null) {
-            array.toZipFormat(fp.outputStream())
+            Tables.toZip(array, fp.outputStream())
         }
     }
 
     fun startFind() {
         val ob = OptionBar()
-        ob.hint = "Enter Something to search for"
+        ob.hint = "Enter something to search for"
 
         ob.setOnEnterPressed {
             ob.isShowing = false
@@ -257,7 +294,7 @@ class DataView {
             }
             try {
                 val num = t.toDouble()
-                val array = array ?: return@InvalidationListener
+                val array = activeTable?.array ?: return@InvalidationListener
                 val rows = array.rows
                 var count = 0
                 for (i in 0 until rows) {
@@ -279,43 +316,13 @@ class DataView {
     }
 
     private fun onSelectionChanged() {
-        selectionText.value = getRangeText()
         val a = spreadsheet.selectionModel.selectedCells
+        selectionText.value = getRangeText(a)
         if (a.size < 2) {
-            calculations.text = ""
+            calculationLabel.text = ""
             return
         }
-        val array = array ?: return
-        var count = 0
-        var sum = 0.0
-        var min = Double.MAX_VALUE
-        var max = Double.MIN_VALUE
-        for (pos in a) {
-            val num = array[pos.row, pos.column]
-            if (num.isFinite()) {
-                count++
-                sum += num
-                if (num < min) min = num
-                if (num > max) max = num
-            }
-        }
-        if (count == 0) {
-            calculations.text = ""
-            return
-        }
-        val average = (sum / count).toFloat() // make it a shorter string
-        calculations.text = "Sum: $sum    Count: $count    Average: $average    Min: $min    Max: $max"
-    }
-
-    private fun getRangeText(): String {
-        val a = spreadsheet.selectionModel.selectedCells
-        if (a.isEmpty()) return "None"
-        val rows = a.map { it.row }
-        val cols = a.map { it.column }
-        val w = rows.min()!! + 1
-        val x = rows.max()!! + 1
-        val y = TableUtil.columnIndexToString(cols.min()!!)
-        val z = TableUtil.columnIndexToString(cols.max()!!)
-        return if (a.size == 1) "$y$w" else "$y$w:$z$x"
+        val array = activeTable?.array ?: return
+        calculationLabel.text = getCalculations(a, array)
     }
 }

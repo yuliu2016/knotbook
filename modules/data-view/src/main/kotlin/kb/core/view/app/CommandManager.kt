@@ -65,7 +65,7 @@ class CommandManager {
     }
 
     fun registerCommand(id: String, command: Command) {
-        if (id !in keys) {
+        if (id !in keys && !hasShortcut(command.shortcut)) {
             keys.add(id)
             values.add(command)
             referenceItems.add(OptionItem(
@@ -78,7 +78,17 @@ class CommandManager {
                         }
                     }, null
             ))
-        } else throw IllegalStateException("The Command $id is already registered")
+        } else throw IllegalStateException("The Command $id is already registered or contains a duplicate shortcut")
+    }
+
+    private fun hasShortcut(shortcut: KeyCombination?): Boolean {
+        val sc = shortcut ?: return false
+        for (value in values) {
+            if (sc == value.shortcut) {
+                return true
+            }
+        }
+        return false
     }
 
     fun hasCommand(id: String): Boolean {

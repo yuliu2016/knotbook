@@ -8,7 +8,7 @@ import kb.service.api.ServiceMetadata
 
 class BowlineService : Service {
 
-    private val meta = ServiceMetadata("BowlineTableView", "0.0.1")
+    private val meta = ServiceMetadata("BowlineTableView", "Test Plugin")
 
     override fun getMetadata(): ServiceMetadata {
         return meta

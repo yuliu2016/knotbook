@@ -6,10 +6,6 @@
     -fx-text-fill: white;
 }
 
-.ikonli-font-icon {
-    -fx-icon-color: white;
-}
-
 /*SPREADSHEET VIEW*/
 
 .spreadsheet-cell {
@@ -163,4 +159,50 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 
 .button .ikonli-font-icon {
     -fx-icon-color: white
+}
+
+.tab-scroller {
+    -fx-background-color: #222;
+    -fx-background-insets: 0 0 1 0;
+}
+
+.tab-scroller:focused {
+    -fx-background-color: #222;
+    -fx-background-insets: 0 0 1 0;
+}
+
+.tab-item {
+    -fx-border-width: 0 1 0 0;
+    -fx-border-color: #222;
+    -fx-background-color: #333;
+    -fx-padding: 8;
+    -fx-spacing: 4;
+}
+
+.tab-item .label {
+    -fx-text-fill: #ccc;
+}
+
+.tab-item-selected {
+    -fx-background-color: black;
+}
+
+.tab-item-selected .label {
+    -fx-text-fill: white;
+}
+
+.tab-close-button {
+    -fx-icon-color: #333
+}
+
+.tab-item-selected .tab-close-button {
+    -fx-icon-color: #ccc
+}
+
+.tab-item:hover .tab-close-button {
+    -fx-icon-color: #ccc
+}
+
+.tab-item:hover .tab-close-button:hover {
+    -fx-icon-color: #fff
 }

@@ -9,7 +9,8 @@ import kb.service.api.ServiceMetadata;
 
 public class FXCameraService implements Service {
 
-    private static ServiceMetadata metadata = new ServiceMetadata("JavaFX WebCam", "1.0");
+    private static ServiceMetadata metadata = new ServiceMetadata(
+            "JavaFX WebCam", "Test Plugin");
 
     @Override
     public void launch(ServiceContext context) {

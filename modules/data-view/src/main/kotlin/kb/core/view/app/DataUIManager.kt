@@ -1,14 +1,15 @@
 package kb.core.view.app
 
+import javafx.application.Platform
 import javafx.beans.InvalidationListener
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
-import kb.core.fx.runOnFxThread
 import kb.core.view.DataView
 import kb.core.view.splash.Splash
 import kb.service.api.ui.*
 import java.util.*
 import java.util.function.Consumer
+import kotlin.concurrent.thread
 
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -20,7 +21,7 @@ class DataUIManager : UIManager {
     }
 
     val memoryUsed = SimpleStringProperty()
-    val themeProperty = SimpleObjectProperty(Theme.Light)
+    val themeProperty = SimpleObjectProperty(Theme.Dark)
 
     val commandManager = CommandManager()
     val stagedOptionBar = StagedOptionBar()
@@ -37,7 +38,7 @@ class DataUIManager : UIManager {
 
     fun toggleTheme() {
         themeProperty.set(when (themeProperty.get()) {
-            null -> Theme.Light
+            null -> Theme.Dark
             Theme.Light -> Theme.Dark
             Theme.Dark -> Theme.Light
         })
@@ -78,20 +79,24 @@ class DataUIManager : UIManager {
     }
 
     override fun showAlert(title: String, message: String) {
-        runOnFxThread { Splash.alert(title, message) }
+        UIHelper.run { Splash.alert(view?.stage, title, message, false) }
+    }
+
+    fun showAlertMonospace(title: String, message: String) {
+        UIHelper.run { Splash.alert(view?.stage, title, message, true) }
     }
 
     override fun showException(e: Throwable?) {
         val thread = Thread.currentThread()
-        runOnFxThread { Splash.error(thread, e) }
+        UIHelper.run { Splash.error(view?.stage, thread, e) }
     }
 
     override fun confirmOK(title: String, message: String, runIfOk: Runnable?) {
-        runOnFxThread { if (Splash.confirmOK(title, message)) runIfOk?.run() }
+        UIHelper.run { if (Splash.confirmOK(view?.stage, title, message)) runIfOk?.run() }
     }
 
     override fun confirmYes(title: String, message: String, runIfYes: Runnable?) {
-        runOnFxThread { if (Splash.confirmYes(title, message)) runIfYes?.run() }
+        UIHelper.run { if (Splash.confirmYes(view?.stage, title, message)) runIfYes?.run() }
     }
 
     override fun getTextInput(prompt: String, callback: Consumer<String>) {
@@ -108,5 +113,26 @@ class DataUIManager : UIManager {
 
     override fun createTextEditor(): TextEditor {
         return textEditors.first().create().withDarkTheme(isDarkTheme())
+    }
+
+    fun startMemoryObserver() {
+        thread(isDaemon = true, name = "KnotBook Memory Observer") {
+            var lastMemoryUsed = -1
+            while (true) {
+                val memoryUsed = ((Runtime.getRuntime().totalMemory() -
+                        Runtime.getRuntime().freeMemory()) / 1024.0 / 1024.0).toInt() + 1
+                if (memoryUsed != lastMemoryUsed) {
+                    Platform.runLater {
+                        this.memoryUsed.value = "${memoryUsed}M"
+                    }
+                    lastMemoryUsed = memoryUsed
+                }
+                try {
+                    Thread.sleep(5000)
+                } catch (e: InterruptedException) {
+                    break
+                }
+            }
+        }
     }
 }

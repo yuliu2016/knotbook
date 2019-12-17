@@ -1,7 +1,7 @@
 /*Base stylesheet -- To clear unnecessary styles*/
 
 .text {
-    -fx-font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
+    -fx-font-family: "Roboto", "Arial", sans-serif;
     /*-fx-font-smoothing-type: gray;*/
 }
 
@@ -135,7 +135,7 @@
 }
 
 .status-bar {
-    -fx-background-color: #3c5c94;
+    -fx-background-color: #5a8ade;
 }
 
 .status-bar .label {
@@ -163,5 +163,5 @@
 }
 
 .num-cell {
-    -fx-alignment: CENTER-RIGHT
+    -fx-alignment: CENTER-RIGHT;
 }

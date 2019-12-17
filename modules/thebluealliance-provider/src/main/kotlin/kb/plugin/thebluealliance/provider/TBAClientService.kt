@@ -6,7 +6,10 @@ import kb.service.api.ServiceMetadata
 
 class TBAClientService : Service {
 
-    private val metadata = ServiceMetadata("The Blue Alliance Integration", "3.0")
+    private val metadata = ServiceMetadata(
+            "The Blue Alliance Integration",
+            "Fetches data tables from TBA"
+    )
 
     override fun getMetadata(): ServiceMetadata {
         return metadata

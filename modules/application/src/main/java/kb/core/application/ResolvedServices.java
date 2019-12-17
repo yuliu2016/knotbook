@@ -4,6 +4,7 @@ import kb.service.api.MetaService;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 class ResolvedServices<T extends MetaService> {
     Class<T> theClass;
     List<T> services;

@@ -18,7 +18,7 @@
     -fx-padding: 0 0.2em 0 0.2em;
     -fx-font-weight: normal;
     -fx-border-color: black;
-    -fx-border-width: 0.3;
+    -fx-border-width: 0.2;
     /*-fx-background-color: -fx-table-cell-border-color, white;*/
     -fx-background-color: white;
 }
@@ -150,4 +150,50 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 
 .button:hover {
     -fx-background-color: #ddd;
+}
+
+.tab-scroller {
+    -fx-background-color: #eee;
+    -fx-background-insets: 0 0 1 0;
+}
+
+.tab-scroller:focused {
+    -fx-background-color: #eee;
+    -fx-background-insets: 0 0 1 0;
+}
+
+.tab-item {
+    -fx-border-width: 0 1 0 0;
+    -fx-background-color: #ddd;
+    -fx-border-color: #ccc;
+    -fx-padding: 8;
+    -fx-spacing: 4;
+}
+
+.tab-item .label {
+    -fx-text-fill: #666;
+}
+
+.tab-item-selected {
+    -fx-background-color: white;
+}
+
+.tab-item-selected .label {
+    -fx-text-fill: black;
+}
+
+.tab-close-button {
+    -fx-icon-color: #ddd
+}
+
+.tab-item-selected .tab-close-button {
+    -fx-icon-color: #666
+}
+
+.tab-item:hover .tab-close-button {
+    -fx-icon-color: #666
+}
+
+.tab-item:hover .tab-close-button:hover {
+    -fx-icon-color: black
 }
