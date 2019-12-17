@@ -9,6 +9,7 @@ import javafx.geometry.Pos
 import javafx.scene.Scene
 import javafx.scene.control.Label
 import javafx.scene.control.ScrollPane
+import javafx.scene.control.Tooltip
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
 import javafx.scene.input.KeyCode
@@ -104,7 +105,6 @@ class DataView {
     val scene = Scene(layout)
 
     val zoomText = SimpleStringProperty("100%")
-    val themeText = SimpleStringProperty("Light")
     val selectionText = SimpleStringProperty("None")
 
     fun addStatus(prop: StringProperty) {
@@ -125,7 +125,8 @@ class DataView {
                 })
             }
             add(label(table.title).apply {
-                this.maxWidth= 160.0
+                tooltip = Tooltip(table.title)
+                this.maxWidth = 160.0
             })
             add(fontIcon(MaterialDesign.MDI_CLOSE, 14).apply {
                 styleClass("tab-close-button")
@@ -166,10 +167,8 @@ class DataView {
         showing = true
 
         updateTheme()
-        themeText.bind(Singleton.uiManager.themeProperty.asString())
         addStatus(selectionText)
         addStatus(zoomText)
-        addStatus(themeText)
         addStatus(Singleton.uiManager.memoryUsed)
 
         Singleton.uiManager.themeProperty.addListener(themeListener)

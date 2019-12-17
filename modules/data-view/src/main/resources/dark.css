@@ -179,8 +179,16 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
     -fx-spacing: 4;
 }
 
+.tab-item .label {
+    -fx-text-fill: #ccc;
+}
+
 .tab-item-selected {
     -fx-background-color: black;
+}
+
+.tab-item-selected .label {
+    -fx-text-fill: white;
 }
 
 .tab-close-button {
@@ -188,9 +196,13 @@ HorizontalHeaderColumn > TableColumnHeader.column-header.table-column.selected >
 }
 
 .tab-item-selected .tab-close-button {
-    -fx-icon-color: white
+    -fx-icon-color: #ccc
 }
 
 .tab-item:hover .tab-close-button {
-    -fx-icon-color: white
+    -fx-icon-color: #ccc
+}
+
+.tab-item:hover .tab-close-button:hover {
+    -fx-icon-color: #fff
 }
